@@ -517,7 +517,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="send_with_untrusted_key_title">Apakah Anda ingin mengirim dengan kunci yang tidak terpercaya?</string>
     <string name="send_with_untrusted_key_message">Anda telah mengaktifkan Verifikasi Alamat dengan Kunci Tepercaya untuk %s, namun tidak ada kunci enkripsi aktif yang telah dipercaya.</string>
     <string name="resign_contact_title">Apakah Anda ingin menandatangani ulang kontak?</string>
-    <string name="resign_contact_message">Verifikasi %s telah gagal: kontak tidak ditandatangani dengan benar. Anda harus menandatangani ulang kontak untuk mengirim pesan ke alamat ini atau mengubah kontak. Hal ini juga dapat terjadi ketika Anda telah memulihkan kata sandi dan mengatur ulang kunci Anda.</string>
+    <string name="resign_contact_message">Verifikasi %s gagal: kontak tidak ditandatangani dengan benar. Anda harus menandatangani ulang kontak untuk dapat mengirim pesan ke alamat ini atau menyunting rincian kontak. Hal ini juga dapat terjadi setelah Anda memulihkan kata sandi dan mengatur ulang kunci Anda.</string>
     <!-- Sender locks -->
     <string name="sender_lock_zero_access">Disimpan dengan enkripsi akses nol</string>
     <!-- External message that was encrypted by the BE -->
@@ -778,13 +778,13 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Masalah umum koneksi dan solusi</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Tidak ada akses internet&lt;/i&gt; - Pastikan koneksi internet anda berjalan sebagaimana semestinya.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Permasalahan Penyedia Layanan Internet (ISP)&lt;/i&gt; - Cobalah untuk terhubung ke Proton dengan jaringan internet yang berbeda (atau gunakan &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; atau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Pemblokiran Pemerintah&lt;/i&gt; - Otoritas negara Anda mungkin memblokir akses ke Proton. Cobalah untuk menggunakan &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (atau VPN lainnya) atau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; untuk mengakses Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Gangguan Antivirus&lt;/i&gt; - Nonaktifkan sementara atau hapus perangkat antivirus Anda.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Gangguan Proxy/Firewall&lt;/i&gt; - Nonaktifkan proxy atau firewall yang sedang aktif, atau hubungi pengelola jaringan Anda.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton sedang offline/down&lt;/i&gt; - Cek &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; untuk mengetahui status sistem kami.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Masih belum menemukan solusi&lt;/i&gt; - Hubungi kami secara langsung melalui &lt;a href=\"https://protonmail.com/support-form\"&gt;formulir layanan dukungan&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), atau &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; kami.
     </string>
     <!-- endregion -->
     <!-- region errors -->

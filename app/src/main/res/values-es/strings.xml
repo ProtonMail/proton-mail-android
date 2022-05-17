@@ -117,7 +117,7 @@
     <string name="app_theme_title">Tema de la aplicación</string>
     <string name="app_theme_light">Claro</string>
     <string name="app_theme_dark">Oscuro</string>
-    <string name="app_theme_system">Sistema por defecto</string>
+    <string name="app_theme_system">Del sistema</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Seleccionar carpeta principal (opcional)</string>
@@ -138,13 +138,13 @@
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Privacidad para todos</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Invita a tus contactos a Proton Mail para que disfruten de un cifrado perfecto de extremo a extremo, o añade una protección con contraseña a los mensajes que les envíes.</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Invite a sus contactos a Proton Mail para que disfruten de un cifrado ininterrumpido de extremo a extremo, o añada protección con contraseña a los mensajes que les envíe.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Limpio y ordenado</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">Archiva, etiqueta y codifica por colores los mensajes para crear tu bandeja de entrada perfecta y personalizada.</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Archive, etiquete y clasifique por colores sus mensajes para crear una bandeja de entrada personalizada perfecta.</string>
     <string name="existing_user_onboarding_new_look_headline">Nuevo aspecto, misma protección</string>
-    <string name="existing_user_onboarding_new_look_description">Su correo electrónico cifrado ha sido completamente remodelado para facilitar su uso.</string>
+    <string name="existing_user_onboarding_new_look_description">Su correo electrónico cifrado ha sido completamente rediseñado para facilitar su uso.</string>
     <string name="existing_user_onboarding_new_features_headline">Nuevas características</string>
-    <string name="existing_user_onboarding_new_features_description">Disfruta de nuevas funciones como el modo oscuro, notificaciones mejoradas, un filtro de mensajes no leídos y subcarpetas.</string>
+    <string name="existing_user_onboarding_new_features_description">Disfrute de nuevas funciones como modo oscuro, notificaciones mejoradas, filtro de mensajes no leídos y subcarpetas.</string>
     <string name="onboarding_next">Siguiente</string>
     <string name="onboarding_get_started">Comenzar</string>
     <string name="onboarding_image_view_content_description">Ilustración de Proton Mail</string>
@@ -628,9 +628,9 @@ compre más
         Considere liberar algo de espacio o compre más antes de quedarse sin espacio.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permisos</string>
-    <string name="need_storage_permissions_add_attachment_text">Para añadir archivos adjuntos necesitas permitir
+    <string name="need_storage_permissions_add_attachment_text">Para añadir archivos adjuntos necesita permitir
         el acceso al almacenamiento.</string>
-    <string name="need_storage_permissions_download_attachment_text">Para añadir archivos adjuntos necesitas permitir         el acceso al almacenamiento.</string>
+    <string name="need_storage_permissions_download_attachment_text">Para añadir archivos adjuntos necesita permitir         el acceso al almacenamiento.</string>
     <string name="need_contacts_permissions_text">Para importar los contactos es necesario permitir el acceso a los mismos.</string>
     <string name="push_notifications_alert_title">Alerta de notificaciones push</string>
     <string name="push_notifications_alert_subtitle">Las notificaciones push para ProtonMail no funcionan sin los servicios de Google Play actualizados.</string>
@@ -663,9 +663,9 @@ compre más
     <string name="edit_display_name">Editar el nombre a mostrar</string>
     <string name="signature">Firma</string>
     <string name="mobile_footer">Pie de página móvil</string>
-    <string name="edit_mobile_footer">Activar el pie de página móvil</string>
-    <string name="default_mobile_footer">Enviado desde el móvil ProtonMail</string>
-    <string name="mobile_footer_is_premium">Cambiar el Pie de Página Móvil solo está permitido para usuarios de pago</string>
+    <string name="edit_mobile_footer">Activar pie de página en la aplicación móvil</string>
+    <string name="default_mobile_footer">Enviado desde ProtonMail móvil</string>
+    <string name="mobile_footer_is_premium">Cambiar el pie de página en la aplicación móvil solo le está permitido a usuarios de pago</string>
     <string name="mobile_footer_info">Este pie de página se añade después de su firma</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Silenciar</string>
@@ -726,7 +726,7 @@ compre más
     <string name="labels_and_folders">Etiquetas y carpetas </string>
     <string name="folders">Carpetas</string>
     <string name="labels">Etiquetas</string>
-    <string name="swipe_actions">Acciones al deslizar</string>
+    <string name="swipe_actions">Gestos de deslizamiento</string>
     <string name="swipe_action_right">Deslizar hacia la derecha</string>
     <string name="swipe_action_left">Deslizar hacia la izquierda</string>
     <!-- region Swipe Actions -->
@@ -769,7 +769,7 @@ compre más
     <string name="combined_contacts">Contactos combinados</string>
     <string name="turn_combined_contacts_on">Active esta función para completar automáticamente las direcciones usando los contactos de todas sus cuentas conectadas.</string>
     <string name="local_cache_management">Caché local</string>
-    <string name="cache_cleared">El caché local se Actualizó</string>
+    <string name="cache_cleared">La caché local ha sido actualizada</string>
     <string name="empty_data">Limpiar datos</string>
     <!-- endregion -->
     <string name="enabled">Habilitado</string>
@@ -786,13 +786,13 @@ compre más
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemas y soluciones habituales de conexión</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Sin conexión a internet&lt;/i&gt; - Por favor, asegúrate de que tu conexión está funcionando.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema del proveedor de servicios de internet  (ISP)&lt;/i&gt; - Prueba a conectarte a Proton desde una red diferente (o usa &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueo gubernamental&lt;/i&gt; - Tu país puede estar bloqueando el acceso a Proton. Prueba &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o cualquier otra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para acceder a Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de antivirus&lt;/i&gt; - Deshabilita temporalmente o elimina tu software antivirus.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de Proxy/Firewall&lt;/i&gt; - Deshabilita cualquier proxy o cortafuegos, o contacta a tu administrador de red.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton se ha caído&lt;/i&gt; - Accede a &lt;a href=\"http://protonstatus.com/\"&gt;Estatus Proton&lt;/a&gt; para comprobar el estatus de nuestro sistema.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aún no se pudo encontrar una solución&lt;/i&gt; - Contáctanos directamente a través de nuestro &lt;a href=\"https://protonmail.com/support-form\"&gt;formulario de apoyo&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correo electrónico&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Sin conexión a internet&lt;/i&gt; - Por favor, asegúrase de que su conexión está funcionando.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema del proveedor de servicios de internet (ISP)&lt;/i&gt; - Pruebe a conectarse a Proton desde una red diferente (o use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueo gubernamental&lt;/i&gt; - Su país puede estar bloqueando el acceso a Proton. Pruebe &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o cualquier otra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para acceder a Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de antivirus&lt;/i&gt; - Deshabilite temporalmente o elimine su software antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de Proxy/Firewall&lt;/i&gt; - Deshabilite cualquier proxy o cortafuegos, o contacte con su administrador de red.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está caído&lt;/i&gt; - Acceda a &lt;a href=\"http://protonstatus.com/\"&gt;Estatus Proton&lt;/a&gt; para comprobar el estado de nuestro sistema.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aún no pudo encontrar una solución&lt;/i&gt; - Contáctenos directamente a través de nuestro &lt;a href=\"https://protonmail.com/support-form\"&gt;formulario de apoyo&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correo electrónico&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagen no encontrada</string>

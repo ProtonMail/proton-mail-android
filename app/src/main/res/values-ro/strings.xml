@@ -19,7 +19,7 @@
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Adăugare folder</string>
     <string name="x_add_label">Adăugare etichetă</string>
     <string name="x_days">zile</string>
@@ -77,7 +77,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">La %s, %s &lt; %s&gt; a scris:</string>
     <string name="set_msg_password_title">Setare parolă</string>
-    <string name="set_msg_password_info">Setați o parolă pentru a cripta acest mesaj pentru cei care nu sunt utilizatori ai ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Detalii</a></string>
+    <string name="set_msg_password_info">Setați o parolă pentru a cripta acest mesaj pentru cei care nu sunt utilizatori ai Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Detalii</a></string>
     <string name="set_msg_password_info_icon_description">Informaţii</string>
     <string name="set_msg_password_msg_password_title">Parolă mesaj</string>
     <string name="set_msg_password_msg_password_hint">între 4 și 21 de caractere</string>
@@ -155,7 +155,7 @@
     <string name="snackbar_action_discard">Renunțare</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Deconectare</string>
     <string name="sign_out_question">Sigur doriți să vă deconectați?</string>
     <string name="processing_request">Solicitarea este în curs de procesare</string>
@@ -168,9 +168,9 @@
     <string name="no_more_messages">Nu mai există mesaje</string>
     <string name="no_network_queued">Nu există conexiune, mesaj pus în așteptare</string>
     <string name="update_app_title">Actualizare necesară</string>
-    <string name="update_app">Nu puteți folosi aplicația ProtonMail înainte de a o actualiza</string>
+    <string name="update_app">Nu puteți folosi aplicația Proton Mail înainte de a o actualiza</string>
     <string name="you_are_offline">Sunteți deconectat</string>
-    <string name="api_offline">ProtonMail este momentan indisponibil. Verificați la https://protonstatus.com sau pe pagina nostră de Twitter pentru starea actuală: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail este momentan indisponibil. Verificați la https://protonstatus.com sau pe pagina nostră de Twitter pentru starea actuală: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contact salvat</string>
     <string name="contact_saved_offline">Contact salvat, va fi sincronizat când conexiunea va fi disponibilă</string>
     <string name="contact_exist">E-mailul de contact există deja</string>
@@ -198,7 +198,7 @@
     <string name="all_mail">Toate mesajele</string>
     <string name="contacts">Contacte</string>
     <string name="search_contacts">Căutare contacte</string>
-    <string name="fetching_contacts">Se preiau contactele ProtonMail...</string>
+    <string name="fetching_contacts">Se preiau contactele Proton Mail...</string>
     <string name="fetching_contacts_success">Contactele au fost preluate cu succes</string>
     <string name="fetching_contacts_failure">Nu s-au putut prelua contactele</string>
     <string name="no_search_results">Nu s-au găsit rezultate</string>
@@ -277,7 +277,7 @@
     <string name="invalid_email_address">Adresa \'%s\' nu este validă</string>
     <string name="invalid_email_address_removed">Adresa „%s” nu este validă și a fost eliminată</string>
     <string name="no_recipients_specified">Adăugați cel puțin un destinatar</string>
-    <string name="no_password_specified">Timp de expirare pot avea doar mesajele complet criptate. Setați o parolă pentru destinatarii non-ProtonMail.</string>
+    <string name="no_password_specified">Timp de expirare pot avea doar mesajele complet criptate. Setați o parolă pentru destinatarii non-Proton Mail.</string>
     <string name="attachment_limit">Fișierele atașate sunt limitate la %1$s. Total atașate vor avea %2$s.</string>
     <string name="sending_message">Se trimite mesajul...</string>
     <string name="sending_message_offline">Deconectat, așteaptă să fie trimis ulterior...</string>
@@ -289,7 +289,7 @@
     <string name="cancel">Anulare</string>
     <string name="close">Închidere</string>
     <string name="eo_password_title">Setare parolă</string>
-    <string name="eo_password_subtitle">Setați o parolă de criptare a acestui mesaj pentru cei ce nu folosesc ProtonMail</string>
+    <string name="eo_password_subtitle">Setați o parolă de criptare a acestui mesaj pentru cei ce nu folosesc Proton Mail</string>
     <string name="eo_password_more_info">Aflați mai multe</string>
     <string name="no_attachments">0 atașamente</string>
     <string name="display_name_banned_chars">Nume afișat nevalid. \'&gt;\' și \'&lt;\' nu sunt permise.</string>
@@ -394,7 +394,7 @@
     <string name="contact_details">Detalii contact</string>
     <string name="email_type_home">Acasă</string>
     <string name="type_title">Alegere tip</string>
-    <string name="sync_local_contacts">Încărcare în ProtonMail</string>
+    <string name="sync_local_contacts">Încărcare în Proton Mail</string>
     <string name="please_select_only_phone_contacts">Selectați doar contactele din acest telefon</string>
     <string name="contact_vcard_hint_email">Introducere adresă de e-mail</string>
     <string name="contact_vcard_hint_phone">Introducere număr de telefon</string>
@@ -472,7 +472,7 @@
     <string name="details_copied">Detaliile s-au copiat în memorie</string>
     <string name="saving">Se salvează...</string>
     <string name="update_folder">Actualizare folder</string>
-    <string name="spam_score_100">Acest e-mail pare să fie de la o adresă ProtonMail, dar a venit din afara sistemului nostru și nu respectă cerințele de autenticitate. Ar putea fi falsificat sau redirecționat eronat!</string>
+    <string name="spam_score_100">Acest e-mail pare să fie de la o adresă Proton Mail, dar a venit din afara sistemului nostru și nu respectă cerințele de autenticitate. Ar putea fi falsificat sau redirecționat eronat!</string>
     <string name="spam_score_101">Acest e-mail nu respectă cerințele de autentificare ale domeniul său. Ar putea fi falsificat sau redirecționat eronat!</string>
     <string name="spam_score_102">Acest mesaj poate fi o încercare de înșelăciune. Vă rugăm să verificați expeditorul și conținutul pentru a vă asigura că acestea sunt legitime. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">Aflați mai multe</a></string>
     <string name="print_from_template">De la: %s</string>
@@ -498,10 +498,10 @@
     <string name="email_empty">Adresa de e-mail lipsește</string>
     <string name="encrypted_contact_details">Detalii criptate contact</string>
     <string name="convert_question">Încărcare contacte din dispozitiv</string>
-    <string name="convert_question_subtitle">Se vor transfera contactele din dispozitiv în folderul contactelor din ProtonMail. Veți putea apoi accesa contactele și pe alte dispozitive prin intermediul ProtonMail.</string>
+    <string name="convert_question_subtitle">Se vor transfera contactele din dispozitiv în folderul contactelor din Proton Mail. Veți putea apoi accesa contactele și pe alte dispozitive prin intermediul Proton Mail.</string>
     <string name="refresh_contacts">Împrospătare</string>
     <string name="invalid_email_some_contacts">Adresa de e-mail nu este validă pentru unele contacte</string>
-    <string name="protonmail_contacts">Contacte din ProtonMail</string>
+    <string name="protonmail_contacts">Contacte din Proton Mail</string>
     <string name="device_contacts">Contacte din dispozitiv</string>
     <string name="print_date_template">Data: %s</string>
     <string name="print_attachment_template">Atașament: %s;  </string>
@@ -513,7 +513,7 @@
     <string name="remove_password_question">Eliminați parola?</string>
     <string name="attachment_storage_value_current">Selectare actuală: %d MB</string>
     <string name="attachment_storage_value_current_unlimited">Selectare actuală: nelimitat</string>
-    <string name="attachment_offline_max_storage">Stabilește cantitatea maximă de spațiu de stocare pe care ProtonMail o poate utiliza pe dispozitivul mobil.</string>
+    <string name="attachment_offline_max_storage">Stabilește cantitatea maximă de spațiu de stocare pe care Proton Mail o poate utiliza pe dispozitivul mobil.</string>
     <string name="load_embedded_images_failed_no_network">Încărcare eșuată imagini incluse. Verificați conexiunea la internet.</string>
     <string name="load_embedded_images_failed">Încărcare eșuată imagini incluse.</string>
     <string name="unlimited">Nelimitat</string>
@@ -530,7 +530,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Trimis de dvs. cu criptare în ambele părți</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Trimis de ProtonMail criptat cu acces exclusiv personal</string>
+    <string name="sender_lock_sent_autoresponder">Trimis de Proton Mail criptat cu acces exclusiv personal</string>
     <string name="sender_lock_verification_failed">Verificare eșuată expeditor</string>
     <string name="sender_lock_pgp_encrypted">Mesaj criptat PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Mesaj criptat cu PGP de la adresă verificată</string>
@@ -642,7 +642,7 @@
         accesul la spațiul de stocare al telefonului.</string>
     <string name="need_contacts_permissions_text">Pentru a importa contacte, trebuie să permiteți accesul la contacte.</string>
     <string name="push_notifications_alert_title">Notificări instante</string>
-    <string name="push_notifications_alert_subtitle">Notificările instante pentru ProtonMail nu funcționează fără ultima actualizare a serviciilor Google Play.</string>
+    <string name="push_notifications_alert_subtitle">Notificările instante pentru Proton Mail nu funcționează fără ultima actualizare a serviciilor Google Play.</string>
     <string name="app_locked">Aplicație blocată</string>
     <string name="use_pin_instead">Folosiți PIN</string>
     <!-- strings used for biometric enrollment -->
@@ -673,7 +673,7 @@
     <string name="signature">Semnătura</string>
     <string name="mobile_footer">Mesaj subsol</string>
     <string name="edit_mobile_footer">Activare mesaj subsol</string>
-    <string name="default_mobile_footer">Trimis cu ProtonMail pentru mobil</string>
+    <string name="default_mobile_footer">Trimis cu Proton Mail pentru mobil</string>
     <string name="mobile_footer_is_premium">Modificarea mesajului din subsol este permisă doar celor cu un cont plătit</string>
     <string name="mobile_footer_info">Acest mesaj din subsol este adăugat după semnătură</string>
     <!-- region Snooze Settings -->
@@ -798,12 +798,12 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Probleme comune conexiune și soluții</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;Fără conexiune la internet&lt;/i&gt; - Asigurați-vă că funcționează conexiunea la internet.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problemă (ISP) Furnizor Servicii Internet&lt;/i&gt; - Încercați să vă conectați la Proton dintr-o altă rețea (sau folosiți &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; sau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blocare guvernamentală&lt;/i&gt; - Țara dvs. s-ar putea să blocheze accesul către Proton. Încercați &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (sau oricare alt VPN) sau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pentru a accesa Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problemă (ISP) Furnizor Servicii Internet&lt;/i&gt; - Încercați să vă conectați la Proton dintr-o altă rețea (sau folosiți &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; sau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blocare guvernamentală&lt;/i&gt; - Țara dvs. s-ar putea să blocheze accesul către Proton. Încercați &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (sau oricare alt VPN) sau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pentru a accesa Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferență antivirus&lt;/i&gt; - Dezactivați temporar sau eliminați programul antivirus.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferențe Proxy/Paravan de protecție&lt;/i&gt; - Dezactivați orice paravan de protecție sau proxy sau contactați administratorul de rețea.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton este căzut&lt;/i&gt; - Accesați &lt;a href=\"http://protonstatus.com/\"&gt;Stare Proton&lt;/a&gt; pentru aflarea stării sistemului nostru.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Încă nu ați găsit soluția?&lt;/i&gt; - Contactați-ne direct prin &lt;a href=\"https://protonmail.com/support-form\"&gt;formularul de suport&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.com) sau &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Încă nu ați găsit soluția?&lt;/i&gt; - Contactați-ne direct prin &lt;a href=\"https://protonmail.com/support-form\"&gt;formularul de suport&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.com) sau &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

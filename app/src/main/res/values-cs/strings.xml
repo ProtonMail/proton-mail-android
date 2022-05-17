@@ -52,7 +52,7 @@
     <string name="mailbox_empty_spam_subtitle">Vaše složka spamu je prázdná</string>
     <string name="mailbox_empty_trash_subtitle">Koš je prázdný</string>
     <string name="mailbox_no_messages">Žádné zprávy</string>
-    <string name="mailbox_unread_count">%d unread</string>
+    <string name="mailbox_unread_count">%d nepřečtených</string>
     <string name="mailbox_updated_just_now">Právě aktualizováno</string>
     <!-- endregion -->
     <!-- region Details -->
@@ -60,10 +60,10 @@
     <string name="details_open_in_proton_calendar_subtitle">Zabezpečený šifrovaný e-mail</string>
     <string name="details_open_in_proton_calendar_icon_desc">Ikona Proton kalendáře</string>
     <string name="details_play_store_error">Nelze otevřít obchod Google Play</string>
-    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
-    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
-    <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
-    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
+    <string name="details_hyperlink_phishing_dialog_title">Varování: pravděpodobně se jedná o podvodnou stránku</string>
+    <string name="details_hyperlink_phishing_dialog_content">Tento odkaz vede na webovou stránku, která se může pokoušet ukrást vaše údaje, například hesla a údaje o kreditní kartě.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Pro Vaší vlastní bezpečnost, nepokračujte.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Vrátit se zpět (doporučeno)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorovat varování a pokračovat</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Skrytá kopie:</string>
@@ -75,7 +75,7 @@
     <string name="composer_removing_address_generic_error">Nelze ověřit adresu: %s1. Odesílání se nemusí podařit.</string>
     <string name="composer_removing_address_server_error">Odebírání adresy: %s1. %s2</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
-    <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
+    <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; napsal:</string>
     <string name="set_msg_password_title">Nastavit heslo</string>
     <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy uživatelům, kteří nepoužívají ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Další informace</a></string>
     <string name="set_msg_password_info_icon_description">Informace</string>
@@ -144,7 +144,7 @@
     <string name="existing_user_onboarding_new_look_headline">Nový vzhled, stejná ochrana</string>
     <string name="existing_user_onboarding_new_look_description">Váš šifrovaný e-mail byl zcela přepracován pro snadnější používání.</string>
     <string name="existing_user_onboarding_new_features_headline">Nové funkce</string>
-    <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
+    <string name="existing_user_onboarding_new_features_description">Využijte nové funkce, jako je tmavý režim, vylepšená oznámení, filtr nepřečtených zpráv a podsložky.</string>
     <string name="onboarding_next">Další</string>
     <string name="onboarding_get_started">Začínáme</string>
     <string name="onboarding_image_view_content_description">Ilustrace Proton Mail</string>

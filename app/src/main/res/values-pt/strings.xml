@@ -20,22 +20,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
-    <string name="x_add_folder">Add folder</string>
-    <string name="x_add_label">Add label</string>
+    <string name="x_add_folder">Adicionar pasta</string>
+    <string name="x_add_label">Adicionar etiqueta</string>
     <string name="x_days">Dias</string>
-    <string name="x_done">Done</string>
-    <string name="x_edit">Edit</string>
+    <string name="x_done">Concluído</string>
+    <string name="x_edit">Editar</string>
     <string name="x_hours">Horas</string>
     <string name="x_more">Mais</string>
-    <string name="x_none">None</string>
+    <string name="x_none">Nenhum</string>
     <string name="x_search">Procurar</string>
     <string name="x_set">Definir</string>
     <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Content descriptions: accessibility description for icons -->
-    <string name="x_label_icon_description">Label icon</string>
-    <string name="x_folder_icon_description">Folder icon</string>
-    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <string name="x_label_icon_description">Ícone de etiqueta</string>
+    <string name="x_folder_icon_description">Ícone de pasta</string>
+    <string name="x_parent_folder_icon_description">Pasta com ícone de crianças</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contactos</string>
@@ -43,24 +43,24 @@
     <string name="drawer_report_bug">Comunicar erro</string>
     <string name="drawer_settings">Definições</string>
     <string name="drawer_sign_out">Terminar sessão</string>
-    <string name="drawer_create_folder_description">Create new folder</string>
-    <string name="drawer_create_label_description">Create new label</string>
+    <string name="drawer_create_folder_description">Criar nova pasta</string>
+    <string name="drawer_create_label_description">Criar nova etiqueta</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_empty_folder_subtitle">This folder is empty</string>
-    <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
-    <string name="mailbox_empty_spam_subtitle">Your spam folder is empty</string>
-    <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
-    <string name="mailbox_no_messages">No messages</string>
-    <string name="mailbox_unread_count">%d unread</string>
-    <string name="mailbox_updated_just_now">Updated just now</string>
+    <string name="mailbox_empty_folder_subtitle">Esta pasta está vazia</string>
+    <string name="mailbox_empty_inbox_subtitle">Você está atualizada(o)</string>
+    <string name="mailbox_empty_spam_subtitle">A sua pasta de spam está vazia</string>
+    <string name="mailbox_empty_trash_subtitle">A pasta de lixo está vazia</string>
+    <string name="mailbox_no_messages">Nenhuma mensagem</string>
+    <string name="mailbox_unread_count">%d Não lidas</string>
+    <string name="mailbox_updated_just_now">Atualizado agora mesmo</string>
     <!-- endregion -->
     <!-- region Details -->
-    <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
-    <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
-    <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
-    <string name="details_play_store_error">Can\'t open Play Store</string>
-    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
+    <string name="details_open_in_proton_calendar_title">Abrir no Calendário Proton</string>
+    <string name="details_open_in_proton_calendar_subtitle">Calendário seguro e criptografado</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Ícone do Calendário Proton</string>
+    <string name="details_play_store_error">Não consigo abrir a Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Aviso: suspeita de sítio web falso</string>
     <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>

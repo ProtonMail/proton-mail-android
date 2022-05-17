@@ -20,22 +20,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
-    <string name="x_add_folder">Add folder</string>
-    <string name="x_add_label">Add label</string>
+    <string name="x_add_folder">Dodaj mapu</string>
+    <string name="x_add_label">Dodaj oznaku</string>
     <string name="x_days">Dana</string>
-    <string name="x_done">Done</string>
-    <string name="x_edit">Edit</string>
+    <string name="x_done">Gotovo</string>
+    <string name="x_edit">Uredi</string>
     <string name="x_hours">Sati</string>
     <string name="x_more">Više</string>
-    <string name="x_none">None</string>
+    <string name="x_none">Ništa</string>
     <string name="x_search">Pretraga</string>
     <string name="x_set">Postavi</string>
     <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Content descriptions: accessibility description for icons -->
-    <string name="x_label_icon_description">Label icon</string>
-    <string name="x_folder_icon_description">Folder icon</string>
-    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <string name="x_label_icon_description">Ikona oznake</string>
+    <string name="x_folder_icon_description">Ikona mape</string>
+    <string name="x_parent_folder_icon_description">Mapa s ikonom djece</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakti</string>
@@ -43,27 +43,27 @@
     <string name="drawer_report_bug">Prijavi problem</string>
     <string name="drawer_settings">Postavke</string>
     <string name="drawer_sign_out">Odjava</string>
-    <string name="drawer_create_folder_description">Create new folder</string>
-    <string name="drawer_create_label_description">Create new label</string>
+    <string name="drawer_create_folder_description">Stvori novu mapu</string>
+    <string name="drawer_create_label_description">Stvori novu oznaku</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_empty_folder_subtitle">This folder is empty</string>
-    <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
-    <string name="mailbox_empty_spam_subtitle">Your spam folder is empty</string>
-    <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
-    <string name="mailbox_no_messages">No messages</string>
-    <string name="mailbox_unread_count">%d unread</string>
-    <string name="mailbox_updated_just_now">Updated just now</string>
+    <string name="mailbox_empty_folder_subtitle">Ova mapa je prazna</string>
+    <string name="mailbox_empty_inbox_subtitle">Vi ste u tijeku</string>
+    <string name="mailbox_empty_spam_subtitle">Vaša mapa neželjene pošte je prazna</string>
+    <string name="mailbox_empty_trash_subtitle">Otpad je prazan</string>
+    <string name="mailbox_no_messages">Nema poruka</string>
+    <string name="mailbox_unread_count">%d nepročitano</string>
+    <string name="mailbox_updated_just_now">Upravo ažurirano</string>
     <!-- endregion -->
     <!-- region Details -->
-    <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
-    <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
-    <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
-    <string name="details_play_store_error">Can\'t open Play Store</string>
-    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
-    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
-    <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
-    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
+    <string name="details_open_in_proton_calendar_title">Otvori u Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Osiguraj šifrirani kalendar</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Ikona Proton Calendar</string>
+    <string name="details_play_store_error">Ne mogu otvoriti Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Upozorenje: sumnja na lažnu web stranicu</string>
+    <string name="details_hyperlink_phishing_dialog_content">Ova hiperveza vodi do web-mjesta koje možda pokušava ukrasti vaše podatke, kao što su lozinke i podaci o kreditnoj kartici.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Zbog vaše sigurnosti nemojte nastaviti.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Vrati se (preporučeno)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Zanemarite upozorenje i nastavite</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -72,12 +72,12 @@
     <string name="composer_from">Od:</string>
     <string name="composer_subject">Predmet:</string>
     <string name="composer_to">Za:</string>
-    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
-    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Ne mogu potvrditi adresu: %s1. Slanje možda neće uspjeti.</string>
+    <string name="composer_removing_address_server_error">Uklanjanje adrese: %s1. %s2</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
-    <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
+    <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; napisao:</string>
     <string name="set_msg_password_title">Postavi lozinku</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-ProtonMail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
+    <string name="set_msg_password_info">Postavite lozinku za šifriranje ove poruke za korisnike koji nisu dio ProtonMail-a. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saznajte više</a></string>
     <string name="set_msg_password_info_icon_description">Informacije</string>
     <string name="set_msg_password_msg_password_title">Lozinka poruke</string>
     <string name="set_msg_password_msg_password_hint">4 do 21 znakova dugo</string>
@@ -100,59 +100,59 @@
     <string name="set_msg_expiration_check_description">Stavka je označena</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_create_pin_code_title">Postavite PIN kôd</string>
     <string name="settings_confirm_pin_code_title">Ponovite PIN kôd</string>
     <string name="settings_pins_dont_match">PIN kôdovi se moraju podudarati!</string>
     <string name="settings_enter_pin_code_title">Unesite PIN kôd</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
-    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB iskorišteno)</string>
+    <string name="settings_storage_limit_unlimited_value">Neograničeno (%1$.2f MB iskorišteno)</string>
     <string name="settings_swipe_settings_info">Postavite radnje povlačenja prstom za pristup najčešće korištenim radnjama.</string>
     <string name="settings_swipe_left_to_right">S lijeva na desno</string>
     <string name="settings_swipe_right_to_left">S desna na lijevo</string>
-    <string name="settings_swipe_saving">Saving Swipe action…</string>
-    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
+    <string name="settings_swipe_saving">Spremanje radnje prevlačenja…</string>
+    <string name="settings_swipe_generic_error">Nije moguće spremiti radnju prevlačenja</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">App theme</string>
-    <string name="app_theme_light">Light</string>
-    <string name="app_theme_dark">Dark</string>
-    <string name="app_theme_system">System default</string>
+    <string name="app_theme_title">Tema aplikacije</string>
+    <string name="app_theme_light">Svjetlo</string>
+    <string name="app_theme_dark">Tamno</string>
+    <string name="app_theme_system">Zadani sustav</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
-    <string name="labels_manager_parent_folder_selected"><b>Parent folder selected.</b> Tap to change</string>
+    <string name="labels_manager_select_parent_folder">Odaberite nadređenu mapu (izborno)</string>
+    <string name="labels_manager_parent_folder_selected"><b>Nadređena mapa odabrana.</b>Dodirnite za promjenu</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
-    <string name="parent_picker_title">Parent folder</string>
-    <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
+    <string name="parent_picker_title">Nadređena mapa</string>
+    <string name="parent_picker_header">Ako ne odaberete nadređenu mapu, ova će nova mapa biti stvorena kao mapa najviše razine.</string>
     <!-- endregion -->
     <!-- region Notifications -->
-    <string name="notification_summary_text_new_messages">New messages</string>
+    <string name="notification_summary_text_new_messages">Nove poruke</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
-    <string name="contact_details_remote_content_dialog_title">Remote content</string>
-    <string name="contact_details_remote_content_dialog_message">This contact contains remote content.</string>
-    <string name="contact_details_remote_content_dialog_positive_button">Load content</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">Grupe kontakata neće biti uvezene. Nadogradite na plaćeni plan da biste uživali u premium značajkama.</string>
+    <string name="contact_details_remote_content_dialog_title">Udaljeni sadržaj</string>
+    <string name="contact_details_remote_content_dialog_message">Ova poruka sadrži udaljeni sadržaj.</string>
+    <string name="contact_details_remote_content_dialog_positive_button">Učitaj sadržaj</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">Privacy for all</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
-    <string name="new_user_onboarding_neat_and_tidy_headline">Neat and tidy</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
-    <string name="existing_user_onboarding_new_look_headline">New look, same protection</string>
-    <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
-    <string name="existing_user_onboarding_new_features_headline">New features</string>
-    <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
-    <string name="onboarding_next">Next</string>
-    <string name="onboarding_get_started">Get started</string>
-    <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Privatnost za sve</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Pozovite svoje kontakte u Proton Mail kako biste uživali u besprijekornoj end-to-end enkripciji ili dodajte zaštitu lozinkom porukama koje im šaljete.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Uredno i čisto</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Poruke s datotekama, oznakama i bojama za stvaranje savršenog, prilagođenog pretinca.</string>
+    <string name="existing_user_onboarding_new_look_headline">Novi izgled, ista zaštita</string>
+    <string name="existing_user_onboarding_new_look_description">Vaša šifrirana e-pošta u potpunosti je redizajnirana za jednostavnu upotrebu.</string>
+    <string name="existing_user_onboarding_new_features_headline">Nove značajke</string>
+    <string name="existing_user_onboarding_new_features_description">Uživajte u novim značajkama kao što su tamni način rada, poboljšane obavijesti, filter nepročitanih poruka i podmape.</string>
+    <string name="onboarding_next">Sljedeće</string>
+    <string name="onboarding_get_started">Započnite</string>
+    <string name="onboarding_image_view_content_description">Proton Mail ilustracija</string>
     <!-- endregion -->
     <!-- region Snackbars -->
-    <string name="snackbar_message_draft_saved">Draft saved</string>
-    <string name="snackbar_message_draft_moved_to_trash">Draft moved to trash</string>
-    <string name="snackbar_action_discard">Discard</string>
+    <string name="snackbar_message_draft_saved">Skica je spremljena</string>
+    <string name="snackbar_message_draft_moved_to_trash">Skica premještena u otpad</string>
+    <string name="snackbar_action_discard">Odbaci</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -170,14 +170,14 @@
     <string name="update_app_title">Potrebno ažuriranje</string>
     <string name="update_app">Ne možete koristiti ProtonMail aplikaciju dok se ne ažurira</string>
     <string name="you_are_offline">Niste na mreži</string>
-    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail je trenutno nedostupan, provjerite https://protonstatus.com ili naš twitter za trenutni status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt je dodan</string>
     <string name="contact_saved_offline">Kontakt je spremljen, biti će sinkroniziran kada veza bude dostupna</string>
-    <string name="contact_exist">Contact email already exists</string>
+    <string name="contact_exist">E-pošta kontakta već postoji</string>
     <string name="invalid_email">Adresa e-pošte nije valjana</string>
     <string name="duplicate_email">Adresa e-pošte je duplikat</string>
     <string name="message_drafted">Slanje poruke nije uspjelo. Poruka je spremljena u skice</string>
-    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
+    <string name="attachment_failed_message_drafted">Uklonite i ponovno priložite \"%s\" i ponovno pošaljite poruku. Vaša poruka se može pronaći u mapi \"Skice\".</string>
     <string name="open_drawer">Otvori</string>
     <string name="close_drawer">Zatvori</string>
     <string name="inbox_option">Pristigla pošta</string>
@@ -308,7 +308,7 @@
     <string name="label_deleted_error">Pogreška tijekom brisanja oznake</string>
     <string name="message_deleted_error">Pogreška tijekom brisanja nekih poruka. Neke od odabranih poruka su u procesu slanja?!</string>
     <string name="respond_inline">Odgovori u ravnini s ostalim tekstom</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Poslužitelj nije dostupan…(<u>Rješavanje problema</u>)</string>
     <string name="connectivity_checking">Provjera veze...</string>
     <string name="draft_label_attachments_uploading">učitavanje privitaka…</string>
     <string name="draft_label_message_uploading">slanje poruke…</string>
@@ -333,7 +333,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Ukloni odabrane oznake?</string>
     <string name="delete_folder_confirmation_title">Ukloni odabrane mape?</string>
-    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b></string>
+    <string name="delete_label_confirmation_message">Ove ovdje sadržane e-pošte naći će se u <b>Sva pošta</b></string>
     <string name="pin_invalid">PIN nije valjan. Unesite ispravan PIN s četiri znamenke</string>
     <string name="pin_not_match">PIN se ne podudara</string>
     <string name="new_pin_saved">Novi PIN je spremljen</string>
@@ -416,7 +416,7 @@
     <string name="contacts_import_contact">Uvezi kontakte</string>
     <string name="contacts_import">Uvoz</string>
     <string name="upload_contacts">Učitavanje kontakata</string>
-    <string name="uploading_contacts">Uploading contacts…</string>
+    <string name="uploading_contacts">Prijenos kontakata…</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
         <item>Mobitel</item>
@@ -474,25 +474,25 @@
     <string name="update_folder">Ažuriraj mapu</string>
     <string name="spam_score_100">Čini se da je ova poruka e-pošte s adrese ProtonMail, ali je došla izvan našeg sustava i nije ispunila naše zahtjeve za provjeru autentičnosti. Može biti lažna ili nepropisno proslijeđena!</string>
     <string name="spam_score_101">Ova poruka e-pošte nije ispunila zahtjeve za provjeru autentičnosti svoje domene. Može biti lažna ili nepropisno proslijeđena!</string>
-    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a></string>
+    <string name="spam_score_102">Ova poruka može biti pokušaj krađe identiteta. Provjerite pošiljatelja i sadržaj kako biste bili sigurni da su legitimni. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SAZNAJTE VIŠE</a></string>
     <string name="print_from_template">Od: %s</string>
-    <string name="print_to_template">To: %s;  </string>
+    <string name="print_to_template">Do: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Adresa: </string>
     <string name="address_street">Ulica</string>
-    <string name="address_extended_street">Extended street</string>
+    <string name="address_extended_street">Produžena ulica</string>
     <string name="address_city">Grad</string>
     <string name="address_region">Regija (država ili pokrajna)</string>
     <string name="address_postcode">Poštanski broj</string>
-    <string name="address_po_box">PO Box</string>
+    <string name="address_po_box">Poštanski pretinac</string>
     <string name="address_country">Država</string>
     <string name="recheck_delinquency">Provjeri ponovno</string>
     <string name="close_app">Zatvori aplikaciju</string>
     <string name="empty_subject">(Bez predmeta)</string>
     <string name="empty_recipients">(Nema primatelja)</string>
     <string name="contacts_unknown">Nepoznato</string>
-    <string name="learn_more"><u>Learn More</u></string>
+    <string name="learn_more"><u>Saznajte više</u></string>
     <string name="info">Informacije</string>
     <string name="error_can_not_send_from_this_address">Nadogradite na plaćeni plan kako biste mogli slati s vaše %s adrese.</string>
     <string name="email_empty">Adresa e-pošte nedostaje</string>
@@ -504,7 +504,7 @@
     <string name="protonmail_contacts">ProtonMail kontakti</string>
     <string name="device_contacts">Kontakti uređaja</string>
     <string name="print_date_template">Datum: %s</string>
-    <string name="print_attachment_template">Attachment: %s;  </string>
+    <string name="print_attachment_template">Privitak: %s; </string>
     <string name="pm_me_changed">Slanje poruka s @pm.me adrese je plaćena značajka. Vaša će poruka biti poslana s Vaše zadane adrese %s</string>
     <string name="pm_me_can_not_be_default">Nadogradite na plaćeni plan kako biste mogli postaviti vašu %s adresu e-pošte kao zadanu</string>
     <string name="dont_remind_again">Ne podsjećaj me više</string>
@@ -513,7 +513,7 @@
     <string name="remove_password_question">Ukloni lozinku?</string>
     <string name="attachment_storage_value_current">Trenutno odabrano: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Trenutno odabrano: neograničeno</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">Postavlja maksimalni iznos prostora za pohranu koji ProtonMail može koristiti na vašem mobilnom uređaju.</string>
     <string name="load_embedded_images_failed_no_network">Učitavanje ugrađenih slika nije uspjelo. Provjerite vašu vezu.</string>
     <string name="load_embedded_images_failed">Neuspješno učitavanje ugrađenih slika.</string>
     <string name="unlimited">Neograničeno</string>
@@ -536,12 +536,12 @@
     <string name="sender_lock_pgp_encrypted_verified">PGP-šifrirana poruka od potvrđene adrese</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-potpisana poruka od potvrđene adrese</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
+    <string name="sender_lock_internal">End-to-end šifrirana i potpisana poruka</string>
     <string name="sender_lock_internal_verified">End-to-end šifrirana poruka od potvrđene adrese</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-End šifriranje</string>
     <string name="composer_lock_internal_pinned">End-to-end šifiranje za potvrđenu adresu</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP šifirano za potvrđenog primatelja</string>
     <string name="composer_lock_pgp_signed">PGP potpisano</string>
     <string name="recipient_not_found_and_removed">Primatelj nije pronađen: %s i uklonjen je</string>
     <string name="recipient_error_and_removed">Došlo je do pogreške prilikom dohvaćanja informacija o primatelju i primatelj je uklonjen: %s</string>
@@ -550,7 +550,7 @@
     <string name="expiration_error_add_msg_password">Molimo dodajte lozinku za poruku za sljedeće primatelje:</string>
     <string name="expiration_error_disable_pgp_sending">Molimo onemogućite PGP Slanja, kako biste omogući vremenski istek poruka za sljedeće primatelje:</string>
     <string name="expiration_error_proceed">Pritisnite pošalji ako svejedno želite poslati poruku ovim primateljima, ali bez isteka poruke.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a></string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">SAZNAJTE VIŠE</a></string>
     <string name="channel_name_attachments">Privitci</string>
     <string name="channel_description_attachments">Informira o statusu preuzimanja privitka</string>
     <string name="channel_name_emails">E-pošta</string>
@@ -622,8 +622,8 @@
     <string name="fab_add_contact">Dodaj novi kontakt</string>
     <string name="fab_add_contact_group">Dodaj novu grupu kontakata</string>
     <string name="contacts_add_photo_title">Dodaj fotografiju</string>
-    <string name="contacts_add_photo_select_gallery">Select from Gallery</string>
-    <string name="contacts_add_photo_select_camera">Capture from Camera</string>
+    <string name="contacts_add_photo_select_gallery">Odabir iz galerije</string>
+    <string name="contacts_add_photo_select_camera">Snimite fotoaparatom</string>
     <string name="save_group_validation_error">Molimo unesite naziv grupe</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Dosegnuto je ograničenje pohrane. Nije moguće poslati ili primiti e-poštu.
@@ -636,11 +636,11 @@
         Razmislite o oslobađanju prostora ili kupnji više prostora za pohranu prije nego što vam ponestane kapaciteta.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Dozvole</string>
-    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
-        access to storage.</string>
-    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
-        access to storage.</string>
-    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
+    <string name="need_storage_permissions_add_attachment_text">Da biste dodali privitke, trebate dopustiti
+        pristup pohrani.</string>
+    <string name="need_storage_permissions_download_attachment_text">Da biste preuzeli privitke, trebate dopustiti
+        pristup pohrani.</string>
+    <string name="need_contacts_permissions_text">Da biste uvezli kontakte, morate dopustiti pristup kontaktima.</string>
     <string name="push_notifications_alert_title">Upozorenja Push obavijesti</string>
     <string name="push_notifications_alert_subtitle">Push obavijesti za ProtonMail ne rade bez ažuriranih Google Play usluga.</string>
     <string name="app_locked">Aplikacija je zaključana</string>
@@ -657,11 +657,11 @@
     <string name="account_settings">Postavke računa</string>
     <!-- region Acc Settings -->
     <string name="account">Korisnički račun</string>
-    <string name="drawer_subscription">Subscription</string>
+    <string name="drawer_subscription">Pretplata</string>
     <string name="password_manager">Promijenite lozinku</string>
-    <string name="password_changed">Password changed.</string>
+    <string name="password_changed">Lozinka je promijenjena.</string>
     <string name="recovery_email">Adresa e-pošte za oporavak</string>
-    <string name="recovery_email_changed">Recovery email changed.</string>
+    <string name="recovery_email_changed">Adresa e-pošte za oporavak je promijenjena.</string>
     <string name="storage">Veličina sandučića e-pošte</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Adrese</string>
@@ -678,7 +678,7 @@
     <string name="mobile_footer_info">Podnožje se dodaje nakon vašeg potpisa</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Utišaj</string>
-    <string name="notifications_snooze">Notifications snooze</string>
+    <string name="notifications_snooze">Utišavanje obavijesti</string>
     <string-array name="quick_snooze_values">
         <item>30 minuta</item>
         <item>1 sat</item>
@@ -733,7 +733,7 @@
     <string name="settings_auto_show_embedded_images">Automatsko prikazivanje ugrađenih slika</string>
     <string name="settings_prevent_taking_screenshots">Spriječite snimanje snimki zaslona</string>
     <string name="hyperlink_confirmation">Zatražite potvrdu poveznice</string>
-    <string name="labels_and_folders">Labels &amp; folders </string>
+    <string name="labels_and_folders">Oznake &amp; mape </string>
     <string name="folders">Mape</string>
     <string name="labels">Oznake</string>
     <string name="swipe_actions">Akcija potezanjem prsta</string>
@@ -759,9 +759,9 @@
     <!-- endregion -->
     <string name="local_storage">Ograničenje lokalne pohrane</string>
     <!-- endregion -->
-    <string name="app_settings">App settings</string>
+    <string name="app_settings">Postavke aplikacije</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push notifications</string>
+    <string name="push_notifications">Obavijesti</string>
     <string name="extended_notifications">Proširene obavijesti</string>
     <string name="extended_notifications_description">Uključite ovu značajku da biste vidjeli\npošiljatelja e-pošte u push obavijestima.</string>
     <string name="notification_settings">Postavke obavijesti</string>
@@ -773,19 +773,19 @@
     <string name="connections_via_third_parties">Alternativno usmjeravanje</string>
     <string name="allow_secure_connections_via_third_parties">Omogući alternativno usmjeravanje</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">U slučaju da su Protonove stranice blokirane, ova postavka omogućuje aplikaciji da isproba alternativno mrežno usmjeravanje do Protona, što može biti korisno u zaobilaženju vatrozida ili problema s mrežom. Preporučujemo da ovu postavku zadržite omogućenom radi veće pouzdanosti.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
-    <string name="app_language">App language</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">U slučaju da su Protonove stranice blokirane, ova postavka omogućuje aplikaciji da isproba alternativno mrežno usmjeravanje do Protona, što može biti korisno u zaobilaženju vatrozida ili problema s mrežom. Preporučujemo da ovu postavku zadržite omogućenom radi veće pouzdanosti. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Saznajte više</a></string>
+    <string name="app_language">Jezik aplikacije</string>
     <string name="custom_language_dialog_title">Odaberite jezik za aplikaciju</string>
     <string name="auto_detect">Automatsko otkrivanje</string>
-    <string name="combined_contacts">Combined contacts</string>
+    <string name="combined_contacts">Kombinirani kontakti</string>
     <string name="turn_combined_contacts_on">Uključite ovu značajku za automatsko dovršavanje adresa e-pošte pomoću kontakata sa svih vaših prijavljenih računa.</string>
-    <string name="local_cache_management">Local cache</string>
-    <string name="cache_cleared">Local cache is Refreshed</string>
-    <string name="empty_data">Clear data</string>
+    <string name="local_cache_management">Lokalna predmemorija</string>
+    <string name="cache_cleared">Lokalna predmemorija je osvježena</string>
+    <string name="empty_data">Obriši podatke</string>
     <!-- endregion -->
     <string name="enabled">Omogućeno</string>
     <string name="disabled">Onemogućeno</string>
-    <string name="app_info">App information</string>
+    <string name="app_info">Informacije o aplikaciji</string>
     <string name="app_version">Verzija aplikacije</string>
     <!-- endregion -->
     <!-- region Multi Account -->
@@ -797,18 +797,18 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Česti problemi s povezivanjem i rješenja</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Nema internetske veze&lt;/i&gt; - Provjerite radi li vaša internetska veza.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problem s Internetskim poslužiteljem usluga (ISP)&lt;/i&gt; - Pokušajte se povezati na Proton s druge mreže (ili upotrijebite &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; ili &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Državne cenzure&lt;/i&gt; - Vaša država možda blokira pristup Protonu. Isprobajte &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (ili bilo koji drugi VPN) ili &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; za pristup Protonu.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Smetnje s antivirusom&lt;/i&gt; - Privremeno onemogućite ili uklonite svoj antivirusni softver.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Smetnje s Proxy-em/Vatrozidom&lt;/i&gt; - Onemogućite proxy ili vatrozid ili se obratite mrežnom administratoru.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton je nedostupan&lt;/i&gt; - Provjerite &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; za uvid u status našeg sustava.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Još uvijek ne mogu pronaći rješenje&lt;/i&gt; - Kontaktirajte nas putem &lt;a href=\"https://protonmail.com/support-form\"&gt;obrasca za podršku&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;e-pošte&lt;/a&gt; (support@protonmail.com), ili &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twittera&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Slika nije pronađena</string>
-    <string name="error_image_bad_url">Malformed image URL</string>
+    <string name="error_image_bad_url">Neispravni URL slike</string>
     <string name="error_saving_try_again">Pogreška prilikom spremanja poruke. Pokušajte kasnije.</string>
     <!-- endregion -->
     <string name="allowed">Dopušteno</string>
@@ -821,7 +821,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Nevažeći API ključ za Firebase. Push obavijesti neće raditi.</string>
     <string name="failed_saving_draft_online">Spremanje online skice za poruku nije uspjelo: \"%s\"</string>
-    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Pogreška u privitku poruke: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Nije moguće otvoriti ovu poruku dok se šalje</string>
     <string name="enable_conversation_mode">Omogući način razgovora</string>
     <!-- endregion -->
@@ -838,8 +838,8 @@
     <string name="manage">Upravljanje</string>
     <string name="message_from">Poruka od %s</string>
     <string name="not_spam_move_to_inbox">Nije neželjena pošta (premjesti u Pristiglu poštu)</string>
-    <string name="action_sheet_view_in_light_mode">View in Light mode</string>
-    <string name="action_sheet_view_in_dark_mode">View in Dark mode</string>
+    <string name="action_sheet_view_in_light_mode">Pogled u svjetlosnom načinu</string>
+    <string name="action_sheet_view_in_dark_mode">Pogled u tamnom načinu</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d poruka</item>
         <item quantity="few">%d poruke</item>
@@ -858,5 +858,5 @@
     <string name="edit_draft">Uredi skicu</string>
     <string name="details_show_history">Prikaži povijest</string>
     <string name="could_not_complete_action">Dovršavanje radnje nije uspjelo</string>
-    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
+    <string name="decryption_of_message_failed">Pogreška dešifriranja: dešifriranje šifriranog sadržaja ove poruke nije uspjelo.</string>
 </resources>

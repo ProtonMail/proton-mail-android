@@ -140,11 +140,11 @@
     <string name="new_user_onboarding_privacy_for_all_headline">Integritet för alla</string>
     <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Rent och snyggt</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Fil-, etikett- och färgkodsmeddelanden för att skapa din perfekta, anpassade inkorg.</string>
     <string name="existing_user_onboarding_new_look_headline">Nytt utseende, samma skydd</string>
-    <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
+    <string name="existing_user_onboarding_new_look_description">Din krypterade e-post har fått en helt ny design för att den ska vara enkel att använda.</string>
     <string name="existing_user_onboarding_new_features_headline">Nya funktioner</string>
-    <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
+    <string name="existing_user_onboarding_new_features_description">Njut av nya funktioner som mörkt läge, förbättrade aviseringar, ett filter för olästa meddelanden och undermappar.</string>
     <string name="onboarding_next">Nästa</string>
     <string name="onboarding_get_started">Kom igång</string>
     <string name="onboarding_image_view_content_description">Proton Mail-illustration</string>
@@ -777,7 +777,7 @@
     <string name="signed_in_with">Inloggad med %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
-    <string name="shortcut_compose">Compose</string>
+    <string name="shortcut_compose">Skriv</string>
     <string name="shortcut_compose_new_message">Skriv ett nytt meddelande</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
