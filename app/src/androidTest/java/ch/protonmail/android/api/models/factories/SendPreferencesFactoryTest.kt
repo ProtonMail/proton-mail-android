@@ -135,7 +135,8 @@ public class SendPreferencesFactoryTest {
         userId,
         0u,
         PgpField.PrivateKey(NotBlankString(MAILBOX_PRIVATE_KEY.trimIndent())),
-        null
+        null,
+        active = true
     )
 
     private val userManager = mockk<UserManager> {
