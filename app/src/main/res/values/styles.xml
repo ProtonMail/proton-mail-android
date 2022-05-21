@@ -136,7 +136,7 @@
         <item name="android:paddingBottom">@dimen/padding_m</item>
         <item name="android:paddingStart">@dimen/padding_l</item>
         <item name="android:paddingEnd">@dimen/padding_l</item>
-        <item name="android:textColor">?attr/brand_norm</item>
+        <item name="android:textColor">?attr/proton_text_accent</item>
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
         <item name="android:maxLines">3</item>
         <item name="android:ellipsize">end</item>
