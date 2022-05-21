@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/img_onboarding_encryption" />
+        app:srcCompat="@drawable/img_onboarding_encryption" />
 
     <ImageView
         android:id="@+id/onboarding_logo_image_view"
@@ -50,12 +50,12 @@
         android:layout_height="128dp"
         android:background="@drawable/ic_logo_background_shape"
         android:elevation="@dimen/elevation_s"
-        android:src="@drawable/ic_logo_mail"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/onboarding_guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_logo_mail" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/onboarding_guideline"

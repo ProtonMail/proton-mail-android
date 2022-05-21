@@ -49,7 +49,7 @@
             android:id="@+id/img_empty_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/img_empty_search"
+            app:srcCompat="@drawable/img_empty_search"
             app:layout_constraintBottom_toTopOf="@id/no_results_found"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
