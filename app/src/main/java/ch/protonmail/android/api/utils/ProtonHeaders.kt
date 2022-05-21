@@ -24,7 +24,7 @@ import ch.protonmail.android.BuildConfig
 object ProtonHeaders {
     val appVersion: String
         get() {
-            val name = "android-mail@" + BuildConfig.VERSION_NAME
+            val name = "android-mail@" + BuildConfig.VERSION_NAME + "." + BuildConfig.VERSION_CODE
             return if (name[name.length - 1] == '.') {
                 name.substring(0, name.length - 1)
             } else {
