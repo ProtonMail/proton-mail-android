@@ -161,14 +161,14 @@
     <string name="processing_request">リクエストは処理中です</string>
     <!-- should check for html tag -->
     <!-- Toast messages -->
-    <string name="error_chrome_disabled">コンテンツを読み込むことができません。 Chromeを有効にしてください</string>
+    <string name="error_chrome_disabled">コンテンツを読み込むことができません。Chrome を有効にしてください</string>
     <string name="error_chrome_not_found">コンテンツを読み込むことができません。 Chromeをインストールしてください</string>
     <string name="messages_load_failure">メッセージの取得ができません。</string>
     <string name="message_details_load_failure">メッセージの詳細を取得できません。</string>
     <string name="no_more_messages">これ以上メッセージはありません。</string>
     <string name="no_network_queued">ネットワークに接続がありません。メッセージは接続確認後に処理されます。</string>
     <string name="update_app_title">アップデートが必要です。</string>
-    <string name="update_app">アップデートされるまで、Protonmailアプリはご利用いただけません。</string>
+    <string name="update_app">アップデートされるまで、ProtonMail アプリはご利用いただけません</string>
     <string name="you_are_offline">オフラインです</string>
     <string name="api_offline">ProtonMail は現在ご利用できません。https://protonstatus.com または Twitter (https://twitter.com/protonmail) で現在の状態を確認してください。</string>
     <string name="contact_saved">連絡先が保存されました。</string>

@@ -61,7 +61,7 @@
     <string name="details_open_in_proton_calendar_icon_desc">Ikon för Proton Calendar</string>
     <string name="details_play_store_error">Kan inte öppna Play Store</string>
     <string name="details_hyperlink_phishing_dialog_title">Varning: misstänkt falsk webbplats</string>
-    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
+    <string name="details_hyperlink_phishing_dialog_content">Denna länk leder till en webbplats som kanske försöker stjäla din information, såsom lösenord och kreditkortsuppgifter.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;För din säkerhet, fortsätt inte.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Gå tillbaka (rekommenderas)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorera varning och fortsätt</string>
     <!-- endregion -->
@@ -207,13 +207,13 @@
     <string name="empty_folder">Töm mapp</string>
     <string name="view_headers">Visa rubriker</string>
     <string name="message_headers">Meddelanderubrik</string>
-    <string name="delete_messages">Radera meddelanden</string>
+    <string name="delete_messages">Ta bort meddelanden</string>
     <string name="move_to_archive">Flytta till Arkiv</string>
     <string name="move_to_trash">Flytta till Papperskorg</string>
     <string name="move_to_spam">Flytta till Skräppost</string>
     <string name="move_to_inbox">Flytta till Inkorg</string>
     <string name="move_to">Flytta till…</string>
-    <string name="are_you_sure_empty">Är du säker på att du vill radera alla meddelanden från denna mapp?</string>
+    <string name="are_you_sure_empty">Är du säker på att du vill ta bort alla meddelanden från denna mapp?</string>
     <string name="send">Skicka</string>
     <string name="selected">Valda</string>
     <string name="no_labels">Inga etiketter</string>
@@ -455,14 +455,14 @@
     <string name="available_folders">Tillgängliga mappar</string>
     <string name="folder_created">Mapp skapad</string>
     <string name="folder_invalid">Mappen skapades inte på grund av ogiltigt namn.</string>
-    <string name="folder_deleted">Mappen borttagen</string>
+    <string name="folder_deleted">Mapp borttagen</string>
     <string name="folder_deleted_error">Fel vid borttagning av mapp</string>
     <string name="empty_emails">Ingen e-post</string>
     <string name="empty_email_list">Ingen e-postadress</string>
     <string name="no_contacts">Inga kontakter</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; skrev:</string>
     <string name="update_label">Uppdatera etikett</string>
-    <string name="delete">Radera</string>
+    <string name="delete">Ta bort</string>
     <string name="subject_copied">Ämnet kopierad till urklipp</string>
     <string name="details_copied">Detaljer kopierades till urklipp</string>
     <string name="saving">Sparar...</string>

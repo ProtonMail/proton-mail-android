@@ -49,7 +49,7 @@
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Ce dossier est vide</string>
     <string name="mailbox_empty_inbox_subtitle">Vous êtes à jour</string>
-    <string name="mailbox_empty_spam_subtitle">Votre dossier courrier indésirable est vide</string>
+    <string name="mailbox_empty_spam_subtitle">Votre dossier Indésirables/spam est vide</string>
     <string name="mailbox_empty_trash_subtitle">La corbeille est vide</string>
     <string name="mailbox_no_messages">Aucun message</string>
     <string name="mailbox_unread_count">%d non lu(s)</string>
@@ -186,7 +186,7 @@
     <string name="sent_option">Envoyés</string>
     <string name="archive_option">Archives</string>
     <string name="trash_option">Corbeille</string>
-    <string name="spam_option">Indésirables</string>
+    <string name="spam_option">Indésirables/spam</string>
     <string name="allmail_option">Tous les messages</string>
     <string name="inbox">Boîte de réception</string>
     <string name="starred">Favoris</string>
@@ -210,7 +210,7 @@
     <string name="delete_messages">Supprimer les messages</string>
     <string name="move_to_archive">Déplacer vers les archives</string>
     <string name="move_to_trash">Déplacer vers la corbeille</string>
-    <string name="move_to_spam">Déplacer dans les indésirables</string>
+    <string name="move_to_spam">Déplacer dans les indésirables/spam</string>
     <string name="move_to_inbox">Déplacer vers la boîte de réception</string>
     <string name="move_to">Déplacer vers…</string>
     <string name="are_you_sure_empty">Êtes-vous sûr de vouloir supprimer tous les messages de ce dossier ?</string>
@@ -736,7 +736,7 @@
     <string name="swipe_action_star">Message favori mis à jour</string>
     <string name="swipe_action_star_short">Mettre à jour le favori</string>
     <string name="swipe_action_spam">Message marqué comme spam</string>
-    <string name="swipe_action_spam_short">Indésirable</string>
+    <string name="swipe_action_spam_short">Indésirable/spam</string>
     <string name="swipe_action_archive">Message archivé</string>
     <string name="swipe_action_archive_short">Archiver</string>
     <string name="swipe_action_mark_read">Message marqué comme lu</string>
@@ -826,7 +826,7 @@
     <string name="move_message">Déplacer le message</string>
     <string name="manage">Gérer</string>
     <string name="message_from">Message de %s</string>
-    <string name="not_spam_move_to_inbox">Non indésirable (déplacer dans la boîte de réception)</string>
+    <string name="not_spam_move_to_inbox">Non indésirable/spam (déplacer dans la boîte de réception)</string>
     <string name="action_sheet_view_in_light_mode">Voir en mode Clair</string>
     <string name="action_sheet_view_in_dark_mode">Voir en mode Sombre</string>
     <plurals name="x_messages_count">

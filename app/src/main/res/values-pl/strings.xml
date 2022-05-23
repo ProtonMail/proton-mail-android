@@ -665,7 +665,7 @@
     <!-- region Acc Settings -->
     <string name="account">Konto</string>
     <string name="drawer_subscription">Subskrypcja</string>
-    <string name="password_manager">Zarządzaniem hasłem</string>
+    <string name="password_manager">Zarządzanie hasłem</string>
     <string name="password_changed">Hasło zostało zmienione.</string>
     <string name="recovery_email">Adres pomocniczy</string>
     <string name="recovery_email_changed">Adres pomocniczy został zmieniony.</string>
