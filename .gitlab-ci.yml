@@ -77,7 +77,6 @@ build alpha:
   when: 'manual'
   only:
     - develop
-    - feat/2696_rebranding
   tags:
     - xlarge-k8s
   script:
