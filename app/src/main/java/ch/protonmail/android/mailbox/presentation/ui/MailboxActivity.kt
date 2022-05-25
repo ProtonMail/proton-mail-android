@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2022 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.mailbox.presentation.ui
 
@@ -36,15 +36,14 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.postDelayed
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
-import androidx.core.view.postDelayed
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.loader.app.LoaderManager
@@ -90,6 +89,7 @@ import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -123,6 +123,7 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.NetworkSnackBarUtil
 import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.utils.extensions.getColorIdFromAttr
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
@@ -166,7 +167,6 @@ private const val STATE_MAILBOX_LOCATION = "mailbox_location"
 private const val STATE_MAILBOX_LABEL_LOCATION = "mailbox_label_location"
 private const val STATE_MAILBOX_LABEL_LOCATION_NAME = "mailbox_label_location_name"
 const val LOADER_ID_LABELS_OFFLINE = 32
-private const val ACTION_MODE_STATUS_BAR_COLOR_DELAY = 500L
 
 @AndroidEntryPoint
 internal class MailboxActivity :
@@ -217,6 +217,7 @@ internal class MailboxActivity :
     private val mailboxViewModel: MailboxViewModel by viewModels()
     private var storageLimitApproachingAlertDialog: AlertDialog? = null
     private val handler = Handler(Looper.getMainLooper())
+    private var isOnline = true
 
     private val startMessageDetailsLauncher = registerForActivityResult(MessageDetailsActivity.Launcher()) {}
     private val startComposeLauncher = registerForActivityResult(StartCompose()) { messageId ->
@@ -249,7 +250,9 @@ internal class MailboxActivity :
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.ProtonTheme_Mail)
+        installSplashScreen().setKeepOnScreenCondition {
+            accountStateManager.state.value != AccountStateManager.State.PrimaryExist
+        }
         super.onCreate(savedInstanceState)
 
         // TODO if we decide to use special flag for switching (and not login), change this
@@ -355,7 +358,7 @@ internal class MailboxActivity :
                 if (MessageUtils.areAllUnRead(
                         selectedMessages
                     )
-                ) R.drawable.ic_envelope_open_text else R.drawable.ic_envelope_dot
+                ) R.drawable.ic_proton_envelope_open_text else R.drawable.ic_proton_envelope_dot
             )
         }
 
@@ -471,7 +474,7 @@ internal class MailboxActivity :
             userManager.setShowStorageLimitWarning(true)
             storageLimitAlert.apply {
                 visibility = View.VISIBLE
-                setIcon(getDrawable(R.drawable.inbox)!!)
+                setIcon(getDrawable(R.drawable.ic_proton_inbox)!!)
                 setText(getString(R.string.storage_limit_alert))
             }
         }
@@ -554,7 +557,6 @@ internal class MailboxActivity :
 
     private fun renderState(state: MailboxState) {
         Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
-        updatedStatusTextView.isVisible = state.isUpdatedFromRemote
         renderUnreadChipState(state.unreadChip)
         renderListState(state.list)
     }
@@ -682,7 +684,7 @@ internal class MailboxActivity :
 
     override fun onDohFailed() {
         super.onDohFailed()
-        showNoConnSnackAndScheduleRetry(Constants.ConnectionState.CANT_REACH_SERVER)
+        setAsOffline(Constants.ConnectionState.CANT_REACH_SERVER)
     }
 
     private fun checkRegistration() {
@@ -804,17 +806,8 @@ internal class MailboxActivity :
         super.onSaveInstanceState(outState)
     }
 
-    private fun setUpMenuItems(composeMenuItem: MenuItem, searchMenuItem: MenuItem) {
-        composeMenuItem.actionView.findViewById<ImageView>(R.id.composeImageButton)
-            .setOnClickListener { onOptionsItemSelected(R.id.compose) }
-
-        searchMenuItem.actionView.findViewById<ImageView>(R.id.searchImageButton)
-            .setOnClickListener { onOptionsItemSelected(R.id.search) }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_mailbox_options, menu)
-        setUpMenuItems(menu.findItem(R.id.compose), menu.findItem(R.id.search))
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(MessageLocationType.DRAFT, MessageLocationType.SPAM, MessageLocationType.TRASH)
@@ -824,7 +817,6 @@ internal class MailboxActivity :
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menu.clear()
         menuInflater.inflate(R.menu.menu_mailbox_options, menu)
-        setUpMenuItems(menu.findItem(R.id.compose), menu.findItem(R.id.search))
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
@@ -871,12 +863,19 @@ internal class MailboxActivity :
     }
 
     private fun initializeSwipeRefreshLayout(swipeRefreshLayoutAux: SwipeRefreshLayout) {
-        swipeRefreshLayoutAux.setColorSchemeResources(R.color.cornflower_blue)
+        swipeRefreshLayoutAux.setColorSchemeResources(getColorIdFromAttr(R.attr.brand_norm))
         swipeRefreshLayoutAux.setOnRefreshListener(this)
     }
 
     private fun setRefreshing(shouldRefresh: Boolean) {
         Timber.v("setRefreshing shouldRefresh: $shouldRefresh")
+        updatedStatusTextView.setText(
+            when {
+                isOnline.not() -> R.string.you_are_offline
+                shouldRefresh -> R.string.mailbox_updating
+                else -> R.string.mailbox_updated_recently
+            }
+        )
         mailboxSwipeRefreshLayout.isRefreshing = shouldRefresh
     }
 
@@ -919,9 +918,19 @@ internal class MailboxActivity :
         supportActionBar?.setTitle(titleRes)
     }
 
+    private fun setAsOffline(connectivity: Constants.ConnectionState) {
+        isOnline = false
+        showNoConnSnackAndScheduleRetry(connectivity)
+        updatedStatusTextView.setText(R.string.you_are_offline)
+    }
+
+    private fun setAsOnline() {
+        isOnline = true
+        hideNoConnSnack()
+    }
+
     private fun showNoConnSnackAndScheduleRetry(connectivity: Constants.ConnectionState) {
         Timber.v("show NoConnection Snackbar ${mConnectivitySnackLayout != null}")
-
         mConnectivitySnackLayout?.let { snackBarLayout ->
             lifecycleScope.launchWhenCreated {
 
@@ -970,9 +979,9 @@ internal class MailboxActivity :
         if (!isDohOngoing) {
             Timber.d("DoH NOT ongoing showing UI")
             if (connectivity != Constants.ConnectionState.CONNECTED) {
-                showNoConnSnackAndScheduleRetry(connectivity)
+                setAsOffline(connectivity)
             } else {
-                hideNoConnSnack()
+                setAsOnline()
             }
         } else {
             Timber.d("DoH ongoing, not showing UI")
@@ -991,18 +1000,10 @@ internal class MailboxActivity :
 
     private fun showToast(status: Status) {
         when (status) {
-            Status.UNAUTHORIZED -> {
-                showNoConnSnackAndScheduleRetry(Constants.ConnectionState.CANT_REACH_SERVER)
-            }
-            Status.NO_NETWORK -> {
-                showNoConnSnackAndScheduleRetry(Constants.ConnectionState.NO_INTERNET)
-            }
-            Status.SUCCESS -> {
-                hideNoConnSnack()
-            }
-            else -> {
-                return
-            }
+            Status.UNAUTHORIZED -> setAsOffline(Constants.ConnectionState.CANT_REACH_SERVER)
+            Status.NO_NETWORK -> setAsOffline(Constants.ConnectionState.NO_INTERNET)
+            Status.SUCCESS -> setAsOnline()
+            else -> return
         }
     }
 
@@ -1025,20 +1026,10 @@ internal class MailboxActivity :
     override fun onActionModeStarted(mode: ActionMode?) {
         super.onActionModeStarted(mode)
         // We need to set a solid color for status bar during Action mode, or it will be black
-        window.statusBarColor = getColor(R.color.status_bar)
+        window.statusBarColor = getColor(R.color.background_norm)
     }
 
     override fun onActionItemClicked(mode: ActionMode, menuItem: MenuItem) = true
-
-    override fun onActionModeFinished(mode: ActionMode?) {
-        super.onActionModeFinished(mode)
-        // The ActionMode will be visually closed with a small delay after this callback ( or any other, like
-        //  onDestroyActionMode ), for this reason we apply a small delay before making the status bar transparent
-        //  again, in order to avoid to flash a black status bar
-        window.decorView.postDelayed(ACTION_MODE_STATUS_BAR_COLOR_DELAY) {
-            window.statusBarColor = getColor(R.color.transparent)
-        }
-    }
 
     override fun onDestroyActionMode(mode: ActionMode) {
         actionMode = null
@@ -1050,7 +1041,7 @@ internal class MailboxActivity :
 
     private fun setUpMailboxActionsView() {
         val actionsUiModel = BottomActionsView.UiModel(
-            R.drawable.ic_envelope_dot,
+            R.drawable.ic_proton_envelope_dot,
             if (currentMailboxLocation in arrayOf(
                     MessageLocationType.DRAFT,
                     MessageLocationType.ALL_DRAFT,
@@ -1059,9 +1050,9 @@ internal class MailboxActivity :
                     MessageLocationType.TRASH,
                     MessageLocationType.SPAM
                 )
-            ) R.drawable.ic_trash_empty else R.drawable.ic_trash,
-            R.drawable.ic_folder_move,
-            R.drawable.ic_label
+            ) R.drawable.ic_proton_trash_cross else R.drawable.ic_proton_trash,
+            R.drawable.ic_proton_folder_arrow_in,
+            R.drawable.ic_proton_tag
         )
         mailboxActionsView.bind(actionsUiModel)
         mailboxActionsView.setOnFirstActionClickListener {
@@ -1219,6 +1210,7 @@ internal class MailboxActivity :
         labelName: String?,
         isFolder: Boolean
     ) {
+        val newMessageLocationType = fromInt(newLocation)
         SetUpNewMessageLocationTask(
             WeakReference(this),
             messageDetailsRepositoryFactory,
@@ -1228,6 +1220,10 @@ internal class MailboxActivity :
             labelName,
             userManager.requireCurrentUserId()
         ).execute()
+        include_mailbox_no_messages.apply {
+            isVisible = false
+            bind(EmptyMailboxUiModel.fromLocation(newMessageLocationType))
+        }
     }
 
     private var undoSnack: Snackbar? = null

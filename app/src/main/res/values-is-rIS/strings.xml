@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2022 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Bæta við möppu</string>
     <string name="x_add_label">Bæta við merkingu</string>
     <string name="x_days">Dagar</string>
@@ -77,7 +77,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
     <string name="set_msg_password_title">Stilltu lykilorð</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-ProtonMail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">Upplýsingar</string>
     <string name="set_msg_password_msg_password_title">Lykilorð skilaboða</string>
     <string name="set_msg_password_msg_password_hint">4 til 21 stafa langt</string>
@@ -155,7 +155,7 @@
     <string name="snackbar_action_discard">Discard</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Skrá út</string>
     <string name="sign_out_question">Ertu viss um að þú viljir skrá þig út?</string>
     <string name="processing_request">Beiðnin þín er þegar í vinnslu</string>
@@ -168,9 +168,9 @@
     <string name="no_more_messages">Engin fleiri skilaboð</string>
     <string name="no_network_queued">Engin nettenging, skilaboð í biðröð</string>
     <string name="update_app_title">Uppfærsla nauðsynleg</string>
-    <string name="update_app">Ekki er hægt að nota ProtonMail-forritið fyrr en það hefur verið uppfært</string>
+    <string name="update_app">Ekki er hægt að nota Proton Mail-forritið fyrr en það hefur verið uppfært</string>
     <string name="you_are_offline">Þú ert án nettengingar</string>
-    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Tengiliður vistaður</string>
     <string name="contact_saved_offline">Tengiliður vistaður, verður samstilltur næst þegar nettenging er til staðar</string>
     <string name="contact_exist">Contact email already exists</string>
@@ -198,7 +198,7 @@
     <string name="all_mail">Allur póstur</string>
     <string name="contacts">Tengiliðir</string>
     <string name="search_contacts">Leita að tengiliðum</string>
-    <string name="fetching_contacts">Sæki ProtonMail tengiliði...</string>
+    <string name="fetching_contacts">Sæki Proton Mail tengiliði...</string>
     <string name="fetching_contacts_success">Það tókst að endurlesa tengiliði</string>
     <string name="fetching_contacts_failure">Ekki tókst að endurlesa tengiliði</string>
     <string name="no_search_results">Engar leitarniðurstöður</string>
@@ -274,7 +274,7 @@
     <string name="invalid_email_address">Tölvupóstfangið \'%s\' er ógilt</string>
     <string name="invalid_email_address_removed">Tölvupóstfangið \'%s\' er ógilt og var fjarlægt</string>
     <string name="no_recipients_specified">Bættu við a.m.k. einum viðtakanda</string>
-    <string name="no_password_specified">Gildistíma er einungis hægt að stilla á full-dulrituðum skilaboðum. Stilltu lykilorð fyrir þá viðtakendur sem ekki eru með ProtonMail.</string>
+    <string name="no_password_specified">Gildistíma er einungis hægt að stilla á full-dulrituðum skilaboðum. Stilltu lykilorð fyrir þá viðtakendur sem ekki eru með Proton Mail.</string>
     <string name="attachment_limit">Viðhengi eru takmörkuð við %1$s. Alls geta viðhengi verið %2$s.</string>
     <string name="sending_message">Sendi skilaboð...</string>
     <string name="sending_message_offline">Án nettengingar, sett í biðröð til að senda síðar...</string>
@@ -286,7 +286,7 @@
     <string name="cancel">Hætta við</string>
     <string name="close">Loka</string>
     <string name="eo_password_title">Setja lykilorð</string>
-    <string name="eo_password_subtitle">Settu lykilorð til að dulrita þessi skilaboð fyrir notendur sem ekki nota ProtonMail</string>
+    <string name="eo_password_subtitle">Settu lykilorð til að dulrita þessi skilaboð fyrir notendur sem ekki nota Proton Mail</string>
     <string name="eo_password_more_info">Fá ítarlegri upplýsingar</string>
     <string name="no_attachments">0 viðhengi</string>
     <string name="display_name_banned_chars">Ógilt birtingarnafn. \'&gt;\' og \'&lt;\' eru ekki leyfilegt</string>
@@ -389,7 +389,7 @@
     <string name="contact_details">Nánar um tengilið</string>
     <string name="email_type_home">Heima</string>
     <string name="type_title">Veldu tegund</string>
-    <string name="sync_local_contacts">Senda inn í ProtonMail</string>
+    <string name="sync_local_contacts">Senda inn í Proton Mail</string>
     <string name="please_select_only_phone_contacts">Veldu einungis símatengiliði á tækinu</string>
     <string name="contact_vcard_hint_email">Settu inn tölvupóstfang</string>
     <string name="contact_vcard_hint_phone">Settu inn símanúmer</string>
@@ -467,7 +467,7 @@
     <string name="details_copied">Afritaði ítarupplýsingar á klippispjaldið</string>
     <string name="saving">Vista...</string>
     <string name="update_folder">Uppfæra möppu</string>
-    <string name="spam_score_100">Þessi tölvupóstur lítur út eins og hann komi frá ProtonMail-vistfangi en kom í rauninni frá utan kerfisins og féll á auðkenningarprófunum okkar. Hann gæti verið áframsendur á rangan hátt eða falsaður!</string>
+    <string name="spam_score_100">Þessi tölvupóstur lítur út eins og hann komi frá Proton Mail-vistfangi en kom í rauninni frá utan kerfisins og féll á auðkenningarprófunum okkar. Hann gæti verið áframsendur á rangan hátt eða falsaður!</string>
     <string name="spam_score_101">Þessi tölvupóstur féll á auðkenningarprófunum lénsins. Hann gæti verið áframsendur á rangan hátt eða falsaður!</string>
     <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a></string>
     <string name="print_from_template">Frá: %s</string>
@@ -493,10 +493,10 @@
     <string name="email_empty">Tölvupóstfang vantar</string>
     <string name="encrypted_contact_details">Dulritaðar nánari upplýsingar um tengilið</string>
     <string name="convert_question">Senda inn tengiliði af tæki</string>
-    <string name="convert_question_subtitle">Þetta mun senda staðværa tengiliði á tækinu inn í tengiliðamöppuna á ProtonMail. Þú munt þá hafa aðgang að þessum tengiliðum á öðrum tækjum þínum í gegnum ProtonMail.</string>
+    <string name="convert_question_subtitle">Þetta mun senda staðværa tengiliði á tækinu inn í tengiliðamöppuna á Proton Mail. Þú munt þá hafa aðgang að þessum tengiliðum á öðrum tækjum þínum í gegnum Proton Mail.</string>
     <string name="refresh_contacts">Endurlesa</string>
     <string name="invalid_email_some_contacts">Tölvupóstfang er ekki gilt hjá sumum tengiliðanna þinna</string>
-    <string name="protonmail_contacts">Tengiliðir í ProtonMail</string>
+    <string name="protonmail_contacts">Tengiliðir í Proton Mail</string>
     <string name="device_contacts">Tengiliðir tækis</string>
     <string name="print_date_template">Dagsetning: %s</string>
     <string name="print_attachment_template">Attachment: %s;  </string>
@@ -508,7 +508,7 @@
     <string name="remove_password_question">Fjarlægja lykilorð?</string>
     <string name="attachment_storage_value_current">Núna valið: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Núna valið: Ótakmarkað</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space Proton Mail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Mistókst að hlaða inn ívöfnum myndum. Athugaðu ástand nettengingarinnar þinnar.</string>
     <string name="load_embedded_images_failed">Mistókst að hlaða inn ívöfnum myndum.</string>
     <string name="unlimited">Ótakmarkað</string>
@@ -525,7 +525,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Sent af þér með enda-í-enda dulritun</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Sent úr ProtonMail með órjúfanlegri dulritun</string>
+    <string name="sender_lock_sent_autoresponder">Sent úr Proton Mail með órjúfanlegri dulritun</string>
     <string name="sender_lock_verification_failed">Sannvottun sendanda mistókst</string>
     <string name="sender_lock_pgp_encrypted">PGP-dulrituð skilaboð</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-dulrituð skilaboð frá sannvottuðu tölvupóstfangi</string>
@@ -664,7 +664,7 @@
     <string name="signature">Undirskrift</string>
     <string name="mobile_footer">Farsímaundirgrein</string>
     <string name="edit_mobile_footer">Virkja farsímaundirgrein</string>
-    <string name="default_mobile_footer">Sent úr ProtonMail-farsíma</string>
+    <string name="default_mobile_footer">Sent úr Proton Mail-farsíma</string>
     <string name="mobile_footer_is_premium">Einungis notendur með greidda áskrift geta breytt farsímaundirgrein</string>
     <string name="mobile_footer_info">Þessu er bætt við á eftir undirskrift þinni</string>
     <!-- region Snooze Settings -->
@@ -792,7 +792,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2022 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.notifications.presentation.utils
 
@@ -33,7 +33,6 @@ import androidx.core.app.NotificationCompat.PRIORITY_HIGH
 import androidx.core.app.NotificationCompat.PRIORITY_LOW
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
-import androidx.core.content.ContextCompat
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.api.segments.event.AlarmReceiver
@@ -50,6 +49,7 @@ import ch.protonmail.android.utils.buildArchiveIntent
 import ch.protonmail.android.utils.buildDismissGroupIntent
 import ch.protonmail.android.utils.buildDismissIntent
 import ch.protonmail.android.utils.buildTrashIntent
+import ch.protonmail.android.utils.extensions.getColorFromAttr
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.getMailboxActivityIntent
 import me.proton.core.domain.entity.UserId
@@ -77,7 +77,7 @@ class NotificationServer @Inject constructor(
 ) {
 
     private val lightIndicatorColor by lazy {
-        ContextCompat.getColor(context, R.color.light_indicator)
+        context.getColorFromAttr(R.attr.brand_norm)
     }
 
     fun createAccountChannel(): String {
@@ -162,7 +162,7 @@ class NotificationServer @Inject constructor(
         val notificationTitle = context.getString(R.string.retrieving_notifications)
         return NotificationCompat.Builder(context, channelId)
             .setPriority(PRIORITY_LOW)
-            .setSmallIcon(R.drawable.notification_icon)
+            .setSmallIcon(R.drawable.ic_brand_mail)
             .setContentTitle(notificationTitle)
             .build()
     }
@@ -222,14 +222,12 @@ class NotificationServer @Inject constructor(
         alarmReceiver.setAlarm(context, true)
 
         // Set Notification's colors
-        val mainColor = context.getColor(R.color.ocean_blue)
-        val lightColor = context.getColor(R.color.light_indicator)
+        val lightColor = context.getColorFromAttr(R.attr.brand_norm)
 
         // Create Notification's Builder with the prepared params
         val builder = NotificationCompat.Builder(context, CHANNEL_ID_EMAIL)
-            .setSmallIcon(R.drawable.notification_icon)
+            .setSmallIcon(R.drawable.ic_brand_mail)
             .setCategory(NotificationCompat.CATEGORY_EMAIL)
-            .setColor(mainColor)
             .setLights(lightColor, 1500, 2000)
             .setAutoCancel(true)
             .setPriority(PRIORITY_HIGH)
@@ -341,14 +339,14 @@ class NotificationServer @Inject constructor(
                 setGroup(userId.id)
                 addAction(
                     NotificationCompat.Action(
-                        R.drawable.archive,
+                        R.drawable.ic_proton_archive_box,
                         context.getString(R.string.archive),
                         archiveIntent
                     )
                 )
                 addAction(
                     NotificationCompat.Action(
-                        R.drawable.action_notification_trash,
+                        R.drawable.ic_proton_trash,
                         context.getString(R.string.trash),
                         trashIntent
                     )
@@ -356,7 +354,7 @@ class NotificationServer @Inject constructor(
                 if (replyIntent != null) {
                     addAction(
                         NotificationCompat.Action(
-                            R.drawable.action_notification_reply,
+                            R.drawable.ic_proton_arrow_up_and_left,
                             context.getString(R.string.reply),
                             replyIntent
                         )
@@ -411,14 +409,12 @@ class NotificationServer @Inject constructor(
         )
 
         // Set Notification's colors
-        val mainColor = context.getColor(R.color.ocean_blue)
-        val lightColor = context.getColor(R.color.light_indicator)
+        val lightColor = context.getColorFromAttr(R.attr.brand_norm)
 
         // Create notification builder
         return NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.notification_icon)
+            .setSmallIcon(R.drawable.ic_brand_mail)
             .setContentIntent(contentPendingIntent)
-            .setColor(mainColor)
             .setLights(lightColor, 1500, 2000)
             .setAutoCancel(true)
     }

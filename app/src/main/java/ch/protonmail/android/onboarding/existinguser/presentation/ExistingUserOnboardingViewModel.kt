@@ -53,6 +53,12 @@ class ExistingUserOnboardingViewModel @Inject constructor(
                     R.drawable.img_onboarding_new_features,
                     R.string.existing_user_onboarding_new_features_headline,
                     R.string.existing_user_onboarding_new_features_description
+                ),
+                OnboardingItemUiModel(
+                    R.drawable.ic_logo_mail,
+                    R.string.existing_user_onboarding_updated_proton_headline,
+                    R.string.existing_user_onboarding_updated_proton_description,
+                    R.drawable.welcome_header
                 )
             )
         )

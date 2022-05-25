@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="@dimen/padding_xl"
-    android:background="@color/cornflower_blue">
+    android:background="?attr/brand_norm">
 
     <TextView
         android:id="@+id/swipe_action_text_view"
@@ -32,7 +31,7 @@
         android:layout_gravity="center_vertical|end"
         android:text="@string/swipe_action_mark_read_short"
         style="@style/Proton.Text.Caption.Strong.Inverted"
-        app:drawableTopCompat="@drawable/ic_envelope_open_text"
+        app:drawableTopCompat="@drawable/ic_proton_envelope_open_text"
         app:drawableTint="@color/icon_inverted" />
 
 </FrameLayout>

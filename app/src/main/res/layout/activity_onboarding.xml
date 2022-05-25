@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2022 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -24,18 +24,6 @@
     android:layout_height="match_parent"
     tools:context=".onboarding.base.presentation.OnboardingActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/onboarding_toolbar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/background_secondary"
-        android:minHeight="?attr/actionBarSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@null"
-        tools:menu="@menu/menu_onboarding" />
-
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/onboarding_view_pager"
         android:layout_width="0dp"
@@ -44,7 +32,19 @@
         app:layout_constraintBottom_toTopOf="@id/onboarding_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/onboarding_toolbar" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/onboarding_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@null"
+        tools:menu="@menu/menu_onboarding" />
 
     <me.proton.core.presentation.ui.view.ProtonButton
         android:id="@+id/onboarding_button"
@@ -52,9 +52,70 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_xl"
         android:layout_marginBottom="@dimen/margin_xxl"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/logo_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@string/onboarding_next" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/logo_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="mail_logo, drive_logo, calendar_logo, vpn_logo" />
+
+    <ImageView
+        android:id="@+id/mail_logo"
+        android:layout_width="@dimen/size_icon_l"
+        android:layout_height="@dimen/size_icon_l"
+        android:layout_marginStart="@dimen/margin_3xl"
+        android:layout_marginBottom="@dimen/margin_xxl"
+        android:background="@drawable/ic_logo_background_shape"
+        android:elevation="@dimen/elevation_s"
+        app:srcCompat="@drawable/ic_logo_mail"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/drive_logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logo_barrier" />
+
+    <ImageView
+        android:id="@+id/drive_logo"
+        android:layout_width="@dimen/size_icon_l"
+        android:layout_height="@dimen/size_icon_l"
+        android:layout_marginBottom="@dimen/margin_xxl"
+        android:background="@drawable/ic_logo_background_shape"
+        android:elevation="@dimen/elevation_s"
+        app:srcCompat="@drawable/ic_logo_drive"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/calendar_logo"
+        app:layout_constraintStart_toEndOf="@id/mail_logo"
+        app:layout_constraintTop_toBottomOf="@id/logo_barrier" />
+
+    <ImageView
+        android:id="@+id/calendar_logo"
+        android:layout_width="@dimen/size_icon_l"
+        android:layout_height="@dimen/size_icon_l"
+        android:layout_marginBottom="@dimen/margin_xxl"
+        android:background="@drawable/ic_logo_background_shape"
+        android:elevation="@dimen/elevation_s"
+        app:srcCompat="@drawable/ic_logo_calendar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/vpn_logo"
+        app:layout_constraintStart_toEndOf="@id/drive_logo"
+        app:layout_constraintTop_toBottomOf="@id/logo_barrier" />
+
+    <ImageView
+        android:id="@+id/vpn_logo"
+        android:layout_width="@dimen/size_icon_l"
+        android:layout_height="@dimen/size_icon_l"
+        android:layout_marginEnd="@dimen/margin_3xl"
+        android:layout_marginBottom="@dimen/margin_xxl"
+        android:background="@drawable/ic_logo_background_shape"
+        android:elevation="@dimen/elevation_s"
+        app:srcCompat="@drawable/ic_logo_vpn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/calendar_logo"
+        app:layout_constraintTop_toBottomOf="@id/logo_barrier" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

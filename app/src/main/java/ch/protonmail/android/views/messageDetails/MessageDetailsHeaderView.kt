@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2022 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
 package ch.protonmail.android.views.messageDetails
@@ -293,7 +293,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         collapsedHeaderGroup.isVisible = true
         locationImageView.isVisible = true
         expandCollapseChevronImageView.setImageDrawable(
-            ContextCompat.getDrawable(context, R.drawable.ic_chevron_down)
+            ContextCompat.getDrawable(context, R.drawable.ic_proton_chevron_down)
         )
     }
 
@@ -314,7 +314,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         expandedHeaderGroup.isVisible = true
         locationImageView.isVisible = false
         expandCollapseChevronImageView.setImageDrawable(
-            ContextCompat.getDrawable(context, R.drawable.ic_chevron_up)
+            ContextCompat.getDrawable(context, R.drawable.ic_proton_chevron_up)
         )
     }
 
@@ -338,16 +338,16 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     }
 
     private fun getIconForMessageLocation(messageLocation: Constants.MessageLocationType) = when (messageLocation) {
-        Constants.MessageLocationType.INBOX -> R.drawable.ic_inbox
-        Constants.MessageLocationType.SENT -> R.drawable.ic_paper_plane
-        Constants.MessageLocationType.DRAFT -> R.drawable.ic_pencil
-        Constants.MessageLocationType.ALL_DRAFT -> R.drawable.ic_pencil
-        Constants.MessageLocationType.ALL_SENT -> R.drawable.ic_paper_plane
-        Constants.MessageLocationType.ARCHIVE -> R.drawable.ic_archive
-        Constants.MessageLocationType.TRASH -> R.drawable.ic_trash
-        Constants.MessageLocationType.SPAM -> R.drawable.ic_fire
-        Constants.MessageLocationType.LABEL_FOLDER -> R.drawable.ic_folder_filled
-        Constants.MessageLocationType.LABEL -> R.drawable.ic_folder_filled
+        Constants.MessageLocationType.INBOX -> R.drawable.ic_proton_inbox
+        Constants.MessageLocationType.SENT -> R.drawable.ic_proton_paper_plane
+        Constants.MessageLocationType.DRAFT -> R.drawable.ic_proton_pencil
+        Constants.MessageLocationType.ALL_DRAFT -> R.drawable.ic_proton_pencil
+        Constants.MessageLocationType.ALL_SENT -> R.drawable.ic_proton_paper_plane
+        Constants.MessageLocationType.ARCHIVE -> R.drawable.ic_proton_archive_box
+        Constants.MessageLocationType.TRASH -> R.drawable.ic_proton_trash
+        Constants.MessageLocationType.SPAM -> R.drawable.ic_proton_fire
+        Constants.MessageLocationType.LABEL_FOLDER -> R.drawable.ic_proton_folder_filled
+        Constants.MessageLocationType.LABEL -> R.drawable.ic_proton_folder_filled
         else -> null
     }
 

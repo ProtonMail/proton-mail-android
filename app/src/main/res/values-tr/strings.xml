@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2022 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Klasör ekle</string>
     <string name="x_add_label">Etiket ekle</string>
     <string name="x_days">Gün</string>
@@ -77,7 +77,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s zamanında &lt;%s&gt; şunu yazdı:</string>
     <string name="set_msg_password_title">Parola ayarla</string>
-    <string name="set_msg_password_info">ProtonMail kullanmayan kişiler için bu iletiyi şifrelemekte kullanılacak bir parola ayarlayın. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Ayrıntılı bilgi alın</a></string>
+    <string name="set_msg_password_info">Proton Mail kullanmayan kişiler için bu iletiyi şifrelemekte kullanılacak bir parola ayarlayın. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Ayrıntılı bilgi alın</a></string>
     <string name="set_msg_password_info_icon_description">Bilgiler</string>
     <string name="set_msg_password_msg_password_title">İleti parolası</string>
     <string name="set_msg_password_msg_password_hint">4 ile 21 karakter uzunluğunda</string>
@@ -155,7 +155,7 @@
     <string name="snackbar_action_discard">Yok say</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Oturumu kapat</string>
     <string name="sign_out_question">Oturumu kapatmak istediğinize emin misiniz?</string>
     <string name="processing_request">İsteğiniz işleniyor</string>
@@ -168,9 +168,9 @@
     <string name="no_more_messages">Başka bir ileti yok</string>
     <string name="no_network_queued">Ağ bağlantısı yok. İleti sıraya alındı.</string>
     <string name="update_app_title">Güncelleme gerekli</string>
-    <string name="update_app">ProtonMail uygulamanız güncellenene kadar kullanılamaz.</string>
+    <string name="update_app">Proton Mail uygulamanız güncellenene kadar kullanılamaz.</string>
     <string name="you_are_offline">Çevrimdışısınız</string>
-    <string name="api_offline">ProtonMail şu anda çevrimdışı. Güncel durum için https://protonstatus.com veya https://twitter.com/protonmail adreslerine bakabilirsiniz</string>
+    <string name="api_offline">Proton Mail şu anda çevrimdışı. Güncel durum için https://protonstatus.com veya https://twitter.com/protonmail adreslerine bakabilirsiniz</string>
     <string name="contact_saved">Kişi kaydedildi</string>
     <string name="contact_saved_offline">Kişi kaydedildi. Bağlantı kurulduğunda eşitlenecek</string>
     <string name="contact_exist">Kişi e-posta adresi zaten var</string>
@@ -198,7 +198,7 @@
     <string name="all_mail">Tüm e-postalar</string>
     <string name="contacts">Kişiler</string>
     <string name="search_contacts">Kişilerde ara</string>
-    <string name="fetching_contacts">ProtonMail kişileri alınıyor...</string>
+    <string name="fetching_contacts">Proton Mail kişileri alınıyor...</string>
     <string name="fetching_contacts_success">Kişiler yenilendi</string>
     <string name="fetching_contacts_failure">Kişiler yenilenemedi</string>
     <string name="no_search_results">Herhangi bir sonuç bulunamadı</string>
@@ -274,7 +274,7 @@
     <string name="invalid_email_address">\'%s\' adresi geçersiz</string>
     <string name="invalid_email_address_removed">%s adresi geçersiz ve kaldırıldı</string>
     <string name="no_recipients_specified">Lütfen en az bir alıcı ekleyin</string>
-    <string name="no_password_specified">Geçerlilik süresi yalnızca tamamen şifrelenmiş iletiler için ayarlanabilir. Lütfen ProtonMail kullanmayan alıcılarınız için bir parola belirtin.</string>
+    <string name="no_password_specified">Geçerlilik süresi yalnızca tamamen şifrelenmiş iletiler için ayarlanabilir. Lütfen Proton Mail kullanmayan alıcılarınız için bir parola belirtin.</string>
     <string name="attachment_limit">Ek dosya sınırı %1$s. Toplam ek dosya boyutu en fazla %2$s olabilir.</string>
     <string name="sending_message">İleti gönderiliyor...</string>
     <string name="sending_message_offline">Çevrimdışı. Daha sonra gönderilmek üzere sıraya alındı...</string>
@@ -286,7 +286,7 @@
     <string name="cancel">İptal</string>
     <string name="close">Kapat</string>
     <string name="eo_password_title">Parola ayarla</string>
-    <string name="eo_password_subtitle">ProtonMail kullanmayan kişiler için bu iletiyi şifreleyecek bir parola belirtin</string>
+    <string name="eo_password_subtitle">Proton Mail kullanmayan kişiler için bu iletiyi şifreleyecek bir parola belirtin</string>
     <string name="eo_password_more_info">Ayrıntılı bilgi alın</string>
     <string name="no_attachments">0 ek dosya</string>
     <string name="display_name_banned_chars">Görüntülenecek ad geçersiz. \'&gt;\' ve \'&lt;\' kullanılamaz</string>
@@ -389,7 +389,7 @@
     <string name="contact_details">Kişi bilgileri</string>
     <string name="email_type_home">Ev</string>
     <string name="type_title">Tür seçin</string>
-    <string name="sync_local_contacts">ProtonMail üzerine yükle</string>
+    <string name="sync_local_contacts">Proton Mail üzerine yükle</string>
     <string name="please_select_only_phone_contacts">Lütfen yalnızca yerel telefon kişilerini seçin</string>
     <string name="contact_vcard_hint_email">E-posta adresini yazın</string>
     <string name="contact_vcard_hint_phone">Telefon numarasını yazın</string>
@@ -467,7 +467,7 @@
     <string name="details_copied">Ayrıntılar panoya kopyalandı</string>
     <string name="saving">Kaydediliyor...</string>
     <string name="update_folder">Klasörü güncelle</string>
-    <string name="spam_score_100">Bu e-posta, bir ProtonMail adresinden gelmiş gibi görünüyor. Ancak sistemimizin dışından geldi ve kimlik doğrulama gereksinimlerini karşılayamadı. Sahte ya da hatalı iletilmiş olabilir!</string>
+    <string name="spam_score_100">Bu e-posta, bir Proton Mail adresinden gelmiş gibi görünüyor. Ancak sistemimizin dışından geldi ve kimlik doğrulama gereksinimlerini karşılayamadı. Sahte ya da hatalı iletilmiş olabilir!</string>
     <string name="spam_score_101">Bu e-posta, etki alanının doğrulama gereksinimlerini karşılayamadı. E-posta, sahte ya da hatalı iletilmiş olabilir!</string>
     <string name="spam_score_102">Bu ileti bir kimlik avı girişimi olabilir. Lütfen göründüğü gibi olduklarından emin olmak için gönderici adresini ve ileti içeriğini kontrol edin. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">AYRINTILI BİLGİ ALIN</a></string>
     <string name="print_from_template">Kimden: %s</string>
@@ -493,10 +493,10 @@
     <string name="email_empty">E-posta adresi eksik</string>
     <string name="encrypted_contact_details">Şifrelenmiş kişi bilgileri</string>
     <string name="convert_question">Yerel kişileri yükle</string>
-    <string name="convert_question_subtitle">Bu işlem, aygıtınızdaki yerel kişileri ProtonMail kişiler klasörüne yükler. Daha sonra diğer aygıtlarınızda ProtonMail kullanarak bu kişilere erişebilirsiniz.</string>
+    <string name="convert_question_subtitle">Bu işlem, aygıtınızdaki yerel kişileri Proton Mail kişiler klasörüne yükler. Daha sonra diğer aygıtlarınızda Proton Mail kullanarak bu kişilere erişebilirsiniz.</string>
     <string name="refresh_contacts">Yenile</string>
     <string name="invalid_email_some_contacts">Bazı kişilerinizin e-posta adresi geçersiz</string>
-    <string name="protonmail_contacts">ProtonMail kişileri</string>
+    <string name="protonmail_contacts">Proton Mail kişileri</string>
     <string name="device_contacts">Aygıt kişileri</string>
     <string name="print_date_template">Tarih: %s</string>
     <string name="print_attachment_template">Ek dosya: %s; </string>
@@ -508,7 +508,7 @@
     <string name="remove_password_question">Parola kaldırılsın mı?</string>
     <string name="attachment_storage_value_current">Seçilmiş olan: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Seçilmiş olan: Sınırsız</string>
-    <string name="attachment_offline_max_storage">ProtonMail uygulamasının mobil aygıtınızda kullanabileceği en fazla depolama alanını ayarlar.</string>
+    <string name="attachment_offline_max_storage">Proton Mail uygulamasının mobil aygıtınızda kullanabileceği en fazla depolama alanını ayarlar.</string>
     <string name="load_embedded_images_failed_no_network">Gömülü görseller yüklenemedi. Lütfen ağ bağlantınızı denetleyin.</string>
     <string name="load_embedded_images_failed">Gömülü görseller yüklenemedi.</string>
     <string name="unlimited">Sınırsız</string>
@@ -525,7 +525,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Sizin tarafınızdan uçtan uca şifreleme ile gönderildi</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">ProtonMail tarafından sıfır erişim şifrelemesiyle gönderildi</string>
+    <string name="sender_lock_sent_autoresponder">Proton Mail tarafından sıfır erişim şifrelemesiyle gönderildi</string>
     <string name="sender_lock_verification_failed">Gönderici doğrulanamadı</string>
     <string name="sender_lock_pgp_encrypted">PGP ile şifrelenmiş ileti</string>
     <string name="sender_lock_pgp_encrypted_verified">Doğrulanmış adresten PGP ile şifrelenmiş ileti</string>
@@ -631,7 +631,7 @@
         izni vermeniz gerekir.</string>
     <string name="need_contacts_permissions_text">Kişileri içe aktarmak için kişilere erişme izni vermeniz gerekir.</string>
     <string name="push_notifications_alert_title">Anlık bildirim uyarıları</string>
-    <string name="push_notifications_alert_subtitle">ProtonMail anlık bildirimleri, güncellenmiş Google Play hizmetleri olmadan çalışmaz.</string>
+    <string name="push_notifications_alert_subtitle">Proton Mail anlık bildirimleri, güncellenmiş Google Play hizmetleri olmadan çalışmaz.</string>
     <string name="app_locked">Uygulama kilitlendi</string>
     <string name="use_pin_instead">Bunun yerine PIN kodu kullanın</string>
     <!-- strings used for biometric enrollment -->
@@ -662,7 +662,7 @@
     <string name="signature">İmza</string>
     <string name="mobile_footer">Mobil alt bilgi</string>
     <string name="edit_mobile_footer">Mobil alt bilgi görüntülensin</string>
-    <string name="default_mobile_footer">ProtonMail mobil ile gönderildi</string>
+    <string name="default_mobile_footer">Proton Mail mobil ile gönderildi</string>
     <string name="mobile_footer_is_premium">Mobil alt bilgi özelliğini, yalnızca ücretli tarife kullanıcıları değiştirebilir</string>
     <string name="mobile_footer_info">Bu alt bilgi, imzanızın altına eklenir</string>
     <!-- region Snooze Settings -->
@@ -790,7 +790,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirüs etkileşimi &lt;/i&gt; - Antivirüs uygulamanızı geçici olarak kapatın ya da aygıtınızdan kaldırın.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vekil sunucu/güvenlik duvarı etkileşimi&lt;/i&gt; - Tüm vekil sunucuları/güvenlik duvarlarını kapatın ya da ağ yöneticinizle görüşün.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton çalışmıyor&lt;/i&gt; - &lt;a href=\"http://protonstatus.com/\"&gt;Proton durumunu&lt;/a&gt; denetleyin.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Çözüm bulamadınız mı?&lt;/i&gt; - &lt;a href=\"https://protonmail.com/support-form\"&gt;Destek formu&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-posta&lt;/a&gt; (support@protonmail.zendesk.com) ya da &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; aracılığıyla bizimle doğrudan görüşün.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Çözüm bulamadınız mı?&lt;/i&gt; - &lt;a href=\"https://protonmail.com/support-form\"&gt;Destek formu&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-posta&lt;/a&gt; (support@protonmail.zendesk.com) ya da &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt; aracılığıyla bizimle doğrudan görüşün.
     </string>
     <!-- endregion -->
     <!-- region errors -->

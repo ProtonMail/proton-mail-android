@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.utils
 
@@ -29,6 +29,7 @@ import androidx.annotation.IdRes
 import androidx.appcompat.widget.SwitchCompat
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.User
+import ch.protonmail.android.utils.extensions.getColorFromAttr
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithCustomView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.scopes.ActivityScoped
@@ -191,13 +192,13 @@ class NetworkSnackBarUtil @Inject constructor() {
 }
 
 private val Snackbar.textColor get() =
-    context.getColor(R.color.white)
+    context.getColor(R.color.text_inverted)
 
 private val Snackbar.warningColor get() =
-    context.getColor(R.color.warning)
+    context.getColor(R.color.notification_warning)
 
 private val Snackbar.errorColor get() =
     context.getColor(R.color.notification_error)
 
 private val Snackbar.infoColor get() =
-    context.getColor(R.color.blue)
+    context.getColorFromAttr(R.attr.brand_norm)

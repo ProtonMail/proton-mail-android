@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2022 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.activities.composeMessage;
 
@@ -161,8 +161,6 @@ import ch.protonmail.android.utils.extensions.SerializationUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider;
-import ch.protonmail.android.views.MessageExpirationView;
-import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
 import ch.protonmail.android.views.PmWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -175,9 +173,7 @@ import timber.log.Timber;
 @AndroidEntryPoint
 public class ComposeMessageActivity
         extends ComposeMessageKotlinActivity
-        implements MessagePasswordButton.OnMessagePasswordChangedListener,
-        MessageExpirationView.OnMessageExpirationChangedListener,
-        LoaderManager.LoaderCallbacks<Cursor>,
+        implements LoaderManager.LoaderCallbacks<Cursor>,
         GroupRecipientsDialogFragment.IGroupRecipientsListener {
     //region extras
     public static final String EXTRA_PARENT_ID = "parent_id";
@@ -349,7 +345,7 @@ public class ComposeMessageActivity
 
         }
 
-        fromAddressSpinner.getBackground().setColorFilter(getResources().getColor(R.color.new_purple), PorterDuff.Mode.SRC_ATOP);
+        fromAddressSpinner.getBackground().setColorFilter(getResources().getColor(R.color.icon_norm), PorterDuff.Mode.SRC_ATOP);
         List<String> senderAddresses = composeMessageViewModel.getSenderAddresses();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item_black, senderAddresses);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -1262,7 +1258,7 @@ public class ComposeMessageActivity
     }
 
     private void setAdditionalRowVisibility(boolean show) {
-        final int icon = show ? R.drawable.ic_chevron_up : R.drawable.ic_chevron_down;
+        final int icon = show ? R.drawable.ic_proton_chevron_up : R.drawable.ic_proton_chevron_down;
         binding.composerExpandRecipientsButton.setImageResource(icon);
         final int visibility = show ? View.VISIBLE : View.GONE;
         binding.composerExpandedRecipientsGroup.setVisibility(visibility);
@@ -1523,18 +1519,6 @@ public class ComposeMessageActivity
         messageBodyEditText.setVisibility(View.VISIBLE);
         composeMessageViewModel.setContent(messageBody);
         setBodyContent(true, isPlainText);
-    }
-
-    @Override
-    public void onMessagePasswordChanged() {
-
-        renderViews();
-    }
-
-    @Override
-    public void onMessageExpirationChanged() {
-
-        renderViews();
     }
 
     private Map<MessageRecipientView, List<MessageRecipient>> pendingRecipients = new HashMap<>();

@@ -1,6 +1,6 @@
-# ProtonMail for Android
+# Proton Mail for Android
 
-Copyright (c) 2020 Proton Technologies AG
+Copyright (c) 2020 Proton AG
 
 ## License
 

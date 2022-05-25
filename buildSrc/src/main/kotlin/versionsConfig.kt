@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2022 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 import studio.forface.easygradle.dsl.*
 import studio.forface.easygradle.dsl.android.*
@@ -62,7 +62,7 @@ fun initVersions() {
 }
 
 // Proton Core
-const val `Proton-core version` = "7.1.11"
+const val `Proton-core version` = "7.2.3"
 
 // Test
 const val `aerogear version` =                  "1.0.0"         // Released: Mar 23, 2013
@@ -79,6 +79,7 @@ const val `junit-ktx version` =                 "1.1.2"         // Released: Aug
 
 // Android
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020
+const val `android-core-splashscreen version` = "1.0.0-beta02"  // Released: Mar 23, 2022
 const val `android-fragment version` =          "1.3.6"         // Released: Jul 21, 2021
 const val `android-media version` =             "1.1.0"         // Released: Sep 06, 2019
 const val `android-preference version` =        "1.1.1"         // Released: Apr 15, 2020

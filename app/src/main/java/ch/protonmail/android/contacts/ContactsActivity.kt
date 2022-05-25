@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.contacts
 
@@ -24,14 +24,12 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.viewpager.widget.ViewPager
@@ -51,11 +49,9 @@ import ch.protonmail.android.databinding.ActivityContactsBinding
 import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
-import com.github.clans.fab.FloatingActionButton
-import com.github.clans.fab.FloatingActionMenu
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
-
 import timber.log.Timber
 
 // region constants
@@ -74,8 +70,11 @@ class ContactsActivity :
 
     private lateinit var progressLayoutView: View
     private lateinit var viewPager: ViewPager
-    private lateinit var addFab: FloatingActionMenu
+    private lateinit var fabContactsAddMenu: FloatingActionButton
+    private lateinit var fabContactsAddContact: FloatingActionButton
+    private lateinit var fabContactsAddContactGroup: FloatingActionButton
     private lateinit var tabLayoutContacts: TabLayout
+    private var isFabOpen: Boolean = false
 
     private val contactsViewModel: ContactsViewModel by viewModels()
 
@@ -117,16 +116,26 @@ class ContactsActivity :
         }
         binding.tablayoutContacts.setupWithViewPager(viewPager)
 
-        addFab = binding.fabContactsAddMenu
-        binding.fabContactsAddContact.setOnClickListener {
+        fabContactsAddMenu = binding.fabContactsAddMenu
+        fabContactsAddContact = binding.fabContactsAddContact
+        fabContactsAddContactGroup = binding.fabContactsAddContactGroup
+
+        fabContactsAddMenu.setOnClickListener {
+            if (!isFabOpen) {
+                showFabMenu()
+            } else {
+                closeFabMenu()
+            }
+        }
+
+        fabContactsAddContact.setOnClickListener {
             startActivityForResult(
                 EditContactDetailsActivity.startNewContactActivity(this),
                 REQUEST_CODE_NEW_CONTACT
             )
-            binding.fabContactsAddMenu.close(false)
         }
 
-        binding.fabContactsAddContactGroup.setOnClickListener {
+        fabContactsAddContactGroup.setOnClickListener {
             if (!contactsViewModel.isPaidUser()) {
                 showToast(R.string.paid_plan_needed)
                 return@setOnClickListener
@@ -134,26 +143,22 @@ class ContactsActivity :
             val intent =
                 AppUtil.decorInAppIntent(Intent(this, ContactGroupEditCreateActivity::class.java))
             startActivity(intent)
-            binding.fabContactsAddMenu.close(false)
         }
         contactsViewModel.fetchContactsResult.observe(
             this,
             ::onContactsFetchedEvent
         )
 
-        contactsViewModel.hasConnectivity.observe(
-            this,
-            { onConnectivityEvent(it) }
-        )
+        contactsViewModel.hasConnectivity.observe(this) { onConnectivityEvent(it) }
 
         progressLayoutView = binding.layoutProgressContacts
         tabLayoutContacts = binding.tablayoutContacts
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.contacts_menu, menu)
-        val searchItem = menu?.findItem(R.id.action_search)
-        searchItem?.configureSearch()
+        val searchItem = menu.findItem(R.id.action_search)
+        searchItem.configureSearch()
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -250,23 +255,20 @@ class ContactsActivity :
     }
 
     override fun onBackPressed() {
-        if (addFab.isOpened) {
-            addFab.close(true)
+        if (isFabOpen) {
+            closeFabMenu()
         } else {
             super.onBackPressed()
         }
     }
 
     private fun onPageSelected(position: Int) {
-        addFab.visibility = ViewGroup.VISIBLE
-        val recyclerViewBottomPadding = {
-            val mainFab = addFab.children.first { it is FloatingActionButton }
-            mainFab.height + (window.decorView.height - addFab.bottom) * 2
-        }
+        val recyclerViewBottomPadding =
+            fabContactsAddMenu.height * 2
         when (position) {
             0 -> {
                 window.decorView.doOnPreDraw {
-                    contactsListFragment.updateRecyclerViewBottomPadding(recyclerViewBottomPadding())
+                    contactsListFragment.updateRecyclerViewBottomPadding(recyclerViewBottomPadding)
                 }
                 contactGroupsFragment.apply {
                     if (isAdded && actionMode != null)
@@ -275,7 +277,7 @@ class ContactsActivity :
             }
             1 -> {
                 window.decorView.doOnPreDraw {
-                    contactGroupsFragment.updateRecyclerViewBottomPadding(recyclerViewBottomPadding())
+                    contactGroupsFragment.updateRecyclerViewBottomPadding(recyclerViewBottomPadding)
                 }
                 contactsListFragment.apply {
                     if (isAdded && actionMode != null)
@@ -313,6 +315,22 @@ class ContactsActivity :
         }
 
         override fun onHasPermission(type: Constants.PermissionType) = onPermissionConfirmed(type)
+    }
+
+    private fun showFabMenu() {
+        isFabOpen = true
+        val rotationLeft = -135f
+        fabContactsAddMenu.animate().rotation(rotationLeft)
+        fabContactsAddContact.animate().translationY(-resources.getDimension(R.dimen.animation_translation_55))
+        fabContactsAddContactGroup.animate().translationY(-resources.getDimension(R.dimen.animation_translation_105))
+    }
+
+    private fun closeFabMenu() {
+        isFabOpen = false
+        val rotationRight = 0f
+        fabContactsAddMenu.animate().rotation(rotationRight)
+        fabContactsAddContact.animate().translationY(0f)
+        fabContactsAddContactGroup.animate().translationY(0f)
     }
 }
 

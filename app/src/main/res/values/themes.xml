@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2022 Proton AG
+  ~
+  ~ This file is part of Proton Mail.
+  ~
+  ~ Proton Mail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Mail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<resources>
+
+    <style name="ProtonTheme.Mail.V5" parent="ProtonTheme.Mail">
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/ProtonMailActionMode</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_proton_arrow_left</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlowIcon</item>
+        <item name="bottomSheetDialogTheme">@style/ProtonMail.BottomSheetDialogTheme</item>
+
+        <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
+        <item name="snackbarButtonStyle">@style/Widget.App.SnackbarButton</item>
+
+        <item name="elevationOverlayEnabled">false</item>
+
+        <item name="android:alertDialogTheme">@style/AlertDialog</item>
+
+    </style>
+
+    <style name="ProtonTheme.Splash.Mail.V5" parent="ProtonTheme.Splash.Mail">
+        <item name="postSplashScreenTheme">@style/ProtonTheme.Mail.V5</item>
+    </style>
+</resources>

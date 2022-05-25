@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2022 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.uitests.robots.mailbox.composer
 
@@ -152,7 +152,6 @@ class ComposerRobot : Robot {
             .definePasswordWithHint(password, hint)
             .messageExpiration()
             .setExpirationInDays(days)
-            .hideExpirationView()
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
             .send()
@@ -170,7 +169,6 @@ class ComposerRobot : Robot {
             .definePasswordWithHint(password, hint)
             .messageExpiration()
             .setExpirationInDays(days)
-            .hideExpirationView()
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
             .sendWithNotSupportedExpiryConfirmation()
@@ -311,11 +309,6 @@ class ComposerRobot : Robot {
         return MessageExpirationRobot()
     }
 
-    private fun hideExpirationView(): ComposerRobot {
-        view.withId(R.id.hide_view).click()
-        return this
-    }
-
     fun attachments(): MessageAttachmentsRobot {
         view.withId(R.id.composer_attachments_button).click()
         return MessageAttachmentsRobot()
@@ -398,7 +391,7 @@ class ComposerRobot : Robot {
         const val sendMessageId = R.id.send_button
         const val messageBodyId = R.id.composer_message_body_edit_text
         const val subjectId = R.id.composer_subject_edit_text
-        const val logoDrawable = R.drawable.logo
+        const val logoDrawable = R.drawable.ic_launcher_foreground
         const val welcomeDrawable = R.drawable.welcome
         const val addressSpinnerId = R.id.composer_from_spinner
         const val toRecipientsId = R.id.composer_to_recipient_view

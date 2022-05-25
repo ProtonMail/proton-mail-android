@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.utils;
 
@@ -24,11 +24,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.Html;
 import android.text.Spannable;
@@ -38,8 +33,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,12 +40,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.core.content.ContextCompat;
-
-import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -77,13 +65,6 @@ public class UiUtil {
         clipboard.setPrimaryClip(ClipData.newPlainText(null, text));
     }
 
-
-    public static void setStatusBarColor(@NonNull Activity activity, int color) {
-        Window window = activity.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(color);
-    }
 
     public static void hideKeyboard(Context context, EditText editText) {
         if (editText != null) {
@@ -113,15 +94,6 @@ public class UiUtil {
         }
     }
 
-    public static void showKeyboard(@NonNull Activity activity, EditText editText) {
-        if (editText != null) {
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                imm.showSoftInput(editText, 0);
-            }
-        }
-    }
-
     /**
      * If the supplied color is in #ABC format insted od #AABBCC it will normalize it, since it
      * is not supported in the Android methods.
@@ -147,41 +119,6 @@ public class UiUtil {
             }
         }
         return labelColor.toString();
-    }
-
-    public static int scaleColor(int color, float factor, boolean scaleAlpha) {
-        return Color.argb(scaleAlpha ? (Math.round(Color.alpha(color) * factor)) : Color.alpha(color),
-                Math.round(Color.red(color) * factor), Math.round(Color.green(color) * factor),
-                Math.round(Color.blue(color) * factor));
-    }
-
-    public static int getStatusBarHeight(Context context) {
-        int result = 0;
-        if (context == null) {
-            return result;
-        }
-        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = context.getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
-    public static int getToolbarHeight(Context context) {
-        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
-                new int[]{R.attr.actionBarSize});
-        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
-        styledAttributes.recycle();
-
-        return toolbarHeight;
-    }
-
-    public static Snackbar showInfoSnack(View snackBarLayout, Context context, @StringRes int message) {
-        Snackbar infoSnack = Snackbar.make(snackBarLayout, context.getString(message), Snackbar.LENGTH_LONG);
-        View view = infoSnack.getView();
-        TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
-        tv.setTextColor(context.getColor(R.color.text_inverted));
-        return infoSnack;
     }
 
     public static int generateViewId(View view) {
@@ -318,14 +255,6 @@ public class UiUtil {
                     activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://protonmail.com/support/knowledge-base/update-required/")));
                     return unit;
                 }, false, false, false);
-    }
-
-    public static void setTextViewDrawableColor(Context context, TextView textView, @ColorRes int color) {
-        for (Drawable drawable : textView.getCompoundDrawables()) {
-            if (drawable != null) {
-                drawable.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(context, color), PorterDuff.Mode.SRC_IN));
-            }
-        }
     }
 
     public static String extractInitials(String name){

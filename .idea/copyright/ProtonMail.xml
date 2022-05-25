@@ -1,6 +1,7 @@
 <component name="CopyrightManager">
   <copyright>
-    <option name="notice" value="Copyright (c) 2022 Proton Technologies AG&#10;&#10;This file is part of ProtonMail.&#10;&#10;ProtonMail is free software: you can redistribute it and/or modify&#10;it under the terms of the GNU General Public License as published by&#10;the Free Software Foundation, either version 3 of the License, or&#10;(at your option) any later version.&#10;&#10;ProtonMail is distributed in the hope that it will be useful,&#10;but WITHOUT ANY WARRANTY; without even the implied warranty of&#10;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&#10;GNU General Public License for more details.&#10;&#10;You should have received a copy of the GNU General Public License&#10;along with ProtonMail. If not, see https://www.gnu.org/licenses/." />
-    <option name="myName" value="ProtonMail" />
+    <option name="allowReplaceRegexp" value="Copyright" />
+    <option name="notice" value="Copyright (c) 2022 Proton AG&#10;&#10;This file is part of Proton Mail.&#10;&#10;Proton Mail is free software: you can redistribute it and/or modify&#10;it under the terms of the GNU General Public License as published by&#10;the Free Software Foundation, either version 3 of the License, or&#10;(at your option) any later version.&#10;&#10;Proton Mail is distributed in the hope that it will be useful,&#10;but WITHOUT ANY WARRANTY; without even the implied warranty of&#10;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&#10;GNU General Public License for more details.&#10;&#10;You should have received a copy of the GNU General Public License&#10;along with Proton Mail. If not, see https://www.gnu.org/licenses/." />
+    <option name="myName" value="Proton Mail" />
   </copyright>
 </component>

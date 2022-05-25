@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_menu_search"
+        android:icon="@drawable/ic_proton_magnifier"
         android:textCursorDrawable="@null"
         android:title="@string/x_search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always" />
+        app:showAsAction="always|collapseActionView" />
 
     <item
         android:id="@+id/action_sync"
@@ -41,7 +41,7 @@
 
     <item
         android:id="@+id/action_delete"
-        android:icon="@drawable/ic_trash"
+        android:icon="@drawable/ic_proton_trash"
         android:textCursorDrawable="@null"
         android:title="@string/delete"
         android:visible="false"

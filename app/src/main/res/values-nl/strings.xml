@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2022 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Map toevoegen</string>
     <string name="x_add_label">Label toevoegen</string>
     <string name="x_days">Dagen</string>
@@ -77,7 +77,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Op %s, schreef %s &lt;%s&gt;:</string>
     <string name="set_msg_password_title">Wachtwoord instellen</string>
-    <string name="set_msg_password_info">Stel een wachtwoord in om dit bericht te versleutelen voor niet-ProtonMail gebruikers. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Meer informatie</a></string>
+    <string name="set_msg_password_info">Stel een wachtwoord in om dit bericht te versleutelen voor niet-Proton Mail gebruikers. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Meer informatie</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Wachtwoord van bericht</string>
     <string name="set_msg_password_msg_password_hint">4 tot 21 tekens lang</string>
@@ -145,8 +145,11 @@
     <string name="existing_user_onboarding_new_look_description">Uw versleutelde e-mail is helemaal opnieuw ontworpen voor optimaal gebruiksgemak.</string>
     <string name="existing_user_onboarding_new_features_headline">Nieuwe functionaliteiten</string>
     <string name="existing_user_onboarding_new_features_description">Profiteer van nieuwe functionaliteiten zoals donkere modus, verbeterde meldingen, een filter voor ongelezen berichten, en submappen.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Vernieuwde Proton, uniforme beveiliging</string>
+    <string name="existing_user_onboarding_updated_proton_description">Ontdek de nieuwe look van Proton. Veel diensten, één missie. Welkom in een internetomgeving waar privacy de standaard is. <a href="https://proton.me/news/updated-proton">Meer informatie</a></string>
     <string name="onboarding_next">Volgende</string>
     <string name="onboarding_get_started">Aan de slag</string>
+    <string name="onboarding_got_it">Begrepen</string>
     <string name="onboarding_image_view_content_description">Proton Mail illustratie</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -155,7 +158,7 @@
     <string name="snackbar_action_discard">Weggooien</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Uitloggen</string>
     <string name="sign_out_question">Weet u zeker dat u zich wilt afmelden?</string>
     <string name="processing_request">Uw verzoek wordt verwerkt</string>
@@ -170,7 +173,7 @@
     <string name="update_app_title">Update vereist</string>
     <string name="update_app">Uw Protonmail-app kan niet worden gebruikt totdat deze is geüpdatet</string>
     <string name="you_are_offline">U bent offline</string>
-    <string name="api_offline">ProtonMail is momenteel offline. Kijk op https://protonstatus.com of https://twitter.com/protonmail voor de huidige status</string>
+    <string name="api_offline">Proton Mail is momenteel offline. Kijk op https://protonstatus.com of https://twitter.com/protonmail voor de huidige status</string>
     <string name="contact_saved">Contact opgeslagen</string>
     <string name="contact_saved_offline">Contactpersoon opgeslagen. Het wordt gesynchroniseerd zodra er een verbinding beschikbaar is.</string>
     <string name="contact_exist">Contact met dit e-mailadres bestaat reeds</string>
@@ -274,7 +277,7 @@
     <string name="invalid_email_address">Het adres \'%s\' is ongeldig</string>
     <string name="invalid_email_address_removed">Adres \'%s\' is ongeldig en is verwijderd</string>
     <string name="no_recipients_specified">Vul minstens één ontvanger in</string>
-    <string name="no_password_specified">Verlooptijd kan alleen ingesteld worden bij volledig versleutelde berichten. Stel een wachtwoord in voor de ontvangers die geen ProtonMail gebruiken.</string>
+    <string name="no_password_specified">Verlooptijd kan alleen ingesteld worden bij volledig versleutelde berichten. Stel een wachtwoord in voor de ontvangers die geen Proton Mail gebruiken.</string>
     <string name="attachment_limit">Bijlages kunnen maximaal %1$s groot zijn. Totaal bijgevoegd zou %2$s zijn.</string>
     <string name="sending_message">Bericht verzenden...</string>
     <string name="sending_message_offline">Offline, in de wachtrij voor het verzenden van later...</string>
@@ -286,7 +289,7 @@
     <string name="cancel">Annuleren</string>
     <string name="close">Sluiten</string>
     <string name="eo_password_title">Wachtwoord instellen</string>
-    <string name="eo_password_subtitle">Voer een wachtwoord in om dit bericht te versleutelen voor niet-ProtonMailgebruikers</string>
+    <string name="eo_password_subtitle">Voer een wachtwoord in om dit bericht te versleutelen voor niet-Proton Mailgebruikers</string>
     <string name="eo_password_more_info">Meer informatie</string>
     <string name="no_attachments">Geen bijlagen</string>
     <string name="display_name_banned_chars">Ongeldige weergavenaam. \'&gt;\' en \'&lt;\' zijn niet toegestaan</string>
@@ -389,7 +392,7 @@
     <string name="contact_details">Contactgegevens</string>
     <string name="email_type_home">Thuis</string>
     <string name="type_title">Kies type</string>
-    <string name="sync_local_contacts">Uploaden naar ProtonMail</string>
+    <string name="sync_local_contacts">Uploaden naar Proton Mail</string>
     <string name="please_select_only_phone_contacts">Selecteer alleen lokale telefooncontacten</string>
     <string name="contact_vcard_hint_email">E-mailadres invoeren</string>
     <string name="contact_vcard_hint_phone">Telefoonnummer invoeren</string>
@@ -467,7 +470,7 @@
     <string name="details_copied">Details gekopieerd naar klembord</string>
     <string name="saving">Opslaan...</string>
     <string name="update_folder">Map bijwerken</string>
-    <string name="spam_score_100">Deze e-mail lijkt afkomstig van een ProtonMail-adres maar kwam van buiten ons systeem en voldoet niet aan onze authenticatie-vereisten. Mogelijk is de e-mail vals of onjuist doorgestuurd!</string>
+    <string name="spam_score_100">Deze e-mail lijkt afkomstig van een Proton Mail-adres maar kwam van buiten ons systeem en voldoet niet aan onze authenticatie-vereisten. Mogelijk is de e-mail vals of onjuist doorgestuurd!</string>
     <string name="spam_score_101">Deze e-mail voldoet niet aan de authenticatievereisten van de domainnaam. Mogelijk is de e-mail vals of onjuist doorgestuurd!</string>
     <string name="spam_score_102">Dit bericht kan phishing zijn. Controleer de afzender en de inhoud om te controleren dat ze legitiem zijn. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MEER INFORMATIE</a></string>
     <string name="print_from_template">Van: %s</string>
@@ -493,10 +496,10 @@
     <string name="email_empty">E-mailadres ontbreekt</string>
     <string name="encrypted_contact_details">Versleutelde contactpersoonsgegevens</string>
     <string name="convert_question">Upload lokale contactpersonen</string>
-    <string name="convert_question_subtitle">Dit uploadt lokale contacten op uw apparaat naar uw ProtonMail-contacten. Zo krijgt u op andere apparaten toegang tot deze contacten via ProtonMail.</string>
+    <string name="convert_question_subtitle">Dit uploadt lokale contacten op uw apparaat naar uw Proton Mail-contacten. Zo krijgt u op andere apparaten toegang tot deze contacten via Proton Mail.</string>
     <string name="refresh_contacts">Vernieuwen</string>
     <string name="invalid_email_some_contacts">E-mailadres van enkele contactpersonen is ongeldig</string>
-    <string name="protonmail_contacts">ProtonMail Contacts</string>
+    <string name="protonmail_contacts">Proton Mail Contacts</string>
     <string name="device_contacts">Contactpersonen van apparaat</string>
     <string name="print_date_template">Datum: %s</string>
     <string name="print_attachment_template">Bijlage: %s;  </string>
@@ -508,7 +511,7 @@
     <string name="remove_password_question">Wachtwoord verwijderen?</string>
     <string name="attachment_storage_value_current">Geselecteerd: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Geselecteerd: Onbeperkt</string>
-    <string name="attachment_offline_max_storage">Stelt de maximale hoeveelheid opslagruimte in die ProtonMail mag gebruiken op uw mobiele apparaat.</string>
+    <string name="attachment_offline_max_storage">Stelt de maximale hoeveelheid opslagruimte in die Proton Mail mag gebruiken op uw mobiele apparaat.</string>
     <string name="load_embedded_images_failed_no_network">Ingesloten afbeeldingen laden mislukt. Controleer uw netwerkverbinding.</string>
     <string name="load_embedded_images_failed">Ingesloten afbeeldingen laden mislukt.</string>
     <string name="unlimited">Onbeperkt</string>
@@ -525,7 +528,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Door u verzonden met end-to-end versleuteling</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Verzonden door ProtonMail met zero access versleuteling</string>
+    <string name="sender_lock_sent_autoresponder">Verzonden door Proton Mail met zero access versleuteling</string>
     <string name="sender_lock_verification_failed">Verificatie van afzender is mislukt</string>
     <string name="sender_lock_pgp_encrypted">PGP-versleuteld bericht</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-versleuteld bericht van geverifieerd e-mailadres</string>
@@ -633,7 +636,7 @@
         toegang tot opslag toestaan.</string>
     <string name="need_contacts_permissions_text">Om contacten te importeren moet u toegang tot contacten toestaan.</string>
     <string name="push_notifications_alert_title">Pushmelding</string>
-    <string name="push_notifications_alert_subtitle">Pushmeldingen voor ProtonMail werken niet zonder bijgewerkte Google Play-diensten.</string>
+    <string name="push_notifications_alert_subtitle">Pushmeldingen voor Proton Mail werken niet zonder bijgewerkte Google Play-diensten.</string>
     <string name="app_locked">App vergrendeld</string>
     <string name="use_pin_instead">Gebruik PIN in de plaats</string>
     <!-- strings used for biometric enrollment -->
@@ -664,7 +667,7 @@
     <string name="signature">Handtekening</string>
     <string name="mobile_footer">Mobiele voettekst</string>
     <string name="edit_mobile_footer">Mobiele voettekst inschakelen</string>
-    <string name="default_mobile_footer">Verzonden met ProtonMail Mobile</string>
+    <string name="default_mobile_footer">Verzonden met Proton Mail Mobile</string>
     <string name="mobile_footer_is_premium">Het veranderen van de mobiele voettekst is alleen toegestaan voor betaalde gebruikers</string>
     <string name="mobile_footer_info">Deze voettekst is toegevoegd na uw handtekening</string>
     <!-- region Snooze Settings -->

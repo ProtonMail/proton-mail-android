@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2022 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Ajouter un dossier</string>
     <string name="x_add_label">Ajouter un label</string>
     <string name="x_days">Jours</string>
@@ -77,7 +77,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Le %s, %s &lt; %s&gt; a écrit :</string>
     <string name="set_msg_password_title">Définir le mot de passe</string>
-    <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message pour les utilisateurs non-ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">En savoir plus</a></string>
+    <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message pour les utilisateurs non-Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">En savoir plus</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Mot de passe du message</string>
     <string name="set_msg_password_msg_password_hint">4 à 21 caractères</string>
@@ -145,8 +145,11 @@
     <string name="existing_user_onboarding_new_look_description">Votre messagerie chiffrée a été entièrement repensée pour en faciliter l\'utilisation.</string>
     <string name="existing_user_onboarding_new_features_headline">Nouvelles fonctionnalités</string>
     <string name="existing_user_onboarding_new_features_description">Profitez de nouvelles fonctionnalités telles que le mode sombre, des notifications améliorées, un filtre de messages non lus et des sous-dossiers.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Proton mis à jour, protection unifiée</string>
+    <string name="existing_user_onboarding_updated_proton_description">Voici la nouvelle apparence de Proton. De nombreux services, une seule mission. Bienvenue dans un Internet où la confidentialité est la règle. <a href="https://proton.me/news/updated-proton">En savoir plus</a></string>
     <string name="onboarding_next">Suivant</string>
     <string name="onboarding_get_started">Commencer</string>
+    <string name="onboarding_got_it">J\'ai compris</string>
     <string name="onboarding_image_view_content_description">Illustration Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -155,7 +158,7 @@
     <string name="snackbar_action_discard">Ignorer</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Se déconnecter</string>
     <string name="sign_out_question">Êtes-vous sûr de vouloir vous déconnecter ?</string>
     <string name="processing_request">Votre demande est en cours de traitement</string>
@@ -168,9 +171,9 @@
     <string name="no_more_messages">Plus de messages</string>
     <string name="no_network_queued">Pas de réseau, message placé en file d\'attente</string>
     <string name="update_app_title">Mise à jour requise</string>
-    <string name="update_app">Votre application ProtonMail ne peut pas être utilisée tant qu\'elle n\'est pas mise à jour</string>
+    <string name="update_app">Votre application Proton Mail ne peut pas être utilisée tant qu\'elle n\'est pas mise à jour</string>
     <string name="you_are_offline">Vous êtes hors ligne</string>
-    <string name="api_offline">ProtonMail est actuellement hors-ligne, visitez https://protonstatus.com ou notre Twitter pour consulter l\'état actuel du service : https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail est actuellement hors-ligne, visitez https://protonstatus.com ou notre Twitter pour consulter l\'état actuel du service : https://twitter.com/protonmail</string>
     <string name="contact_saved">Contact enregistré</string>
     <string name="contact_saved_offline">Contact enregistré, il sera synchronisé quand une connexion sera disponible</string>
     <string name="contact_exist">L\'adresse e-mail du contact existe déjà</string>
@@ -198,7 +201,7 @@
     <string name="all_mail">Tous les messages</string>
     <string name="contacts">Contacts</string>
     <string name="search_contacts">Rechercher des contacts</string>
-    <string name="fetching_contacts">Récupération des contacts ProtonMail...</string>
+    <string name="fetching_contacts">Récupération des contacts Proton Mail...</string>
     <string name="fetching_contacts_success">Actualisation des contacts réussie</string>
     <string name="fetching_contacts_failure">Impossible d\'actualiser les contacts</string>
     <string name="no_search_results">Aucun résultat pour cette recherche</string>
@@ -274,7 +277,7 @@
     <string name="invalid_email_address">L’adresse « %s » n’est pas valide</string>
     <string name="invalid_email_address_removed">L\'adresse « %s » n’est pas valide et a été supprimée</string>
     <string name="no_recipients_specified">Veuillez ajouter au moins un destinataire</string>
-    <string name="no_password_specified">Définir un délai d\'expiration n\'est possible que sur les messages entièrement chiffrés. Veuillez définir un mot de passe pour vos destinataires non-ProtonMail.</string>
+    <string name="no_password_specified">Définir un délai d\'expiration n\'est possible que sur les messages entièrement chiffrés. Veuillez définir un mot de passe pour vos destinataires non-Proton Mail.</string>
     <string name="attachment_limit">Les pièces jointes sont limitées à %1$s. Le poids total des pièces jointes est de %2$s.</string>
     <string name="sending_message">Envoi du message en cours...</string>
     <string name="sending_message_offline">Hors-ligne, placé en file d\'attente pour un envoi différé...</string>
@@ -286,7 +289,7 @@
     <string name="cancel">Annuler</string>
     <string name="close">Fermer</string>
     <string name="eo_password_title">Définir le mot de passe</string>
-    <string name="eo_password_subtitle">Définir un mot de passe afin de chiffrer ce message pour les utilisateurs non-ProtonMail</string>
+    <string name="eo_password_subtitle">Définir un mot de passe afin de chiffrer ce message pour les utilisateurs non-Proton Mail</string>
     <string name="eo_password_more_info">En savoir plus</string>
     <string name="no_attachments">Aucune pièce jointe</string>
     <string name="display_name_banned_chars">Nom d\'affichage invalide. \'&gt;\' et \'&lt;\' ne sont pas autorisés</string>
@@ -389,7 +392,7 @@
     <string name="contact_details">Détails du contact</string>
     <string name="email_type_home">Domicile</string>
     <string name="type_title">Choisir un type</string>
-    <string name="sync_local_contacts">Importer sur ProtonMail</string>
+    <string name="sync_local_contacts">Importer sur Proton Mail</string>
     <string name="please_select_only_phone_contacts">Veuillez sélectionner uniquement les contacts locaux</string>
     <string name="contact_vcard_hint_email">Saisir une adresse électronique</string>
     <string name="contact_vcard_hint_phone">Saisir un numéro de téléphone</string>
@@ -467,7 +470,7 @@
     <string name="details_copied">Détails copiés dans le presse-papiers</string>
     <string name="saving">Enregistrement en cours...</string>
     <string name="update_folder">Mettre à jour le dossier</string>
-    <string name="spam_score_100">Cet e-mail semble provenir d\'une adresse ProtonMail, mais ne provient pas de notre système et a échoué aux exigences d\'authentification. Il a peut-être été falsifié ou transmis de manière incorrecte !</string>
+    <string name="spam_score_100">Cet e-mail semble provenir d\'une adresse Proton Mail, mais ne provient pas de notre système et a échoué aux exigences d\'authentification. Il a peut-être été falsifié ou transmis de manière incorrecte !</string>
     <string name="spam_score_101">Cet e-mail a échoué aux tests d\'authentification de son domaine. Il a peut-être été falsifié ou transféré incorrectement !</string>
     <string name="spam_score_102">Ce message peut être une tentative d’hameçonnage. Veuillez vérifier l’expéditeur et le contenu afin de vous assurer qu’ils sont légitimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">EN SAVOIR PLUS</a></string>
     <string name="print_from_template">De : %s</string>
@@ -493,10 +496,10 @@
     <string name="email_empty">L’adresse électronique est manquante</string>
     <string name="encrypted_contact_details">Détails chiffrés du contact</string>
     <string name="convert_question">Télécharger les contacts locaux</string>
-    <string name="convert_question_subtitle">Ceci va télécharger les contacts présents sur votre appareil vers votre répertoire ProtonMail. Vous pourrez ensuite accéder à ces contacts sur vos autres appareils via ProtonMail.</string>
+    <string name="convert_question_subtitle">Ceci va télécharger les contacts présents sur votre appareil vers votre répertoire Proton Mail. Vous pourrez ensuite accéder à ces contacts sur vos autres appareils via Proton Mail.</string>
     <string name="refresh_contacts">Actualiser</string>
     <string name="invalid_email_some_contacts">L\'adresse électronique n’est pas valide pour certains de vos contacts</string>
-    <string name="protonmail_contacts">Contacts ProtonMail</string>
+    <string name="protonmail_contacts">Contacts Proton Mail</string>
     <string name="device_contacts">Contacts de l’appareil</string>
     <string name="print_date_template">Date : %s</string>
     <string name="print_attachment_template">Pièce jointe : %s; </string>
@@ -508,7 +511,7 @@
     <string name="remove_password_question">Supprimer le mot de passe ?</string>
     <string name="attachment_storage_value_current">Actuellement sélectionné : %d Mo</string>
     <string name="attachment_storage_value_current_unlimited">Actuellement sélectionné : illimité</string>
-    <string name="attachment_offline_max_storage">Ce paramètre définit l’espace de stockage maximal que ProtonMail peut utiliser sur votre mobile.</string>
+    <string name="attachment_offline_max_storage">Ce paramètre définit l’espace de stockage maximal que Proton Mail peut utiliser sur votre mobile.</string>
     <string name="load_embedded_images_failed_no_network">Échec du chargement des images incorporées. Vérifiez votre connexion réseau.</string>
     <string name="load_embedded_images_failed">Échec du chargement des images incorporées.</string>
     <string name="unlimited">Illimité</string>
@@ -525,7 +528,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Envoyé par vous avec un chiffrement de bout en bout</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Envoyé par ProtonMail avec chiffrement zéro accès</string>
+    <string name="sender_lock_sent_autoresponder">Envoyé par Proton Mail avec chiffrement zéro accès</string>
     <string name="sender_lock_verification_failed">La vérification de l\'émetteur a échoué</string>
     <string name="sender_lock_pgp_encrypted">Message chiffré par PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Message chiffré par PGP provenant d\'une adresse vérifiée</string>
@@ -633,7 +636,7 @@
         l\'accès au stockage.</string>
     <string name="need_contacts_permissions_text">Pour importer des contacts, vous devez autoriser l\'accès aux contacts.</string>
     <string name="push_notifications_alert_title">Alerte de notifications push</string>
-    <string name="push_notifications_alert_subtitle">Les notifications push pour ProtonMail ne fonctionnent pas sans la mise à jour des services Google Play.</string>
+    <string name="push_notifications_alert_subtitle">Les notifications push pour Proton Mail ne fonctionnent pas sans la mise à jour des services Google Play.</string>
     <string name="app_locked">Application verrouillée</string>
     <string name="use_pin_instead">Utiliser le code PIN à la place</string>
     <!-- strings used for biometric enrollment -->
@@ -664,7 +667,7 @@
     <string name="signature">Signature</string>
     <string name="mobile_footer">Pied de page mobile</string>
     <string name="edit_mobile_footer">Activer le pied de page mobile</string>
-    <string name="default_mobile_footer">Envoyé depuis ProtonMail mobile</string>
+    <string name="default_mobile_footer">Envoyé depuis Proton Mail mobile</string>
     <string name="mobile_footer_is_premium">La modification du pied de page mobile est autorisée uniquement aux utilisateurs payants</string>
     <string name="mobile_footer_info">Ce pied de page est ajouté après votre signature</string>
     <!-- region Snooze Settings -->
@@ -792,7 +795,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférences antivirus&lt;/i&gt; : désactivez ou supprimez temporairement votre logiciel antivirus.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférences proxy/pare-feu&lt;/i&gt; : désactivez tout proxy ou pare-feu, ou contactez votre administrateur réseau.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton est en panne&lt;/i&gt; : vérifiez le &lt;a href=\"http://protonstatus.com/\"&gt;Statut Proton&lt;/a&gt; pour connaître l\'état de notre système.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez pas de solution&lt;/i&gt; : contactez-nous directement via notre &lt;a href=\"https://protonmail.com/support-form\"&gt;formulaire d’assistance&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;par e-mail&lt;/a&gt; (support@protonmail.zendesk.com) ou via &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez pas de solution&lt;/i&gt; : contactez-nous directement via notre &lt;a href=\"https://protonmail.com/support-form\"&gt;formulaire d’assistance&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;par e-mail&lt;/a&gt; (support@protonmail.zendesk.com) ou via &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

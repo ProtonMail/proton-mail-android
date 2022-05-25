@@ -1,0 +1,78 @@
+<!--
+  ~ Copyright (c) 2022 Proton AG
+  ~
+  ~ This file is part of Proton Mail.
+  ~
+  ~ Proton Mail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Mail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="552dp"
+            android:height="552dp"
+            android:viewportWidth="552"
+            android:viewportHeight="552">
+            <group
+                android:pivotX="276.0"
+                android:pivotY="276.0"
+                android:scaleX="0.70"
+                android:scaleY="0.70">
+                <path
+                    android:fillColor="#6D4AFF"
+                    android:pathData="M102,149.043C102,142.266 109.898,138.559 115.111,142.888L253,257.4C266.334,268.473 285.666,268.473 299,257.4L436.889,142.888C442.102,138.559 450,142.266 450,149.043V384C450,403.882 433.882,420 414,420H138C118.118,420 102,403.882 102,384V149.043Z" />
+                <path
+                    android:fillType="evenOdd"
+                    android:pathData="M322.981,237.457L323,237.473L253.558,298.814C241.728,309.263 224.046,309.526 211.911,299.434L102,208.026V149.015C102,142.239 109.898,138.532 115.111,142.861L253,257.372C266.334,268.446 285.666,268.446 299,257.372L322.981,237.457Z">
+                    <aapt:attr name="android:fillColor">
+                        <gradient
+                            android:endX="285.177"
+                            android:endY="-61.1683"
+                            android:startX="364.5"
+                            android:startY="277.473"
+                            android:type="linear">
+                            <item
+                                android:color="#FFE2DBFF"
+                                android:offset="0" />
+                            <item
+                                android:color="#FF6D4AFF"
+                                android:offset="1" />
+                        </gradient>
+                    </aapt:attr>
+                </path>
+                <path
+                    android:fillType="evenOdd"
+                    android:pathData="M376,193.455V420H414C433.882,420 450,403.881 450,384V149.043C450,142.266 442.102,138.558 436.889,142.889L376,193.455Z">
+                    <aapt:attr name="android:fillColor">
+                        <gradient
+                            android:endX="285.302"
+                            android:endY="25.2311"
+                            android:startX="556"
+                            android:startY="603.5"
+                            android:type="linear">
+                            <item
+                                android:color="#FFE2DBFF"
+                                android:offset="0.271019" />
+                            <item
+                                android:color="#FF6D4AFF"
+                                android:offset="1" />
+                        </gradient>
+                    </aapt:attr>
+                </path>
+            </group>
+        </vector>
+    </aapt:attr>
+</animated-vector>
+

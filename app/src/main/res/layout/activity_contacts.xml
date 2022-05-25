@@ -1,23 +1,23 @@
 <!--
-Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
+  ~
+  ~ This file is part of Proton Mail.
+  ~
+  ~ Proton Mail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Mail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
+  -->
 
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
-
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_contacts_main_content"
@@ -26,39 +26,54 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:fitsSystemWindows="true"
     tools:context=".contacts.ContactsActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar_contacts"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background_norm"
-        android:translationZ="@dimen/elevation_m">
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <include
-            android:id="@+id/toolbar_contacts"
-            layout="@layout/toolbar" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tablayout_contacts"
-            style="@style/CustomTabLayout"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar_contacts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@color/interaction_strong"
-            app:tabMode="fixed" />
+            android:background="@color/background_norm"
+            android:translationZ="@dimen/elevation_m"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <include
+                android:id="@+id/toolbar_contacts"
+                layout="@layout/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tablayout_contacts"
+                style="@style/CustomTabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                app:tabGravity="fill"
+                app:tabIndicatorColor="@color/interaction_strong"
+                app:tabMode="fixed" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager_contacts"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_height="0dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/coordinatorLayout" />
 
     <FrameLayout
         android:id="@+id/layout_no_connectivity_info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/coordinatorLayout" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_progress_contacts"
@@ -66,6 +81,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_height="match_parent"
         android:background="@color/background_norm"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:visibility="visible">
 
         <ProgressBar
@@ -77,8 +93,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ch.protonmail.android.views.CustomFontTextView
-            style="@style/App.Text.Subtitle"
+        <TextView
+            style="@style/Proton.Text.Default.Weak"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fields_default_space_small"
@@ -89,53 +105,50 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- TODO: library development has discontinued in 2016 -->
-    <com.github.clans.fab.FloatingActionMenu
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_contacts_add_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_m"
+        app:srcCompat="@drawable/ic_proton_user_plus"
+        app:backgroundTint="@color/interaction_strong"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="@id/fab_contacts_add_menu"
+        app:layout_constraintEnd_toEndOf="@id/fab_contacts_add_menu"
+        app:layout_constraintStart_toStartOf="@id/fab_contacts_add_menu"
+        app:layout_constraintTop_toTopOf="@id/fab_contacts_add_menu"
+        app:rippleColor="?attr/brand_norm"
+        app:tint="@color/icon_inverted"
+        tools:ignore="VectorDrawableCompat" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_contacts_add_contact_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_m"
+        app:srcCompat="@drawable/ic_proton_users_plus"
+        app:backgroundTint="@color/interaction_strong"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="@id/fab_contacts_add_menu"
+        app:layout_constraintEnd_toEndOf="@id/fab_contacts_add_menu"
+        app:layout_constraintStart_toStartOf="@id/fab_contacts_add_menu"
+        app:layout_constraintTop_toTopOf="@id/fab_contacts_add_menu"
+        app:rippleColor="?attr/brand_norm"
+        app:tint="@color/icon_inverted"
+        tools:ignore="VectorDrawableCompat" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_contacts_add_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/ic_proton_plus"
+        app:backgroundTint="@color/interaction_strong"
+        app:fabSize="normal"
         app:layout_collapseMode="parallax"
-        app:menu_colorNormal="@color/interaction_strong"
-        app:menu_colorPressed="@color/dark_purple_statusbar"
-        app:menu_colorRipple="@color/dark_purple_statusbar"
-        app:menu_icon="@drawable/ic_add_inverted"
-        app:menu_labels_colorNormal="@color/white"
-        app:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
-        app:menu_labels_position="@integer/fab_label_start"
-        app:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
-        app:menu_labels_showShadow="true"
-        app:menu_labels_singleLine="true"
-        app:menu_labels_textColor="@color/dark_purple"
-        app:menu_labels_textSize="14sp"
-        app:menu_openDirection="up"
-        app:menu_showShadow="true">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="?attr/brand_norm"
+        app:tint="@color/icon_inverted" />
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_contacts_add_contact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_contact_add"
-            app:fab_colorNormal="@color/interaction_strong"
-            app:fab_colorPressed="@color/dark_purple_statusbar"
-            app:fab_label="@string/fab_add_contact"
-            app:fab_size="mini"
-            app:menu_colorRipple="@color/dark_purple_statusbar"
-            tools:ignore="VectorDrawableCompat" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_contacts_add_contact_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_contacts_group_add"
-            app:fab_colorNormal="@color/interaction_strong"
-            app:fab_colorPressed="@color/dark_purple_statusbar"
-            app:fab_label="@string/fab_add_contact_group"
-            app:fab_size="mini"
-            app:menu_colorRipple="@color/dark_purple_statusbar"
-            tools:ignore="VectorDrawableCompat" />
-
-    </com.github.clans.fab.FloatingActionMenu>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

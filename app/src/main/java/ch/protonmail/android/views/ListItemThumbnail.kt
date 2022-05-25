@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
 package ch.protonmail.android.views
@@ -33,6 +33,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
 import ch.protonmail.android.R
+import ch.protonmail.android.utils.extensions.getColorFromAttr
 import timber.log.Timber
 
 private const val TEXT_SIZE_PROPORTION = 2.75f
@@ -51,7 +52,7 @@ class ListItemThumbnail @JvmOverloads constructor(
         color = ContextCompat.getColor(context, R.color.interaction_weak)
     }
     private val borderPaint = Paint(ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.cornflower_blue)
+        color = context.getColorFromAttr(R.attr.brand_norm)
         style = Paint.Style.STROKE
         strokeWidth = context.resources.getDimension(R.dimen.padding_xxs)
     }
@@ -72,14 +73,15 @@ class ListItemThumbnail @JvmOverloads constructor(
         }
 
     @DrawableRes
-    var iconResource = R.drawable.ic_contact_groups_filled
+    var iconResource = R.drawable.ic_proton_users_filled
         set(value) {
             iconDrawable = AppCompatResources.getDrawable(context, value)
+            iconDrawable?.setTint(ContextCompat.getColor(context, R.color.icon_norm))
             text = ""
         }
     private var iconDrawable = AppCompatResources.getDrawable(context, iconResource)
 
-    private val checkIconDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_check_white)
+    private val checkIconDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_proton_checkmark)?.mutate()
 
     private var isMultiselectModeActive: Boolean = false
 
@@ -92,7 +94,7 @@ class ListItemThumbnail @JvmOverloads constructor(
         ) {
             val defaultCircleSize = context.resources.getDimensionPixelSize(R.dimen.padding_3xl)
             circleSize = getDimensionPixelSize(R.styleable.ListItemThumbnail_circleSize, defaultCircleSize)
-            iconResource = getResourceId(R.styleable.ListItemThumbnail_icon, R.drawable.ic_contact_groups_filled)
+            iconResource = getResourceId(R.styleable.ListItemThumbnail_icon, R.drawable.ic_proton_users_filled)
         }
     }
 
@@ -137,6 +139,7 @@ class ListItemThumbnail @JvmOverloads constructor(
         borderPaint.style = Paint.Style.FILL
         canvas.drawCircle(centerX, centerY, centerX, borderPaint)
 
+        checkIconDrawable?.setTint(ContextCompat.getColor(context, R.color.icon_inverted))
         val imageWidth = checkIconDrawable?.intrinsicWidth?.div(2) ?: 0
         val imageHeight = checkIconDrawable?.intrinsicHeight?.div(2) ?: 0
         checkIconDrawable?.setBounds(

@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2022 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.navigation.presentation
 
@@ -56,7 +56,6 @@ import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
 import ch.protonmail.android.notifications.presentation.utils.EXTRA_USER_ID
 import ch.protonmail.android.pinlock.presentation.PinLockManager
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
@@ -361,13 +360,7 @@ internal abstract class NavigationActivity : BaseActivity() {
             R.string.open_drawer,
             R.string.close_drawer
         )
-        drawerLayout.setStatusBarBackgroundColor(
-            UiUtil.scaleColor(
-                getColor(R.color.dark_purple),
-                0.6f,
-                true
-            )
-        )
+
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
         setUpInitialDrawerItems(userManager.currentLegacyUser?.isUsePin ?: false)
 
@@ -398,27 +391,27 @@ internal abstract class NavigationActivity : BaseActivity() {
 
         sideDrawer.setLocationItems(
             listOf(
-                Primary.Static(Type.INBOX, R.string.inbox, R.drawable.ic_inbox),
-                Primary.Static(Type.DRAFTS, R.string.drafts, R.drawable.ic_drafts),
-                Primary.Static(Type.SENT, R.string.sent, R.drawable.ic_paper_plane),
-                Primary.Static(Type.STARRED, R.string.starred, R.drawable.ic_star),
-                Primary.Static(Type.ARCHIVE, R.string.archive, R.drawable.ic_archive),
-                Primary.Static(Type.SPAM, R.string.spam, R.drawable.ic_fire),
-                Primary.Static(Type.TRASH, R.string.trash, R.drawable.ic_trash),
-                Primary.Static(Type.ALLMAIL, R.string.all_mail, R.drawable.ic_envelope_all_emails)
+                Primary.Static(Type.INBOX, R.string.inbox, R.drawable.ic_proton_inbox),
+                Primary.Static(Type.DRAFTS, R.string.drafts, R.drawable.ic_proton_file),
+                Primary.Static(Type.SENT, R.string.sent, R.drawable.ic_proton_paper_plane),
+                Primary.Static(Type.STARRED, R.string.starred, R.drawable.ic_proton_star),
+                Primary.Static(Type.ARCHIVE, R.string.archive, R.drawable.ic_proton_archive_box),
+                Primary.Static(Type.SPAM, R.string.spam, R.drawable.ic_proton_fire),
+                Primary.Static(Type.TRASH, R.string.trash, R.drawable.ic_proton_trash),
+                Primary.Static(Type.ALLMAIL, R.string.all_mail, R.drawable.ic_proton_envelopes)
             )
         )
 
         sideDrawer.setMoreItems(
             R.string.x_more,
             listOfNotNull(
-                Primary.Static(Type.SETTINGS, R.string.drawer_settings, R.drawable.ic_sliders_two),
-                Primary.Static(Type.SUBSCRIPTION, R.string.drawer_subscription, R.drawable.ic_pencil),
-                Primary.Static(Type.CONTACTS, R.string.drawer_contacts, R.drawable.ic_book_contacts),
-                Primary.Static(Type.REPORT_BUGS, R.string.drawer_report_bug, R.drawable.ic_bug),
-                if (hasPin) Primary.Static(Type.LOCK, R.string.drawer_lock_the_app, R.drawable.ic_lock)
+                Primary.Static(Type.SETTINGS, R.string.drawer_settings, R.drawable.ic_proton_cog_wheel),
+                Primary.Static(Type.SUBSCRIPTION, R.string.drawer_subscription, R.drawable.ic_proton_pencil),
+                Primary.Static(Type.CONTACTS, R.string.drawer_contacts, R.drawable.ic_proton_users),
+                Primary.Static(Type.REPORT_BUGS, R.string.drawer_report_bug, R.drawable.ic_proton_bug),
+                if (hasPin) Primary.Static(Type.LOCK, R.string.drawer_lock_the_app, R.drawable.ic_proton_lock)
                 else null,
-                Primary.Static(Type.SIGNOUT, R.string.drawer_sign_out, R.drawable.ic_sign_out)
+                Primary.Static(Type.SIGNOUT, R.string.drawer_sign_out, R.drawable.ic_proton_arrow_out_from_rectangle)
             )
         )
 

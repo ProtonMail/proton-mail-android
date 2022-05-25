@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/labels_dialog_bg"
+    android:background="@color/background_norm"
     android:minWidth="@dimen/manage_labels_min_width"
     android:orientation="vertical"
-    android:paddingBottom="0dp"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="0dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -35,6 +34,7 @@
 
         <TextView
             android:id="@+id/dialog_title"
+            style="@style/Proton.Text.Default"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -42,10 +42,10 @@
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:padding="0dp"
             android:text="@string/notifications_snooze"
-            android:textColor="#505061"
-            android:textSize="20sp" />
+            android:textColor="?attr/proton_interaction_norm" />
 
-        <ch.protonmail.android.views.CustomFontTextView
+        <TextView
+            style="@style/Proton.Text.DefaultSmall.Interaction"
             android:id="@+id/notifications_resume_in"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,10 +54,7 @@
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/fields_default_space"
             android:padding="0dp"
-            android:textColor="#505061"
-            android:textSize="14sp"
-            android:visibility="gone"
-            app:fontName="Roboto-Thin.ttf" />
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -90,7 +87,7 @@
                     android:singleLine="true"
                     android:text="@string/turn_off"
                     android:textAllCaps="true"
-                    android:textColor="@color/red"
+                    android:textColor="@color/notification_error"
                     android:textSize="@dimen/h5" />
 
             </FrameLayout>

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2022 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Új mappa</string>
     <string name="x_add_label">Új címke</string>
     <string name="x_days">Nap</string>
@@ -77,7 +77,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s-kor, %s &lt; %s&gt; ezt írta:</string>
     <string name="set_msg_password_title">Jelszó beállítása</string>
-    <string name="set_msg_password_info">Állítson be egy jelszót, hogy titkosítsa ezt az üzenetet a ProtonMailt nem használóknak. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">További információk</a></string>
+    <string name="set_msg_password_info">Állítson be egy jelszót, hogy titkosítsa ezt az üzenetet a Proton Mailt nem használóknak. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">További információk</a></string>
     <string name="set_msg_password_info_icon_description">Infó</string>
     <string name="set_msg_password_msg_password_title">Üzenet jelszó</string>
     <string name="set_msg_password_msg_password_hint">4-től 21 karakter hosszúságig</string>
@@ -155,7 +155,7 @@
     <string name="snackbar_action_discard">Elvetés</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Kijelentkezés</string>
     <string name="sign_out_question">Biztos, hogy ki szeretne jelentkezni?</string>
     <string name="processing_request">A kérés feldolgozás alatt</string>
@@ -168,9 +168,9 @@
     <string name="no_more_messages">Nincs több üzenet</string>
     <string name="no_network_queued">Nincs hálózat, az üzenet várólistára került</string>
     <string name="update_app_title">Frissítés szükséges</string>
-    <string name="update_app">A ProtonMail alkalmazás nem használható, amíg nincs frissítve</string>
+    <string name="update_app">A Proton Mail alkalmazás nem használható, amíg nincs frissítve</string>
     <string name="you_are_offline">Offline vagy</string>
-    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Névjegy elmentve</string>
     <string name="contact_saved_offline">Névjegy elmentve. A kapcsolat helyreállásakor lesz szinkronizálva.</string>
     <string name="contact_exist">Contact email already exists</string>
@@ -198,7 +198,7 @@
     <string name="all_mail">Összes levél</string>
     <string name="contacts">Névjegyek</string>
     <string name="search_contacts">Névjegyek keresése</string>
-    <string name="fetching_contacts">ProtonMail névjegyek lekérése...</string>
+    <string name="fetching_contacts">Proton Mail névjegyek lekérése...</string>
     <string name="fetching_contacts_success">Névjegyek sikeresen frissítve</string>
     <string name="fetching_contacts_failure">Nem sikerült a névjegyek frissítése</string>
     <string name="no_search_results">Nincs találat</string>
@@ -274,7 +274,7 @@
     <string name="invalid_email_address">A cím érvénytelen: %s</string>
     <string name="invalid_email_address_removed">A %s cím érvénytelen és eltávolításra került</string>
     <string name="no_recipients_specified">Kérjük adjon meg legalább egy címzettet</string>
-    <string name="no_password_specified">Lejárati idő csak teljesen titkosított üzenetekhez adható meg. Kérjük, adjon meg egy jelszót a nem ProtonMail címzettekhez.</string>
+    <string name="no_password_specified">Lejárati idő csak teljesen titkosított üzenetekhez adható meg. Kérjük, adjon meg egy jelszót a nem Proton Mail címzettekhez.</string>
     <string name="attachment_limit">A mellékletek maximális mérete: %1$s. Jelenleg %2$s melléklet van megadva.</string>
     <string name="sending_message">Üzenet küldése...</string>
     <string name="sending_message_offline">Nincs hálózat, az üzenet várólistára került...</string>
@@ -286,7 +286,7 @@
     <string name="cancel">Mégsem</string>
     <string name="close">Bezárás</string>
     <string name="eo_password_title">Jelszó beállítása</string>
-    <string name="eo_password_subtitle">Állítson be egy jelszót a nem ProtonMail felhasználók számára küldött titkosított üzenethez</string>
+    <string name="eo_password_subtitle">Állítson be egy jelszót a nem Proton Mail felhasználók számára küldött titkosított üzenethez</string>
     <string name="eo_password_more_info">További információ</string>
     <string name="no_attachments">0 melléklet</string>
     <string name="display_name_banned_chars">Érvénytelen megjelenítési név. \"&gt;\" és \"&lt;\" nem megengedett</string>
@@ -389,7 +389,7 @@
     <string name="contact_details">Névjegy részletei</string>
     <string name="email_type_home">Otthoni</string>
     <string name="type_title">Válasszon típust</string>
-    <string name="sync_local_contacts">Feltöltés a ProtonMailre</string>
+    <string name="sync_local_contacts">Feltöltés a Proton Mailre</string>
     <string name="please_select_only_phone_contacts">Csak helyi telefon névjegyeket válasszon</string>
     <string name="contact_vcard_hint_email">Írja be az e-mail címet</string>
     <string name="contact_vcard_hint_phone">Írjuk be a telefonszámot</string>
@@ -467,7 +467,7 @@
     <string name="details_copied">Adatok a vágólapra másolva</string>
     <string name="saving">Mentés...</string>
     <string name="update_folder">Mappa frissítése</string>
-    <string name="spam_score_100">Ez az e-mail a ProtonMailról feladottnak tűnik, de külső rendszerből érkezett és nem felelt meg az ellenőrzési követelményeknek. Lehet becsapós üzenet vagy hibásan továbbított!</string>
+    <string name="spam_score_100">Ez az e-mail a Proton Mailról feladottnak tűnik, de külső rendszerből érkezett és nem felelt meg az ellenőrzési követelményeknek. Lehet becsapós üzenet vagy hibásan továbbított!</string>
     <string name="spam_score_101">Az e-mail nem felelt meg a domain név ellenőrzési követelményeinek. Lehet becsapós üzenet vagy hibásan továbbított!</string>
     <string name="spam_score_102">Ez az üzenet lehetséges, hogy egy adathalászati kísérlet! Kérjük, alaposan ellenőrizze, hogy a feladó és az üzenet szövege megbízható-e. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">TOVÁBBI INFORMÁCIÓK</a></string>
     <string name="print_from_template">Feladó: %s</string>
@@ -493,10 +493,10 @@
     <string name="email_empty">E-mail cím hiányzik</string>
     <string name="encrypted_contact_details">Titkosított névjegy adatok</string>
     <string name="convert_question">Helyi névjegyek felötlése</string>
-    <string name="convert_question_subtitle">Ezzel a funkcióval az eszközön lévő névjegyek tölthetők be a ProtonMail névjegyeihez. Ezután ezeket a névjegyeket az összes ProtonMail felületen használhatja.</string>
+    <string name="convert_question_subtitle">Ezzel a funkcióval az eszközön lévő névjegyek tölthetők be a Proton Mail névjegyeihez. Ezután ezeket a névjegyeket az összes Proton Mail felületen használhatja.</string>
     <string name="refresh_contacts">Frissítés</string>
     <string name="invalid_email_some_contacts">Némelyik névjegyben érvénytelen e-mail cím szerepel</string>
-    <string name="protonmail_contacts">ProtonMail névjegyek</string>
+    <string name="protonmail_contacts">Proton Mail névjegyek</string>
     <string name="device_contacts">Eszköz névjegyek</string>
     <string name="print_date_template">Dátum: %s</string>
     <string name="print_attachment_template">Melléklet: %s;  </string>
@@ -508,7 +508,7 @@
     <string name="remove_password_question">Jelszó eltávolítása?</string>
     <string name="attachment_storage_value_current">Jelenleg kiválasztva: %d MB</string>
     <string name="attachment_storage_value_current_unlimited">Jelenleg kiválasztva: Korlátlan</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space Proton Mail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Hiba a beágyazott képek betöltésekor. Ellenőrizze a kapcsolatot.</string>
     <string name="load_embedded_images_failed">Hiba a beágyazott képek betöltésekor.</string>
     <string name="unlimited">Korlátlan</string>
@@ -525,7 +525,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Ön által küldve, végpontok közt titkosítva</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">A ProtonMail küldte, Zéró Hozzáférés titkosítással</string>
+    <string name="sender_lock_sent_autoresponder">A Proton Mail küldte, Zéró Hozzáférés titkosítással</string>
     <string name="sender_lock_verification_failed">A küldő ellenőrzése sikertelen volt</string>
     <string name="sender_lock_pgp_encrypted">PGP titkosított üzenet</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP titkosított üzenet, ellenőrzött címről</string>
@@ -633,7 +633,7 @@
         access to storage.</string>
     <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
     <string name="push_notifications_alert_title">Push értesítés riasztás</string>
-    <string name="push_notifications_alert_subtitle">A ProtonMail push értesítések nem működnek a legújabb Google Play szolgáltatások nélkül.</string>
+    <string name="push_notifications_alert_subtitle">A Proton Mail push értesítések nem működnek a legújabb Google Play szolgáltatások nélkül.</string>
     <string name="app_locked">Az alkalmazás zárolt</string>
     <string name="use_pin_instead">Inkább PIN-kód használata</string>
     <!-- strings used for biometric enrollment -->
@@ -664,7 +664,7 @@
     <string name="signature">Aláírás</string>
     <string name="mobile_footer">Mobile footer</string>
     <string name="edit_mobile_footer">Enable mobile footer</string>
-    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
+    <string name="default_mobile_footer">Sent from Proton Mail mobile</string>
     <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
     <string name="mobile_footer_info">This footer is added after your signature</string>
     <!-- region Snooze Settings -->
@@ -717,7 +717,7 @@
     <string name="mailbox">Postafiók</string>
     <string name="privacy">Adatvédelem</string>
     <string name="auto_download_messages_title">Üzenetek automatikus letöltése</string>
-    <string name="auto_download_messages_subtitle">Bekapcsolásakor a ProtonMail a háttérben automatikusan letölti az új üzenetek törzsét (több adatforgalmat igényel). Ha ki van kapcsolva, a ProtonMail az üzenet törzsét csak az üzenet megnyitásakor tölti le. (Megjegyzés: ha törli a gyorstárat vagy kijelentkezik, akkor egyik esetben sem tudja elolvasni a levelet, amikor nincs internetkapcsolat.)</string>
+    <string name="auto_download_messages_subtitle">Bekapcsolásakor a Proton Mail a háttérben automatikusan letölti az új üzenetek törzsét (több adatforgalmat igényel). Ha ki van kapcsolva, a Proton Mail az üzenet törzsét csak az üzenet megnyitásakor tölti le. (Megjegyzés: ha törli a gyorstárat vagy kijelentkezik, akkor egyik esetben sem tudja elolvasni a levelet, amikor nincs internetkapcsolat.)</string>
     <string name="settings_background_sync">Szinkronizálás háttérben</string>
     <string name="settings_auto_show_images">Távoli képek automatikus megjelenítése</string>
     <string name="settings_auto_show_embedded_images">Beágyazott képek automatikus megjelenítése</string>

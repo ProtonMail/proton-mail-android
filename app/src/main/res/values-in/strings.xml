@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2022 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Tambah folder</string>
     <string name="x_add_label">Tambah label</string>
     <string name="x_days">Hari</string>
@@ -77,7 +77,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Pada %s, %s &lt; %s&gt; menulis:</string>
     <string name="set_msg_password_title">Setel kata sandi</string>
-    <string name="set_msg_password_info">Tentukan kata sandi untuk dapat mengenkripsi pesan ini bagi para pengguna non-ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Pelajari lebih lanjut</a></string>
+    <string name="set_msg_password_info">Tentukan kata sandi untuk dapat mengenkripsi pesan ini bagi para pengguna non-Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Pelajari lebih lanjut</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Kata sandi pesan</string>
     <string name="set_msg_password_msg_password_hint">panjang 8 hingga 21 karakter</string>
@@ -155,7 +155,7 @@
     <string name="snackbar_action_discard">Hapus</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Keluar</string>
     <string name="sign_out_question">Apakah Anda yakin anda ingin keluar?</string>
     <string name="processing_request">Permintaan Anda sedang diproses</string>
@@ -168,9 +168,9 @@
     <string name="no_more_messages">Tidak ada pesan lagi</string>
     <string name="no_network_queued">Tidak ada jaringan, pesan diantrekan</string>
     <string name="update_app_title">Butuh pembaruan</string>
-    <string name="update_app">Aplikasi ProtonMail Anda tidak dapat digunakan karena perlu diperbarui</string>
+    <string name="update_app">Aplikasi Proton Mail Anda tidak dapat digunakan karena perlu diperbarui</string>
     <string name="you_are_offline">Anda sedang offline</string>
-    <string name="api_offline">ProtonMail sedang luring. Kunjungi https://protonstatus.com atau Twitter kami untuk mengetahui status saat ini: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail sedang luring. Kunjungi https://protonstatus.com atau Twitter kami untuk mengetahui status saat ini: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontak telah tersimpan</string>
     <string name="contact_saved_offline">Kontak tersimpan, akan disinkronkan saat koneksi tersedia</string>
     <string name="contact_exist">Email kontak sudah ada</string>
@@ -198,7 +198,7 @@
     <string name="all_mail">Semua Surat</string>
     <string name="contacts">Kontak</string>
     <string name="search_contacts">Cari kontak</string>
-    <string name="fetching_contacts">Mengambil kontak ProtonMail...</string>
+    <string name="fetching_contacts">Mengambil kontak Proton Mail...</string>
     <string name="fetching_contacts_success">Kontak berhasil dimuat ulang</string>
     <string name="fetching_contacts_failure">Tidak dapat menyegarkan kontak</string>
     <string name="no_search_results">Tidak ada hasil pencarian</string>
@@ -273,7 +273,7 @@
     <string name="invalid_email_address">Alamat \'%s\' tidak valid</string>
     <string name="invalid_email_address_removed">Alamat \'%s\' tidak valid dan telah dihapus</string>
     <string name="no_recipients_specified">Harap tambahkan setidaknya satu penerima</string>
-    <string name="no_password_specified">Waktu kedaluwarsa hanya dapat diatur pada pesan terenkripsi penuh. Harap tentukan kata sandi untuk penerima non-ProtonMail Anda.</string>
+    <string name="no_password_specified">Waktu kedaluwarsa hanya dapat diatur pada pesan terenkripsi penuh. Harap tentukan kata sandi untuk penerima non-Proton Mail Anda.</string>
     <string name="attachment_limit">Lampiran dibatasi hingga %1$s. Total terlampir seharusnya menjadi %2$s.</string>
     <string name="sending_message">Mengirim pesan...</string>
     <string name="sending_message_offline">Anda sedang offline. Pesan Anda telah diantrikan...</string>
@@ -285,7 +285,7 @@
     <string name="cancel">Batal</string>
     <string name="close">Tutup</string>
     <string name="eo_password_title">Atur Kata Sandi</string>
-    <string name="eo_password_subtitle">Atur kata sandi untuk mengenkripsi pesan ini untuk pengguna non-ProtonMail</string>
+    <string name="eo_password_subtitle">Atur kata sandi untuk mengenkripsi pesan ini untuk pengguna non-Proton Mail</string>
     <string name="eo_password_more_info">Dapatkan lebih banyak informasi</string>
     <string name="no_attachments">0 Lampiran</string>
     <string name="display_name_banned_chars">Nama tampilan tidak valid. \'&gt;\' dan \'&lt;\' tidak diizinkan</string>
@@ -387,7 +387,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="contact_details">Rincian Kontak</string>
     <string name="email_type_home">Rumah</string>
     <string name="type_title">Pilih Jenis</string>
-    <string name="sync_local_contacts">Unggah ke ProtonMail</string>
+    <string name="sync_local_contacts">Unggah ke Proton Mail</string>
     <string name="please_select_only_phone_contacts">Harap pilih hanya Kontak Telepon Lokal</string>
     <string name="contact_vcard_hint_email">Masukkan Email</string>
     <string name="contact_vcard_hint_phone">Masukkan Nomor Telepon</string>
@@ -465,7 +465,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="details_copied">Rincian disalin ke clipboard</string>
     <string name="saving">Menyimpan...</string>
     <string name="update_folder">Perbarui Folder</string>
-    <string name="spam_score_100">Walaupun email ini sekilas terlihat seperti dikirim dari alamat ProtonMail, email ini sepertinya berasal dari luar sistem kami dan tidak memenuhi persyaratan otentikasi yang kami miliki. Email ini mungkin palsu atau tidak diteruskan dengan benar!</string>
+    <string name="spam_score_100">Walaupun email ini sekilas terlihat seperti dikirim dari alamat Proton Mail, email ini sepertinya berasal dari luar sistem kami dan tidak memenuhi persyaratan otentikasi yang kami miliki. Email ini mungkin palsu atau tidak diteruskan dengan benar!</string>
     <string name="spam_score_101">Email ini tidak memenuhi syarat otentikasi domainnya. Email ini mungkin telah dipalsukan atau tidak diteruskan dengan benar!</string>
     <string name="spam_score_102">Pesan ini mungkin merupakan sebuah upaya phishing. Mohon periksa nama pengirim dan konten yang tertera secara seksama untuk memastikan keabsahan email ini. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">PELAJARI LEBIH LANJUT</a></string>
     <string name="print_from_template">Dari: %s</string>
@@ -491,10 +491,10 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="email_empty">Alamat email tidak ada</string>
     <string name="encrypted_contact_details">Rincian Kontak Terenkripsi</string>
     <string name="convert_question">Unggah kontak lokal</string>
-    <string name="convert_question_subtitle">Ini akan mengunggah kontak lokal pada perangkat Anda ke direktori kontak ProtonMail Anda. Anda kemudian dapat mengakses kontak ini di perangkat Anda yang lain melalui ProtonMail.</string>
+    <string name="convert_question_subtitle">Ini akan mengunggah kontak lokal pada perangkat Anda ke direktori kontak Proton Mail Anda. Anda kemudian dapat mengakses kontak ini di perangkat Anda yang lain melalui Proton Mail.</string>
     <string name="refresh_contacts">Muat Ulang</string>
     <string name="invalid_email_some_contacts">Alamat email sebagian kontak Anda tidak valid</string>
-    <string name="protonmail_contacts">Kontak ProtonMail</string>
+    <string name="protonmail_contacts">Kontak Proton Mail</string>
     <string name="device_contacts">Kontak Perangkat</string>
     <string name="print_date_template">Tanggal: %s</string>
     <string name="print_attachment_template">Lampiran: %s;  </string>
@@ -506,7 +506,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="remove_password_question">Hapus Kata Sandi?</string>
     <string name="attachment_storage_value_current">Sedang dipilih: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Sedang dipilih: Tidak terbatas</string>
-    <string name="attachment_offline_max_storage">Mengatur jumlah ruang penyimpanan maksimum yang dapat digunakan ProtonMail di perangkat seluler Anda.</string>
+    <string name="attachment_offline_max_storage">Mengatur jumlah ruang penyimpanan maksimum yang dapat digunakan Proton Mail di perangkat seluler Anda.</string>
     <string name="load_embedded_images_failed_no_network">Gagal memuat gambar-gambar yang tersemat. Mohon periksa koneksi internet Anda.</string>
     <string name="load_embedded_images_failed">Gagal memuat gambar-gambar yang tersemat.</string>
     <string name="unlimited">Tanpa Batas</string>
@@ -523,7 +523,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Dikirim oleh Anda dengan enkripsi end-to-end</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Dikirim oleh ProtonMail dengan enkripsi akses nol</string>
+    <string name="sender_lock_sent_autoresponder">Dikirim oleh Proton Mail dengan enkripsi akses nol</string>
     <string name="sender_lock_verification_failed">Verifikasi pengirim gagal</string>
     <string name="sender_lock_pgp_encrypted">Pesan terenkripsi PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Pesan terenkripsi PGP dari alamat terverifikasi</string>
@@ -627,7 +627,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
         memberikan kami izin akses ke dalam perangkat Anda.</string>
     <string name="need_contacts_permissions_text">Untuk mengimpor kontak, Anda harus mengizinkan akses ke kontak.</string>
     <string name="push_notifications_alert_title">Notifikasi Pemberitahuan Push</string>
-    <string name="push_notifications_alert_subtitle">Pemberitahuan Push untuk ProtonMail tidak dapat berfungsi tanpa memperbarui layanan Google Play.</string>
+    <string name="push_notifications_alert_subtitle">Pemberitahuan Push untuk Proton Mail tidak dapat berfungsi tanpa memperbarui layanan Google Play.</string>
     <string name="app_locked">Aplikasi terkunci</string>
     <string name="use_pin_instead">Gunakan PIN sebagai gantinya</string>
     <!-- strings used for biometric enrollment -->
@@ -658,7 +658,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="signature">Tanda tangan</string>
     <string name="mobile_footer">Footer selular</string>
     <string name="edit_mobile_footer">Aktifkan footer selular</string>
-    <string name="default_mobile_footer">Dikirim dari ProtonMail selular</string>
+    <string name="default_mobile_footer">Dikirim dari Proton Mail selular</string>
     <string name="mobile_footer_is_premium">Mengubah Footer Selular diizinkan hanya untuk pengguna Berbayar</string>
     <string name="mobile_footer_info">Footer ini ditambahkan setelah tanda tangan Anda</string>
     <!-- region Snooze Settings -->

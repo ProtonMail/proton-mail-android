@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2022 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
 package ch.protonmail.android.notifications.domain
@@ -58,6 +58,7 @@ import javax.inject.Inject
 const val KEY_PUSH_NOTIFICATION_UID = "UID"
 const val KEY_PUSH_NOTIFICATION_ENCRYPTED_MESSAGE = "encryptedMessage"
 const val KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR = "ProcessPushNotificationDataError"
+private const val PROCESS_PUSH_NOTIFICATION_DATA_WORKER_ID = "ProcessPushNotificationDataWorker"
 
 /**
  * A worker that is responsible for processing the data payload of the received FCM push notifications.
@@ -83,7 +84,7 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
         // and are important to the user
         setForeground(
             ForegroundInfo(
-                id.hashCode(),
+                PROCESS_PUSH_NOTIFICATION_DATA_WORKER_ID.hashCode(),
                 notificationServer.createRetrievingNotificationsNotification()
             )
         )

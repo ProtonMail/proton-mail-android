@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/mark_as_unread"
-                app:drawableStartCompat="@drawable/ic_envelope_dot"
+                app:drawableStartCompat="@drawable/ic_proton_envelope_dot"
                 tools:visibility="visible" />
 
             <TextView
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/mark_as_read"
                 android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_envelope_read"
+                app:drawableStartCompat="@drawable/ic_proton_envelope_open"
                 tools:visibility="visible" />
 
 
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/star"
                 android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_star"
+                app:drawableStartCompat="@drawable/ic_proton_star"
                 app:drawableTint="@color/icon_norm"
                 tools:visibility="visible" />
 
@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/unstar"
                 android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_star_remove"
+                app:drawableStartCompat="@drawable/ic_proton_star_slash"
                 tools:visibility="visible" />
 
             <TextView
@@ -102,7 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_as"
-                app:drawableStartCompat="@drawable/ic_label" />
+                app:drawableStartCompat="@drawable/ic_proton_tag" />
 
             <TextView
                 android:id="@+id/details_actions_view_in_light_mode_text_view"
@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/action_sheet_view_in_light_mode"
                 android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_sun"
+                app:drawableStartCompat="@drawable/ic_proton_sun"
                 tools:visibility="visible" />
 
             <TextView
@@ -121,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/action_sheet_view_in_dark_mode"
                 android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_moon"
+                app:drawableStartCompat="@drawable/ic_proton_moon"
                 tools:visibility="visible" />
 
             <View style="@style/ViewSeparatorHorizontal" />
@@ -138,7 +138,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_inbox"
-                app:drawableStartCompat="@drawable/ic_inbox"
+                app:drawableStartCompat="@drawable/ic_proton_inbox"
                 app:drawableTint="@color/icon_norm"/>
 
             <TextView
@@ -147,7 +147,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_trash"
-                app:drawableStartCompat="@drawable/ic_trash"
+                app:drawableStartCompat="@drawable/ic_proton_trash"
                 app:drawableTint="@color/icon_norm"/>
 
             <TextView
@@ -156,7 +156,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_archive"
-                app:drawableStartCompat="@drawable/ic_archive"
+                app:drawableStartCompat="@drawable/ic_proton_archive_box"
                 app:drawableTint="@color/icon_norm"/>
 
             <TextView
@@ -165,7 +165,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/delete"
-                app:drawableStartCompat="@drawable/ic_trash_empty" />
+                app:drawableStartCompat="@drawable/ic_proton_trash_cross" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to_spam"
@@ -173,7 +173,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_spam"
-                app:drawableStartCompat="@drawable/ic_fire" />
+                app:drawableStartCompat="@drawable/ic_proton_fire" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to"
@@ -181,7 +181,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to"
-                app:drawableStartCompat="@drawable/ic_move_to" />
+                app:drawableStartCompat="@drawable/ic_proton_folder_arrow_in" />
 
             <View
                 android:id="@+id/view_action_sheet_separator"
@@ -200,7 +200,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/print"
-                app:drawableStartCompat="@drawable/ic_print" />
+                app:drawableStartCompat="@drawable/ic_proton_printer" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_view_headers"
@@ -208,7 +208,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/view_headers"
-                app:drawableStartCompat="@drawable/ic_header_info" />
+                app:drawableStartCompat="@drawable/ic_proton_file_lines" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_report_phishing"
@@ -217,7 +217,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/report_phishing"
                 android:textColor="@color/notification_error"
-                app:drawableStartCompat="@drawable/ic_phishing"
+                app:drawableStartCompat="@drawable/ic_proton_hook"
                 app:drawableTint="@color/notification_error" />
 
             <View

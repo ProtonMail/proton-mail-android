@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2022 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Přidat složku</string>
     <string name="x_add_label">Přidat štítek</string>
     <string name="x_days">Dny</string>
@@ -77,7 +77,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; napsal:</string>
     <string name="set_msg_password_title">Nastavit heslo</string>
-    <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy uživatelům, kteří nepoužívají ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Další informace</a></string>
+    <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy uživatelům, kteří nepoužívají Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Další informace</a></string>
     <string name="set_msg_password_info_icon_description">Informace</string>
     <string name="set_msg_password_msg_password_title">Heslo zprávy</string>
     <string name="set_msg_password_msg_password_hint">4 až 21 znaků</string>
@@ -155,7 +155,7 @@
     <string name="snackbar_action_discard">Zahodit</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Odhlásit se</string>
     <string name="sign_out_question">Opravdu se chcete odhlásit?</string>
     <string name="processing_request">Váš požadavek se zpracovává</string>
@@ -170,7 +170,7 @@
     <string name="update_app_title">Je vyžadována aktualizace</string>
     <string name="update_app">Aplikaci Protonmail nelze použít dokud nebude aktualizována</string>
     <string name="you_are_offline">Jste v režimu offline</string>
-    <string name="api_offline">ProtonMail je nyní v režimu offline, zkontrolujte https://protonstatus.com pro aktuální stav: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail je nyní v režimu offline, zkontrolujte https://protonstatus.com pro aktuální stav: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt byl uložen</string>
     <string name="contact_saved_offline">Kontakt byl uložen, synchronizace proběhne po připojení k internetu.</string>
     <string name="contact_exist">E-mail kontaktu již existuje</string>
@@ -280,7 +280,7 @@
     <string name="invalid_email_address">Adresa \'%s\' je neplatná</string>
     <string name="invalid_email_address_removed">Adresa \'%s\' je neplatná a byla odstraněna</string>
     <string name="no_recipients_specified">Zadejte alespoň jednoho příjemce</string>
-    <string name="no_password_specified">Vypršení platnosti může být nastaveno pouze pro kompletně šifrované zprávy. Nastavte prosím heslo pro vaše příjemce, kteří nevyužívají služby ProtonMail.</string>
+    <string name="no_password_specified">Vypršení platnosti může být nastaveno pouze pro kompletně šifrované zprávy. Nastavte prosím heslo pro vaše příjemce, kteří nevyužívají služby Proton Mail.</string>
     <string name="attachment_limit">Přílohy jsou omezeny na %1$s. Celková velikost příloh bude: %2$s.</string>
     <string name="sending_message">Odesílání zprávy...</string>
     <string name="sending_message_offline">Odpojeno, zařazeno do fronty pro pozdější odeslání...</string>
@@ -292,7 +292,7 @@
     <string name="cancel">Zrušit</string>
     <string name="close">Zavřít</string>
     <string name="eo_password_title">Nastavit heslo</string>
-    <string name="eo_password_subtitle">Nastavit heslo pro šifrování zprávy uživatelům bez ProtonMailu</string>
+    <string name="eo_password_subtitle">Nastavit heslo pro šifrování zprávy uživatelům bez Proton Mailu</string>
     <string name="eo_password_more_info">Získat více informací</string>
     <string name="no_attachments">Bez příloh</string>
     <string name="display_name_banned_chars">Neplatné zobrazované jméno. \'&gt;\' a \'&lt;\' nejsou povoleny</string>
@@ -399,7 +399,7 @@
     <string name="contact_details">Kontaktní údaje</string>
     <string name="email_type_home">Domov</string>
     <string name="type_title">Vyberte typ</string>
-    <string name="sync_local_contacts">Nahrát na ProtonMail</string>
+    <string name="sync_local_contacts">Nahrát na Proton Mail</string>
     <string name="please_select_only_phone_contacts">Vyberte prosím pouze kontakty z Vašeho telefonu</string>
     <string name="contact_vcard_hint_email">Zadejte e-mail</string>
     <string name="contact_vcard_hint_phone">Zadejte telefonní číslo</string>
@@ -477,7 +477,7 @@
     <string name="details_copied">Detaily zkopírovány do schránky</string>
     <string name="saving">Ukládání...</string>
     <string name="update_folder">Aktualizace složky</string>
-    <string name="spam_score_100">Zdá se, že e-mail byl odeslán z adresy ProtonMail, ale pochází z externího systému a požadavky na ověření selhaly. E-mail může být falešný, nebo špatně přeposlaný!</string>
+    <string name="spam_score_100">Zdá se, že e-mail byl odeslán z adresy Proton Mail, ale pochází z externího systému a požadavky na ověření selhaly. E-mail může být falešný, nebo špatně přeposlaný!</string>
     <string name="spam_score_101">Zpráva nesplňuje požadavky na ověření domény odesílatele. Může být falešná, nebo špatně přeposlaná!</string>
     <string name="spam_score_102">Tato zpráva může být pokusem o phishing. Zkontrolujte odesílatele a obsah, abyste se ujistili, že jsou legitimní. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">VÍCE INFORMACÍ</a></string>
     <string name="print_from_template">Od: %s</string>
@@ -503,10 +503,10 @@
     <string name="email_empty">Chybí e-mailová adresa</string>
     <string name="encrypted_contact_details">Šifrované kontaktní údaje</string>
     <string name="convert_question">Nahrát místní kontakty</string>
-    <string name="convert_question_subtitle">Tímto nahrajete Vaše kontakty v zařízení do adresáře ProtonMail kontakty. Pak budete mít přístup k těmto kontaktům na ostatních zařízeních prostřednictvím služby ProtonMail.</string>
+    <string name="convert_question_subtitle">Tímto nahrajete Vaše kontakty v zařízení do adresáře Proton Mail kontakty. Pak budete mít přístup k těmto kontaktům na ostatních zařízeních prostřednictvím služby Proton Mail.</string>
     <string name="refresh_contacts">Obnovit</string>
     <string name="invalid_email_some_contacts">E-mailová adresa není platná pro některé z Vašich kontaktů</string>
-    <string name="protonmail_contacts">Kontakty ProtonMail</string>
+    <string name="protonmail_contacts">Kontakty Proton Mail</string>
     <string name="device_contacts">Kontakty zařízení</string>
     <string name="print_date_template">Datum: %s</string>
     <string name="print_attachment_template">Příloha: %s;  </string>
@@ -518,7 +518,7 @@
     <string name="remove_password_question">Odstranit heslo?</string>
     <string name="attachment_storage_value_current">Vybrané: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Vybrané: neomezeně</string>
-    <string name="attachment_offline_max_storage">Nastaví maximální velikost úložného prostoru ve Vašem mobilním zařízení, kterou ProtonMail může používat.</string>
+    <string name="attachment_offline_max_storage">Nastaví maximální velikost úložného prostoru ve Vašem mobilním zařízení, kterou Proton Mail může používat.</string>
     <string name="load_embedded_images_failed_no_network">Nahrání vložených obrázků se nezdařilo. Zkontrolujte prosím vaše síťové připojení.</string>
     <string name="load_embedded_images_failed">Nahrání vložených obrázků se nezdařilo.</string>
     <string name="unlimited">Bez omezení</string>
@@ -535,7 +535,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Odesláno Vámi s end-to-end šifrováním</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Odesláno pomocí ProtonMail s nulovým přístupem šifrování</string>
+    <string name="sender_lock_sent_autoresponder">Odesláno pomocí Proton Mail s nulovým přístupem šifrování</string>
     <string name="sender_lock_verification_failed">Ověření odesílatele se nezdařilo</string>
     <string name="sender_lock_pgp_encrypted">Zpráva šifrovaná pomocí PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Zpráva šifrovaná pomocí PGP z ověřené adresy</string>
@@ -651,7 +651,7 @@
         k úložišti.</string>
     <string name="need_contacts_permissions_text">Chcete-li importovat kontakty, musíte ke kontaktům povolit přístup.</string>
     <string name="push_notifications_alert_title">Oznámení Push notifikací</string>
-    <string name="push_notifications_alert_subtitle">Push notifikace pro ProtonMail nefungují bez aktuální verze služeb Google Play.</string>
+    <string name="push_notifications_alert_subtitle">Push notifikace pro Proton Mail nefungují bez aktuální verze služeb Google Play.</string>
     <string name="app_locked">Aplikace uzamčena</string>
     <string name="use_pin_instead">Použít raději PIN</string>
     <!-- strings used for biometric enrollment -->
@@ -682,7 +682,7 @@
     <string name="signature">Podpis</string>
     <string name="mobile_footer">Záhlaví Mobilu</string>
     <string name="edit_mobile_footer">Povolit mobilní zápatí</string>
-    <string name="default_mobile_footer">Odesláno z aplikace ProtonMail</string>
+    <string name="default_mobile_footer">Odesláno z aplikace Proton Mail</string>
     <string name="mobile_footer_is_premium">Změna Mobilního zápatí je povolena pouze pro platící uživatele</string>
     <string name="mobile_footer_info">Toto zápatí je přidáno za Váš podpis</string>
     <!-- region Snooze Settings -->
@@ -814,7 +814,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aktivita antiviru&lt;/i&gt; - Dočasně vypněte nebo odstraňte antivirový software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall rušení&lt;/i&gt; - Vypněte všechny proxy servery nebo brány firewall nebo se obraťte na správce sítě.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton je vypnutý&lt;/i&gt; - Zkontrolujte &lt;a href=\"http://protonstatus.com/\"&gt;stav Protonu&lt;/a&gt; pro stav našeho systému.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Pořád nelze najít řešení&lt;/i&gt; - Kontaktujte nás přímo pomocí našeho &lt;a href=\"https://protonmail.com/support-form\"&gt;formuláře podpory&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), nebo &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Pořád nelze najít řešení&lt;/i&gt; - Kontaktujte nás přímo pomocí našeho &lt;a href=\"https://protonmail.com/support-form\"&gt;formuláře podpory&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), nebo &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

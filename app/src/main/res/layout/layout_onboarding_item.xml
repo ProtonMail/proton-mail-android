@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2022 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -24,9 +24,10 @@
     android:layout_height="match_parent">
 
     <View
+        android:id="@+id/onboarding_background_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/background_secondary"
+        android:background="@color/onboarding_image_background"
         app:layout_constraintBottom_toTopOf="@id/onboarding_guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,14 +42,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/img_onboarding_encryption" />
+        app:srcCompat="@drawable/img_onboarding_encryption" />
+
+    <ImageView
+        android:id="@+id/onboarding_logo_image_view"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:background="@drawable/ic_logo_background_shape"
+        android:elevation="@dimen/elevation_s"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/onboarding_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_logo_mail" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/onboarding_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintGuide_percent="0.6" />
 
     <ch.protonmail.android.onboarding.base.presentation.OnboardingIndicatorsView
         android:id="@+id/onboarding_indicators_view"
@@ -79,7 +93,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_xxl"
         android:layout_marginTop="@dimen/margin_m"
-        android:scrollbars="vertical"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

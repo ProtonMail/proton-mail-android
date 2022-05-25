@@ -1,39 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources>
-
-    <!-- region V3 -->
-    <color name="colorPrimary">#4F4F60</color>
-
-    <!-- Monochromatic Blues -->
-    <color name="deep_blue">#475F77</color>
-    <color name="ocean_blue">#384C5F</color>
-    <color name="black">#000000</color>
-
-    <color name="icon_background">#515060</color>
-
-    <!-- new color scheme -->
-    <color name="dark_purple">#4F4F60</color>
-    <color name="dark_purple_statusbar">#333341</color>
-    <color name="message_divider_gray">#DADEE8</color>
-    <color name="name_gray">#838897</color>
 
     <!-- lock and unlock -->
     <color name="icon_purple">#9397cd</color>
@@ -42,34 +26,7 @@
     <color name="icon_warning">#ffa500</color>
 
     <!-- Grays -->
-    <color name="white">@android:color/white</color>
     <color name="white_30">#4DFFFFFF</color>
-    <color name="white_55">#8CFFFFFF</color>
-    <color name="white_85">#D9FFFFFF</color>
-    <color name="dark_silver_gray">#CFD2D4</color>
-    <color name="fog_gray">#C9CED4</color>
-    <color name="iron_gray">#808487</color>
-    <color name="rain_gray">#383A3B</color>
-    <color name="lead_gray">#4F4F4F</color>
-    <color name="chateau_gray">#A4A6A7</color>
-
-    <color name="red">#BF0000</color>
-    <color name="red_orange">#EA644C</color>
-    <color name="orange">#D9804B</color>
-    <color name="green">#A2C276</color>
-    <color name="blue">#7569D1</color>
-    <color name="labels_dialog_bg">@color/white</color>
-
-    <!-- login -->
-    <color name="new_purple">#9199cb</color>
-    <color name="new_purple_dark">#656FAC</color>
-
-    <!-- nav drawer -->
-
-    <!-- upselling -->
-    <color name="upgrade_section">#9497CE</color>
-
-    <!-- edit settings screens-->
 
     <!-- account types -->
     <color name="professional">#D4B46E</color>
@@ -77,7 +34,6 @@
     <color name="plus">#c6e422</color>
     <color name="free">@color/cornflower_blue</color>
 
-    <color name="switch_settings_item">#9199CA</color>
     <array name="account_type_colors">
         <item>@color/free</item>
         <item>@color/plus</item>
@@ -85,69 +41,25 @@
         <item>@color/professional</item>
     </array>
 
-    <!-- signature verification -->
-
-    <!-- contacts -->
-    <color name="contact_heading">@color/dark_purple_statusbar</color>
-
-    <!--lights-->
-	<color name="light_indicator">#6A6A9C</color>
-
-    <color name="warning">@color/orange</color>
-
-    <color name="label_buttons">#9497ce</color>
-    <!-- labels -->
-    <color name="purple_base">#7272A7</color>
-    <color name="heather_base">#8989AC</color>
-    <color name="strawberry_base">#CF5858</color>
-    <color name="blush_base">#CF7E7E</color>
-    <color name="pink_base">#C26CC7</color>
-    <color name="lilac_base">#C793CA</color>
-    <color name="slateblue_base">#7569D1</color>
-    <color name="kimberly_base">#9B94D1</color>
-    <color name="pacific_base">#69A9D1</color>
-    <color name="glacier_base">#A8C4D5</color>
     <color name="aqua_base">#5EC7B7</color>
     <color name="sage_base">#97C9C1</color>
-    <color name="fern_base">#72BB75</color>
-    <color name="moss_base">#9DB99F</color>
-    <color name="pear_base">#C3D261</color>
-    <color name="olive_base">#C6CD97</color>
-    <color name="mustard_base">#E6C04C</color>
-    <color name="sahara_base">#E7D292</color>
-    <color name="carrot_base">#E6984C</color>
-    <color name="cinnamon_base">#DFB286</color>
-
 
     <array name="label_colors">
         <item>@color/purple_base</item>
-        <item>@color/heather_base</item>
-        <item>@color/strawberry_base</item>
-        <item>@color/blush_base</item>
         <item>@color/pink_base</item>
-        <item>@color/lilac_base</item>
-        <item>@color/slateblue_base</item>
-        <item>@color/kimberly_base</item>
-        <item>@color/pacific_base</item>
-        <item>@color/glacier_base</item>
-        <item>@color/aqua_base</item>
-        <item>@color/sage_base</item>
-        <item>@color/fern_base</item>
-        <item>@color/moss_base</item>
-        <item>@color/pear_base</item>
-        <item>@color/olive_base</item>
-        <item>@color/mustard_base</item>
-        <item>@color/sahara_base</item>
+        <item>@color/strawberry_base</item>
         <item>@color/carrot_base</item>
-        <item>@color/cinnamon_base</item>
+        <item>@color/sahara_base</item>
+        <item>@color/slateblue_base</item>
+        <item>@color/pacific_base</item>
+        <item>@color/reef_base</item>
+        <item>@color/fern_base</item>
+        <item>@color/olive_base</item>
     </array>
 
-
-    //custom fab
-
     <color name="hyperlink_color">#0000EE</color>
-
-    <color name="spam_score">@color/red_orange</color>
     <!-- endregion -->
+
+    <color name="onboarding_image_background">#f2efff</color>
 
 </resources>

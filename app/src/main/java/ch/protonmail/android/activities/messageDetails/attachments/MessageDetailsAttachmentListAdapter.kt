@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.activities.messageDetails.attachments
 
@@ -37,13 +37,13 @@ class MessageDetailsAttachmentListAdapter(
     @DrawableRes
     private fun String?.getIconRes(): Int {
         return when (this) {
-            "image/jpeg", "image/pjpeg", "image/png" -> R.drawable.ic_file_image_variants
+            "image/jpeg", "image/pjpeg", "image/png" -> R.drawable.ic_proton_file_image_24
             "application/zip", "application/x-compressed", "application/x-zip-compressed", "multipart/x-zip" ->
-                R.drawable.ic_file_rar_zip_variants
-            "text/plain" -> R.drawable.ic_file_attachment_variants // currently no icon for plain text files
-            "application/pdf" -> R.drawable.ic_file_pdf_variants
-            "application/msword" -> R.drawable.ic_file_word_variants
-            else -> R.drawable.ic_file_attachment_variants
+                R.drawable.ic_proton_file_rar_zip_24
+            "text/plain" -> R.drawable.ic_proton_file_attachment_24 // currently no icon for plain text files
+            "application/pdf" -> R.drawable.ic_proton_file_pdf_24
+            "application/msword" -> R.drawable.ic_proton_file_word_24
+            else -> R.drawable.ic_proton_file_attachment_24
         }
     }
 

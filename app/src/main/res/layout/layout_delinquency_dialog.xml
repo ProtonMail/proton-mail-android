@@ -1,85 +1,75 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-Copyright (c) 2020 Proton Technologies AG
-
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2022 Proton AG
+  ~
+  ~ This file is part of Proton Mail.
+  ~
+  ~ Proton Mail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Mail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
+  -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_norm"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/fields_default_space"
     android:paddingLeft="@dimen/fields_default_space"
-    android:paddingRight="@dimen/fields_default_space">
+    android:paddingRight="@dimen/fields_default_space"
+    android:paddingBottom="@dimen/fields_default_space">
 
-    <ch.protonmail.android.views.CustomFontTextView
+    <TextView
         android:id="@+id/subtitle"
+        style="@style/Proton.Text.Default"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginLeft="@dimen/padding_m"
+        android:layout_marginTop="@dimen/padding_xl"
+        android:layout_marginRight="@dimen/padding_m"
         android:gravity="center_horizontal"
-        android:paddingBottom="5dp"
-        android:paddingLeft="0dp"
-        android:paddingStart="0dp"
         android:text="@string/delinquency_subtitle"
-        android:textColor="@color/rain_gray"
-        android:textSize="@dimen/h3"
-        app:fontName="Roboto-Thin.ttf"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintTop_creator="1" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <me.proton.core.presentation.ui.view.ProtonButton
         android:id="@+id/close_app"
+        style="@style/ProtonButton.Borderless.Text"
         android:layout_width="wrap_content"
-        android:layout_height="42dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:maxLines="1"
         android:text="@string/close_app"
-        android:textAllCaps="true"
         app:layout_constraintEnd_toStartOf="@+id/logout"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/recheck"
         app:layout_constraintTop_toBottomOf="@+id/subtitle" />
 
-    <Button
+    <me.proton.core.presentation.ui.view.ProtonButton
         android:id="@+id/recheck"
+        style="@style/ProtonButton.Borderless.Text"
         android:layout_width="wrap_content"
-        android:layout_height="42dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:maxLines="1"
         android:text="@string/recheck_delinquency"
         app:layout_constraintEnd_toStartOf="@+id/close_app"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subtitle" />
 
-    <Button
+    <me.proton.core.presentation.ui.view.ProtonButton
         android:id="@+id/logout"
+        style="@style/ProtonButton.Borderless.Text"
         android:layout_width="wrap_content"
-        android:layout_height="42dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:maxLines="1"
         android:text="@string/logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

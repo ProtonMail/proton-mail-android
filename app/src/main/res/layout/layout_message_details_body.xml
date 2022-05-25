@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -80,7 +80,7 @@
         app:layout_constraintTop_toBottomOf="@id/expirationInfoView"
         android:visibility="gone"
         android:text="@string/display_images"
-        app:icon="@drawable/mail_showimages"
+        app:icon="@drawable/ic_proton_image"
         app:iconGravity="textStart"
         android:drawableTint="@color/white"
         tools:visibility="visible" />
@@ -98,7 +98,7 @@
         app:layout_constraintTop_toBottomOf="@id/displayRemoteContentButton"
         android:visibility="gone"
         android:text="@string/load_embedded_images"
-        app:icon="@drawable/mail_showimages"
+        app:icon="@drawable/ic_proton_image"
         app:iconGravity="textStart"
         android:drawableTint="@color/white"
         tools:visibility="visible" />
@@ -129,7 +129,7 @@
         android:visibility="gone"
         android:text="@string/edit_draft"
         android:gravity="center"
-        app:icon="@drawable/ic_pencil"
+        app:icon="@drawable/ic_proton_pen"
         app:iconGravity="textStart"
         android:drawableTint="@color/white"
         tools:visibility="visible" />
@@ -142,7 +142,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editDraftButton"
-        android:background="@color/spam_score"
+        android:background="@color/notification_warning"
         android:padding="@dimen/fields_default_space"
         android:textColor="@color/white"
         android:visibility="visible"

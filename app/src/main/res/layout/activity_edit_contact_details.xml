@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-Copyright (c) 2020 Proton Technologies AG
-
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
+  ~ Copyright (c) 2022 Proton AG
+  ~
+  ~ This file is part of Proton Mail.
+  ~
+  ~ Proton Mail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Mail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
+  -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -63,7 +63,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/padding_6xl"
                     app:circleSize="@dimen/avatar_size"
-                    app:icon="@drawable/ic_camera_filled"
+                    app:icon="@drawable/ic_proton_camera"
+                    app:tint="@color/icon_norm"
                     app:layout_collapseMode="parallax"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -102,7 +103,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_margin="@dimen/padding_s"
-                android:background="@color/lead_gray" />
+                android:background="@color/separator_norm" />
 
             <LinearLayout
                 android:id="@+id/card_view_top_part"
@@ -138,13 +139,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                         android:paddingEnd="@dimen/fields_default_space"
                         android:paddingRight="@dimen/fields_default_space" />
                 </LinearLayout>
-
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_margin="@dimen/padding_s"
-                    android:background="@color/lead_gray" />
 
             </LinearLayout>
 
@@ -224,7 +218,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white_55"
+        android:background="@color/background_norm"
         android:visibility="gone">
 
         <ProgressBar

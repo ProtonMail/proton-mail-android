@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2022 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.contacts.details.edit;
 
@@ -660,7 +660,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 return false;
             });
         }
-        final ImageButton btnMinus = emailRowView.findViewById(R.id.btn_minus);
+        final ImageButton btnMinus = emailRowView.findViewById(R.id.btn_clear);
         btnMinus.setVisibility(View.VISIBLE);
         optionValueView.addTextChangedListener(new DirtyWatcher());
         optionValueView.setHintText(optionHint);
@@ -728,7 +728,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         final ProtonInput option = newOptionRowView.findViewById(R.id.option);
         final View inputFields = newOptionRowView.findViewById(R.id.fields_parent);
         final ImageButton btnOptionType = newOptionRowView.findViewById(R.id.btnOptionType);
-        final ImageButton btnMinus = newOptionRowView.findViewById(R.id.btn_minus);
+        final ImageButton btnMinus = newOptionRowView.findViewById(R.id.btn_clear);
         final TextView optionTitle = newOptionRowView.findViewById(R.id.optionTitle);
 
         String optionUITypeText;

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-Copyright (c) 2020 Proton Technologies AG
-
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
+  ~ Copyright (c) 2022 Proton AG
+  ~
+  ~ This file is part of Proton Mail.
+  ~
+  ~ Proton Mail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Mail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
+  -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -66,13 +66,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:paddingHorizontal="@dimen/padding_l">
 
             <TextView
+                style="@style/Proton.Text.Default"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:padding="@dimen/padding_s"
-                android:text="@string/contact_group_display_name"
-                android:textColor="@color/contact_heading"
-                android:textSize="16sp" />
+                android:text="@string/contact_group_display_name" />
 
             <me.proton.core.presentation.ui.view.ProtonInput
                 android:id="@+id/contactGroupName"
@@ -106,7 +105,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:padding="@dimen/padding_l"
             android:text="@string/contact_groups_manage_members"
             android:textAllCaps="true"
-            android:textColor="@color/cornflower_blue" />
+            android:textColor="?attr/brand_norm" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -119,16 +118,38 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_height="match_parent"
                 android:divider="@null" />
 
-            <ch.protonmail.android.views.CustomFontTextView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/noResults"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/no_contacts"
-                android:textColor="@color/new_purple_dark"
-                android:textSize="@dimen/h2"
                 android:visibility="gone"
-                tools:visibility="visible" />
+                tools:visibility="visible">
+
+
+                <ImageView
+                    android:id="@+id/img_no_contacts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center"
+                    app:srcCompat="@drawable/img_no_contacts"
+                    app:layout_constraintBottom_toTopOf="@id/no_contacts"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/no_contacts"
+                    style="@style/Proton.Text.Headline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/contacts_empty_state_no_contacts"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/img_no_contacts" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </FrameLayout>
 
@@ -138,7 +159,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white_85"
+        android:background="@color/background_norm"
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone">

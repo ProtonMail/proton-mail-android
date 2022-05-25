@@ -1,46 +1,23 @@
 <!--
-  ~ Copyright (c) 2022 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 
 <resources>
-
-    <!-- region V4 -->
-    <style name="ProtonTheme.Splash.Mail.Light">
-        <item name="proton_background_norm">@color/background_norm</item>
-        <item name="proton_text_norm">@color/text_norm</item>
-    </style>
-
-    <style name="ProtonTheme.Mail" parent="ProtonTheme">
-        <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeStyle">@style/ProtonMailActionMode</item>
-        <item name="actionModeCloseDrawable">@drawable/ic_arrow_left</item>
-        <item name="bottomSheetDialogTheme">@style/ProtonMail.BottomSheetDialogTheme</item>
-        <item name="colorControlHighlight">@color/interaction_weak_pressed</item>
-
-        <item name="statusBarBackground">@color/status_bar</item>
-        <item name="android:navigationBarColor">@color/nav_bar</item>
-        <item name="android:statusBarColor">@color/transparent</item>
-
-        <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
-        <item name="snackbarButtonStyle">@style/Widget.App.SnackbarButton</item>
-
-        <item name="elevationOverlayEnabled">false</item>
-    </style>
 
     <style name="ProtonMailActionMode" parent="Widget.AppCompat.ActionMode">
         <item name="height">?attr/actionBarSize</item>
@@ -49,7 +26,7 @@
     </style>
 
     <style name="Proton.Text.DefaultSmall.Interaction">
-        <item name="android:textColor">@color/cornflower_blue</item>
+        <item name="android:textColor">?attr/proton_interaction_norm</item>
     </style>
 
     <style name="Proton.Text.Caption.Strong.Inverted">
@@ -87,6 +64,16 @@
         <item name="android:background">@drawable/shape_stretchable_circle</item>
         <item name="backgroundTint">?brand_norm</item>
     </style>
+
+
+    <style name="AlertDialog" parent="Proton.ThemeOverlay.AlertDialog">
+        <item name="android:background">@color/background_norm</item>
+    </style>
+
+    <style name="OverFlowIcon" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_proton_three_dots_vertical</item>
+    </style>
+
 
     <!-- region Mailbox -->
     <style name="UnreadMessagesStatusChip" parent="Widget.MaterialComponents.Chip.Choice">
@@ -149,20 +136,14 @@
         <item name="android:paddingBottom">@dimen/padding_m</item>
         <item name="android:paddingStart">@dimen/padding_l</item>
         <item name="android:paddingEnd">@dimen/padding_l</item>
-        <item name="android:textColor">@color/cornflower_blue</item>
+        <item name="android:textColor">?attr/proton_text_accent</item>
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
         <item name="android:maxLines">3</item>
         <item name="android:ellipsize">end</item>
-        <item name="drawableTint">@color/cornflower_blue</item>
+        <item name="drawableTint">?attr/brand_norm</item>
     </style>
 
-    <style name="ProtonMail.BottomSheetDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/Widget.App.BottomSheet.Modal</item>
-    </style>
-
-    <style name="Widget.App.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
-        <item name="backgroundTint">@color/background_norm</item>
-    </style>
+    <style name="ProtonMail.BottomSheetDialogTheme" parent="@style/ProtonBottomSheetDialog" />
     <!-- endregion -->
 
     <!-- region Snackbar -->
@@ -185,7 +166,7 @@
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
         <item name="android:letterSpacing">0.4</item>
         <item name="android:textSize">@dimen/settings_pin_font_size</item>
-        <item name="android:textColor">@color/cornflower_blue</item>
+        <item name="android:textColor">?attr/brand_norm</item>
         <item name="android:background">@color/transparent</item>
     </style>
 
@@ -207,122 +188,23 @@
 
     <style name="AppTheme" parent="ProtonTheme" />
 
-    <style name="V3EditText" parent="@android:style/Widget.EditText">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textColorHint">@color/white</item>
-        <item name="android:textSize">@dimen/h5</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:background">@drawable/v3_edittext</item>
-    </style>
-
-    <style name="V3EditText.Inverted" parent="V3EditText">
-        <item name="android:textColor">@color/new_purple</item>
-        <item name="android:textColorHint">@color/name_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:background">@drawable/v3_edittext_inverted</item>
-    </style>
-
-    <style name="V3EditText.NoBg" parent="V3EditText">
-        <item name="android:textColor">@color/new_purple</item>
-        <item name="android:textColorHint">@color/name_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:background">@color/background_norm</item>
-    </style>
-
-    <style name="NoMessagesText">
-        <item name="android:textColor">@color/rain_gray</item>
-        <item name="android:textSize">@dimen/h4</item>
-    </style>
-
-    <style name="ComposeMessageEditText" parent="@android:style/Widget.EditText">
-        <item name="android:background">@null</item>
-        <item name="android:textColor">@color/text_norm</item>
-        <item name="android:textColorHint">@color/text_hint</item>
-    </style>
-
-    <style name="ComposeMessageBodyText" parent="ComposeMessageEditText">
-        <item name="android:gravity">top</item>
-        <item name="android:inputType">textMultiLine|textLongMessage|textCapSentences</item>
-        <item name="android:textSize">@dimen/h4</item>
-    </style>
-
-    <style name="MessagePasswordEditTextBase" parent="@android:style/Widget.EditText">
-        <item name="android:background">@null</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">@dimen/message_spacing</item>
-        <item name="android:paddingRight">@dimen/message_spacing</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/lead_gray</item>
-        <item name="android:textColorHint">@color/chateau_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
-    <style name="MessagePasswordEditText" parent="MessagePasswordEditTextBase">
-        <item name="android:imeOptions">actionNext</item>
-        <item name="android:inputType">textPassword</item>
-    </style>
-
-    <style name="MessagePasswordHintEditText" parent="MessagePasswordEditTextBase">
-        <item name="android:imeOptions">actionDone</item>
-        <item name="android:inputType">textCapSentences</item>
-    </style>
-
-    <style name="MessagePasswordEditText.Dialog" parent="MessagePasswordEditText">
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="android:background">@drawable/v3_edittext_inverted</item>
-        <item name="android:layout_marginLeft">@dimen/fields_default_space</item>
-        <item name="android:layout_marginRight">@dimen/fields_default_space</item>
-        <item name="android:layout_marginTop">@dimen/fields_default_space_small</item>
-        <item name="android:layout_marginBottom">@dimen/fields_default_space_small</item>
-    </style>
-
-    <style name="MessageExpirationText">
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">@dimen/message_spacing</item>
-        <item name="android:paddingRight">@dimen/message_spacing</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/lead_gray</item>
-        <item name="android:textColorHint">@color/chateau_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
-    <style name="MessageRecipientBase">
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
-    <style name="MessageRecipientView" parent="MessageRecipientBase">
+    <style name="MessageRecipientView">
         <item name="android:background">@null</item>
         <item name="android:inputType">text|textNoSuggestions|textMultiLine</item>
         <item name="android:textColor">@color/text_norm</item>
+        <item name="android:textAppearance">@style/Proton.Text.DefaultSmall</item>
         <item name="android:lineSpacingExtra">@dimen/padding_m</item>
     </style>
 
-    <style name="AttachmentText">
-        <item name="android:ellipsize">middle</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textColor">@android:color/black</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
     <style name="SettingsItemPadding">
-        <item name="android:background">@drawable/settings_item_selector</item>
+        <item name="android:background">@drawable/ripple_background_norm</item>
         <item name="android:clickable">true</item>
         <item name="android:orientation">vertical</item>
-        <item name="android:padding">@dimen/message_spacing</item>
-        <item name="android:layout_marginLeft">@dimen/fields_default_space</item>
-        <item name="android:layout_marginRight">@dimen/fields_default_space_small</item>
+        <item name="android:padding">@dimen/padding_m</item>
+        <item name="android:layout_marginLeft">@dimen/margin_m</item>
+        <item name="android:layout_marginRight">@dimen/margin_m</item>
         <item name="android:paddingLeft">0dp</item>
         <item name="android:paddingRight">0dp</item>
-    </style>
-
-    <style name="SettingsHeadingText">
-        <item name="android:textColor">@color/lead_gray</item>
-        <item name="android:textSize">@dimen/h4</item>
-        <item name="fontName">Roboto-Regular.ttf</item>
     </style>
 
     <style name="DialogAnimation">
@@ -332,7 +214,7 @@
 
     <style name="AppTheme.Dialog.Labels" parent="AppTheme">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@color/labels_dialog_bg</item>
+        <item name="android:windowBackground">@color/background_norm</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowFullscreen">false</item>
     </style>
@@ -345,7 +227,6 @@
         <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowIsTranslucent">true</item>
-
         <item name="android:windowCloseOnTouchOutside">false</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:backgroundDimEnabled">true</item>
@@ -372,22 +253,12 @@
         <item name="tabSelectedTextColor">?proton_text_norm</item>
     </style>
 
-    <style name="CustomSearchView" parent="@android:style/Widget.EditText">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textColorHint">#CACACA</item>
-        <item name="android:textSize">@dimen/h3</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:drawableStart">@drawable/ic_search</item>
-        <item name="android:drawableLeft">@drawable/ic_search</item>
+    <style name="CustomSearchView" parent="ProtonInput">
+        <item name="android:textColor">@color/text_norm</item>
+        <item name="android:textColorHint">@color/text_hint</item>
+        <item name="android:drawableStart">@drawable/ic_proton_magnifier</item>
+        <item name="android:drawableLeft">@drawable/ic_proton_magnifier</item>
         <item name="android:drawablePadding">@dimen/fields_default_space_small</item>
-        <item name="android:background">@drawable/search_edittext_shape</item>
-    </style>
-
-    <!-- Text Appearance -->
-
-    <style name="App.Text.Subtitle" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:textColor">@color/new_purple</item>
-        <item name="android:fontFamily">Roboto-Thin.ttf</item>
     </style>
 
     <!-- endregion -->

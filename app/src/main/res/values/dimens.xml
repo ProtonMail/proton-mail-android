@@ -1,20 +1,20 @@
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton AG
   ~
-  ~ This file is part of ProtonMail.
+  ~ This file is part of Proton Mail.
   ~
-  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ Proton Mail is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ Proton Mail is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 
 <resources>
@@ -67,6 +67,7 @@
     <dimen name="margin_l">16dp</dimen>
     <dimen name="margin_xl">24dp</dimen>
     <dimen name="margin_xxl">32dp</dimen>
+    <dimen name="margin_3xl">40dp</dimen>
 
     <!-- Toolbars -->
     <dimen name="toolbar_padding_start">0dp</dimen>
@@ -217,5 +218,8 @@
     <dimen name="constrained_message_content_view_size">200dp</dimen>
 
     <!-- endregion -->
+
+    <dimen name="animation_translation_55">55dp</dimen>
+    <dimen name="animation_translation_105">105dp</dimen>
 
 </resources>
