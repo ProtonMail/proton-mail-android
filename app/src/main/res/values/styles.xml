@@ -140,7 +140,7 @@
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
         <item name="android:maxLines">3</item>
         <item name="android:ellipsize">end</item>
-        <item name="drawableTint">?attr/brand_norm</item>
+        <item name="drawableTint">?attr/proton_text_accent</item>
     </style>
 
     <style name="ProtonMail.BottomSheetDialogTheme" parent="@style/ProtonBottomSheetDialog" />
