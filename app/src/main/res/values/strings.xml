@@ -58,7 +58,10 @@
     <string name="mailbox_empty_state_no_results_found">No results found</string>
     <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
     <string name="mailbox_no_messages">No messages</string>
-    <string name="mailbox_unread_count">%d unread</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d unread</item>
+        <item quantity="other">%d unread</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Updated just now</string>
     <string name="mailbox_updated_recently">Updated recently</string>
     <string name="mailbox_updating">Updating…</string>
