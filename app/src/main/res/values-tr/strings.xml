@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">Posta kutunuz güncel</string>
     <string name="mailbox_empty_spam_subtitle">İstenmeyen klasörünüz boş</string>
     <string name="mailbox_empty_trash_subtitle">Çöp kutusu boş</string>
+    <string name="mailbox_empty_state_no_results_found">Herhangi bir sonuç bulunamadı</string>
+    <string name="mailbox_empty_state_try_a_different_term">Farklı bir ifade ile aramayı deneyin</string>
     <string name="mailbox_no_messages">Herhangi bir ileti yok</string>
     <string name="mailbox_unread_count">%d okunmamış</string>
     <string name="mailbox_updated_just_now">Az önce güncellendi</string>
+    <string name="mailbox_updated_recently">Yakın zamanda güncellenmiş</string>
+    <string name="mailbox_updating">Güncelleniyor…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Proton Calendar ile açın</string>
@@ -77,7 +81,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s zamanında &lt;%s&gt; şunu yazdı:</string>
     <string name="set_msg_password_title">Parola ayarla</string>
-    <string name="set_msg_password_info">Proton Mail kullanmayan kişiler için bu iletiyi şifrelemekte kullanılacak bir parola ayarlayın. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Ayrıntılı bilgi alın</a></string>
+    <string name="set_msg_password_info">Proton Mail kullanmayan kişiler için bu iletiyi şifrelemekte kullanılacak bir parola ayarlayın.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Ayrıntılı bilgi alın</a></string>
     <string name="set_msg_password_info_icon_description">Bilgiler</string>
     <string name="set_msg_password_msg_password_title">İleti parolası</string>
     <string name="set_msg_password_msg_password_hint">4 ile 21 karakter uzunluğunda</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Yeni iletiler</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">Henüz bir kişi yok</string>
+    <string name="contacts_empty_state_no_groups">Henüz bir grup yok</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Kişi grupları içe aktarılmayacak. Ücretli özelliklerin tadını çıkarmak için lütfen hesabınızı ücretli bir tarifeye yükseltin.</string>
     <string name="contact_details_remote_content_dialog_title">Uzak içerik</string>
@@ -145,8 +153,11 @@
     <string name="existing_user_onboarding_new_look_description">Şifrelenmiş e-postanız daha kolay kullanım için yeniden tasarlandı.</string>
     <string name="existing_user_onboarding_new_features_headline">Yeni özellikler</string>
     <string name="existing_user_onboarding_new_features_description">Karanlık kip, geliştirilmiş bildirimler, okunmamış iletiler süzgeci ve alt klasörler gibi yeni özelliklerin tadını çıkarın.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Güncellenmiş Proton, birleşik koruma</string>
+    <string name="existing_user_onboarding_updated_proton_description">Yenilenmiş Proton böyle görünüyor. Birçok hizmet, tek amaç. Kişisel gizliliğin doğal sayıldığı internet fikrine hoş geldiniz. <a href="https://proton.me/news/updated-proton">Ayrıntılı bilgi alın</a></string>
     <string name="onboarding_next">Sonraki</string>
     <string name="onboarding_get_started">Başlayalım</string>
+    <string name="onboarding_got_it">Anladım</string>
     <string name="onboarding_image_view_content_description">Proton Mail çizimi</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -168,7 +179,7 @@
     <string name="no_more_messages">Başka bir ileti yok</string>
     <string name="no_network_queued">Ağ bağlantısı yok. İleti sıraya alındı.</string>
     <string name="update_app_title">Güncelleme gerekli</string>
-    <string name="update_app">Proton Mail uygulamanız güncellenene kadar kullanılamaz.</string>
+    <string name="update_app">Proton Mail uygulamanız güncellenene kadar kullanılamaz</string>
     <string name="you_are_offline">Çevrimdışısınız</string>
     <string name="api_offline">Proton Mail şu anda çevrimdışı. Güncel durum için https://protonstatus.com veya https://twitter.com/protonmail adreslerine bakabilirsiniz</string>
     <string name="contact_saved">Kişi kaydedildi</string>
@@ -201,7 +212,6 @@
     <string name="fetching_contacts">Proton Mail kişileri alınıyor...</string>
     <string name="fetching_contacts_success">Kişiler yenilendi</string>
     <string name="fetching_contacts_failure">Kişiler yenilenemedi</string>
-    <string name="no_search_results">Herhangi bir sonuç bulunamadı</string>
     <string name="compose">Oluştur</string>
     <string name="compose_message">İleti oluştur</string>
     <string name="empty_folder">Klasörü boşalt</string>
@@ -240,7 +250,7 @@
     <string name="expiration_hours">%dS</string>
     <string name="expiration_minutes">%dD</string>
     <plurals name="attachments">
-        <item quantity="one">Bir ek dosya</item>
+        <item quantity="one">1 ek dosya</item>
         <item quantity="other">%d ek dosya</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
@@ -467,7 +477,7 @@
     <string name="details_copied">Ayrıntılar panoya kopyalandı</string>
     <string name="saving">Kaydediliyor...</string>
     <string name="update_folder">Klasörü güncelle</string>
-    <string name="spam_score_100">Bu e-posta, bir Proton Mail adresinden gelmiş gibi görünüyor. Ancak sistemimizin dışından geldi ve kimlik doğrulama gereksinimlerini karşılayamadı. Sahte ya da hatalı iletilmiş olabilir!</string>
+    <string name="spam_score_100">Bu e-posta bir Proton Mail adresinden gelmiş gibi görünüyor, ancak sistemimizin dışından geldi ve kimlik doğrulama gereksinimlerimiz başarısız oldu. Sahteciliğe yol açabilir veya yanlış yönlendirilebilir!</string>
     <string name="spam_score_101">Bu e-posta, etki alanının doğrulama gereksinimlerini karşılayamadı. E-posta, sahte ya da hatalı iletilmiş olabilir!</string>
     <string name="spam_score_102">Bu ileti bir kimlik avı girişimi olabilir. Lütfen göründüğü gibi olduklarından emin olmak için gönderici adresini ve ileti içeriğini kontrol edin. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">AYRINTILI BİLGİ ALIN</a></string>
     <string name="print_from_template">Kimden: %s</string>
@@ -525,7 +535,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Sizin tarafınızdan uçtan uca şifreleme ile gönderildi</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Proton Mail tarafından sıfır erişim şifrelemesiyle gönderildi</string>
+    <string name="sender_lock_sent_autoresponder">Proton Mail tarafından sıfır erişim şifrelemesi ile gönderildi</string>
     <string name="sender_lock_verification_failed">Gönderici doğrulanamadı</string>
     <string name="sender_lock_pgp_encrypted">PGP ile şifrelenmiş ileti</string>
     <string name="sender_lock_pgp_encrypted_verified">Doğrulanmış adresten PGP ile şifrelenmiş ileti</string>

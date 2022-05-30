@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">U bent helemaal bij</string>
     <string name="mailbox_empty_spam_subtitle">Uw spam map is leeg</string>
     <string name="mailbox_empty_trash_subtitle">Uw prullenbak is leeg</string>
+    <string name="mailbox_empty_state_no_results_found">Geen resultaten gevonden</string>
+    <string name="mailbox_empty_state_try_a_different_term">Probeer een andere zoekterm</string>
     <string name="mailbox_no_messages">Geen berichten</string>
     <string name="mailbox_unread_count">%d ongelezen</string>
     <string name="mailbox_updated_just_now">Zojuist geüpdatet</string>
+    <string name="mailbox_updated_recently">Recent geüpdatet</string>
+    <string name="mailbox_updating">Updaten…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nieuwe berichten</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">Geen contacten</string>
+    <string name="contacts_empty_state_no_groups">Geen groepen</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Contactgroepen zullen niet geïmporteerd worden. Upgrade naar een betaald abonnement om te profiteren van premium functies.</string>
     <string name="contact_details_remote_content_dialog_title">Externe inhoud</string>
@@ -144,9 +152,9 @@
     <string name="existing_user_onboarding_new_look_headline">Nieuw uiterlijk, dezelfde beveiliging</string>
     <string name="existing_user_onboarding_new_look_description">Uw versleutelde e-mail is helemaal opnieuw ontworpen voor optimaal gebruiksgemak.</string>
     <string name="existing_user_onboarding_new_features_headline">Nieuwe functionaliteiten</string>
-    <string name="existing_user_onboarding_new_features_description">Profiteer van nieuwe functionaliteiten zoals donkere modus, verbeterde meldingen, een filter voor ongelezen berichten, en submappen.</string>
-    <string name="existing_user_onboarding_updated_proton_headline">Vernieuwde Proton, uniforme beveiliging</string>
-    <string name="existing_user_onboarding_updated_proton_description">Ontdek de nieuwe look van Proton. Veel diensten, één missie. Welkom in een internetomgeving waar privacy de standaard is. <a href="https://proton.me/news/updated-proton">Meer informatie</a></string>
+    <string name="existing_user_onboarding_new_features_description">Geniet van nieuwe functionaliteiten zoals donkere modus, verbeterde meldingen, een filter voor ongelezen berichten, en submappen.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Geüpdatete Proton, verenigde bescherming</string>
+    <string name="existing_user_onboarding_updated_proton_description">Maak kennis met Proton\'s vernieuwde look. Veel diensten, één missie. Welkom op een internet waar privacy de standaard is. <a href="https://proton.me/news/updated-proton">Meer leren</a></string>
     <string name="onboarding_next">Volgende</string>
     <string name="onboarding_get_started">Aan de slag</string>
     <string name="onboarding_got_it">Begrepen</string>
@@ -171,7 +179,7 @@
     <string name="no_more_messages">Geen berichten meer</string>
     <string name="no_network_queued">Netwerk niet beschikbaar, bericht in wachtrij geplaatst</string>
     <string name="update_app_title">Update vereist</string>
-    <string name="update_app">Uw Protonmail-app kan niet worden gebruikt totdat deze is geüpdatet</string>
+    <string name="update_app">Uw Proton Mail-app kan niet worden gebruikt totdat het is bijgewerkt</string>
     <string name="you_are_offline">U bent offline</string>
     <string name="api_offline">Proton Mail is momenteel offline. Kijk op https://protonstatus.com of https://twitter.com/protonmail voor de huidige status</string>
     <string name="contact_saved">Contact opgeslagen</string>
@@ -201,10 +209,9 @@
     <string name="all_mail">Alle berichten</string>
     <string name="contacts">Contacten</string>
     <string name="search_contacts">Doorzoek contacten</string>
-    <string name="fetching_contacts">Protonmail contacten ophalen...</string>
+    <string name="fetching_contacts">Proton Mail contacten ophalen...</string>
     <string name="fetching_contacts_success">Contacten succesvol vernieuwd</string>
     <string name="fetching_contacts_failure">Kan contacten niet vernieuwen</string>
-    <string name="no_search_results">Geen zoekresultaten</string>
     <string name="compose">Opstellen</string>
     <string name="compose_message">Bericht opstellen</string>
     <string name="empty_folder">Map leegmaken</string>
@@ -243,8 +250,8 @@
     <string name="expiration_hours">%du</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">Een bijlage</item>
-        <item quantity="other">%d bijlagen</item>
+        <item quantity="one">1 Bijlage</item>
+        <item quantity="other">%d Bijlagen</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="one">\u0020 1 bijlage</item>
@@ -470,7 +477,7 @@
     <string name="details_copied">Details gekopieerd naar klembord</string>
     <string name="saving">Opslaan...</string>
     <string name="update_folder">Map bijwerken</string>
-    <string name="spam_score_100">Deze e-mail lijkt afkomstig van een Proton Mail-adres maar kwam van buiten ons systeem en voldoet niet aan onze authenticatie-vereisten. Mogelijk is de e-mail vals of onjuist doorgestuurd!</string>
+    <string name="spam_score_100">Deze e-mail lijkt afkomstig van een Proton Mail-adres maar kwam van buiten ons systeem en voldoet niet aan onze authenticatie-vereisten. Mogelijk werd deze gespoofed of onjuist doorgestuurd!</string>
     <string name="spam_score_101">Deze e-mail voldoet niet aan de authenticatievereisten van de domainnaam. Mogelijk is de e-mail vals of onjuist doorgestuurd!</string>
     <string name="spam_score_102">Dit bericht kan phishing zijn. Controleer de afzender en de inhoud om te controleren dat ze legitiem zijn. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MEER INFORMATIE</a></string>
     <string name="print_from_template">Van: %s</string>
@@ -496,10 +503,10 @@
     <string name="email_empty">E-mailadres ontbreekt</string>
     <string name="encrypted_contact_details">Versleutelde contactpersoonsgegevens</string>
     <string name="convert_question">Upload lokale contactpersonen</string>
-    <string name="convert_question_subtitle">Dit uploadt lokale contacten op uw apparaat naar uw Proton Mail-contacten. Zo krijgt u op andere apparaten toegang tot deze contacten via Proton Mail.</string>
+    <string name="convert_question_subtitle">Dit uploadt lokale contacten op uw apparaat naar uw Proton Mail-contacten. Zo krijgt u op andere apparaten toegang tot deze contacten via ProtonMail.</string>
     <string name="refresh_contacts">Vernieuwen</string>
     <string name="invalid_email_some_contacts">E-mailadres van enkele contactpersonen is ongeldig</string>
-    <string name="protonmail_contacts">Proton Mail Contacts</string>
+    <string name="protonmail_contacts">Proton Mail Contacten</string>
     <string name="device_contacts">Contactpersonen van apparaat</string>
     <string name="print_date_template">Datum: %s</string>
     <string name="print_attachment_template">Bijlage: %s;  </string>
@@ -528,7 +535,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Door u verzonden met end-to-end versleuteling</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Verzonden door Proton Mail met zero access versleuteling</string>
+    <string name="sender_lock_sent_autoresponder">Verzonden door Proton Mail met end-to-end versleuteling</string>
     <string name="sender_lock_verification_failed">Verificatie van afzender is mislukt</string>
     <string name="sender_lock_pgp_encrypted">PGP-versleuteld bericht</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-versleuteld bericht van geverifieerd e-mailadres</string>
@@ -667,7 +674,7 @@
     <string name="signature">Handtekening</string>
     <string name="mobile_footer">Mobiele voettekst</string>
     <string name="edit_mobile_footer">Mobiele voettekst inschakelen</string>
-    <string name="default_mobile_footer">Verzonden met Proton Mail Mobile</string>
+    <string name="default_mobile_footer">Verzonden met Proton Mail mobiel</string>
     <string name="mobile_footer_is_premium">Het veranderen van de mobiele voettekst is alleen toegestaan voor betaalde gebruikers</string>
     <string name="mobile_footer_info">Deze voettekst is toegevoegd na uw handtekening</string>
     <!-- region Snooze Settings -->

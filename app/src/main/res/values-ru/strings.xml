@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">Вы в курсе всех событий</string>
     <string name="mailbox_empty_spam_subtitle">Папка Спам пуста</string>
     <string name="mailbox_empty_trash_subtitle">Корзина пуста</string>
+    <string name="mailbox_empty_state_no_results_found">Результатов не найдено</string>
+    <string name="mailbox_empty_state_try_a_different_term">Попробуйте другой поисковый запрос</string>
     <string name="mailbox_no_messages">Нет сообщений</string>
     <string name="mailbox_unread_count">%d непрочитанных</string>
     <string name="mailbox_updated_just_now">Только что обновлено</string>
+    <string name="mailbox_updated_recently">Недавно обновлено</string>
+    <string name="mailbox_updating">Обновляется…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Открыть в Proton Calendar</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Новые сообщения</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">Нет контактов</string>
+    <string name="contacts_empty_state_no_groups">Нет групп</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Группы контактов не будут импортированы. Чтобы воспользоваться платными функциями, перейдите на платный тариф.</string>
     <string name="contact_details_remote_content_dialog_title">Внешнее содержимое</string>
@@ -145,11 +153,11 @@
     <string name="existing_user_onboarding_new_look_description">Ваша зашифрованная электронная почта была полностью переработана для удобства использования.</string>
     <string name="existing_user_onboarding_new_features_headline">Показать функции</string>
     <string name="existing_user_onboarding_new_features_description">Воспользуйтесь такими новыми функциями, как темный режим, улучшенные уведомления, фильтр непрочитанных сообщений и вложенные папки.</string>
-    <string name="existing_user_onboarding_updated_proton_headline">Обновленный Proton и комплексная защита</string>
-    <string name="existing_user_onboarding_updated_proton_description">Мы освежили внешний вид Proton. У наших сервисов общая миссия — создать Интернет, где конфиденциальность будет на первом месте. <a href="https://proton.me/news/updated-proton">Подробнее</a></string>
+    <string name="existing_user_onboarding_updated_proton_headline">Обновленный Proton, единая защита</string>
+    <string name="existing_user_onboarding_updated_proton_description">Представляем обновленный вид Proton. Много служб, одна миссия. Добро пожаловать в Интернет, где конфиденциальность установлена по умолчанию. <a href="https://proton.me/news/updated-proton">Подробнее</a></string>
     <string name="onboarding_next">Далее</string>
     <string name="onboarding_get_started">Приступить к работе</string>
-    <string name="onboarding_got_it">ОК</string>
+    <string name="onboarding_got_it">Понятно</string>
     <string name="onboarding_image_view_content_description">иллюстрация Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -171,9 +179,9 @@
     <string name="no_more_messages">Больше сообщений нет</string>
     <string name="no_network_queued">Нет подключения к сети. Сообщение поставлено в очередь</string>
     <string name="update_app_title">Требуется обновление</string>
-    <string name="update_app">Вашим приложением ProtonМail нельзя пользоваться, пока оно не будет обновлено</string>
+    <string name="update_app">Вашим приложением Proton Мail нельзя пользоваться, пока оно не будет обновлено</string>
     <string name="you_are_offline">Вы не подключены к сети</string>
-    <string name="api_offline">В настоящее время Proton Mail не работает, проверьте текущее состояние тут: https://protonstatus.com или в нашем Twitter: https://twitter.com/protonmail.</string>
+    <string name="api_offline">Proton Mail в настоящее время не в сети, проверьте текущее состояние тут: https://protonstatus.com или в нашем Twitter: https://twitter.com/protonmail</string>
     <string name="contact_saved">Контакт сохранён</string>
     <string name="contact_saved_offline">Контакт сохранён. Он будет синхронизирован, когда подключение станет доступно</string>
     <string name="contact_exist">Адрес эл. почты контакта уже существует</string>
@@ -201,10 +209,9 @@
     <string name="all_mail">Все письма</string>
     <string name="contacts">Контакты</string>
     <string name="search_contacts">Поиск контактов</string>
-    <string name="fetching_contacts">Получение контактов с Proton Mail...</string>
+    <string name="fetching_contacts">Получение контактов Proton Mail...</string>
     <string name="fetching_contacts_success">Контакты успешно обновлены</string>
     <string name="fetching_contacts_failure">Невозможно обновить контакты</string>
-    <string name="no_search_results">Ничего не найдено</string>
     <string name="compose">Новое письмо</string>
     <string name="compose_message">Написать сообщение</string>
     <string name="empty_folder">Очистить папку</string>
@@ -243,7 +250,7 @@
     <string name="expiration_hours">%dЧ</string>
     <string name="expiration_minutes">%dм</string>
     <plurals name="attachments">
-        <item quantity="one">Одно вложение</item>
+        <item quantity="one">1 вложение</item>
         <item quantity="few">%d вложения</item>
         <item quantity="many">%d вложений</item>
         <item quantity="other">%d вложений</item>
@@ -283,7 +290,7 @@
     <string name="invalid_email_address">Адрес \'%s\' неверен</string>
     <string name="invalid_email_address_removed">Адрес \'%s\' недействителен и был удален</string>
     <string name="no_recipients_specified">Пожалуйста, укажите хотя бы одного получателя</string>
-    <string name="no_password_specified">Срок действия можно установить только на полностью зашифрованные сообщения. Пожалуйста, укажите пароль для получателей вне Proton Mail.</string>
+    <string name="no_password_specified">Срок действия можно установить только для полностью зашифрованных сообщений. Пожалуйста, установите пароль для получателей, не являющихся пользователями Proton Mail.</string>
     <string name="attachment_limit">Размер вложений ограничен %1$s. Все вложения займут: %2$s.</string>
     <string name="sending_message">Отправка сообщения...</string>
     <string name="sending_message_offline">Вы не в сети, поставлено в очередь на отправку...</string>
@@ -295,7 +302,7 @@
     <string name="cancel">Отменить</string>
     <string name="close">Закрыть</string>
     <string name="eo_password_title">Задать пароль</string>
-    <string name="eo_password_subtitle">Задать пароль для шифрования этого сообщения для пользователей вне Proton Mail</string>
+    <string name="eo_password_subtitle">Установите пароль для шифрования этого сообщения для пользователей, не являющихся пользователями Proton Mail</string>
     <string name="eo_password_more_info">Получить больше информации</string>
     <string name="no_attachments">Нет вложений</string>
     <string name="display_name_banned_chars">Недопустимое отображаемое имя. Символы \'&gt;\' и \'&lt;\' запрещены</string>
@@ -480,7 +487,7 @@
     <string name="details_copied">Подробности скопированы в буфер обмена</string>
     <string name="saving">Сохранение...</string>
     <string name="update_folder">Обновить папку</string>
-    <string name="spam_score_100">Похоже, источником этого письма является адрес, относящийся к Proton Mail, но само письмо пришло извне нашей системы и не прошло проверку на соответствие нашим требованиям подтверждения подлинности. Оно может быть поддельным, либо было переслано ненадлежащим образом!</string>
+    <string name="spam_score_100">Это письмо, по-видимому, пришло с адреса Proton Mail, но было получено не из нашей системы и не прошло проверку подлинности. Это может быть поддельное или неправильно пересланное письмо!</string>
     <string name="spam_score_101">Это письмо не соответствует требованиям подтверждения подлинности своего домена. Оно может быть поддельным, либо было переслано ненадлежащим образом!</string>
     <string name="spam_score_102">Это сообщение может быть попыткой фишинга. Пожалуйста, проверьте отправителя и содержимое, чтобы оценить их подлинность. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ПОДРОБНЕЕ</a></string>
     <string name="print_from_template">От: %s</string>
@@ -506,7 +513,7 @@
     <string name="email_empty">Адрес электронной почты отсутствует</string>
     <string name="encrypted_contact_details">Зашифрованные контактные данные</string>
     <string name="convert_question">Добавить локальные контакты</string>
-    <string name="convert_question_subtitle">Будет выполнена загрузка локальных контактов из вашего устройства в список ваших контактов Proton Mail. В дальнейшем вы сможете получать доступ к этим контактам, используя Proton Mail на других ваших устройствах.</string>
+    <string name="convert_question_subtitle">Это позволит загрузить локальные контакты на вашем устройстве в каталог контактов Proton Mail. После этого вы сможете получить доступ к этим контактам на других устройствах через Proton Mail.</string>
     <string name="refresh_contacts">Обновить</string>
     <string name="invalid_email_some_contacts">У некоторых из ваших контактов некорректен адрес эл. почты</string>
     <string name="protonmail_contacts">Контакты Proton Mail</string>
@@ -538,7 +545,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Отправлено вами с применением сквозного шифрования</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Отправлено Proton Mail с применением шифрования нулевого доступа</string>
+    <string name="sender_lock_sent_autoresponder">Отправлено Proton Mail с шифрованием нулевого доступа</string>
     <string name="sender_lock_verification_failed">Проверка отправителя не удалась</string>
     <string name="sender_lock_pgp_encrypted">Сообщение, зашифрованное PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Сообщение, зашифрованное PGP; с проверенного адреса</string>
@@ -654,7 +661,7 @@
         доступ к хранилищу.</string>
     <string name="need_contacts_permissions_text">Чтобы импортировать контакты вам надо предоставить доступ к контактам.</string>
     <string name="push_notifications_alert_title">Предупреждение о push-уведомлениях</string>
-    <string name="push_notifications_alert_subtitle">Push-уведомления для Proton Mail не работают без обновлённых сервисов Google Play.</string>
+    <string name="push_notifications_alert_subtitle">Push-уведомления для Proton Mail не работают без обновленных сервисов Google Play.</string>
     <string name="app_locked">Приложение заблокировано</string>
     <string name="use_pin_instead">Использовать PIN-код вместо этого</string>
     <!-- strings used for biometric enrollment -->
@@ -685,7 +692,7 @@
     <string name="signature">Подпись</string>
     <string name="mobile_footer">Подпись мобильного клиента</string>
     <string name="edit_mobile_footer">Включить подпись для мобильного клиента</string>
-    <string name="default_mobile_footer">Отправлено из мобильного клиента Proton Mail</string>
+    <string name="default_mobile_footer">Отправлено из мобильного приложения Proton Mail</string>
     <string name="mobile_footer_is_premium">Изменение подписи для мобильного клиента возможно только для платных пользователей</string>
     <string name="mobile_footer_info">Эта информация будет добавлена после вашей подписи</string>
     <!-- region Snooze Settings -->
@@ -811,13 +818,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Наиболее часто встречающиеся проблемы с соединением и их решения</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Нет подключения к интернет&lt;/i&gt; - Пожалуйста, убедитесь, что ваше соединение с интернет работает.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема с интернет-провайдером (ISP)&lt;/i&gt; - Попробуйте подлключиться к сервисам Proton через другую сеть (или используйте &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Правительственные блокировки&lt;/i&gt; - Возможно, что ваша страна блокирует доступ к сервисам Proton. Попробуйте &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (или любой другой VPN-сервис) или &lt;a href=\"https://www.torproject.org/\"&gt;Tor,&lt;/a&gt; чтобы получить доступ к Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблемы из-за антивируса&lt;/i&gt; - Попробуйте временно отключить или удалить антивирус.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблемы из-за прокси/брандмауэра&lt;/i&gt; - Попробуйте отключить все прокси или брандмауэры или обратитесь к вашему сетевому администратору.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Сервисы Proton не работают&lt;/i&gt; - Проверьте сайт&lt;a href=\"http://protonstatus.com/\"&gt;Состояние сервисов Proton,&lt;/a&gt; чтобы проверить текущее состояние наших сервисов.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;По-прежнему не найти решение?&lt;/i&gt; - Напишите нам напрямую, воспользовавшись &lt;a href=\"https://protonmail.com/support-form\"&gt;формой обращения к поддержке&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;по электронной почте&lt;/a&gt; (support@protonmail.zendesk.com) или &lt;a href=\"https://twitter.com/Proton Mail\"&gt;в Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Нет подключения к Интернету&lt;/i&gt; - Пожалуйста, убедитесь, что ваше подключение к итернету.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема с поставщиком интернет-услуг (ISP)&lt;/i&gt; - Попытайтесь подключиться к Proton из другой сети (или используйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Правительственная блокировка&lt;/i&gt; - Ваша страна может блокировать доступ к Proton. Используйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (или любой другой VPN) или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; для доступа к Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Вмшательство антивируса&lt;/i&gt; - Временно отключите или удалите программу-антивирус.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Помехи прокси/брандмауэра&lt;/i&gt; - Отключите все прокси и брандмауэры или свяжитесь со своим администратором.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton недоступен&lt;/i&gt; - Проверьте состояние сервера на &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Решение всё ещё не найдено&lt;/i&gt; - Свяжитесь с нами напрямую через нашу &lt;a href=\"https://protonmail.com/support-form\"&gt;форму поддержки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;электронную почту&lt;/a&gt; (support@protonmail.zendesk.com), или &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

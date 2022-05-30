@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">已是最新狀態</string>
     <string name="mailbox_empty_spam_subtitle">您的垃圾郵件資料夾是空的</string>
     <string name="mailbox_empty_trash_subtitle">垃圾桶是空的</string>
+    <string name="mailbox_empty_state_no_results_found">No results found</string>
+    <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
     <string name="mailbox_no_messages">沒有郵件</string>
     <string name="mailbox_unread_count">%d 未讀</string>
     <string name="mailbox_updated_just_now">剛剛更新</string>
+    <string name="mailbox_updated_recently">Updated recently</string>
+    <string name="mailbox_updating">Updating…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">於Proton 行事曆中打開</string>
@@ -77,7 +81,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
     <string name="set_msg_password_title">設定密碼</string>
-    <string name="set_msg_password_info">設定密碼以加密此郵件給非 Proton Mail 使用者。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">瞭解更多</a></string>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">資訊</string>
     <string name="set_msg_password_msg_password_title">郵件密碼</string>
     <string name="set_msg_password_msg_password_hint">長度為 4 至 21 個字元</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">新郵件</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">No contacts</string>
+    <string name="contacts_empty_state_no_groups">No groups</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">不會匯入聯絡人群組。請升級至付費方案以享受進階功能。</string>
     <string name="contact_details_remote_content_dialog_title">遠端內容</string>
@@ -145,8 +153,11 @@
     <string name="existing_user_onboarding_new_look_description">為了進一步提升易用性，您的加密電子郵件已重新設計，煥然一新。</string>
     <string name="existing_user_onboarding_new_features_headline">新功能</string>
     <string name="existing_user_onboarding_new_features_description">享受深色模式、改善後的通知、未讀郵件過濾器與子資料夾等新功能。</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Updated Proton, unified protection</string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">下一步</string>
     <string name="onboarding_get_started">入門指南</string>
+    <string name="onboarding_got_it">Got it</string>
     <string name="onboarding_image_view_content_description">Proton 電子郵件插圖</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -168,9 +179,9 @@
     <string name="no_more_messages">沒有其他郵件了</string>
     <string name="no_network_queued">無網際網路，郵件已排入佇列</string>
     <string name="update_app_title">需要更新</string>
-    <string name="update_app">Protonmail 應用程式必須更新才可使用</string>
+    <string name="update_app">Proton Mail 應用程式必須更新才可使用</string>
     <string name="you_are_offline">您現正離線</string>
-    <string name="api_offline">Proton Mail 目前處於離線狀態，請看看 https://protonstatus.com 或我們的 Twitter 來檢視目前的狀態：https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">聯絡人已儲存</string>
     <string name="contact_saved_offline">聯絡人已儲存，將在連線到網際網路時同步</string>
     <string name="contact_exist">聯絡人電子郵件地址已存在</string>
@@ -198,10 +209,9 @@
     <string name="all_mail">所有郵件</string>
     <string name="contacts">通訊錄</string>
     <string name="search_contacts">搜尋聯絡人</string>
-    <string name="fetching_contacts">正在擷取 Protonmail 聯絡人……</string>
+    <string name="fetching_contacts">Fetching Proton Mail contacts...</string>
     <string name="fetching_contacts_success">已成功更新聯絡人</string>
     <string name="fetching_contacts_failure">無法更新聯絡人</string>
-    <string name="no_search_results">沒有搜尋結果</string>
     <string name="compose">撰寫</string>
     <string name="compose_message">撰寫郵件</string>
     <string name="empty_folder">清空資料夾</string>
@@ -240,7 +250,7 @@
     <string name="expiration_hours">%d 時</string>
     <string name="expiration_minutes">%d 分</string>
     <plurals name="attachments">
-        <item quantity="other">%d 個附件</item>
+        <item quantity="other">%d Attachments</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="other">\u0020 %d 個附件</item>
@@ -271,7 +281,7 @@
     <string name="invalid_email_address">這個地址「%s」是無效的。</string>
     <string name="invalid_email_address_removed">電子郵件地址 \'%s\' 無效，因此已被移除</string>
     <string name="no_recipients_specified">請輸入最少一位收件者</string>
-    <string name="no_password_specified">到期時間只能在完全加密的郵件上設定，請為您的非 Proton Mail 收件者設定密碼。</string>
+    <string name="no_password_specified">Expiration times can only be set on fully encrypted messages. Please set a password for your non-Proton Mail recipients.</string>
     <string name="attachment_limit">附件限制為 %1$s。附件全部的大小為 %2$s。</string>
     <string name="sending_message">傳送郵件中……</string>
     <string name="sending_message_offline">離線，等待稍後傳送……</string>
@@ -283,7 +293,7 @@
     <string name="cancel">取消</string>
     <string name="close">關閉</string>
     <string name="eo_password_title">設定密碼</string>
-    <string name="eo_password_subtitle">針對非 Proton Mail 使用者設定一個密碼以加密此郵件</string>
+    <string name="eo_password_subtitle">Set a password to encrypt this message for non-Proton Mail users</string>
     <string name="eo_password_more_info">取得更多資訊</string>
     <string name="no_attachments">無附件</string>
     <string name="display_name_banned_chars">顯示名稱無效。不允許使用 \'&gt;\' 和 \'&lt;\'</string>
@@ -384,7 +394,7 @@
     <string name="contact_details">聯絡人詳細資料</string>
     <string name="email_type_home">住家</string>
     <string name="type_title">選擇類型</string>
-    <string name="sync_local_contacts">上傳到 Proton Mail</string>
+    <string name="sync_local_contacts">Upload to Proton Mail</string>
     <string name="please_select_only_phone_contacts">請只選擇手機連絡人</string>
     <string name="contact_vcard_hint_email">輸入電子郵件</string>
     <string name="contact_vcard_hint_phone">輸入電話號碼</string>
@@ -462,7 +472,7 @@
     <string name="details_copied">詳細資訊已複製到剪貼簿</string>
     <string name="saving">正在儲存……</string>
     <string name="update_folder">更新資料夾</string>
-    <string name="spam_score_100">此郵件似乎來自一個 Proton Mail 電子郵件地址，但並非我們的系統寄出，而且未能通過我們的認證要求。這可能是偽造或不當轉寄的郵件！</string>
+    <string name="spam_score_100">This email seems to be from a Proton Mail address but came from outside our system and failed our authentication requirements. It may be spoofed or improperly forwarded!</string>
     <string name="spam_score_101">此電子郵件無法通過網域驗證。這可能是詐騙郵件或是轉發不當導致，請再三留意！</string>
     <string name="spam_score_102">此郵件可能有網路釣魚的企圖。請檢查寄件者和內容，以確保它們是正當的。<a href="https://protonmail.com/blog/prevent-phishing-attacks/">瞭解更多</a></string>
     <string name="print_from_template">寄件者：%s</string>
@@ -488,10 +498,10 @@
     <string name="email_empty">電子郵件地址遺失</string>
     <string name="encrypted_contact_details">加密的聯絡人詳細資訊</string>
     <string name="convert_question">上傳本機聯絡人</string>
-    <string name="convert_question_subtitle">這將使裝置上的本機聯絡人與 Proton Mail 聯絡人目錄同步。然後您就能夠通過 Proton Mail 存取其他裝置上的這些聯絡人。</string>
+    <string name="convert_question_subtitle">This will upload the local contacts on your device to your Proton Mail contacts directory. You will then be able to access these contacts on your other devices through Proton Mail.</string>
     <string name="refresh_contacts">更新</string>
     <string name="invalid_email_some_contacts">部分聯絡人的電子郵件地址無效</string>
-    <string name="protonmail_contacts">Proton Mail 通訊錄</string>
+    <string name="protonmail_contacts">Proton Mail Contacts</string>
     <string name="device_contacts">裝置通訊錄</string>
     <string name="print_date_template">日期：%s</string>
     <string name="print_attachment_template">附件：%s;  </string>
@@ -503,7 +513,7 @@
     <string name="remove_password_question">移除密碼？</string>
     <string name="attachment_storage_value_current">目前選取：%dMB</string>
     <string name="attachment_storage_value_current_unlimited">目前選取：無限制</string>
-    <string name="attachment_offline_max_storage">設定 Proton Mail 在行動裝置所能運用的最大儲存空間。</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space Proton Mail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">載入內嵌圖片失敗。請檢查您的網路連線。</string>
     <string name="load_embedded_images_failed">嵌入的圖片載入失敗。</string>
     <string name="unlimited">無限制</string>
@@ -520,7 +530,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">由您寄出的端到端加密訊息</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">以零存取加密由 Proton Mail 寄出</string>
+    <string name="sender_lock_sent_autoresponder">Sent by Proton Mail with zero access encryption</string>
     <string name="sender_lock_verification_failed">寄件人驗證失敗</string>
     <string name="sender_lock_pgp_encrypted">PGP 加密訊息</string>
     <string name="sender_lock_pgp_encrypted_verified">來自已驗證電子郵件地址的 PGP 加密郵件</string>
@@ -622,7 +632,7 @@
         存取儲存空間。</string>
     <string name="need_contacts_permissions_text">為了匯入聯絡人，您必須允許存取聯絡人。</string>
     <string name="push_notifications_alert_title">推送通知提醒</string>
-    <string name="push_notifications_alert_subtitle">如果沒有更新過 Google Play 服務，Proton Mail 的推送通知將無法正常運作。</string>
+    <string name="push_notifications_alert_subtitle">Push notifications for Proton Mail do not work without updated Google Play services.</string>
     <string name="app_locked">應用程式已鎖定</string>
     <string name="use_pin_instead">改為使用 PIN 碼</string>
     <!-- strings used for biometric enrollment -->
@@ -653,7 +663,7 @@
     <string name="signature">簽名</string>
     <string name="mobile_footer">行動註腳</string>
     <string name="edit_mobile_footer">啟用行動註腳</string>
-    <string name="default_mobile_footer">從 Proton Mail 手機版送出</string>
+    <string name="default_mobile_footer">Sent from Proton Mail mobile</string>
     <string name="mobile_footer_is_premium">只有付費使用者可變更行動版註腳</string>
     <string name="mobile_footer_info">此註腳會新增至您的簽章之後</string>
     <!-- region Snooze Settings -->

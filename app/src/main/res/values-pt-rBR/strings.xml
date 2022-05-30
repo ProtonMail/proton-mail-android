@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">Você está atualizado</string>
     <string name="mailbox_empty_spam_subtitle">Sua pasta de spam está vazia</string>
     <string name="mailbox_empty_trash_subtitle">A lixeira está vazia</string>
+    <string name="mailbox_empty_state_no_results_found">Nenhum resultado encontrado</string>
+    <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
     <string name="mailbox_no_messages">Nenhuma mensagem</string>
     <string name="mailbox_unread_count">%d não lido(s)</string>
     <string name="mailbox_updated_just_now">Atualizado agora</string>
+    <string name="mailbox_updated_recently">Updated recently</string>
+    <string name="mailbox_updating">Atualizando…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Abrir no Proton Calendar</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Novas mensagens</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">Nenhum contato</string>
+    <string name="contacts_empty_state_no_groups">Nenhum grupo</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Os grupos de contatos não serão importados. Atualize para um plano pago para aproveitar os recursos premium.</string>
     <string name="contact_details_remote_content_dialog_title">Conteúdo remoto</string>
@@ -145,11 +153,11 @@
     <string name="existing_user_onboarding_new_look_description">Seu e-mail criptografado foi inteiramente redesenhado para facilidade de uso.</string>
     <string name="existing_user_onboarding_new_features_headline">Novos recursos</string>
     <string name="existing_user_onboarding_new_features_description">Aproveite novos recursos como modo escuro, notificações aprimoradas, um filtro de mensagens não lidas e subpastas.</string>
-    <string name="existing_user_onboarding_updated_proton_headline">Nuevo diseño, protección unificada</string>
-    <string name="existing_user_onboarding_updated_proton_description">Proton tiene un nuevo look. Muchos servicios, una sola misión. Te damos la bienvenida a un Internet en el que prima la privacidad. <a href="https://proton.me/news/updated-proton">Más información</a></string>
+    <string name="existing_user_onboarding_updated_proton_headline">Proton atualizado, proteção unificada</string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Próximo</string>
     <string name="onboarding_get_started">Começar</string>
-    <string name="onboarding_got_it">Entendido</string>
+    <string name="onboarding_got_it">Entendi</string>
     <string name="onboarding_image_view_content_description">Ilustração do Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -171,7 +179,7 @@
     <string name="no_more_messages">Não há mais mensagens</string>
     <string name="no_network_queued">Sem conexão com a internet. A mensagem está na fila de espera</string>
     <string name="update_app_title">Atualização necessária</string>
-    <string name="update_app">Seu aplicativo Proton Mail não pode ser usado até que seja atualizado</string>
+    <string name="update_app">O aplicativo do Proton Mail não pode ser usado até que seja atualizado</string>
     <string name="you_are_offline">Você está desconectado</string>
     <string name="api_offline">Proton Mail está momentaneamente indisponível. Verifique o nosso twitter para maiores informações: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contato salvo</string>
@@ -201,10 +209,9 @@
     <string name="all_mail">Todos os e-mails</string>
     <string name="contacts">Contatos</string>
     <string name="search_contacts">Pesquisar contatos</string>
-    <string name="fetching_contacts">Pesquisando contatos no Proton Mail...</string>
+    <string name="fetching_contacts">Buscando contatos do Proton Mail...</string>
     <string name="fetching_contacts_success">Contatos atualizados com sucesso</string>
     <string name="fetching_contacts_failure">Não foi possível atualizar contatos</string>
-    <string name="no_search_results">Pesquisa sem resultados</string>
     <string name="compose">Escrever</string>
     <string name="compose_message">Escrever mensagem</string>
     <string name="empty_folder">Esvaziar Pasta</string>
@@ -243,8 +250,8 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">Um anexo</item>
-        <item quantity="other">%d anexos</item>
+        <item quantity="one">1 anexo</item>
+        <item quantity="other">%d Anexos</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="one">\u0020 1 anexo</item>
@@ -277,7 +284,7 @@
     <string name="invalid_email_address">O endereço \'%s\' é inválido</string>
     <string name="invalid_email_address_removed">O endereço \'%s\' é inválido e foi removido</string>
     <string name="no_recipients_specified">Por favor adicione ao menos um destinatário</string>
-    <string name="no_password_specified">Os tempos de expiração só podem ser configurados em mensagens completamente criptografadas. Defina uma senha para seus destinatários de fora do Proton Mail.</string>
+    <string name="no_password_specified">Os tempos de expiração só podem ser configurados em mensagens criptografadas. Defina uma senha para seus destinatários que não usam o Proton Mail.</string>
     <string name="attachment_limit">Os anexos são limitados a %1$s. O total de anexos seria %2$s.</string>
     <string name="sending_message">Enviando mensagem...</string>
     <string name="sending_message_offline">Sem conexão, na fila para enviar mais tarde...</string>
@@ -349,7 +356,7 @@
     <string name="share_link">Compartilhar link</string>
     <string name="sync_attachments">Sincronizando anexos</string>
     <string name="processing_attachment">Processando anexo</string>
-    <string name="hyperlink_confirmation_dialog_text_html">Você está prestes a ser redirecionado para para:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Você tem certeza que deseja continuar?</string>
+    <string name="hyperlink_confirmation_dialog_text_html">Você está prestes a ser redirecionado para:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Você deseja continuar?</string>
     <string name="dont_ask_again">Não perguntar novamente</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorreto, %d tentativa restante</item>
@@ -470,7 +477,7 @@
     <string name="details_copied">Detalhes copiados para a área de transferência</string>
     <string name="saving">Salvando...</string>
     <string name="update_folder">Atualizar pasta</string>
-    <string name="spam_score_100">Este email parece ser de um endereço Proton Mail, mas veio de fora do nosso sistema e falhou nos nossos requisitos de autenticação. Ele pode ser falsificado ou encaminhado incorretamente!</string>
+    <string name="spam_score_100">Este e-mail parece ser de um endereço Proton Mail, mas veio de fora do nosso sistema e não atendeu a nossos requisitos de autenticação. Ele pode ser falsificado ou encaminhado indevidamente!</string>
     <string name="spam_score_101">Este e-mail falhou nos requisitos de autenticação de domínio. Ele pode ser falsificado ou encaminhado incorretamente!</string>
     <string name="spam_score_102">Esta mensagem pode ser uma tentativa de phishing. Por favor, verifique o remetente e seu conteúdo para se certificar de que eles são legítimos. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SAIBA MAIS</a></string>
     <string name="print_from_template">De: %s</string>
@@ -499,7 +506,7 @@
     <string name="convert_question_subtitle">Isso irá carregar os contatos locais em seu dispositivo para o diretório de contatos do Proton Mail. Você poderá então acessar esses contatos em seus outros dispositivos através do Proton Mail.</string>
     <string name="refresh_contacts">Atualizar</string>
     <string name="invalid_email_some_contacts">O endereço de e-mail de alguns de seus contatos não é válido</string>
-    <string name="protonmail_contacts">Contatos Proton Mail</string>
+    <string name="protonmail_contacts">Contatos do Proton Mail</string>
     <string name="device_contacts">Contatos do dispositivo</string>
     <string name="print_date_template">Data: %s</string>
     <string name="print_attachment_template">Anexo: %s  </string>

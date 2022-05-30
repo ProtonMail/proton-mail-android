@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">Estás al día</string>
     <string name="mailbox_empty_spam_subtitle">Tu carpeta de spam está vacía</string>
     <string name="mailbox_empty_trash_subtitle">La papelera está vacía</string>
+    <string name="mailbox_empty_state_no_results_found">No se encontraron resultados</string>
+    <string name="mailbox_empty_state_try_a_different_term">Intenta un término de búsqueda diferente</string>
     <string name="mailbox_no_messages">No hay mensajes</string>
     <string name="mailbox_unread_count">%d no leído</string>
     <string name="mailbox_updated_just_now">Actualizado justo ahora</string>
+    <string name="mailbox_updated_recently">Actualizado recientemente</string>
+    <string name="mailbox_updating">Actualizando…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Abrir en Proton Calendar</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nuevos mensajes</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">No hay contactos</string>
+    <string name="contacts_empty_state_no_groups">No hay grupos</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Los grupos de contactos no se importarán. Por favor actualice a un plan de pago para disfrutar de las funciones premium.</string>
     <string name="contact_details_remote_content_dialog_title">Contenido remoto</string>
@@ -146,10 +154,10 @@
     <string name="existing_user_onboarding_new_features_headline">Nuevas características</string>
     <string name="existing_user_onboarding_new_features_description">Disfrute de nuevas funciones como modo oscuro, notificaciones mejoradas, filtro de mensajes no leídos y subcarpetas.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualizado, protección unificada</string>
-    <string name="existing_user_onboarding_updated_proton_description">Presentamos la nueva imagen de Proton, con varios servicios, pero una misma misión. Has llegado al internet cimentado sobre la base de la privacidad. <a href="https://proton.me/news/updated-proton">Quiero saber más</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Presentamos el aspecto renovado de Proton. Muchos servicios, una misión. Bienvenido a un Internet en el que la privacidad es la norma. <a href="https://proton.me/news/updated-proton">Aprender más</a></string>
     <string name="onboarding_next">Siguiente</string>
     <string name="onboarding_get_started">Comenzar</string>
-    <string name="onboarding_got_it">Es suficiente</string>
+    <string name="onboarding_got_it">Entendido</string>
     <string name="onboarding_image_view_content_description">Ilustración de Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -171,9 +179,9 @@
     <string name="no_more_messages">No hay más mensajes</string>
     <string name="no_network_queued">No hay conexión, mensaje en espera</string>
     <string name="update_app_title">Actualización requerida</string>
-    <string name="update_app">Su aplicación de Proton Mail no se puede usar hasta que se actualice</string>
+    <string name="update_app">Su app de Proton Mail no se puede usar hasta que se actualice</string>
     <string name="you_are_offline">No estás conectado</string>
-    <string name="api_offline">Proton Mail está fuera de línea, verifica en https://protonstatus.com o en nuestro Twitter el estado actual: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail está actualmente fuera de línea, verifica en https://protonstatus.com o en nuestro Twitter para el estado actual: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contacto guardado</string>
     <string name="contact_saved_offline">Contacto guardado. Se sincronizará cuando la conexión esté disponible.</string>
     <string name="contact_exist">El correo del contacto ya existe</string>
@@ -191,7 +199,7 @@
     <string name="trash_option">Papelera</string>
     <string name="spam_option">Spam</string>
     <string name="allmail_option">Todos los mensajes</string>
-    <string name="inbox">Buzón</string>
+    <string name="inbox">Bandeja de entrada</string>
     <string name="starred">Destacados</string>
     <string name="drafts">Borradores</string>
     <string name="sent">Enviados</string>
@@ -201,10 +209,9 @@
     <string name="all_mail">Todos los mensajes</string>
     <string name="contacts">Contactos</string>
     <string name="search_contacts">Buscar contactos</string>
-    <string name="fetching_contacts">Obteniendo contactos de Protonmail...</string>
+    <string name="fetching_contacts">Obteniendo contactos de Proton Mail...</string>
     <string name="fetching_contacts_success">Contactos actualizados exitosamente</string>
     <string name="fetching_contacts_failure">No se pueden actualizar los contactos</string>
-    <string name="no_search_results">Búsqueda sin resultados</string>
     <string name="compose">Redactar</string>
     <string name="compose_message">Redactar mensaje</string>
     <string name="empty_folder">Carpeta vacía</string>
@@ -243,7 +250,7 @@
     <string name="expiration_hours">%dh</string>
     <string name="expiration_minutes">%dm</string>
     <plurals name="attachments">
-        <item quantity="one">Un archivo adjunto</item>
+        <item quantity="one">1 archivo adjunto</item>
         <item quantity="other">%d archivos adjuntos</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
@@ -277,7 +284,7 @@
     <string name="invalid_email_address">La dirección \'%s\' es inválida</string>
     <string name="invalid_email_address_removed">La dirección \'%s\' no es válida y fue eliminada</string>
     <string name="no_recipients_specified">Agregue al menos un destinatario</string>
-    <string name="no_password_specified">Los tiempos de expiración sólo se pueden establecer en mensajes totalmente cifrados. Establezca una contraseña para sus destinatarios que no sean de Proton Mail.</string>
+    <string name="no_password_specified">Los tiempos de expiración sólo se pueden establecer en mensajes totalmente cifrados. Por favor, establece una contraseña para tus destinatarios que no sean de Proton Mail.</string>
     <string name="attachment_limit">Los archivos adjuntos están limitados a %1$s. El total adjunto sería %2$s.</string>
     <string name="sending_message">Enviando mensaje...</string>
     <string name="sending_message_offline">Sin conexión, en espera para enviar más tarde...</string>
@@ -289,7 +296,7 @@
     <string name="cancel">Cancelar</string>
     <string name="close">Cerrar</string>
     <string name="eo_password_title">Establecer contraseña</string>
-    <string name="eo_password_subtitle">Establecezca una contraseña para cifrar este mensaje para usuarios que no sean de Proton Mail</string>
+    <string name="eo_password_subtitle">Establece una contraseña para cifrar este mensaje para usuarios que no sean de Proton Mail</string>
     <string name="eo_password_more_info">Obtener más información</string>
     <string name="no_attachments">0 archivos adjuntos</string>
     <string name="display_name_banned_chars">Nombre inválido. \'&gt;\' y \'&lt;\' no están permitidos</string>
@@ -392,7 +399,7 @@
     <string name="contact_details">Datos del contacto</string>
     <string name="email_type_home">Hogar</string>
     <string name="type_title">Elegir tipo</string>
-    <string name="sync_local_contacts">Cargar a Proton Mail</string>
+    <string name="sync_local_contacts">Subir a Proton Mail</string>
     <string name="please_select_only_phone_contacts">Seleccione solo contactos locales del teléfono</string>
     <string name="contact_vcard_hint_email">Ingresar correo electrónico</string>
     <string name="contact_vcard_hint_phone">Ingresar número de teléfono</string>
@@ -470,7 +477,7 @@
     <string name="details_copied">Detalles copiados al portapapeles</string>
     <string name="saving">Guardando...</string>
     <string name="update_folder">Actualizar carpeta</string>
-    <string name="spam_score_100">Este correo parece venir de una dirección de Proton Mail, pero vino desde fuera de nuestro sistema y ha fallado los requisitos de autenticación. ¡Pudo haber sido falsificado o reenviado incorrectamente!</string>
+    <string name="spam_score_100">Este correo parece ser de una dirección de Proton Mail, pero vino de fuera de nuestro sistema y ha fallado los requisitos de autenticación. ¡Pudo ser falsificado o reenviado incorrectamente!</string>
     <string name="spam_score_101">Este correo ha fallado sus requisitos de autenticación de dominio. ¡Pudo haber sido falsificado o reenviado incorrectamente!</string>
     <string name="spam_score_102">Este mensaje puede ser un intento de estafa. Compruebe que el remitente y el contenido sean legítimos. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MÁS INFORMACIÓN</a></string>
     <string name="print_from_template">De: %s</string>
@@ -672,7 +679,7 @@ compre más
     <string name="mobile_footer_info">Este pie de página se añade después de su firma</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Silenciar</string>
-    <string name="notifications_snooze">Notificaciones silenciadas</string>
+    <string name="notifications_snooze">Silenciar notificaciones</string>
     <string-array name="quick_snooze_values">
         <item>30 minutos</item>
         <item>1 hora</item>
@@ -717,7 +724,7 @@ compre más
     <string name="scheduled_snooze_on">Programado (activado)</string>
     <string name="scheduled_snooze_off">Programado (Desactivado)</string>
     <!-- endregion -->
-    <string name="mailbox">Buzón</string>
+    <string name="mailbox">Bandeja de entrada</string>
     <string name="privacy">Privacidad</string>
     <string name="auto_download_messages_title">Auto descargar mensajes</string>
     <string name="auto_download_messages_subtitle">Cuando esta opción está activada, los cuerpos de los mensajes se descargarán automáticamente cada vez que reciba una notificación nueva (esto consumirá más datos). Si la opción no está activada, los cuerpos de los mensajes solo se descargarán cuando abra el mensaje. (Nota: con cualquier opción, si vacía la caché o cierra la sesión, no podrá leer el cuerpo de los mensajes mientras no esté conectado).</string>
