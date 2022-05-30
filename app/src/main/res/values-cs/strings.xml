@@ -19,7 +19,7 @@
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
+    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
     <string name="x_add_folder">Přidat složku</string>
     <string name="x_add_label">Přidat štítek</string>
     <string name="x_days">Dny</string>
@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">Všechno máte aktuální</string>
     <string name="mailbox_empty_spam_subtitle">Vaše složka spamu je prázdná</string>
     <string name="mailbox_empty_trash_subtitle">Koš je prázdný</string>
+    <string name="mailbox_empty_state_no_results_found">Nebyly nalezeny žádné výsledky</string>
+    <string name="mailbox_empty_state_try_a_different_term">Zkuste jiný hledaný výraz</string>
     <string name="mailbox_no_messages">Žádné zprávy</string>
     <string name="mailbox_unread_count">%d nepřečtených</string>
     <string name="mailbox_updated_just_now">Právě aktualizováno</string>
+    <string name="mailbox_updated_recently">Nedávno aktualizováno</string>
+    <string name="mailbox_updating">Aktualizuji…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Otevřít v Proton kalendáři</string>
@@ -77,7 +81,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; napsal:</string>
     <string name="set_msg_password_title">Nastavit heslo</string>
-    <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy uživatelům, kteří nepoužívají Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Další informace</a></string>
+    <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy uživatelům, kteří nepoužívají ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Další informace</a></string>
     <string name="set_msg_password_info_icon_description">Informace</string>
     <string name="set_msg_password_msg_password_title">Heslo zprávy</string>
     <string name="set_msg_password_msg_password_hint">4 až 21 znaků</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nové zprávy</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">Žádné kontakty</string>
+    <string name="contacts_empty_state_no_groups">Žádné skupiny</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Skupiny kontaktů nebudou importovány. Chcete-li využívat prémiové funkce, přejděte na placený plán.</string>
     <string name="contact_details_remote_content_dialog_title">Vzdálený obsah</string>
@@ -145,8 +153,11 @@
     <string name="existing_user_onboarding_new_look_description">Váš šifrovaný e-mail byl zcela přepracován pro snadnější používání.</string>
     <string name="existing_user_onboarding_new_features_headline">Nové funkce</string>
     <string name="existing_user_onboarding_new_features_description">Využijte nové funkce, jako je tmavý režim, vylepšená oznámení, filtr nepřečtených zpráv a podsložky.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Aktualizovaný Proton, jednotná ochrana</string>
+    <string name="existing_user_onboarding_updated_proton_description">Představujeme osvěžený vzhled Protonu. Mnoho služeb, jedno poslání. Vítejte na internetu, kde je soukromí standardem. <a href="https://proton.me/news/updated-proton">Další informace</a></string>
     <string name="onboarding_next">Další</string>
     <string name="onboarding_get_started">Začínáme</string>
+    <string name="onboarding_got_it">Rozumím</string>
     <string name="onboarding_image_view_content_description">Ilustrace Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -168,9 +179,9 @@
     <string name="no_more_messages">Žádné další zprávy</string>
     <string name="no_network_queued">Žádná síť, zpráva zařazena do fronty</string>
     <string name="update_app_title">Je vyžadována aktualizace</string>
-    <string name="update_app">Aplikaci Protonmail nelze použít dokud nebude aktualizována</string>
+    <string name="update_app">Aplikaci Proton Mail nelze použít, dokud nebude aktualizována</string>
     <string name="you_are_offline">Jste v režimu offline</string>
-    <string name="api_offline">Proton Mail je nyní v režimu offline, zkontrolujte https://protonstatus.com pro aktuální stav: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail je momentálně offline, aktuální stav najdete na https://protonstatus.com nebo na našem Twitteru: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt byl uložen</string>
     <string name="contact_saved_offline">Kontakt byl uložen, synchronizace proběhne po připojení k internetu.</string>
     <string name="contact_exist">E-mail kontaktu již existuje</string>
@@ -198,10 +209,9 @@
     <string name="all_mail">Všechny zprávy</string>
     <string name="contacts">Kontakty</string>
     <string name="search_contacts">Vyhledat kontakty</string>
-    <string name="fetching_contacts">Načítání Protonmail kontaktů...</string>
+    <string name="fetching_contacts">Načítání Proton Mail kontaktů...</string>
     <string name="fetching_contacts_success">Kontakty úspěšně načteny</string>
     <string name="fetching_contacts_failure">Nelze načíst kontakty</string>
-    <string name="no_search_results">Žádné výsledky vyhledávání</string>
     <string name="compose">Napsat</string>
     <string name="compose_message">Napsat zprávu</string>
     <string name="empty_folder">Vyprázdnit složku</string>
@@ -240,7 +250,7 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">%d příloha</item>
+        <item quantity="one">1 příloha</item>
         <item quantity="few">%d přílohy</item>
         <item quantity="many">%d příloh</item>
         <item quantity="other">%d příloh</item>
@@ -506,7 +516,7 @@
     <string name="convert_question_subtitle">Tímto nahrajete Vaše kontakty v zařízení do adresáře Proton Mail kontakty. Pak budete mít přístup k těmto kontaktům na ostatních zařízeních prostřednictvím služby Proton Mail.</string>
     <string name="refresh_contacts">Obnovit</string>
     <string name="invalid_email_some_contacts">E-mailová adresa není platná pro některé z Vašich kontaktů</string>
-    <string name="protonmail_contacts">Kontakty Proton Mail</string>
+    <string name="protonmail_contacts">Proton Mail kontakty</string>
     <string name="device_contacts">Kontakty zařízení</string>
     <string name="print_date_template">Datum: %s</string>
     <string name="print_attachment_template">Příloha: %s;  </string>
@@ -682,7 +692,7 @@
     <string name="signature">Podpis</string>
     <string name="mobile_footer">Záhlaví Mobilu</string>
     <string name="edit_mobile_footer">Povolit mobilní zápatí</string>
-    <string name="default_mobile_footer">Odesláno z aplikace Proton Mail</string>
+    <string name="default_mobile_footer">Odesláno z mobilní verze Proton Mail</string>
     <string name="mobile_footer_is_premium">Změna Mobilního zápatí je povolena pouze pro platící uživatele</string>
     <string name="mobile_footer_info">Toto zápatí je přidáno za Váš podpis</string>
     <!-- region Snooze Settings -->
@@ -808,13 +818,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problémy a řešení běžného připojení</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Žádné připojení k internetu&lt;/i&gt; - Ujistěte se, že vaše internetové připojení funguje.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problém poskytovatele připojení (ISP)&lt;/i&gt; - Zkuste připojení k Protonu z jiné sítě (nebo použijte &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; nebo &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blokování vládou&lt;/i&gt; - Vaše země může blokovat přístup k Protonu. Zkuste &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (nebo jiné VPN) nebo &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pro přístup k Protonu.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aktivita antiviru&lt;/i&gt; - Dočasně vypněte nebo odstraňte antivirový software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall rušení&lt;/i&gt; - Vypněte všechny proxy servery nebo brány firewall nebo se obraťte na správce sítě.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton je vypnutý&lt;/i&gt; - Zkontrolujte &lt;a href=\"http://protonstatus.com/\"&gt;stav Protonu&lt;/a&gt; pro stav našeho systému.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Pořád nelze najít řešení&lt;/i&gt; - Kontaktujte nás přímo pomocí našeho &lt;a href=\"https://protonmail.com/support-form\"&gt;formuláře podpory&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), nebo &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Není připojení k internetu&lt;/i&gt; - Ujistěte se, že vaše internetové připojení funguje.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problém s poskytovatelem internetového připojení&lt;/i&gt; - Zkuste se připojit k Protonu z jiné sítě (nebo použijte &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; nebo &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vládní blokování&lt;/i&gt; - Vaše země může přístup k Protonu blokovat. Zkuste &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (nebo jinou VPN) nebo &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pro přístup k Protonu.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Dočasně vypněte nebo odstraňte antivirový software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Vypněte všechny proxy servery nebo firewally nebo kontaktujte správce sítě.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton je mimo provoz&lt;/i&gt; - Zkontrolujte &lt;a href=\"http://protonstatus.com/\"&gt;Proton status&lt;/a&gt; stav našeho systému.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Stále nemůžete najít řešení&lt;/i&gt; - Kontaktujte nás přímo prostřednictvím našeho &lt;a href=\"https://protonmail.com/support-form\"&gt;formuláře podpory&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), nebo &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

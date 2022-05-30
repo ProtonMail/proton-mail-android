@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
     <string name="mailbox_empty_spam_subtitle">Ο φάκελος ενοχλητικών είναι κενός</string>
     <string name="mailbox_empty_trash_subtitle">Ο φάκελος διαγραμμένων είναι κενός</string>
+    <string name="mailbox_empty_state_no_results_found">No results found</string>
+    <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
     <string name="mailbox_no_messages">Κανένα μήνυμα</string>
     <string name="mailbox_unread_count">%d unread</string>
     <string name="mailbox_updated_just_now">Ενημερώθηκε μόλις τώρα</string>
+    <string name="mailbox_updated_recently">Updated recently</string>
+    <string name="mailbox_updating">Updating…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Άνοιγμα στο Proton Calendar</string>
@@ -77,7 +81,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Την %s, %s &lt; ο/η %s&gt; έγραψε:</string>
     <string name="set_msg_password_title">Ορισμός κωδικού</string>
-    <string name="set_msg_password_info">Ορισμός κωδικού κρυπτογράφησης μηνύματος για χρήστες εκτός Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Μάθετε περισσότερα</a></string>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">Πληροφορίες</string>
     <string name="set_msg_password_msg_password_title">Κωδικός πρόσβασης μηνύματος</string>
     <string name="set_msg_password_msg_password_hint">μήκος 4 έως 21 χαρακτήρες</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Νέα μηνύματα</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">No contacts</string>
+    <string name="contacts_empty_state_no_groups">No groups</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Οι ομάδες επαφών δεν θα εισαχθούν. Για απόλαυση προνομιακών λειτουργιών, παρακαλούμε αναβαθμίστε σε πρόγραμμα επί πληρωμή.</string>
     <string name="contact_details_remote_content_dialog_title">Απομακρυσμένο περιεχόμενο</string>
@@ -145,8 +153,11 @@
     <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
     <string name="existing_user_onboarding_new_features_headline">New features</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Updated Proton, unified protection</string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Επόμενο</string>
     <string name="onboarding_get_started">Ξεκινήστε</string>
+    <string name="onboarding_got_it">Got it</string>
     <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -168,9 +179,9 @@
     <string name="no_more_messages">Όχι άλλα μηνύματα</string>
     <string name="no_network_queued">Δεν υπάρχει δίκτυο, το μήνυμα τέθηκε σε σειρά</string>
     <string name="update_app_title">Απαιτείται ενημέρωση</string>
-    <string name="update_app">Η εφαρμογή Proton Mail δεν μπορεί να χρησιμοποιηθεί μέχρι να ενημερωθεί</string>
+    <string name="update_app">Your Proton Mail app cannot be used until it is updated</string>
     <string name="you_are_offline">Είστε εκτός σύνδεσης</string>
-    <string name="api_offline">Το Proton Mail είναι εκτός σύνδεσης, ελέγξτε το https://protonstatus.com ή το twitter για την τρέχουσα κατάσταση: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Η επαφή αποθηκεύτηκε</string>
     <string name="contact_saved_offline">Η επαφή αποθηκεύτηκε, θα συγχρονιστεί όταν υπάρξει διαθέσιμη σύνδεση</string>
     <string name="contact_exist">Το email επικοινωνίας υπάρχει ήδη</string>
@@ -198,10 +209,9 @@
     <string name="all_mail">Όλα τα Μηνύματα</string>
     <string name="contacts">Επαφές</string>
     <string name="search_contacts">Αναζήτηση επαφών</string>
-    <string name="fetching_contacts">Ανάκτηση επαφών Protonmail...</string>
+    <string name="fetching_contacts">Fetching Proton Mail contacts...</string>
     <string name="fetching_contacts_success">Οι επαφές ενημερώθηκαν με επιτυχία</string>
     <string name="fetching_contacts_failure">Αδύνατη η ενημέρωση των επαφών</string>
-    <string name="no_search_results">Δεν βρέθηκαν αποτελέσματα</string>
     <string name="compose">Σύνταξη</string>
     <string name="compose_message">Σύνταξη μηνύματος</string>
     <string name="empty_folder">Άδειασμα Φακέλου</string>
@@ -240,8 +250,8 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">Ένα συνημμένο</item>
-        <item quantity="other">%d Συνημμένα</item>
+        <item quantity="one">1 Attachment</item>
+        <item quantity="other">%d Attachments</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="one">\u0020 1 Συνημμένο</item>
@@ -274,7 +284,7 @@
     <string name="invalid_email_address">Η διεύθυνση \'%s\' δεν είναι έγκυρη</string>
     <string name="invalid_email_address_removed">Η διεύθυνση \'%s\' είναι άκυρη και καταργήθηκε</string>
     <string name="no_recipients_specified">Παρακαλώ προσθέστε τουλάχιστον έναν παραλήπτη</string>
-    <string name="no_password_specified">Τα χρονικά όρια λήξης μπορούν να οριστούν μόνο σε πλήρως κρυπτογραφημένα μηνύματα. Παρακαλώ ορίστε έναν κωδικό πρόσβασης για τους αποδέκτες που δεν χρησιμοποιούν το Proton Mail.</string>
+    <string name="no_password_specified">Expiration times can only be set on fully encrypted messages. Please set a password for your non-Proton Mail recipients.</string>
     <string name="attachment_limit">Τα συνημμένα είναι περιορισμένα σε %1$s. Συνολικά τα συνημμένα θα πρέπει να είναι %2$s.</string>
     <string name="sending_message">Αποστολή μηνύματος...</string>
     <string name="sending_message_offline">Εκτός σύνδεσης, τέθηκε σε σειρά προκειμένου να σταλεί αργότερα...</string>
@@ -286,7 +296,7 @@
     <string name="cancel">Ακύρωση</string>
     <string name="close">Κλείσιμο</string>
     <string name="eo_password_title">Ορισμός Κωδικού</string>
-    <string name="eo_password_subtitle">Ορισμός κωδικού κρυπτογράφησης μηνύματος για χρήστες εκτός Proton Mail</string>
+    <string name="eo_password_subtitle">Set a password to encrypt this message for non-Proton Mail users</string>
     <string name="eo_password_more_info">Λάβετε περισσότερες πληροφορίες</string>
     <string name="no_attachments">0 Συνημμένα</string>
     <string name="display_name_banned_chars">Μή Έγκυρο Εμφανιζόμενο Όνομα. &gt; και &lt; δεν επιτρέπονται</string>
@@ -389,7 +399,7 @@
     <string name="contact_details">Στοιχεία Επαφής</string>
     <string name="email_type_home">Οικία</string>
     <string name="type_title">Επιλογή Τύπου</string>
-    <string name="sync_local_contacts">Μεταφόρτωση στο Proton Mail</string>
+    <string name="sync_local_contacts">Upload to Proton Mail</string>
     <string name="please_select_only_phone_contacts">Παρακαλώ επιλέξτε μόνο τοπικές επαφές τηλεφώνου</string>
     <string name="contact_vcard_hint_email">Εισαγωγή Email</string>
     <string name="contact_vcard_hint_phone">Εισαγωγή Αριθμού Τηλεφώνου</string>
@@ -467,7 +477,7 @@
     <string name="details_copied">Οι λεπτομέρειες αντιγράφηκαν στο πρόχειρο</string>
     <string name="saving">Αποθήκευση...</string>
     <string name="update_folder">Ενημέρωση φακέλου</string>
-    <string name="spam_score_100">Αυτό το μήνυμα ηλεκτρονικού ταχυδρομείου φαίνεται να προέρχεται από μια διεύθυνση Proton Mail, αλλά προήλθε έξω από το σύστημα μας και απέτυχε τις απαιτήσεις ελέγχου ταυτότητας μας. Μπορεί να έχει πλαστογραφηθεί ή να έχει προωθηθεί εσφαλμένα!</string>
+    <string name="spam_score_100">This email seems to be from a Proton Mail address but came from outside our system and failed our authentication requirements. It may be spoofed or improperly forwarded!</string>
     <string name="spam_score_101">Αυτό το μήνυμα ηλεκτρονικού ταχυδρομείου απέτυχε στις απαιτήσεις του ελέγχου ταυτότητας domain. Μπορεί να έχει πλαστογραφηθεί ή να έχει προωθηθεί λάθος!</string>
     <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a></string>
     <string name="print_from_template">Από: %s</string>
@@ -493,10 +503,10 @@
     <string name="email_empty">Η διεύθυνση E-mail λείπει</string>
     <string name="encrypted_contact_details">Κρυπτογραφημένα στοιχεία επαφής</string>
     <string name="convert_question">Μεταφόρτωση τοπικών επαφών</string>
-    <string name="convert_question_subtitle">Αυτό θα μεταφορτώσει τις τοπικές επαφές της συσκευή σας στον κατάλογο επαφών Proton Mail. Στη συνέχεια, θα έχετε πρόσβαση σε αυτές τις επαφές από τις υπόλοιπες συσκευές σας μέσω του Proton Mail.</string>
+    <string name="convert_question_subtitle">This will upload the local contacts on your device to your Proton Mail contacts directory. You will then be able to access these contacts on your other devices through Proton Mail.</string>
     <string name="refresh_contacts">Ανανέωση</string>
     <string name="invalid_email_some_contacts">Η διεύθυνση E-mail δεν είναι έγκυρη για ορισμένες από τις επαφές σας</string>
-    <string name="protonmail_contacts">Επαφές Proton Mail</string>
+    <string name="protonmail_contacts">Proton Mail Contacts</string>
     <string name="device_contacts">Επαφές Συσκευής</string>
     <string name="print_date_template">Ημερομηνία: %s</string>
     <string name="print_attachment_template">Συνημμένο: %s;  </string>
@@ -508,7 +518,7 @@
     <string name="remove_password_question">Αφαίρεση κωδικού;</string>
     <string name="attachment_storage_value_current">Τρέχουσα επιλογή: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Τρέχουσα επιλογή: Απεριόριστο</string>
-    <string name="attachment_offline_max_storage">Ορίζει το μέγιστο αποθηκευτικό χώρο που μπορεί να χρησιμοποιήσει το Proton Mail στην κινητή συσκευή σας.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space Proton Mail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Αποτυχία φόρτωσης ενσωματωμένων εικόνων. Παρακαλούμε ελέγξτε τη σύνδεση του δικτύου σας.</string>
     <string name="load_embedded_images_failed">Αποτυχία φόρτωσης ενσωματωμένων εικόνων.</string>
     <string name="unlimited">Απεριόριστο</string>
@@ -525,7 +535,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Στάλθηκε από εσάς με κρυπτογράφηση από άκρο σε άκρο</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Στάλθηκε από το Proton Mail με κρυπτογράφηση μηδενικής πρόσβασης</string>
+    <string name="sender_lock_sent_autoresponder">Sent by Proton Mail with zero access encryption</string>
     <string name="sender_lock_verification_failed">Η επαλήθευση του αποστολέα απέτυχε</string>
     <string name="sender_lock_pgp_encrypted">Κρυπτογραφημένο μήνυμα με PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Κρυπτογραφημένο μήνυμα με PGP απο επαληθευμένη διεύθυνση</string>
@@ -633,7 +643,7 @@
          πρόσβαση στο χώρο αποθήκευσης.</string>
     <string name="need_contacts_permissions_text">Για να εισάγετε επαφές πρέπει να επιτρέψετε την πρόσβαση σε επαφές.</string>
     <string name="push_notifications_alert_title">Ειδοποιήσεις Push</string>
-    <string name="push_notifications_alert_subtitle">Οι ειδοποιήσεις Push για το Proton Mail δεν λειτουργούν χωρίς ενημερωμένες υπηρεσίες του Google Play.</string>
+    <string name="push_notifications_alert_subtitle">Push notifications for Proton Mail do not work without updated Google Play services.</string>
     <string name="app_locked">Η εφαρμογή είναι κλειδωμένη</string>
     <string name="use_pin_instead">Εναλλακτικά, χρησιμοποιήστε PIN</string>
     <!-- strings used for biometric enrollment -->
@@ -664,7 +674,7 @@
     <string name="signature">Υπογραφή</string>
     <string name="mobile_footer">Υποσέλιδο κινητού</string>
     <string name="edit_mobile_footer">Ενεργοποίηση υποσέλιδου κινητού</string>
-    <string name="default_mobile_footer">Στάλθηκε από Proton Mail mobile</string>
+    <string name="default_mobile_footer">Sent from Proton Mail mobile</string>
     <string name="mobile_footer_is_premium">Η αλλαγή του Υποσέλιδου σε Κινητό επιτρέπεται μόνο σε χρήστες επί Πληρωμή</string>
     <string name="mobile_footer_info">Αυτό το υποσέλιδο προστέθηκε μετά την υπογραφή σας</string>
     <!-- region Snooze Settings -->

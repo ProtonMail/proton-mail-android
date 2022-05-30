@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">Du er ajour</string>
     <string name="mailbox_empty_spam_subtitle">Din spam-mappe er tom</string>
     <string name="mailbox_empty_trash_subtitle">Papirkuven er tom</string>
+    <string name="mailbox_empty_state_no_results_found">Ingen resultater fundet</string>
+    <string name="mailbox_empty_state_try_a_different_term">Prøv et andet søgeord</string>
     <string name="mailbox_no_messages">Ingen beskeder</string>
     <string name="mailbox_unread_count">%d ulæst</string>
     <string name="mailbox_updated_just_now">Netop opdateret</string>
+    <string name="mailbox_updated_recently">Opdateret for nylig</string>
+    <string name="mailbox_updating">Opdaterer…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Åbn i Proton Calendar</string>
@@ -77,7 +81,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s skrev %s &lt; %s&gt;:</string>
     <string name="set_msg_password_title">Indstil adgangskode</string>
-    <string name="set_msg_password_info">Indstil en adgangskode til at kryptere denne besked for ikke-protonmail-brugere. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Lær mere</a></string>
+    <string name="set_msg_password_info">Indstil en adgangskode til kryptering af denne besked for brugere, der ikke anvender Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Lær mere</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Beskedadgangskode</string>
     <string name="set_msg_password_msg_password_hint">4 til 21 tegn lang</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nye beskeder</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">Ingen kontakter</string>
+    <string name="contacts_empty_state_no_groups">Ingen grupper</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Kontaktgrupper vil ikke blive importeret. Du skal opgradere til et betalt abonnement for at nyde godt af premium-funktioner.</string>
     <string name="contact_details_remote_content_dialog_title">Eksternt indhold</string>
@@ -145,8 +153,11 @@
     <string name="existing_user_onboarding_new_look_description">Din krypterede e-mail er blevet fuldstændig redesignet for at gøre den nemmere at bruge.</string>
     <string name="existing_user_onboarding_new_features_headline">Nye funktioner</string>
     <string name="existing_user_onboarding_new_features_description">Du kan nyde godt af nye funktioner som mørk tilstand, forbedrede beskeder, et filter for ulæste meddelelser og undermapper.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Opdateret Proton, forenet beskyttelse</string>
+    <string name="existing_user_onboarding_updated_proton_description">Vi præsenterer Proton\'s nye udseende. Mange tjenester, én mission. Velkommen til et internet, hvor privatlivsbeskyttelse er standard. <a href="https://proton.me/news/updated-proton">Lær mere</a></string>
     <string name="onboarding_next">Næste</string>
     <string name="onboarding_get_started">Kom godt i gang</string>
+    <string name="onboarding_got_it">Forstået</string>
     <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -201,7 +212,6 @@
     <string name="fetching_contacts">Henter Proton Mail-kontakter...</string>
     <string name="fetching_contacts_success">Kontakter opdateret</string>
     <string name="fetching_contacts_failure">Kunne ikke opdatere kontakter</string>
-    <string name="no_search_results">Ingen søgeresultater</string>
     <string name="compose">Skriv</string>
     <string name="compose_message">Skriv besked</string>
     <string name="empty_folder">Tøm mappe</string>
@@ -240,7 +250,7 @@
     <string name="expiration_hours">%dT</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">En vedhæftning</item>
+        <item quantity="one">1 vedhæftning</item>
         <item quantity="other">%d vedhæftninger</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
@@ -274,7 +284,7 @@
     <string name="invalid_email_address">Adressen \'%s\' er ugyldig</string>
     <string name="invalid_email_address_removed">The address \'%s\' is invalid and was removed</string>
     <string name="no_recipients_specified">Angiv mindst én modtager</string>
-    <string name="no_password_specified">Udløbstider kan kun sættes for fuldt krypterede beskeder. Opsæt en adgangskode til din ikke-Proton Mail-modtagere.</string>
+    <string name="no_password_specified">Udløbstider kan kun sættes for fuldt krypterede beskeder. Opsæt en adgangskode til dine modtagere, som ikke anvender Proton Mail.</string>
     <string name="attachment_limit">Vedhæftninger er begrænset til %1$s. Vedhæftninger i alt ville udgøre %2$s.</string>
     <string name="sending_message">Sender besked ...</string>
     <string name="sending_message_offline">Offline, sat i kø til senere afsendelse...</string>
@@ -286,7 +296,7 @@
     <string name="cancel">Annuller</string>
     <string name="close">Luk</string>
     <string name="eo_password_title">Indstil adgangskode</string>
-    <string name="eo_password_subtitle">Indstil en adgangskode for at kryptere denne besked til ikke-Proton Mail-brugere</string>
+    <string name="eo_password_subtitle">Indstil en adgangskode for at kryptere denne besked til brugere, som ikke anvender Proton Mail</string>
     <string name="eo_password_more_info">Få flere oplysninger</string>
     <string name="no_attachments">0 vedhæftninger</string>
     <string name="display_name_banned_chars">Ugyldigt visningsnavn. \'&gt;\', \'&lt;\' og \' @\' er ikke tilladt</string>
@@ -467,7 +477,7 @@
     <string name="details_copied">Oplysninger kopieret til udklipsholder</string>
     <string name="saving">Gemmer...</string>
     <string name="update_folder">Opdater mappe</string>
-    <string name="spam_score_100">Denne e-mail lader til at være sendt fra en Proton Mail-adresse, men den kom fra et sted uden for vores system og bestod ikke vores godkendelseskrav. Den kan være falsk eller ukorrekt videresendt!</string>
+    <string name="spam_score_100">Denne e-mail ser ud til at være fra en Proton Mail-adresse, men den kom fra et sted uden for vores system og har ikke overholdt vores godkendelseskrav. Den kan være forfalsket eller ukorrekt videresendt!</string>
     <string name="spam_score_101">Denne e-mail bestod ikke sit domænes godkendelseskrav. Den kan være falsk eller ukorrekt videresendt!</string>
     <string name="spam_score_102">Denne besked kan være et phishing-forsøg. Tjek afsenderen og indholdet for at sikre, at de er legitime. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">FÅ MERE AT VIDE</a></string>
     <string name="print_from_template">Fra: %s</string>
@@ -508,7 +518,7 @@
     <string name="remove_password_question">Fjern adgangskode?</string>
     <string name="attachment_storage_value_current">Aktuelt valg: %d MB</string>
     <string name="attachment_storage_value_current_unlimited">Aktuelt valg: Ubegrænset</string>
-    <string name="attachment_offline_max_storage">Angiver den maksimale lagerpladsmængde, Proton Mail kan bruge på din mobilenhed.</string>
+    <string name="attachment_offline_max_storage">Angiver den maksimale lagerpladsmængde, som Proton Mail kan bruge på din mobilenhed.</string>
     <string name="load_embedded_images_failed_no_network">Indlæsning af indlejrede billeder mislykkedes. Tjek din netværksforbindelse.</string>
     <string name="load_embedded_images_failed">Indlæsning af indlejrede billeder mislykkedes.</string>
     <string name="unlimited">Ubegrænset</string>
@@ -633,7 +643,7 @@
         adgang til lager.</string>
     <string name="need_contacts_permissions_text">For at importere kontakter skal du tillade adgang til kontakter.</string>
     <string name="push_notifications_alert_title">Push-notifikationsadvarsel</string>
-    <string name="push_notifications_alert_subtitle">Push-notifikationer i Proton Mail fungerer ikke uden opdaterede Google Play-tjenester.</string>
+    <string name="push_notifications_alert_subtitle">Push-notifikationer for Proton Mail fungerer ikke uden opdaterede Google Play-tjenester.</string>
     <string name="app_locked">App er låst</string>
     <string name="use_pin_instead">Brug i stedet PIN-kode</string>
     <!-- strings used for biometric enrollment -->
@@ -664,7 +674,7 @@
     <string name="signature">Signatur</string>
     <string name="mobile_footer">Mobil-sidefod</string>
     <string name="edit_mobile_footer">Aktivér mobil-sidefod</string>
-    <string name="default_mobile_footer">Sendt fra Proton Mail mobil</string>
+    <string name="default_mobile_footer">Sendt fra Proton Mail-mobil</string>
     <string name="mobile_footer_is_premium">Ændring af mobilsignaturen er kun tilladt for betalende brugere</string>
     <string name="mobile_footer_info">Denne sidefod tilføjes efter din signatur</string>
     <!-- region Snooze Settings -->

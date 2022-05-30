@@ -49,11 +49,15 @@
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Ce dossier est vide</string>
     <string name="mailbox_empty_inbox_subtitle">Vous êtes à jour</string>
-    <string name="mailbox_empty_spam_subtitle">Votre dossier Indésirables/spam est vide</string>
+    <string name="mailbox_empty_spam_subtitle">Votre dossier courrier indésirable est vide</string>
     <string name="mailbox_empty_trash_subtitle">La corbeille est vide</string>
+    <string name="mailbox_empty_state_no_results_found">Aucun résultat trouvé</string>
+    <string name="mailbox_empty_state_try_a_different_term">Essayez un autre terme de recherche</string>
     <string name="mailbox_no_messages">Aucun message</string>
     <string name="mailbox_unread_count">%d non lu(s)</string>
     <string name="mailbox_updated_just_now">Mis à jour à l\'instant</string>
+    <string name="mailbox_updated_recently">Mis à jour récemment</string>
+    <string name="mailbox_updating">Mise à jour…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Ouvrir dans Proton Calendar</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nouveaux messages</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">Aucun contact</string>
+    <string name="contacts_empty_state_no_groups">Aucun groupe</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Les groupes de contacts ne seront pas importés. Veuillez passer à une offre payante pour bénécifier des fonctionnalités premium.</string>
     <string name="contact_details_remote_content_dialog_title">Contenu distant</string>
@@ -145,8 +153,8 @@
     <string name="existing_user_onboarding_new_look_description">Votre messagerie chiffrée a été entièrement repensée pour en faciliter l\'utilisation.</string>
     <string name="existing_user_onboarding_new_features_headline">Nouvelles fonctionnalités</string>
     <string name="existing_user_onboarding_new_features_description">Profitez de nouvelles fonctionnalités telles que le mode sombre, des notifications améliorées, un filtre de messages non lus et des sous-dossiers.</string>
-    <string name="existing_user_onboarding_updated_proton_headline">Proton mis à jour, protection unifiée</string>
-    <string name="existing_user_onboarding_updated_proton_description">Voici la nouvelle apparence de Proton. De nombreux services, une seule mission. Bienvenue dans un Internet où la confidentialité est la règle. <a href="https://proton.me/news/updated-proton">En savoir plus</a></string>
+    <string name="existing_user_onboarding_updated_proton_headline">Nouvelle version, protection unifiée</string>
+    <string name="existing_user_onboarding_updated_proton_description">Présentation du nouveau design de Proton. Plusieurs services, une seule mission. Bienvenue sur un Internet où la confidentialité est la valeur par défaut. <a href="https://proton.me/news/updated-proton">En savoir plus</a></string>
     <string name="onboarding_next">Suivant</string>
     <string name="onboarding_get_started">Commencer</string>
     <string name="onboarding_got_it">J\'ai compris</string>
@@ -189,7 +197,7 @@
     <string name="sent_option">Envoyés</string>
     <string name="archive_option">Archives</string>
     <string name="trash_option">Corbeille</string>
-    <string name="spam_option">Indésirables/spam</string>
+    <string name="spam_option">Indésirables</string>
     <string name="allmail_option">Tous les messages</string>
     <string name="inbox">Boîte de réception</string>
     <string name="starred">Favoris</string>
@@ -204,7 +212,6 @@
     <string name="fetching_contacts">Récupération des contacts Proton Mail...</string>
     <string name="fetching_contacts_success">Actualisation des contacts réussie</string>
     <string name="fetching_contacts_failure">Impossible d\'actualiser les contacts</string>
-    <string name="no_search_results">Aucun résultat pour cette recherche</string>
     <string name="compose">Rédiger</string>
     <string name="compose_message">Rédiger un message</string>
     <string name="empty_folder">Vider le dossier</string>
@@ -213,7 +220,7 @@
     <string name="delete_messages">Supprimer les messages</string>
     <string name="move_to_archive">Déplacer vers les archives</string>
     <string name="move_to_trash">Déplacer vers la corbeille</string>
-    <string name="move_to_spam">Déplacer dans les indésirables/spam</string>
+    <string name="move_to_spam">Déplacer dans les indésirables</string>
     <string name="move_to_inbox">Déplacer vers la boîte de réception</string>
     <string name="move_to">Déplacer vers…</string>
     <string name="are_you_sure_empty">Êtes-vous sûr de vouloir supprimer tous les messages de ce dossier ?</string>
@@ -277,7 +284,7 @@
     <string name="invalid_email_address">L’adresse « %s » n’est pas valide</string>
     <string name="invalid_email_address_removed">L\'adresse « %s » n’est pas valide et a été supprimée</string>
     <string name="no_recipients_specified">Veuillez ajouter au moins un destinataire</string>
-    <string name="no_password_specified">Définir un délai d\'expiration n\'est possible que sur les messages entièrement chiffrés. Veuillez définir un mot de passe pour vos destinataires non-Proton Mail.</string>
+    <string name="no_password_specified">Définir un délai d\'expiration n\'est possible que sur les messages entièrement chiffrés. Veuillez définir un mot de passe pour vos destinataires qui n\'utilisent pas Proton Mail.</string>
     <string name="attachment_limit">Les pièces jointes sont limitées à %1$s. Le poids total des pièces jointes est de %2$s.</string>
     <string name="sending_message">Envoi du message en cours...</string>
     <string name="sending_message_offline">Hors-ligne, placé en file d\'attente pour un envoi différé...</string>
@@ -289,7 +296,7 @@
     <string name="cancel">Annuler</string>
     <string name="close">Fermer</string>
     <string name="eo_password_title">Définir le mot de passe</string>
-    <string name="eo_password_subtitle">Définir un mot de passe afin de chiffrer ce message pour les utilisateurs non-Proton Mail</string>
+    <string name="eo_password_subtitle">Définir un mot de passe pour chiffrer ce message pour les utilisateurs qui ne sont pas sur Proton Mail</string>
     <string name="eo_password_more_info">En savoir plus</string>
     <string name="no_attachments">Aucune pièce jointe</string>
     <string name="display_name_banned_chars">Nom d\'affichage invalide. \'&gt;\' et \'&lt;\' ne sont pas autorisés</string>
@@ -470,7 +477,7 @@
     <string name="details_copied">Détails copiés dans le presse-papiers</string>
     <string name="saving">Enregistrement en cours...</string>
     <string name="update_folder">Mettre à jour le dossier</string>
-    <string name="spam_score_100">Cet e-mail semble provenir d\'une adresse Proton Mail, mais ne provient pas de notre système et a échoué aux exigences d\'authentification. Il a peut-être été falsifié ou transmis de manière incorrecte !</string>
+    <string name="spam_score_100">Cet e-mail semble provenir d\'une adresse Proton Mail, mais il vient de l\'extérieur de notre système et à échoué aux tests d\'authentification. Il a peut-être été falsifié ou transféré incorrectement!</string>
     <string name="spam_score_101">Cet e-mail a échoué aux tests d\'authentification de son domaine. Il a peut-être été falsifié ou transféré incorrectement !</string>
     <string name="spam_score_102">Ce message peut être une tentative d’hameçonnage. Veuillez vérifier l’expéditeur et le contenu afin de vous assurer qu’ils sont légitimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">EN SAVOIR PLUS</a></string>
     <string name="print_from_template">De : %s</string>
@@ -795,7 +802,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférences antivirus&lt;/i&gt; : désactivez ou supprimez temporairement votre logiciel antivirus.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférences proxy/pare-feu&lt;/i&gt; : désactivez tout proxy ou pare-feu, ou contactez votre administrateur réseau.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton est en panne&lt;/i&gt; : vérifiez le &lt;a href=\"http://protonstatus.com/\"&gt;Statut Proton&lt;/a&gt; pour connaître l\'état de notre système.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez pas de solution&lt;/i&gt; : contactez-nous directement via notre &lt;a href=\"https://protonmail.com/support-form\"&gt;formulaire d’assistance&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;par e-mail&lt;/a&gt; (support@protonmail.zendesk.com) ou via &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez pas de solution&lt;/i&gt; : contactez-nous directement via notre &lt;a href=\"https://protonmail.com/support-form\"&gt;formulaire d’assistance&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;par e-mail&lt;/a&gt; (support@protonmail.zendesk.com) ou via &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

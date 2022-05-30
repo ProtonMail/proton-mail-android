@@ -34,8 +34,8 @@
     <!-- endregion -->
     <!-- region Content descriptions: accessibility description for icons -->
     <string name="x_label_icon_description">ラベルのアイコン</string>
-    <string name="x_folder_icon_description">フォルダのアイコン</string>
-    <string name="x_parent_folder_icon_description">サブフォルダを含むフォルダのアイコン</string>
+    <string name="x_folder_icon_description">フォルダーのアイコン</string>
+    <string name="x_parent_folder_icon_description">サブフォルダを含むフォルダーのアイコン</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">連絡先</string>
@@ -43,7 +43,7 @@
     <string name="drawer_report_bug">バグを報告</string>
     <string name="drawer_settings">設定</string>
     <string name="drawer_sign_out">サインアウト</string>
-    <string name="drawer_create_folder_description">新しいフォルダを作成</string>
+    <string name="drawer_create_folder_description">新しいフォルダーを作成</string>
     <string name="drawer_create_label_description">新しいラベルを作成</string>
     <!-- endregion -->
     <!-- region Mailbox -->
@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">最新です</string>
     <string name="mailbox_empty_spam_subtitle">迷惑メールフォルダーは空です。</string>
     <string name="mailbox_empty_trash_subtitle">ごみ箱は空です</string>
+    <string name="mailbox_empty_state_no_results_found">結果が見つかりませんでした</string>
+    <string name="mailbox_empty_state_try_a_different_term">違う単語で検索してみてください</string>
     <string name="mailbox_no_messages">メッセージはありません</string>
     <string name="mailbox_unread_count">%d 未読</string>
     <string name="mailbox_updated_just_now">たった今更新</string>
+    <string name="mailbox_updated_recently">最近更新されました</string>
+    <string name="mailbox_updating">更新中…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Proton Calendar で開く</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">新しいメッセージ</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">連絡先がありません</string>
+    <string name="contacts_empty_state_no_groups">グループがありません</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">連絡先グループはインポートされません。有料プランにアップグレードしてプレミアム機能を利用できます。</string>
     <string name="contact_details_remote_content_dialog_title">リモートコンテンツ</string>
@@ -140,13 +148,16 @@
     <string name="new_user_onboarding_privacy_for_all_headline">すべての人にプライバシーを</string>
     <string name="new_user_onboarding_privacy_for_all_description">連絡先を Proton Mail に招待するとエンドツーエンド暗号化をシームレスに利用でき、メッセージを送信する際にパスワード保護を追加できます。</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">自分だけの外観</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">ファイルやラベルを使ったり、メッセージに色付けをしたりして、自分好みの受信トレイを作りましょう。</string>
     <string name="existing_user_onboarding_new_look_headline">新しい外観、変わらない保護</string>
     <string name="existing_user_onboarding_new_look_description">暗号化されたメールは使いやさを追求するために、デザインを一新しました。</string>
     <string name="existing_user_onboarding_new_features_headline">新しい機能</string>
     <string name="existing_user_onboarding_new_features_description">ダークモード、アップデートされた通知、未読メッセージフィルター、サブフォルダーなどの新たな機能をお楽しみください。</string>
+    <string name="existing_user_onboarding_updated_proton_headline">統一された保護を新しくなった Proton で</string>
+    <string name="existing_user_onboarding_updated_proton_description">新しい外観になった Proton をご紹介します。たくさんのサービス、1 つのミッション。どこでもプライベートなインターネットへようこそ。<a href="https://proton.me/news/updated-proton">詳細</a></string>
     <string name="onboarding_next">次へ</string>
     <string name="onboarding_get_started">利用開始</string>
+    <string name="onboarding_got_it">はい</string>
     <string name="onboarding_image_view_content_description">Proton Mail イラストレーション</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -168,7 +179,7 @@
     <string name="no_more_messages">これ以上メッセージはありません。</string>
     <string name="no_network_queued">ネットワークに接続がありません。メッセージは接続確認後に処理されます。</string>
     <string name="update_app_title">アップデートが必要です。</string>
-    <string name="update_app">アップデートされるまで、ProtonMail アプリはご利用いただけません</string>
+    <string name="update_app">アップデートされるまで、Proton Mail アプリはご利用いただけません</string>
     <string name="you_are_offline">オフラインです</string>
     <string name="api_offline">Proton Mail は現在ご利用できません。https://protonstatus.com または Twitter (https://twitter.com/protonmail) で現在の状態を確認してください。</string>
     <string name="contact_saved">連絡先が保存されました。</string>
@@ -177,7 +188,7 @@
     <string name="invalid_email">メールアドレスが無効です。</string>
     <string name="duplicate_email">メール アドレスが重複しています。</string>
     <string name="message_drafted">メッセージの送信に失敗しました。メッセージは下書きフォルダーに保存されます。</string>
-    <string name="attachment_failed_message_drafted">\"%s\"を添付ファイルから削除し、再度添付して送信してください。メッセージは\"下書き\"フォルダに保存されています。</string>
+    <string name="attachment_failed_message_drafted">\"%s\"を添付ファイルから削除し、再度添付して送信してください。メッセージは下書きフォルダーに保存されています。</string>
     <string name="open_drawer">開く</string>
     <string name="close_drawer">閉じる</string>
     <string name="inbox_option">受信トレイ</string>
@@ -187,8 +198,8 @@
     <string name="archive_option">アーカイブ</string>
     <string name="trash_option">ごみ箱</string>
     <string name="spam_option">迷惑メール</string>
-    <string name="allmail_option">全メール</string>
-    <string name="inbox">受信箱</string>
+    <string name="allmail_option">すべてのメール</string>
+    <string name="inbox">受信トレイ</string>
     <string name="starred">星付き</string>
     <string name="drafts">下書き</string>
     <string name="sent">送信済み</string>
@@ -198,10 +209,9 @@
     <string name="all_mail">すべてのメール</string>
     <string name="contacts">連絡先</string>
     <string name="search_contacts">連絡先の検索</string>
-    <string name="fetching_contacts">Protonmailの連絡先を取得しています...</string>
+    <string name="fetching_contacts">Proton Mail の連絡先をフェッチ中...</string>
     <string name="fetching_contacts_success">連絡先が正常に更新されました。</string>
     <string name="fetching_contacts_failure">連絡先を更新できません。</string>
-    <string name="no_search_results">検索結果はありません。</string>
     <string name="compose">新規作成</string>
     <string name="compose_message">メッセージの作成</string>
     <string name="empty_folder">フォルダーを空にする</string>
@@ -211,9 +221,9 @@
     <string name="move_to_archive">アーカイブに移動</string>
     <string name="move_to_trash">ごみ箱に移動</string>
     <string name="move_to_spam">迷惑メールに移動</string>
-    <string name="move_to_inbox">受信箱に移動</string>
-    <string name="move_to">... へ移動</string>
-    <string name="are_you_sure_empty">このフォルダー内の全てのメッセージを削除してよろしいですか？</string>
+    <string name="move_to_inbox">受信トレイに移動</string>
+    <string name="move_to">移動先</string>
+    <string name="are_you_sure_empty">このフォルダー内のすべてのメッセージを削除してよろしいですか？</string>
     <string name="send">送信</string>
     <string name="selected">選択済</string>
     <string name="no_labels">ラベルはありません。</string>
@@ -240,7 +250,7 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="other">%d 添付ファイル</item>
+        <item quantity="other">%d 件の添付ファイル</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="other">\u0020 %d 添付ファイル</item>
@@ -271,7 +281,7 @@
     <string name="invalid_email_address">\'%s\' は無効です。</string>
     <string name="invalid_email_address_removed">%sは無効なため、削除されました。</string>
     <string name="no_recipients_specified">少なくとも 1 件の宛先を追加してください。</string>
-    <string name="no_password_specified">有効期限は完全に暗号化されたメッセージに対してのみ設定できます。Proton Mail利用者以外のためのパスワードを設定してください。</string>
+    <string name="no_password_specified">有効期限は完全に暗号化されたメッセージに対してのみ設定できます。Proton Mail 利用者以外のためのパスワードを設定してください。</string>
     <string name="attachment_limit">添付ファイルは、%1$s に制限されています。添付ファイルの合計は、%2$s になります。</string>
     <string name="sending_message">メッセージを送信しています...</string>
     <string name="sending_message_offline">現在オフラインのため、後ほど送信されます。</string>
@@ -283,7 +293,7 @@
     <string name="cancel">キャンセル</string>
     <string name="close">閉じる</string>
     <string name="eo_password_title">パスワードの設定</string>
-    <string name="eo_password_subtitle">Proton Mail利用者以外へのメッセージの暗号化パスワードを設定して下さい。</string>
+    <string name="eo_password_subtitle">Proton Mail 利用者以外へのメッセージの暗号化パスワードを設定して下さい。</string>
     <string name="eo_password_more_info">詳細情報を入手</string>
     <string name="no_attachments">添付ファイルはありません。</string>
     <string name="display_name_banned_chars">無効な表示名です。\' &gt;\'および、\' &lt;\'は利用できません。</string>
@@ -320,8 +330,8 @@
     <string name="cant_download_attachment">添付ファイルをダウンロードできません。</string>
     <string-array name="auto_logout_options_array">
         <item>切替/終了時に直ちに</item>
-        <item>5分間未使用の場合</item>
-        <item>15分間未使用の場合</item>
+        <item>5 分間未使用の場合</item>
+        <item>15 分間未使用の場合</item>
         <item>1時間未使用の場合</item>
         <item>24時間未使用の場合</item>
     </string-array>
@@ -341,7 +351,7 @@
     <string name="select_tone">音を選択してください</string>
     <string name="copy_link">リンクをコピーする</string>
     <string name="share_link">リンクを共有する</string>
-    <string name="sync_attachments">添付ファイルを同期しています...</string>
+    <string name="sync_attachments">添付ファイルを同期中</string>
     <string name="processing_attachment">添付ファイルの処理中</string>
     <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次の URL を開こうとしています:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
     <string name="dont_ask_again">今後表示しない</string>
@@ -384,7 +394,7 @@
     <string name="contact_details">連絡先の詳細</string>
     <string name="email_type_home">自宅</string>
     <string name="type_title">種類を選択</string>
-    <string name="sync_local_contacts">Proton Mailにアップロード</string>
+    <string name="sync_local_contacts">Proton Mail にアップロード</string>
     <string name="please_select_only_phone_contacts">ローカルの電話連絡先だけを選択してください。</string>
     <string name="contact_vcard_hint_email">メールアドレスを入力してください</string>
     <string name="contact_vcard_hint_phone">電話番号を入力してください</string>
@@ -444,13 +454,13 @@
     <string name="unsaved_changes_title">変更が保存されていません</string>
     <string name="unsaved_changes_subtitle">フォーム内に保存されていない項目があります。本当に破棄してよろしいですか。</string>
     <string name="request_timeout">リクエストが時間切れになりました。もう一度やり直してください。</string>
-    <string name="no_folders">フォルダーがありません。</string>
+    <string name="no_folders">フォルダーがありません</string>
     <string name="folder_add_new">新しいフォルダーの追加</string>
     <string name="folder_name">フォルダー名</string>
     <string name="available_folders">利用可能なフォルダー</string>
     <string name="folder_created">フォルダーを作成しました。</string>
     <string name="folder_invalid">フォルダー名が無効なため、作成できません。</string>
-    <string name="folder_deleted">フォルダを削除しました。</string>
+    <string name="folder_deleted">フォルダーを削除しました</string>
     <string name="folder_deleted_error">フォルダー削除中にエラーが発生しました。</string>
     <string name="empty_emails">メールがありません。</string>
     <string name="empty_email_list">メールアドレスがありません。</string>
@@ -462,7 +472,7 @@
     <string name="details_copied">クリップボードへのコピーの詳細</string>
     <string name="saving">保存中...</string>
     <string name="update_folder">フォルダーを更新</string>
-    <string name="spam_score_100">このメールはProton Mailのアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
+    <string name="spam_score_100">このメールは Proton Mail のアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。差出人と内容を疑い、正当なものかどうかを確認してください。 <a href="https://protonmail.com/blog/prevent-phishing-attacks/">詳細</a></string>
     <string name="print_from_template">差出人: %s</string>
@@ -488,10 +498,10 @@
     <string name="email_empty">メールアドレスがありません。</string>
     <string name="encrypted_contact_details">暗号化された連絡先の詳細</string>
     <string name="convert_question">ローカルの連絡先をアップロード</string>
-    <string name="convert_question_subtitle">デバイスのローカル連絡先が Proton Mail 連絡先ディレクトリにアップロードされます。 Proton Mail を使用して、他のデバイスの連絡先にアクセスできます。</string>
+    <string name="convert_question_subtitle">デバイスのローカル連絡先が Proton Mail 連絡先ディレクトリにアップロードされます。Proton Mail を使用して、他のデバイスの連絡先にアクセスできます。</string>
     <string name="refresh_contacts">再読み込み</string>
     <string name="invalid_email_some_contacts">一部の連絡先でメールアドレスが有効ではありません。</string>
-    <string name="protonmail_contacts">Proton Mailの連絡先</string>
+    <string name="protonmail_contacts">Proton Mail 連絡先</string>
     <string name="device_contacts">デバイスの連絡先</string>
     <string name="print_date_template">日付: %s</string>
     <string name="print_attachment_template">添付ファイル: %s; </string>
@@ -520,7 +530,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">あなたによって送信された、エンドツーエンド暗号化されたメッセージ</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Proton Mail によって送信された、ゼロアクセス暗号化されたメッセージ</string>
+    <string name="sender_lock_sent_autoresponder">Proton Mail のゼロアクセス暗号化による送信</string>
     <string name="sender_lock_verification_failed">送信者の検証に失敗しました。</string>
     <string name="sender_lock_pgp_encrypted">PGPで暗号化されたメッセージ（署名なし）</string>
     <string name="sender_lock_pgp_encrypted_verified">検証済みアドレスからのPGP暗号化メッセージ</string>
@@ -553,7 +563,7 @@
     <string name="report_phishing">フィッシングを報告</string>
     <string name="print">印刷</string>
     <string name="phishing_dialog_title">フィッシング報告の確認</string>
-    <string name="phishing_dialog_message">フィッシングの試みとして報告することは、フィルターの改善と解析に役立ちます。これは我々が内容の全てを閲覧できることを意味します。</string>
+    <string name="phishing_dialog_message">フィッシングの試みとして報告することは、フィルターの改善と解析に役立ちます。これは我々が内容のすべてを閲覧できることを意味します。</string>
     <string name="phishing_report_send_message_moved_to_spam">レポートを送信し、メッセージを迷惑メールに移動しました。</string>
     <string name="cannot_send_report_send">レポートを送信できません</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
@@ -561,7 +571,7 @@
     <string name="add_photo">写真を追加</string>
     <string name="contact_display_name">表示名</string>
     <string name="add_new_email">メールアドレスを追加</string>
-    <string name="no_groups">グループはありません。</string>
+    <string name="no_groups">グループはありません</string>
     <string name="contact_vcard_note">メモ</string>
     <string name="edit_contact">連絡先の編集</string>
     <string name="create_contact_group">連絡先グループの作成</string>
@@ -606,7 +616,7 @@
     <string name="save_group_validation_error">グループ名を入力してください</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">ストレージの上限に達したため、メールの送受信ができなくなります。
-詳細は「より詳しく」を押してください。</string>
+        詳細を選択してください。</string>
     <string name="storage_limit_warning_title">警告</string>
     <string name="storage_limit_reached_text">ストレージ容量の100%に達しました。容量を空けるか、ストレージを購入するまでメールの送受信ができなくなります。</string>
     <string name="storage_limit_approaching_text">ストレージ容量の90%に達しました。容量を空けるか、ストレージの追加購入を検討してください。</string>
@@ -616,7 +626,7 @@
     <string name="need_storage_permissions_download_attachment_text">添付ファイルをダウンロードするには、ストレージへのアクセスを許可する必要があります。</string>
     <string name="need_contacts_permissions_text">この連絡先をインポートするには、連絡先へのアクセスを許可する必要があります。</string>
     <string name="push_notifications_alert_title">プッシュ通知警告</string>
-    <string name="push_notifications_alert_subtitle">Proton Mailのプッシュ通知は、Google Playサービスを更新しないと機能しません。</string>
+    <string name="push_notifications_alert_subtitle">Proton Mail のプッシュ通知は、Google Play サービスを更新しないと機能しません。</string>
     <string name="app_locked">アプリはロックされています。</string>
     <string name="use_pin_instead">代わりにPINコードを使用する</string>
     <!-- strings used for biometric enrollment -->
@@ -743,7 +753,7 @@
     <string name="connections_via_third_parties">代替ルーティング</string>
     <string name="allow_secure_connections_via_third_parties">代替ルーティングを許可</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Proton のサイトがブロックされている場合、この設定により、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。サービスへの接続の信頼性向上の観点から、私たちはこの設定を有効にしておくことをお勧めします。</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Proton のサイトがブロックされている場合、この設定により、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。サービスへの接続の信頼性向上の観点から、私たちはこの設定を有効にしておくことをお勧めします。<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">より詳しく</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Proton のサイトがブロックされている場合、この設定により、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。サービスへの接続の信頼性向上の観点から、私たちはこの設定を有効にしておくことをお勧めします。<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">詳細</a></string>
     <string name="app_language">アプリ言語</string>
     <string name="custom_language_dialog_title">アプリの言語を選択してください</string>
     <string name="auto_detect">自動検出</string>
@@ -773,7 +783,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;ウイルス対策ソフトウェアの干渉&lt;/i&gt; - ウイルス対策ソフトウェアを一時的に無効にするか、削除することで解決する可能性もあります。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;プロキシまたはファイアウォールの干渉&lt;/i&gt; - プロキシまたはファイアウォールを無効にするか、ネットワーク管理者に問い合わせてみてください。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton のサービスが一時的にダウンしている&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton ステータス&lt;/a&gt; から私たちのシステムの動作状況をご確認ください。
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;それでも問題が解決しない場合&lt;/i&gt; -  &lt;a href=\"https://protonmail.com/support-form\"&gt;サポートフォーム&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;メール&lt;/a&gt; (support@protonmail.zendesk.com)、または &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;から直接お問い合わせください。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;それでも問題が解決しない場合&lt;/i&gt; -  &lt;a href=\"https://protonmail.com/support-form\"&gt;サポートフォーム&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;メール&lt;/a&gt; (support@protonmail.zendesk.com)、または &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;から直接お問い合わせください。
     </string>
     <!-- endregion -->
     <!-- region errors -->
@@ -790,7 +800,7 @@
     <string name="go_to_settings">設定を開く</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Firebase API キーが無効です。プッシュ通知は動作しません。</string>
-    <string name="failed_saving_draft_online">ドラフトメッセージの保存に失敗しました:\"%s \"</string>
+    <string name="failed_saving_draft_online">ドラフトメッセージの保存に失敗しました: \"%s\"</string>
     <string name="failed_uploading_attachment_online">添付ファイルのエラー: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">送信中にこのメッセージを開くことはできません</string>
     <string name="enable_conversation_mode">会話モードを有効化</string>

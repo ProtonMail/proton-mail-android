@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">Esteu al dia</string>
     <string name="mailbox_empty_spam_subtitle">La carpeta de correu brossa és buida</string>
     <string name="mailbox_empty_trash_subtitle">La paperera és buida</string>
+    <string name="mailbox_empty_state_no_results_found">No results found</string>
+    <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
     <string name="mailbox_no_messages">Cap missatge</string>
     <string name="mailbox_unread_count">%d sense llegir</string>
     <string name="mailbox_updated_just_now">Actualitzat ara mateix</string>
+    <string name="mailbox_updated_recently">Updated recently</string>
+    <string name="mailbox_updating">Updating…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Obrir a Proton Calendar</string>
@@ -77,7 +81,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
     <string name="set_msg_password_title">Establir contrasenya</string>
-    <string name="set_msg_password_info">Establiu una contrasenya per xifrar el missatge als no usuaris de Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Més informació</a></string>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">Informació</string>
     <string name="set_msg_password_msg_password_title">Contrasenya del missatge</string>
     <string name="set_msg_password_msg_password_hint">Longitud de 4 a 21 caràcters</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">New messages</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">No contacts</string>
+    <string name="contacts_empty_state_no_groups">No groups</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
     <string name="contact_details_remote_content_dialog_title">Remote content</string>
@@ -145,8 +153,11 @@
     <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
     <string name="existing_user_onboarding_new_features_headline">New features</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Updated Proton, unified protection</string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Següent</string>
     <string name="onboarding_get_started">Comença</string>
+    <string name="onboarding_got_it">Got it</string>
     <string name="onboarding_image_view_content_description">Ilustració de Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -168,9 +179,9 @@
     <string name="no_more_messages">No hi ha més missatges</string>
     <string name="no_network_queued">No hi ha connexió, el missatge queda a la cua</string>
     <string name="update_app_title">Actualització requerida</string>
-    <string name="update_app">L\'aplicació de Proton Mail no pot ser utilitzada fins que no sigui actualitzada</string>
+    <string name="update_app">Your Proton Mail app cannot be used until it is updated</string>
     <string name="you_are_offline">Esteu fora de línia</string>
-    <string name="api_offline">Actualment Proton Mail està fora de línia, comproveu https://protonstatus.com o el nostre twitter per saber l\'estat actual: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contacte desat</string>
     <string name="contact_saved_offline">Contacte desat, es sincronitzarà quan hi hagi una connexió disponible</string>
     <string name="contact_exist">L\'adreça electrònica del contacte ja existeix</string>
@@ -198,10 +209,9 @@
     <string name="all_mail">Tot el correu</string>
     <string name="contacts">Contactes</string>
     <string name="search_contacts">Cercar contactes</string>
-    <string name="fetching_contacts">Obtenint contactes de Protonmail...</string>
+    <string name="fetching_contacts">Fetching Proton Mail contacts...</string>
     <string name="fetching_contacts_success">Contactes actualitzats amb èxit</string>
     <string name="fetching_contacts_failure">No es pot actualitzar els contactes</string>
-    <string name="no_search_results">Cap resultat de cerca</string>
     <string name="compose">Redactar</string>
     <string name="compose_message">Redactar missatge</string>
     <string name="empty_folder">Buidar carpeta</string>
@@ -240,8 +250,8 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">Un arxiu adjunt</item>
-        <item quantity="other">%d arxius adjunts</item>
+        <item quantity="one">1 Attachment</item>
+        <item quantity="other">%d Attachments</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="one">\u0020 1 arxiu adjunt</item>
@@ -274,7 +284,7 @@
     <string name="invalid_email_address">La direcció \'%s\' no és vàlida</string>
     <string name="invalid_email_address_removed">La adreça \'%s\' es invàlida i ha estat esborrada</string>
     <string name="no_recipients_specified">Si us plau agrega almenys un destinatari</string>
-    <string name="no_password_specified">Els temps d\'expiració només es poden establir en missatges totalment xifrats. Estableix una contrasenya pels destinataris que no siguin de Proton Mail.</string>
+    <string name="no_password_specified">Expiration times can only be set on fully encrypted messages. Please set a password for your non-Proton Mail recipients.</string>
     <string name="attachment_limit">Els fitxers adjunts són limitats a %1$s. Total adjuntat seria %2$s.</string>
     <string name="sending_message">Enviant missatge...</string>
     <string name="sending_message_offline">Fora de línia, en espera per enviar més tard...</string>
@@ -286,7 +296,7 @@
     <string name="cancel">Cancel·lar</string>
     <string name="close">Tancar</string>
     <string name="eo_password_title">Establir contrasenya</string>
-    <string name="eo_password_subtitle">Estableix una contrasenya per xifrar aquest missatge per usuaris que no siguin de Proton Mail</string>
+    <string name="eo_password_subtitle">Set a password to encrypt this message for non-Proton Mail users</string>
     <string name="eo_password_more_info">Rebre més informació</string>
     <string name="no_attachments">0 Fitxers adjunts</string>
     <string name="display_name_banned_chars">Nom de visualització no vàlid. \'&gt;\' i \'&lt;\' no estan permesos</string>
@@ -389,7 +399,7 @@
     <string name="contact_details">Detalls de contacte</string>
     <string name="email_type_home">Inici</string>
     <string name="type_title">Trieu Tipus</string>
-    <string name="sync_local_contacts">Pujar a Proton Mail</string>
+    <string name="sync_local_contacts">Upload to Proton Mail</string>
     <string name="please_select_only_phone_contacts">Seleccioneu només Contactes telefònics locals</string>
     <string name="contact_vcard_hint_email">Introduïu correu electrònic</string>
     <string name="contact_vcard_hint_phone">Introduïu el número de telèfon</string>
@@ -467,7 +477,7 @@
     <string name="details_copied">Detalls copiats al porta-retalls</string>
     <string name="saving">Desant...</string>
     <string name="update_folder">Actualitza la carpeta</string>
-    <string name="spam_score_100">Aquest correu sembla que sigui d\'una adreça de Proton Mail però ha arribat des de fora del nostre sistema i no ha passat els requisits d\'autentificació. És possible que es tracti d\'un correu falsejat o reenviat indegudament!</string>
+    <string name="spam_score_100">This email seems to be from a Proton Mail address but came from outside our system and failed our authentication requirements. It may be spoofed or improperly forwarded!</string>
     <string name="spam_score_101">Aquest correu no ha superat els requisits d\'autentificació del domini. Pot ser que estigui falsejat o reenviat indegudament!</string>
     <string name="spam_score_102">Aquest missatge pot ser un intent de pesca de credencials. Comproveu el remitent i el contingut per assegurar-vos que són legítims. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MÉS INFORMACIÓ</a></string>
     <string name="print_from_template">Des de: %s</string>
@@ -493,10 +503,10 @@
     <string name="email_empty">Falta l\'adreça de correu electrònic</string>
     <string name="encrypted_contact_details">Dades de contacte xifrades</string>
     <string name="convert_question">Pujar contactes locals</string>
-    <string name="convert_question_subtitle">Això carregarà els contactes locals al vostre dispositiu al directori de contactes de Proton Mail. A continuació, podrà accedir a aquests contactes en els altres dispositius a través de Proton Mail.</string>
+    <string name="convert_question_subtitle">This will upload the local contacts on your device to your Proton Mail contacts directory. You will then be able to access these contacts on your other devices through Proton Mail.</string>
     <string name="refresh_contacts">Refrescar</string>
     <string name="invalid_email_some_contacts">L\'adreça de correu electrònic no és vàlida per a alguns dels vostres contactes</string>
-    <string name="protonmail_contacts">Contactes de Proton Mail</string>
+    <string name="protonmail_contacts">Proton Mail Contacts</string>
     <string name="device_contacts">Contactes del dispositiu</string>
     <string name="print_date_template">Data: %s</string>
     <string name="print_attachment_template">Adjunt: %s;  </string>
@@ -508,7 +518,7 @@
     <string name="remove_password_question">Suprimeix la contrasenya?</string>
     <string name="attachment_storage_value_current">Actualment seleccionat: %d Mb</string>
     <string name="attachment_storage_value_current_unlimited">Actualment seleccionat: il·limitat</string>
-    <string name="attachment_offline_max_storage">Estableix la quantitat màxima d\'espai d\'emmagatzematge que Proton Mail pot utilitzar al vostre dispositiu mòbil.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space Proton Mail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Ha fallat la càrrega d\'imatges incrustades. Comproveu la vostra connexió de xarxa.</string>
     <string name="load_embedded_images_failed">Ha fallat la càrrega d\'imatges incrustades.</string>
     <string name="unlimited">Il·limitat</string>
@@ -525,7 +535,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Enviat per vostè amb xifrat d\'extrem a extrem</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Enviat per Proton Mail amb xifrat d\'accés zero</string>
+    <string name="sender_lock_sent_autoresponder">Sent by Proton Mail with zero access encryption</string>
     <string name="sender_lock_verification_failed">La verificació del remitent ha fallat</string>
     <string name="sender_lock_pgp_encrypted">Missatge PGP-encriptat</string>
     <string name="sender_lock_pgp_encrypted_verified">Missatge PGP xifrat de direcció verificada</string>
@@ -633,7 +643,7 @@
         l\'accés a l\'emmagatzematge.</string>
     <string name="need_contacts_permissions_text">Per a poder importar contactes heu de permetre l\'accés als contactes.</string>
     <string name="push_notifications_alert_title">Alerta de notificacions push</string>
-    <string name="push_notifications_alert_subtitle">Les notificacions push per Proton Mail no funcionen sense els serveis de Google Play.</string>
+    <string name="push_notifications_alert_subtitle">Push notifications for Proton Mail do not work without updated Google Play services.</string>
     <string name="app_locked">L\'aplicació està bloquejada</string>
     <string name="use_pin_instead">Utilitzeu el PIN en lloc</string>
     <!-- strings used for biometric enrollment -->
@@ -649,7 +659,7 @@
     <!-- region Acc Settings -->
     <string name="account">Compte</string>
     <string name="drawer_subscription">Subscripció</string>
-    <string name="password_manager">Administrador de contrasenyes</string>
+    <string name="password_manager">Gestió de contrasenya</string>
     <string name="password_changed">S\'ha canviat la contrasenya.</string>
     <string name="recovery_email">Correu electrònic de recuperació</string>
     <string name="recovery_email_changed">S\'ha canviat el correu electrònic de recuperació.</string>
@@ -658,13 +668,13 @@
     <string name="addresses">Adreces</string>
     <string name="default_mail_address">Adreça de correu per defecte</string>
     <string name="default_address">Adreça per defecte</string>
-    <string name="display_name_n_signature">Nom de visualització &amp; signatura</string>
+    <string name="display_name_n_signature">Nom de visualització i signatura</string>
     <string name="display_name">Mostrar el nom</string>
     <string name="edit_display_name">Modificar el nom per mostrar</string>
     <string name="signature">Signatura</string>
     <string name="mobile_footer">Text al peu al mòbil</string>
     <string name="edit_mobile_footer">Activar text al peu</string>
-    <string name="default_mobile_footer">Enviat des de Proton Mail mòbil</string>
+    <string name="default_mobile_footer">Sent from Proton Mail mobile</string>
     <string name="mobile_footer_is_premium">El canvi de del text al peu al mòbil només es permet als usuaris de pagament</string>
     <string name="mobile_footer_info">Aquest text al peu s\'afegeix després de la vostra signtura</string>
     <!-- region Snooze Settings -->
@@ -786,13 +796,14 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemes de conexió comuns i solucions</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Sense conexió a Internet&lt;/i&gt; - Si us plau, revisi que la seva conexió funciona correctament.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema al seu Proveïdor de Servei d\'Internet (ISP)&lt;/i&gt; - Proveu de conectar-vos a Proton des d\'una altra xarxa (o utilitzi &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueig Guvernamental block&lt;/i&gt; - El seu país pot haber-hi bloquetjat d\'acces a Proton. Proveu &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o un altre servei VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; per accedir a Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia d\'Antivirus&lt;/i&gt; - Deshabiliti temporalment o esborri el seu software antivirus.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia Proxy/Firewall&lt;/i&gt; - Deshabiliti qualsevol proxy o firewall o contacti amb el seu administrador de xarxa.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton es caigut&lt;/i&gt; - Revisi &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; per saber el nostre estat del sistema.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Encara no hem trobat una solució&lt;/i&gt; - Contacti\'ns directament al nostre &lt;a href=\"https://protonmail.com/support-form\"&gt;Formulari de suport form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correu electrònic&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imatge no trobada</string>

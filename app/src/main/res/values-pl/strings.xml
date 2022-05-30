@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">Jesteś na bieżąco</string>
     <string name="mailbox_empty_spam_subtitle">Folder Spam jest pusty</string>
     <string name="mailbox_empty_trash_subtitle">Kosz jest pusty</string>
+    <string name="mailbox_empty_state_no_results_found">Nie znaleziono żadnych wyników</string>
+    <string name="mailbox_empty_state_try_a_different_term">Spróbuj użyć innego zapytania</string>
     <string name="mailbox_no_messages">Brak wiadomości</string>
     <string name="mailbox_unread_count">%d unread</string>
     <string name="mailbox_updated_just_now">Zaktualizowano teraz</string>
+    <string name="mailbox_updated_recently">Zaktualizowano ostatnio</string>
+    <string name="mailbox_updating">Aktualizowanie…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Otwórz w aplikacji Proton Calendar</string>
@@ -77,7 +81,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; napisał(a):</string>
     <string name="set_msg_password_title">Ustaw hasło</string>
-    <string name="set_msg_password_info">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza Proton Maila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Dowiedz się więcej</a></string>
+    <string name="set_msg_password_info">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Dowiedz się więcej</a></string>
     <string name="set_msg_password_info_icon_description">Informacje</string>
     <string name="set_msg_password_msg_password_title">Hasło wiadomości</string>
     <string name="set_msg_password_msg_password_hint">od 4 do 21 znaków</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nowe wiadomości</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">Brak kontaktów</string>
+    <string name="contacts_empty_state_no_groups">Brak grup</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Grupy kontaktów nie zostaną zaimportowane. Ulepsz do płatnego planu, aby cieszyć się funkcjami premium.</string>
     <string name="contact_details_remote_content_dialog_title">Zawartość zdalna</string>
@@ -145,11 +153,11 @@
     <string name="existing_user_onboarding_new_look_description">Twoja szyfrowana poczta e-mail została przeprojektowana.</string>
     <string name="existing_user_onboarding_new_features_headline">Nowe funkcje</string>
     <string name="existing_user_onboarding_new_features_description">Ciesz się nowymi funkcjami, takimi jak ciemny motyw, ulepszone powiadomienia, filtr nieprzeczytanych wiadomości i podfolderami.</string>
-    <string name="existing_user_onboarding_updated_proton_headline">Nowy Proton, ujednolicona ochrona</string>
-    <string name="existing_user_onboarding_updated_proton_description">Przedstawiamy odświeżony wygląd Protona. Wiele usług, jeden cel. Witaj w Internecie, w którym prywatność jest oczywistością. <a href="https://proton.me/news/updated-proton">Dowiedz się więcej</a></string>
+    <string name="existing_user_onboarding_updated_proton_headline">Zaktualizowany Proton, ujednolicona ochrona</string>
+    <string name="existing_user_onboarding_updated_proton_description">Przedstawiamy odświeżony wygląd usługi Proton. Wiele usług, jedna misja. Witaj w Internecie, w którym prywatność jest standardem. <a href="https://proton.me/news/updated-proton">Dowiedz się więcej</a></string>
     <string name="onboarding_next">Dalej</string>
     <string name="onboarding_get_started">Rozpocznij</string>
-    <string name="onboarding_got_it">Rozumiem</string>
+    <string name="onboarding_got_it">Ok</string>
     <string name="onboarding_image_view_content_description">Ilustracja Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -171,7 +179,7 @@
     <string name="no_more_messages">Nie masz więcej wiadomości</string>
     <string name="no_network_queued">Brak połączenia z siecią. Wiadomości zostały dodane do kolejki</string>
     <string name="update_app_title">Aktualizacja jest wymagana</string>
-    <string name="update_app">Nie możesz używać aplikacji Proton Mail, dopóki jej nie zaktualizujesz.</string>
+    <string name="update_app">Nie możesz używać aplikacji Proton Mail, dopóki jej nie zaktualizujesz</string>
     <string name="you_are_offline">Jesteś w trybie offline</string>
     <string name="api_offline">Proton Mail jest obecnie niedostępny. Sprawdź https://protonstatus.com lub naszego Twittera, aby poznać stan usługi: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt został zapisany</string>
@@ -204,7 +212,6 @@
     <string name="fetching_contacts">Trwa pobieranie kontaktów Proton Mail...</string>
     <string name="fetching_contacts_success">Kontakty zostały odświeżone</string>
     <string name="fetching_contacts_failure">Nie można odświeżyć kontaktów</string>
-    <string name="no_search_results">Brak wyników wyszukiwania</string>
     <string name="compose">Napisz</string>
     <string name="compose_message">Napisz wiadomość</string>
     <string name="empty_folder">Opróżnij folder</string>
@@ -283,7 +290,7 @@
     <string name="invalid_email_address">Adres \'%s\' jest nieprawidłowy</string>
     <string name="invalid_email_address_removed">Adres \'%s\' jest nieprawidłowy i został usunięty</string>
     <string name="no_recipients_specified">Wpisz co najmniej jednego odbiorcę</string>
-    <string name="no_password_specified">Czas wygaśnięcia może być ustawiony jedynie dla wiadomości w pełni szyfrowanych. Ustaw hasło dla odbiorców spoza Proton Maila.</string>
+    <string name="no_password_specified">Czas wygaśnięcia może być ustawiony jedynie dla wiadomości w pełni szyfrowanych. Ustaw hasło dla odbiorców spoza Proton Mail.</string>
     <string name="attachment_limit">Limit dla załączników to %1$s. Łączny rozmiar załączników w tej chwili to %2$s.</string>
     <string name="sending_message">Wysyłanie wiadomości...</string>
     <string name="sending_message_offline">Brak połączenia z siecią. Wiadomość zostanie wysłana później...</string>
@@ -295,7 +302,7 @@
     <string name="cancel">Anuluj</string>
     <string name="close">Zamknij</string>
     <string name="eo_password_title">Ustaw hasło</string>
-    <string name="eo_password_subtitle">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza Proton Maila</string>
+    <string name="eo_password_subtitle">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza Proton Mail</string>
     <string name="eo_password_more_info">Więcej informacji</string>
     <string name="no_attachments">0 załączników</string>
     <string name="display_name_banned_chars">Nazwa wyświetlana jest nieprawidłowa. \'&gt;\' i \'&lt;\' są niedozwolone</string>
@@ -402,7 +409,7 @@
     <string name="contact_details">Szczegóły kontaktu</string>
     <string name="email_type_home">Domowy</string>
     <string name="type_title">Wybierz typ</string>
-    <string name="sync_local_contacts">Prześlij do Proton Maila</string>
+    <string name="sync_local_contacts">Prześlij do Proton Mail</string>
     <string name="please_select_only_phone_contacts">Wybierz tylko lokalne kontakty z telefonu</string>
     <string name="contact_vcard_hint_email">Wpisz adres e-mail</string>
     <string name="contact_vcard_hint_phone">Wpisz numer telefonu</string>
@@ -506,10 +513,10 @@
     <string name="email_empty">Brak adresu e-mail</string>
     <string name="encrypted_contact_details">Zaszyfrowane szczegóły kontaktu</string>
     <string name="convert_question">Prześlij lokalne kontakty</string>
-    <string name="convert_question_subtitle">Spowoduje to przesłanie lokalnych kontaktów z Twojego urządzenia do kontaktów Proton Maila. Dzięki temu będziesz mógł uzyskać dostęp do tych kontaktów na innych urządzeniach poprzez pocztę Proton Mail.</string>
+    <string name="convert_question_subtitle">Spowoduje to przesłanie lokalnych kontaktów z Twojego urządzenia do kontaktów Proton Mail. Dzięki temu będziesz mógł uzyskać dostęp do tych kontaktów na innych urządzeniach poprzez pocztę Proton Mail.</string>
     <string name="refresh_contacts">Odśwież</string>
     <string name="invalid_email_some_contacts">Adres e-mail nie jest prawidłowy dla niektórych kontaktów</string>
-    <string name="protonmail_contacts">Kontakty Proton Maila</string>
+    <string name="protonmail_contacts">Proton Mail Kontakty</string>
     <string name="device_contacts">Kontakty urządzenia</string>
     <string name="print_date_template">Data: %s</string>
     <string name="print_attachment_template">Załącznik: %s</string>
@@ -538,7 +545,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Wysłana przez Ciebie z szyfrowaniem end-to-end</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Wysłana przez Proton Maila z szyfrowaniem po stronie klienta</string>
+    <string name="sender_lock_sent_autoresponder">Wysłana przez Proton Mail z szyfrowaniem po stronie klienta</string>
     <string name="sender_lock_verification_failed">Weryfikacja nadawcy nie powiodła się</string>
     <string name="sender_lock_pgp_encrypted">Wiadomość zaszyfrowana PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Wiadomość zaszyfrowana PGP od zweryfikowanego adresu</string>
@@ -652,7 +659,7 @@
         na dostęp do pamięci wewnętrznej.</string>
     <string name="need_contacts_permissions_text">Aby zaimportować kontakty, musisz zezwolić na dostęp do kontaktów.</string>
     <string name="push_notifications_alert_title">Alert o powiadomieniach</string>
-    <string name="push_notifications_alert_subtitle">Powiadomienia poczty Proton Mail nie działają bez zaktualizowanych usług Google Play.</string>
+    <string name="push_notifications_alert_subtitle">Powiadomienia Proton Mail nie działają bez zaktualizowanych usług Google Play.</string>
     <string name="app_locked">Aplikacja jest zablokowana</string>
     <string name="use_pin_instead">Użyj kodu PIN</string>
     <!-- strings used for biometric enrollment -->
@@ -759,7 +766,7 @@
     <string name="swipe_action_spam">Wiadomość została oznaczona jako spam</string>
     <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Wiadomość została zarchiwizowana</string>
-    <string name="swipe_action_archive_short">Archiwum</string>
+    <string name="swipe_action_archive_short">Archiwizuj</string>
     <string name="swipe_action_mark_read">Wiadomość została oznaczona jako przeczytana</string>
     <string name="swipe_action_mark_read_short">Przeczytane</string>
     <plurals name="action_move_to_trash">
@@ -815,8 +822,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Konflikt z antywirusem&lt;/i&gt; - Tymczasowo wyłącz lub usuń oprogramowanie antywirusowe.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Konflikt z zaporą sieciową/serwerem proxy&lt;/i&gt; - Wyłącz zaporę oraz proxy lub skontaktuj się z administratorem sieci.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton jest niedostępny&lt;/i&gt; - Sprawdź &lt;a href=\"http://protonstatus.com/\"&gt;Status usług Proton&lt;/a&gt; na naszej stronie.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Nadal nie mogę znaleźć rozwiązania&lt;/i&gt; - Skontaktuj się z nami przez &lt;a href=\"https://protonmail.com/support-form\"&gt;formularz kontaktowy&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;wiadomość e-mail&lt;/a&gt; (support@protonmail.zendesk.com) lub &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twittera&lt;/a&gt;.
-    </string>
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Nadal nie mogę znaleźć rozwiązania&lt;/i&gt; - Skontaktuj się z nami przez &lt;a href=\"https://protonmail.com/support-form\"&gt;formularz kontaktowy&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;wiadomość e-mail&lt;/a&gt; (support@protonmail.zendesk.com) lub &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twittera&lt;/a&gt;.</string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Obraz nie został znaleziony</string>

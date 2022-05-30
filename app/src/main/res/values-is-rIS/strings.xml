@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
     <string name="mailbox_empty_spam_subtitle">Your spam folder is empty</string>
     <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
+    <string name="mailbox_empty_state_no_results_found">No results found</string>
+    <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
     <string name="mailbox_no_messages">No messages</string>
     <string name="mailbox_unread_count">%d unread</string>
     <string name="mailbox_updated_just_now">Updated just now</string>
+    <string name="mailbox_updated_recently">Updated recently</string>
+    <string name="mailbox_updating">Updating…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">New messages</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">No contacts</string>
+    <string name="contacts_empty_state_no_groups">No groups</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
     <string name="contact_details_remote_content_dialog_title">Remote content</string>
@@ -145,8 +153,11 @@
     <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
     <string name="existing_user_onboarding_new_features_headline">New features</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Updated Proton, unified protection</string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_get_started">Get started</string>
+    <string name="onboarding_got_it">Got it</string>
     <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -168,7 +179,7 @@
     <string name="no_more_messages">Engin fleiri skilaboð</string>
     <string name="no_network_queued">Engin nettenging, skilaboð í biðröð</string>
     <string name="update_app_title">Uppfærsla nauðsynleg</string>
-    <string name="update_app">Ekki er hægt að nota Proton Mail-forritið fyrr en það hefur verið uppfært</string>
+    <string name="update_app">Your Proton Mail app cannot be used until it is updated</string>
     <string name="you_are_offline">Þú ert án nettengingar</string>
     <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Tengiliður vistaður</string>
@@ -198,10 +209,9 @@
     <string name="all_mail">Allur póstur</string>
     <string name="contacts">Tengiliðir</string>
     <string name="search_contacts">Leita að tengiliðum</string>
-    <string name="fetching_contacts">Sæki Proton Mail tengiliði...</string>
+    <string name="fetching_contacts">Fetching Proton Mail contacts...</string>
     <string name="fetching_contacts_success">Það tókst að endurlesa tengiliði</string>
     <string name="fetching_contacts_failure">Ekki tókst að endurlesa tengiliði</string>
-    <string name="no_search_results">Engar leitarniðurstöður</string>
     <string name="compose">Semja skilaboð</string>
     <string name="compose_message">Skrifa skilaboð</string>
     <string name="empty_folder">Tóm mappa</string>
@@ -240,8 +250,8 @@
     <string name="expiration_hours">%dK</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">Eitt viðhengi</item>
-        <item quantity="other">%d viðhengi</item>
+        <item quantity="one">1 Attachment</item>
+        <item quantity="other">%d Attachments</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="one">\u0020 1 viðhengi</item>
@@ -274,7 +284,7 @@
     <string name="invalid_email_address">Tölvupóstfangið \'%s\' er ógilt</string>
     <string name="invalid_email_address_removed">Tölvupóstfangið \'%s\' er ógilt og var fjarlægt</string>
     <string name="no_recipients_specified">Bættu við a.m.k. einum viðtakanda</string>
-    <string name="no_password_specified">Gildistíma er einungis hægt að stilla á full-dulrituðum skilaboðum. Stilltu lykilorð fyrir þá viðtakendur sem ekki eru með Proton Mail.</string>
+    <string name="no_password_specified">Expiration times can only be set on fully encrypted messages. Please set a password for your non-Proton Mail recipients.</string>
     <string name="attachment_limit">Viðhengi eru takmörkuð við %1$s. Alls geta viðhengi verið %2$s.</string>
     <string name="sending_message">Sendi skilaboð...</string>
     <string name="sending_message_offline">Án nettengingar, sett í biðröð til að senda síðar...</string>
@@ -286,7 +296,7 @@
     <string name="cancel">Hætta við</string>
     <string name="close">Loka</string>
     <string name="eo_password_title">Setja lykilorð</string>
-    <string name="eo_password_subtitle">Settu lykilorð til að dulrita þessi skilaboð fyrir notendur sem ekki nota Proton Mail</string>
+    <string name="eo_password_subtitle">Set a password to encrypt this message for non-Proton Mail users</string>
     <string name="eo_password_more_info">Fá ítarlegri upplýsingar</string>
     <string name="no_attachments">0 viðhengi</string>
     <string name="display_name_banned_chars">Ógilt birtingarnafn. \'&gt;\' og \'&lt;\' eru ekki leyfilegt</string>
@@ -389,7 +399,7 @@
     <string name="contact_details">Nánar um tengilið</string>
     <string name="email_type_home">Heima</string>
     <string name="type_title">Veldu tegund</string>
-    <string name="sync_local_contacts">Senda inn í Proton Mail</string>
+    <string name="sync_local_contacts">Upload to Proton Mail</string>
     <string name="please_select_only_phone_contacts">Veldu einungis símatengiliði á tækinu</string>
     <string name="contact_vcard_hint_email">Settu inn tölvupóstfang</string>
     <string name="contact_vcard_hint_phone">Settu inn símanúmer</string>
@@ -467,7 +477,7 @@
     <string name="details_copied">Afritaði ítarupplýsingar á klippispjaldið</string>
     <string name="saving">Vista...</string>
     <string name="update_folder">Uppfæra möppu</string>
-    <string name="spam_score_100">Þessi tölvupóstur lítur út eins og hann komi frá Proton Mail-vistfangi en kom í rauninni frá utan kerfisins og féll á auðkenningarprófunum okkar. Hann gæti verið áframsendur á rangan hátt eða falsaður!</string>
+    <string name="spam_score_100">This email seems to be from a Proton Mail address but came from outside our system and failed our authentication requirements. It may be spoofed or improperly forwarded!</string>
     <string name="spam_score_101">Þessi tölvupóstur féll á auðkenningarprófunum lénsins. Hann gæti verið áframsendur á rangan hátt eða falsaður!</string>
     <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a></string>
     <string name="print_from_template">Frá: %s</string>
@@ -493,10 +503,10 @@
     <string name="email_empty">Tölvupóstfang vantar</string>
     <string name="encrypted_contact_details">Dulritaðar nánari upplýsingar um tengilið</string>
     <string name="convert_question">Senda inn tengiliði af tæki</string>
-    <string name="convert_question_subtitle">Þetta mun senda staðværa tengiliði á tækinu inn í tengiliðamöppuna á Proton Mail. Þú munt þá hafa aðgang að þessum tengiliðum á öðrum tækjum þínum í gegnum Proton Mail.</string>
+    <string name="convert_question_subtitle">This will upload the local contacts on your device to your Proton Mail contacts directory. You will then be able to access these contacts on your other devices through Proton Mail.</string>
     <string name="refresh_contacts">Endurlesa</string>
     <string name="invalid_email_some_contacts">Tölvupóstfang er ekki gilt hjá sumum tengiliðanna þinna</string>
-    <string name="protonmail_contacts">Tengiliðir í Proton Mail</string>
+    <string name="protonmail_contacts">Proton Mail Contacts</string>
     <string name="device_contacts">Tengiliðir tækis</string>
     <string name="print_date_template">Dagsetning: %s</string>
     <string name="print_attachment_template">Attachment: %s;  </string>
@@ -525,7 +535,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Sent af þér með enda-í-enda dulritun</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Sent úr Proton Mail með órjúfanlegri dulritun</string>
+    <string name="sender_lock_sent_autoresponder">Sent by Proton Mail with zero access encryption</string>
     <string name="sender_lock_verification_failed">Sannvottun sendanda mistókst</string>
     <string name="sender_lock_pgp_encrypted">PGP-dulrituð skilaboð</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-dulrituð skilaboð frá sannvottuðu tölvupóstfangi</string>
@@ -633,7 +643,7 @@
     <string name="need_contacts_permissions_text">Til að geta flutt inn tengiliði þarftu að leyfa
         aðgang að tengiliðum.</string>
     <string name="push_notifications_alert_title">Viðvörun vegna ýti-tilkynninga</string>
-    <string name="push_notifications_alert_subtitle">Ýti-tilkynningar virka ekki nema með uppfærðum séreignahugbúnaði Google Play þjónustu.</string>
+    <string name="push_notifications_alert_subtitle">Push notifications for Proton Mail do not work without updated Google Play services.</string>
     <string name="app_locked">Forrit læst</string>
     <string name="use_pin_instead">Nota PIN-númer í staðinn</string>
     <!-- strings used for biometric enrollment -->
@@ -664,7 +674,7 @@
     <string name="signature">Undirskrift</string>
     <string name="mobile_footer">Farsímaundirgrein</string>
     <string name="edit_mobile_footer">Virkja farsímaundirgrein</string>
-    <string name="default_mobile_footer">Sent úr Proton Mail-farsíma</string>
+    <string name="default_mobile_footer">Sent from Proton Mail mobile</string>
     <string name="mobile_footer_is_premium">Einungis notendur með greidda áskrift geta breytt farsímaundirgrein</string>
     <string name="mobile_footer_info">Þessu er bætt við á eftir undirskrift þinni</string>
     <!-- region Snooze Settings -->

@@ -51,9 +51,13 @@
     <string name="mailbox_empty_inbox_subtitle">Усе в актуальному стані</string>
     <string name="mailbox_empty_spam_subtitle">Тека зі спамом порожня</string>
     <string name="mailbox_empty_trash_subtitle">Смітник порожній</string>
+    <string name="mailbox_empty_state_no_results_found">Результатів не знайдено</string>
+    <string name="mailbox_empty_state_try_a_different_term">Спробуйте інший пошуковий термін</string>
     <string name="mailbox_no_messages">Немає повідомлень</string>
     <string name="mailbox_unread_count">%d непрочитаних</string>
     <string name="mailbox_updated_just_now">Щойно оновлено</string>
+    <string name="mailbox_updated_recently">Недавно оновлено</string>
+    <string name="mailbox_updating">Оновлення…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Відкрити у Proton Calendar</string>
@@ -130,6 +134,10 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Нові повідомлення</string>
     <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">Немає контактів</string>
+    <string name="contacts_empty_state_no_groups">Немає груп</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Групи контактів не будуть імпортовані. Будь ласка, перейдіть платний тарифний план, щоб користуватися преміальними функціями.</string>
     <string name="contact_details_remote_content_dialog_title">Віддалений вміст</string>
@@ -145,8 +153,11 @@
     <string name="existing_user_onboarding_new_look_description">Ваша зашифрована е-пошта була повністю перероблена для зручності користування.</string>
     <string name="existing_user_onboarding_new_features_headline">Нові можливості</string>
     <string name="existing_user_onboarding_new_features_description">Насолоджуйтесь такими новими функціями, як темний режим, удосконалені сповіщення, фільтр непрочитаних повідомлень та підтеки.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Оновлений Proton, єдиний захист</string>
+    <string name="existing_user_onboarding_updated_proton_description">Представляємо оновлений вигляд Proton. Багато служб, одна місія. Ласкаво просимо до Інтернету, де приватність — це стандарт. <a href="https://proton.me/news/updated-proton">Докладніше</a></string>
     <string name="onboarding_next">Далі</string>
     <string name="onboarding_get_started">Розпочати</string>
+    <string name="onboarding_got_it">Зрозуміло</string>
     <string name="onboarding_image_view_content_description">Ілюстрація Proton Maіl</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -168,9 +179,9 @@
     <string name="no_more_messages">Більше повідомлень немає</string>
     <string name="no_network_queued">Немає мережі, повідомлення в очікуванні</string>
     <string name="update_app_title">Необхідне оновлення</string>
-    <string name="update_app">Програму Proton Mail не можна використовувати, доки її не оновити</string>
+    <string name="update_app">Програму Proton Mail не можна використовувати, поки вона не буде оновлена</string>
     <string name="you_are_offline">Ви не в мережі</string>
-    <string name="api_offline">Перепрошуємо, але Proton Mail зараз не в мережі. Перейдіть на https://protonstatus.com або у наш Twitter, щоб дізнатися про поточний стан: https://twitter.com/protonmail</string>
+    <string name="api_offline">Перепрошуємо, але Proton Mail зараз офлайн. Перейдіть на https://protonstatus.com або у наш Twitter, щоб дізнатися про поточний стан: https://twitter.com/protonmail</string>
     <string name="contact_saved">Контакт збережено</string>
     <string name="contact_saved_offline">Контакт збережений і синхронізується при відновленні з\'єднання з мережею</string>
     <string name="contact_exist">Адреса е-пошти контакту вже існує</string>
@@ -201,7 +212,6 @@
     <string name="fetching_contacts">Отримання контактів Proton Mail...</string>
     <string name="fetching_contacts_success">Контакти успішно оновлено</string>
     <string name="fetching_contacts_failure">Не вдається оновити контакти</string>
-    <string name="no_search_results">Нічого не знайдено</string>
     <string name="compose">Написати</string>
     <string name="compose_message">Написати повідомлення</string>
     <string name="empty_folder">Спорожнити теку</string>
@@ -240,10 +250,10 @@
     <string name="expiration_hours">%dГОД</string>
     <string name="expiration_minutes">%dХВ</string>
     <plurals name="attachments">
-        <item quantity="one">Одне вкладення</item>
+        <item quantity="one">1 вкладення</item>
         <item quantity="few">%d вкладення</item>
         <item quantity="many">%d вкладень</item>
-        <item quantity="other">%d вкладень</item>
+        <item quantity="other">%d вкладення</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="one">\u0020 1 вкладення</item>
@@ -292,7 +302,7 @@
     <string name="cancel">Скасувати</string>
     <string name="close">Закрити</string>
     <string name="eo_password_title">Встановити пароль</string>
-    <string name="eo_password_subtitle">Встановити пароль для шифрування цього повідомлення для Користувачів поза Proton Mail</string>
+    <string name="eo_password_subtitle">Установити пароль для шифрування цього повідомлення для Користувачів поза Proton Mail</string>
     <string name="eo_password_more_info">Отримати більше інформації</string>
     <string name="no_attachments">0 вкладень</string>
     <string name="display_name_banned_chars">Неприпустиме ім\'я. \'&gt;\' і \'&lt;\' не дозволені</string>
@@ -477,7 +487,7 @@
     <string name="details_copied">Подробиці скопійовано до буфера обміну</string>
     <string name="saving">Збереження...</string>
     <string name="update_folder">Оновити теку</string>
-    <string name="spam_score_100">Схоже, цей лист надіслано з адреси Proton Mail, але він прийшов з-за меж нашої системи та не відповідає нашим вимогам перевірки. Він може бути підроблений або неправильно пересланий!</string>
+    <string name="spam_score_100">Схоже, цей лист надіслано з адреси Proton Mail, але він надійшов з-за меж нашої системи та не відповідає нашим вимогам перевірки. Він може бути підроблений або неправильно пересланий!</string>
     <string name="spam_score_101">Цей лист не пройшов вимоги перевірки свого домену. Він міг бути підроблений або неправильно пересланий!</string>
     <string name="spam_score_102">Це повідомлення може бути спробою шахрайства. Будь ласка, перевірте відправника і вміст, щоб упевнитися в його справжності. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ДОКЛАДНІШЕ</a></string>
     <string name="print_from_template">Від: %s</string>
@@ -535,7 +545,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Надіслано вами з наскрізним шифруванням</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Надіслано з Proton Mail із шифруванням нульового доступу</string>
+    <string name="sender_lock_sent_autoresponder">Надіслано Proton Mail з повним шифруванням</string>
     <string name="sender_lock_verification_failed">Не вдалося перевірити відправника</string>
     <string name="sender_lock_pgp_encrypted">PGP-зашифроване повідомлення</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-зашифроване повідомлення з надійної адреси</string>
