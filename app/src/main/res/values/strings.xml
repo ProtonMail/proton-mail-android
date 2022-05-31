@@ -271,15 +271,15 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">1 Attachment</item>
+        <item quantity="one">%d Attachment</item>
         <item quantity="other">%d Attachments</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 Attachment</item>
+        <item quantity="one">\u0020 %d Attachment</item>
         <item quantity="other">\u0020 %d Attachments</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 Attachment</item>
+        <item quantity="one">%d Attachment</item>
         <item quantity="other">%d Attachments</item>
     </plurals>
     <string name="add_attachment">Add attachment</string>
@@ -778,7 +778,7 @@
     <string name="snooze_repeat">Repeat:</string>
     <plurals name="quick_snooze_resume_min">
         <item quantity="zero">Notifications will resume in less than a minute</item>
-        <item quantity="one">Notifications will resume in 1 min</item>
+        <item quantity="one">Notifications will resume in %d min</item>
         <item quantity="other">Notifications will resume in %d mins</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Notifications will resume in %1$d hours and %2$d mins</string>
