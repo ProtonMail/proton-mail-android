@@ -156,7 +156,7 @@ abstract class Crypto<K>(
         for (key in currentKeys) {
             runCatching {
                 return block(key)
-            }.onFailure(Timber::w)
+            }.onFailure(Timber::d)
         }
         val messagePrefix = errorMessage?.let { "$it. " } ?: EMPTY_STRING
         throw IllegalStateException(
