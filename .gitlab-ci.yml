@@ -258,10 +258,13 @@ stopReview:
 
 i18n-sync-crowdin:
   stage: bot-i18n
+  needs: [ 'detekt analysis' ]
   variables:
     I18N_SYNC_CROWDIN_PROJECT: 'android-mail'
   extends: .i18n-sync-crowdin-shared
   except:
+    refs:
+      - schedules
     variables:
       - $TEST_TYPE == "feature" || $TEST_TYPE == "regression"
 
