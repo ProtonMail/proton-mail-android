@@ -110,5 +110,14 @@
       "setting_hasValue": true,
       "setting_type": "toggle"
     }
+  ],
+  [
+    {
+      "setting_id": "show_moved",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "toggle"
+    }
   ]
 ]

@@ -75,6 +75,13 @@
     "setting_type": "drill"
   },
   {
+    "setting_id": "show_moved",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": false,
+    "setting_type": "drill"
+  },
+  {
     "setting_id": "local_storage_limit",
     "is_section": false,
     "setting_value": "",
