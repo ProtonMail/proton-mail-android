@@ -54,7 +54,9 @@
     <string name="mailbox_empty_state_no_results_found">結果が見つかりませんでした</string>
     <string name="mailbox_empty_state_try_a_different_term">違う単語で検索してみてください</string>
     <string name="mailbox_no_messages">メッセージはありません</string>
-    <string name="mailbox_unread_count">%d 未読</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="other">%d 未読</item>
+    </plurals>
     <string name="mailbox_updated_just_now">たった今更新</string>
     <string name="mailbox_updated_recently">最近更新されました</string>
     <string name="mailbox_updating">更新中…</string>
@@ -153,7 +155,7 @@
     <string name="existing_user_onboarding_new_look_description">暗号化されたメールは使いやさを追求するために、デザインを一新しました。</string>
     <string name="existing_user_onboarding_new_features_headline">新しい機能</string>
     <string name="existing_user_onboarding_new_features_description">ダークモード、アップデートされた通知、未読メッセージフィルター、サブフォルダーなどの新たな機能をお楽しみください。</string>
-    <string name="existing_user_onboarding_updated_proton_headline">統一された保護を新しくなった Proton で</string>
+    <string name="existing_user_onboarding_updated_proton_headline">統合された保護を新しくなった Proton で</string>
     <string name="existing_user_onboarding_updated_proton_description">新しい外観になった Proton をご紹介します。たくさんのサービス、1 つのミッション。どこでもプライベートなインターネットへようこそ。<a href="https://proton.me/news/updated-proton">詳細</a></string>
     <string name="onboarding_next">次へ</string>
     <string name="onboarding_get_started">利用開始</string>
@@ -253,10 +255,10 @@
         <item quantity="other">%d 件の添付ファイル</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="other">\u0020 %d 添付ファイル</item>
+        <item quantity="other">\u0020 %d の添付ファイル</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="other">１ 件の添付ファイル</item>
+        <item quantity="other">%d 件の添付ファイル</item>
     </plurals>
     <string name="add_attachment">添付ファイルの追加</string>
     <string name="select_file">ファイルを選択</string>
@@ -681,7 +683,7 @@
     <string name="snooze_end_time">終了時刻:</string>
     <string name="snooze_repeat">繰り返し:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="other">通知は、%d分後に再開されます。</item>
+        <item quantity="other">通知は、%d 分後に再開されます</item>
     </plurals>
     <string name="quick_snooze_resume_hours">通知は、%1$d時間 %2$d分後に再開されます。</string>
     <string name="minutes">分</string>
@@ -814,7 +816,7 @@
     <string name="label_as">ラベルを付ける</string>
     <string name="mark_as_unread">未読にする</string>
     <string name="mark_as_read">既読にする</string>
-    <string name="move_message">メールを移動</string>
+    <string name="move_message">メッセージを移動</string>
     <string name="manage">管理</string>
     <string name="message_from">\"%s\"からのメッセージ</string>
     <string name="not_spam_move_to_inbox">迷惑メールではありません (受信トレイに移動)</string>

@@ -52,11 +52,14 @@
     <string name="mailbox_empty_spam_subtitle">Sua pasta de spam está vazia</string>
     <string name="mailbox_empty_trash_subtitle">A lixeira está vazia</string>
     <string name="mailbox_empty_state_no_results_found">Nenhum resultado encontrado</string>
-    <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
+    <string name="mailbox_empty_state_try_a_different_term">Tente um termo de pesquisa diferente</string>
     <string name="mailbox_no_messages">Nenhuma mensagem</string>
-    <string name="mailbox_unread_count">%d não lido(s)</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d não lido</item>
+        <item quantity="other">%d não lido</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Atualizado agora</string>
-    <string name="mailbox_updated_recently">Updated recently</string>
+    <string name="mailbox_updated_recently">Atualizado recentemente</string>
     <string name="mailbox_updating">Atualizando…</string>
     <!-- endregion -->
     <!-- region Details -->
@@ -154,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">Novos recursos</string>
     <string name="existing_user_onboarding_new_features_description">Aproveite novos recursos como modo escuro, notificações aprimoradas, um filtro de mensagens não lidas e subpastas.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton atualizado, proteção unificada</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Apresentando o visual atualizado do Proton. Muitos serviços, uma missão. Bem-vindo a uma Internet onde a privacidade é o padrão. <a href="https://proton.me/news/updated-proton">Saiba mais</a></string>
     <string name="onboarding_next">Próximo</string>
     <string name="onboarding_get_started">Começar</string>
     <string name="onboarding_got_it">Entendi</string>
@@ -250,15 +253,15 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">1 anexo</item>
+        <item quantity="one">%d Anexo</item>
         <item quantity="other">%d Anexos</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 anexo</item>
-        <item quantity="other">\u0020 %d anexos</item>
+        <item quantity="one">\u0020 %d Anexo</item>
+        <item quantity="other">\u0020 %d Anexos</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 anexo</item>
+        <item quantity="one">%d Anexo</item>
         <item quantity="other">%d Anexos</item>
     </plurals>
     <string name="add_attachment">Adicionar anexo</string>
@@ -698,8 +701,8 @@
     <string name="snooze_end_time">Hora de término:</string>
     <string name="snooze_repeat">Repetir:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Notificações serão retomadas em 1 min</item>
-        <item quantity="other">Notificações serão retomadas em %d minutos</item>
+        <item quantity="one">As notificações serão retomadas em %d minutos</item>
+        <item quantity="other">As notificações serão retomadas em %d minutos</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Notificações serão retomadas em %1$d horas e %2$d mins</string>
     <string name="minutes">Minutos</string>
@@ -802,7 +805,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferência do antivírus&lt;/i&gt; - desactive temporariamente o seu antivírus, ou remova-o.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferência de proxy/firewall&lt;/i&gt; - desactive os proxies ou firewalls, ou contacte o seu administrador de rede.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está em baixo&lt;/i&gt; - veja &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; para conhecer o nosso estado.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Ainda sem solução&lt;/i&gt; - contacte-nos directamente através do nosso &lt;a href=\"https://protonmail.com/support-form\"&gt;formulário de suporte&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), ou &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Ainda sem solução&lt;/i&gt; - contacte-nos directamente através do nosso &lt;a href=\"https://protonmail.com/support-form\"&gt;formulário de suporte&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), ou &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

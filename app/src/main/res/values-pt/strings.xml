@@ -51,13 +51,16 @@
     <string name="mailbox_empty_inbox_subtitle">Você está atualizada(o)</string>
     <string name="mailbox_empty_spam_subtitle">A sua pasta de spam está vazia</string>
     <string name="mailbox_empty_trash_subtitle">A pasta de lixo está vazia</string>
-    <string name="mailbox_empty_state_no_results_found">No results found</string>
-    <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
+    <string name="mailbox_empty_state_no_results_found">Nenhum resultado encontrado</string>
+    <string name="mailbox_empty_state_try_a_different_term">Tente um termo de pesquisa diferente</string>
     <string name="mailbox_no_messages">Nenhuma mensagem</string>
-    <string name="mailbox_unread_count">%d Não lidas</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d unread</item>
+        <item quantity="other">%d unread</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Atualizado agora mesmo</string>
-    <string name="mailbox_updated_recently">Updated recently</string>
-    <string name="mailbox_updating">Updating…</string>
+    <string name="mailbox_updated_recently">Atualizado recentemente</string>
+    <string name="mailbox_updating">Atualizando…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Abrir no Calendário Proton</string>
@@ -81,7 +84,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
     <string name="set_msg_password_title">Definir senha</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
+    <string name="set_msg_password_info">Defina uma senha para encriptar esta mensagem para utilizadores que não estão no Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/"> Saiba mais </a></string>
     <string name="set_msg_password_info_icon_description">Informação</string>
     <string name="set_msg_password_msg_password_title">Senha da mensagem</string>
     <string name="set_msg_password_msg_password_hint">4 a 21 caracteres</string>
@@ -135,8 +138,8 @@
     <string name="notification_summary_text_new_messages">New messages</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
-    <string name="contacts_empty_state_no_contacts">No contacts</string>
-    <string name="contacts_empty_state_no_groups">No groups</string>
+    <string name="contacts_empty_state_no_contacts">Nenhum contato</string>
+    <string name="contacts_empty_state_no_groups">Nenhum grupo</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
@@ -153,7 +156,7 @@
     <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
     <string name="existing_user_onboarding_new_features_headline">New features</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
-    <string name="existing_user_onboarding_updated_proton_headline">Updated Proton, unified protection</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Proton atualizado, proteção unificada</string>
     <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_get_started">Get started</string>
@@ -179,7 +182,7 @@
     <string name="no_more_messages">Não há mais mensagens</string>
     <string name="no_network_queued">Sem rede, mensagem em fila</string>
     <string name="update_app_title">Actualização requerida</string>
-    <string name="update_app">Your Proton Mail app cannot be used until it is updated</string>
+    <string name="update_app">O aplicativo Proton Mail não pode ser usado até que seja atualizado</string>
     <string name="you_are_offline">Está offline</string>
     <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contacto gravado</string>
@@ -250,16 +253,16 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">1 Attachment</item>
-        <item quantity="other">%d Attachments</item>
+        <item quantity="one">%d Anexo</item>
+        <item quantity="other">%d Anexos</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 anexo</item>
-        <item quantity="other">\u0020 %d anexos</item>
+        <item quantity="one">\u0020 %d Anexo</item>
+        <item quantity="other">\u0020 %d Anexos</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 anexo</item>
-        <item quantity="other">%d anexos</item>
+        <item quantity="one">%d Anexo</item>
+        <item quantity="other">%d Anexos</item>
     </plurals>
     <string name="add_attachment">Adicionar anexo</string>
     <string name="select_file">Seleccionar ficheiro</string>
@@ -399,7 +402,7 @@
     <string name="contact_details">Detalhes do contacto</string>
     <string name="email_type_home">Casa</string>
     <string name="type_title">Escolher tipo</string>
-    <string name="sync_local_contacts">Upload to Proton Mail</string>
+    <string name="sync_local_contacts">Enviar para o Proton Mail</string>
     <string name="please_select_only_phone_contacts">Por favor, seleccione apenas contactos do telefone local</string>
     <string name="contact_vcard_hint_email">Inserir o email</string>
     <string name="contact_vcard_hint_phone">Inserir o número de telefone</string>
@@ -506,7 +509,7 @@
     <string name="convert_question_subtitle">This will upload the local contacts on your device to your Proton Mail contacts directory. You will then be able to access these contacts on your other devices through Proton Mail.</string>
     <string name="refresh_contacts">Actualizar</string>
     <string name="invalid_email_some_contacts">O endereço de email de alguns dos seus contactos não é válido</string>
-    <string name="protonmail_contacts">Proton Mail Contacts</string>
+    <string name="protonmail_contacts">Contatos do Proton Mail</string>
     <string name="device_contacts">Contactos do dispositivo</string>
     <string name="print_date_template">Data: %s</string>
     <string name="print_attachment_template">Anexo: %s; </string>
@@ -518,7 +521,7 @@
     <string name="remove_password_question">Remover a senha?</string>
     <string name="attachment_storage_value_current">Actualmente seleccionado: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Actualmente seleccionado: ilimitado</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space Proton Mail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">Define o espaço máximo de armazenamento que o Proton Mail pode usar no seu dispositivo móvel.</string>
     <string name="load_embedded_images_failed_no_network">Falha ao carregar imagens incorporadas. Verifique a ligação à rede.</string>
     <string name="load_embedded_images_failed">Falha ao carregar imagens incorporadas.</string>
     <string name="unlimited">Ilimitado</string>
@@ -535,7 +538,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Enviado por si com encriptação ponta-a-ponta</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Sent by Proton Mail with zero access encryption</string>
+    <string name="sender_lock_sent_autoresponder">Enviado pelo Proton Mail com encriptação de acesso zero</string>
     <string name="sender_lock_verification_failed">Falha ao verificar o remetente</string>
     <string name="sender_lock_pgp_encrypted">Mensagem encriptada com PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Mensagem de endereço verificado encriptada com PGP</string>
@@ -643,7 +646,7 @@
         access to storage.</string>
     <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
     <string name="push_notifications_alert_title">Alerta de notificações forçadas</string>
-    <string name="push_notifications_alert_subtitle">Push notifications for Proton Mail do not work without updated Google Play services.</string>
+    <string name="push_notifications_alert_subtitle">As notificações push para o Proton Mail não funcionam sem os serviços Google Play atualizados.</string>
     <string name="app_locked">Aplicação bloqueada</string>
     <string name="use_pin_instead">Utilizar antes PIN</string>
     <!-- strings used for biometric enrollment -->
@@ -674,7 +677,7 @@
     <string name="signature">Assinatura</string>
     <string name="mobile_footer">Rodapé móvel</string>
     <string name="edit_mobile_footer">Activar rodapé móvel</string>
-    <string name="default_mobile_footer">Sent from Proton Mail mobile</string>
+    <string name="default_mobile_footer">Enviado do Proton Mail móvel</string>
     <string name="mobile_footer_is_premium">Mudar o rodapé móvel só é permitido a utilizadores pagantes</string>
     <string name="mobile_footer_info">Este rodapé é adicionado após a assinatura</string>
     <!-- region Snooze Settings -->
@@ -698,7 +701,7 @@
     <string name="snooze_end_time">Hora de fim:</string>
     <string name="snooze_repeat">Repetir:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">As notificações serão retomadas em 1 minuto</item>
+        <item quantity="one">As notificações serão retomadas em %d minuto</item>
         <item quantity="other">As notificações serão retomadas em %d minutos</item>
     </plurals>
     <string name="quick_snooze_resume_hours">As notificações serão retomadas em %1$d horas e %2$d minutos</string>
@@ -802,7 +805,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

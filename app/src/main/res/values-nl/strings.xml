@@ -54,7 +54,10 @@
     <string name="mailbox_empty_state_no_results_found">Geen resultaten gevonden</string>
     <string name="mailbox_empty_state_try_a_different_term">Probeer een andere zoekterm</string>
     <string name="mailbox_no_messages">Geen berichten</string>
-    <string name="mailbox_unread_count">%d ongelezen</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d ongelezen</item>
+        <item quantity="other">%d ongelezen</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Zojuist geüpdatet</string>
     <string name="mailbox_updated_recently">Recent geüpdatet</string>
     <string name="mailbox_updating">Updaten…</string>
@@ -250,16 +253,16 @@
     <string name="expiration_hours">%du</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">1 Bijlage</item>
+        <item quantity="one">%d Bijlage</item>
         <item quantity="other">%d Bijlagen</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 bijlage</item>
-        <item quantity="other">\u0020 %d bijlagen</item>
+        <item quantity="one">\u0020 %d Bijlage</item>
+        <item quantity="other">\u0020 %d Bijlagen</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 bijlage</item>
-        <item quantity="other">%d bijlagen</item>
+        <item quantity="one">%d Bijlage</item>
+        <item quantity="other">%d Bijlagen</item>
     </plurals>
     <string name="add_attachment">Voeg bijlage toe</string>
     <string name="select_file">Selecteer bestand</string>
@@ -698,8 +701,8 @@
     <string name="snooze_end_time">Eindtijd:</string>
     <string name="snooze_repeat">Herhaal:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Notificaties worden hervat over 1 min</item>
-        <item quantity="other">Notificaties worden over %d min hervat</item>
+        <item quantity="one">Meldingen worden over %d min hervat</item>
+        <item quantity="other">Meldingen worden over %d min hervat</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Notificaties worden over %1$d uur en %2$d minuten hervat</string>
     <string name="minutes">Minuten</string>
@@ -797,12 +800,12 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Gemeenschappelijke verbindingsproblemen en oplossingen</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;Geen internetverbinding&lt;/i&gt; - Zorg ervoor dat uw internetverbinding werkt.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) probleem&lt;/i&gt; - Probeer te verbinden met Proton vanaf een ander netwerk (of gebruik &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; of &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;)
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Probleem met de internetaanbieder&lt;/i&gt; - Probeer te verbinden met Proton vanaf een ander netwerk (of gebruik &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; of &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;)
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Overheidsblokkade&lt;/i&gt; - Uw land blokkeert mogelijk toegang tot Proton. Probeer &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (of een andere VPN) of &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; om toegang te krijgen tot Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interferentie&lt;/i&gt; - Schakel uw antivirussoftware tijdelijk uit of verwijder deze.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interferentie&lt;/i&gt; - Schakel alle proxy\'s of firewalls uit, of neem contact op met uw netwerkbeheerder.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton heeft een storing&lt;/i&gt; - Controleer de &lt;a href=\"http://protonstatus.com/\"&gt;Proton&lt;/a&gt; voor onze systeemstatus.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Nog steeds geen oplossing gevonden&lt;/i&gt; - Contacteer ons rechtstreeks via ons &lt;a href=\"https://protonmail.com/support-form\"&gt;ondersteuningsformulier&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.zendesk.com), of &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Nog steeds geen oplossing gevonden&lt;/i&gt; - Neem rechtstreeks contact op met ons via &lt;a href=\"https://protonmail.com/support-form\"&gt;ondersteuningsformulier&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.zendesk.com), of &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

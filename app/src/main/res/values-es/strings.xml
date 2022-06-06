@@ -54,7 +54,10 @@
     <string name="mailbox_empty_state_no_results_found">No se encontraron resultados</string>
     <string name="mailbox_empty_state_try_a_different_term">Intenta un término de búsqueda diferente</string>
     <string name="mailbox_no_messages">No hay mensajes</string>
-    <string name="mailbox_unread_count">%d no leído</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d no leído</item>
+        <item quantity="other">%d no leído</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Actualizado justo ahora</string>
     <string name="mailbox_updated_recently">Actualizado recientemente</string>
     <string name="mailbox_updating">Actualizando…</string>
@@ -250,15 +253,15 @@
     <string name="expiration_hours">%dh</string>
     <string name="expiration_minutes">%dm</string>
     <plurals name="attachments">
-        <item quantity="one">1 archivo adjunto</item>
+        <item quantity="one">%d archivo adjunto</item>
         <item quantity="other">%d archivos adjuntos</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 archivo adjunto</item>
-        <item quantity="other">\u0020 %d archivos adjuntos</item>
+        <item quantity="one">\u0020 %d Adjunto</item>
+        <item quantity="other">\u0020 %d Adjuntos</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 archivo adjunto</item>
+        <item quantity="one">%d archivo adjunto</item>
         <item quantity="other">%d archivos adjuntos</item>
     </plurals>
     <string name="add_attachment">Añadir adjunto</string>
@@ -698,7 +701,7 @@ compre más
     <string name="snooze_end_time">Hora final:</string>
     <string name="snooze_repeat">Repetir:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Las notificaciones se reanudarán en 1 minuto</item>
+        <item quantity="one">Las notificaciones se reanudarán en %d min</item>
         <item quantity="other">Las notificaciones se reanudarán en %d minutos</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Las notificaciones se reanudarán en %1$d horas y %2$d minutos</string>
@@ -796,13 +799,13 @@ compre más
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemas y soluciones habituales de conexión</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Sin conexión a internet&lt;/i&gt; - Por favor, asegúrase de que su conexión está funcionando.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema del proveedor de servicios de internet (ISP)&lt;/i&gt; - Pruebe a conectarse a Proton desde una red diferente (o use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueo gubernamental&lt;/i&gt; - Su país puede estar bloqueando el acceso a Proton. Pruebe &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o cualquier otra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para acceder a Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de antivirus&lt;/i&gt; - Deshabilite temporalmente o elimine su software antivirus.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de Proxy/Firewall&lt;/i&gt; - Deshabilite cualquier proxy o cortafuegos, o contacte con su administrador de red.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está caído&lt;/i&gt; - Acceda a &lt;a href=\"http://protonstatus.com/\"&gt;Estatus Proton&lt;/a&gt; para comprobar el estado de nuestro sistema.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aún no pudo encontrar una solución&lt;/i&gt; - Contáctenos directamente a través de nuestro &lt;a href=\"https://protonmail.com/support-form\"&gt;formulario de apoyo&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correo electrónico&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Sin conexión a internet&lt;/i&gt; - Por favor, asegúrate de que tu conexión está funcionando.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema del proveedor de servicios de internet (ISP)&lt;/i&gt; - Prueba a conectarte a Proton desde una red diferente (o usa &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueo gubernamental&lt;/i&gt; - Tu país puede estar bloqueando el acceso a Proton. Prueba &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o cualquier otra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para acceder a Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de antivirus&lt;/i&gt; - Deshabilita temporalmente o elimina tu software antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de Proxy/Firewall&lt;/i&gt; - Deshabilita cualquier proxy o cortafuegos, o contacta con tu administrador de red.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está caído&lt;/i&gt; - Accede a &lt;a href=\"http://protonstatus.com/\"&gt;Estatus Proton&lt;/a&gt; para comprobar el estado de nuestro sistema.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aún no se pudo encontrar una solución&lt;/i&gt; - Contáctanos directamente a través de nuestro &lt;a href=\"https://protonmail.com/support-form\"&gt;formulario de apoyo&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correo electrónico&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagen no encontrada</string>

@@ -54,7 +54,9 @@
     <string name="mailbox_empty_state_no_results_found">Tidak ada hasil yang ditemukan</string>
     <string name="mailbox_empty_state_try_a_different_term">Cobalah kriteria pencarian lainnya</string>
     <string name="mailbox_no_messages">Tidak ada pesan</string>
-    <string name="mailbox_unread_count">%d belum dibaca</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="other">%d belum dibaca</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Baru saja diperbarui</string>
     <string name="mailbox_updated_recently">Baru-baru ini diperbarui</string>
     <string name="mailbox_updating">Memperbarui…</string>
@@ -256,9 +258,7 @@
         <item quantity="other">\u0020 %d Lampiran</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="other">1 Lampiran
-
-%d Lampiran</item>
+        <item quantity="other">%d Lampiran</item>
     </plurals>
     <string name="add_attachment">Tambahkan lampiran</string>
     <string name="select_file">Pilih berkas</string>
@@ -794,7 +794,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Gangguan Antivirus&lt;/i&gt; - Nonaktifkan sementara atau hapus perangkat antivirus Anda.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Gangguan Proxy/Firewall&lt;/i&gt; - Nonaktifkan proxy atau firewall yang sedang aktif, atau hubungi pengelola jaringan Anda.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton sedang offline/down&lt;/i&gt; - Cek &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; untuk mengetahui status sistem kami.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Masih belum menemukan solusi&lt;/i&gt; - Hubungi kami secara langsung melalui &lt;a href=\"https://protonmail.com/support-form\"&gt;formulir layanan dukungan&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), atau &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt; kami.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Masih belum menemukan solusi&lt;/i&gt; - Hubungi kami secara langsung melalui &lt;a href=\"https://protonmail.com/support-form\"&gt;formulir layanan dukungan&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), atau &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; kami.
     </string>
     <!-- endregion -->
     <!-- region errors -->
@@ -806,7 +806,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="denied">Ditolak</string>
     <string name="more">Lainnya</string>
     <!-- region Swipe gestures changed dialog -->
-    <string name="swipe_gestures_changed">Gestur geser diubah</string>
+    <string name="swipe_gestures_changed">Gestur usap diubah</string>
     <string name="swipe_gestures_changed_message">Setelah pembaruan terakhir gestur geser telah dipindah. Jika berminat, Anda dapat mengatur ulang di bagian pengaturan.</string>
     <string name="go_to_settings">Ke pengaturan</string>
     <!-- endregion -->
@@ -818,13 +818,13 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="star">Bintang</string>
+    <string name="star">Bintangi</string>
     <string name="unstar">Hapus Bintang</string>
     <string name="star_unstar">Bintangi/Hapus Bintang</string>
     <string name="send_to_archive">Kirim ke arsip?</string>
     <string name="label_as">Labeli sebagai…</string>
     <string name="mark_as_unread">Tandai sebagai belum dibaca</string>
-    <string name="mark_as_read">Tandai telah dibaca</string>
+    <string name="mark_as_read">Tandai sebagai telah dibaca</string>
     <string name="move_message">Pindahkan pesan</string>
     <string name="manage">Kelola</string>
     <string name="message_from">Pesan dari %s</string>
@@ -841,8 +841,8 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="contacts_send_group_message">Kirim pesan grup</string>
     <string name="inbox_this_folder_is_empty">Folder ini kosong</string>
     <string name="inbox_could_not_retrieve_messages">Tidak dapat mengambil pesan Anda</string>
-    <string name="inbox_pull_down_to_retry">Silakan tarik ke bawah untuk coba ulang</string>
-    <string name="edit_draft">Edit draf</string>
+    <string name="inbox_pull_down_to_retry">Silakan tarik ke bawah untuk mencoba kembali</string>
+    <string name="edit_draft">Sunting draf</string>
     <string name="details_show_history">Tampilkan riwayat</string>
     <string name="could_not_complete_action">Tidak dapat menyelesaikan tindakan</string>
     <string name="decryption_of_message_failed">Dekripsi gagal: proses dekripsi konten yang terenkripsi dalam pesan ini telah gagal.</string>

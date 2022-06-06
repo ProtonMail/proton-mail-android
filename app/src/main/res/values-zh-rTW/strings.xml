@@ -51,13 +51,15 @@
     <string name="mailbox_empty_inbox_subtitle">已是最新狀態</string>
     <string name="mailbox_empty_spam_subtitle">您的垃圾郵件資料夾是空的</string>
     <string name="mailbox_empty_trash_subtitle">垃圾桶是空的</string>
-    <string name="mailbox_empty_state_no_results_found">No results found</string>
-    <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
+    <string name="mailbox_empty_state_no_results_found">查無結果</string>
+    <string name="mailbox_empty_state_try_a_different_term">嘗試使用其他搜尋關鍵字</string>
     <string name="mailbox_no_messages">沒有郵件</string>
-    <string name="mailbox_unread_count">%d 未讀</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="other">%d 則未讀</item>
+    </plurals>
     <string name="mailbox_updated_just_now">剛剛更新</string>
-    <string name="mailbox_updated_recently">Updated recently</string>
-    <string name="mailbox_updating">Updating…</string>
+    <string name="mailbox_updated_recently">最近更新</string>
+    <string name="mailbox_updating">正在更新……</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">於Proton 行事曆中打開</string>
@@ -250,7 +252,7 @@
     <string name="expiration_hours">%d 時</string>
     <string name="expiration_minutes">%d 分</string>
     <plurals name="attachments">
-        <item quantity="other">%d Attachments</item>
+        <item quantity="other">%d 個附件</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="other">\u0020 %d 個附件</item>
@@ -783,13 +785,14 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">常見連線問題及解決方案</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;未連線網際網路&lt;/i&gt; - 請確認您的網路連線是否運作中。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;網際網路服務商 (ISP) 障礙&lt;/i&gt; - 試著透過不同的網路連接 Proton (亦可使用 &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&amp;gt或是 &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;)。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;政府單位攔截&lt;/i&gt; - 您所在的國家地區很可能攔截存取 Proton。 試試 &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (或任何其它 VPN) 也可用 &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; 以存取 Proton。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;防毒軟體觸發衝突&lt;/i&gt; - 暫時停用或移除防毒軟體。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;代理伺服器/防火牆抵觸&lt;/i&gt; - 停用所有代理伺服器或防火牆，聯繫網路管理員。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton 服務中斷&lt;/i&gt; - 移至 &lt;a href=\"http://protonstatus.com/\"&gt;Proton 狀態&lt;/a&gt; 查看系統即時資訊。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;仍然束手無策&lt;/i&gt; - 直接透過以下方式聯繫我們 &lt;a href=\"https://protonmail.com/support-form\"&gt;發送支援服務需求&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;發送電郵&lt;/a&gt; (support@protonmail.zendesk.com)，亦可經由 &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    
     </string>
     <!-- endregion -->
     <!-- region errors -->
