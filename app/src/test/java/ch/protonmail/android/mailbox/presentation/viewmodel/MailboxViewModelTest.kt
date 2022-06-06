@@ -65,7 +65,7 @@ import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.pendingaction.data.model.PendingUpload
-import ch.protonmail.android.settings.domain.GetMailSettings
+import ch.protonmail.android.settings.domain.usecase.GetMailSettings
 import ch.protonmail.android.testdata.UserIdTestData
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -609,9 +609,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private fun List<MailboxItemUiModel>.toMailboxState(): MailboxListState.Data =
         MailboxListState.Data(this, isFreshData = false, shouldResetPosition = true)
-
-    private fun MailSettings.toFlowOfDataResult() =
-        flowOf(DataResult.Success(ResponseSource.Local, this))
 
     companion object TestData {
 

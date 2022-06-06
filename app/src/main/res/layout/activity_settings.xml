@@ -23,7 +23,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".activities.SettingsActivity"
+    tools:context=".settings.presentation.SettingsActivity"
     tools:layoutDirection="ltr">
 
     <include

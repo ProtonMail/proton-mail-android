@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities.settings
+package ch.protonmail.android.settings.presentation
 
 import android.app.Activity
 import android.content.Intent
@@ -31,6 +31,8 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
+import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
+import ch.protonmail.android.activities.settings.RingtoneSettingsUiModel
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,7 +41,6 @@ import studio.forface.viewstatestore.ViewStateActivity
 import javax.inject.Inject
 
 // region constants
-private const val EXTRA_CURRENT_ACTION = "extra.current.action"
 private const val REQUEST_CODE_PICK_RINGTONE = 5
 // endregion
 
@@ -81,7 +82,7 @@ internal class NotificationSettingsActivity : BaseActivity(), ViewStateActivity 
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        currentAction = intent.getIntExtra(EXTRA_CURRENT_ACTION, 0)
+        currentAction = intent.getIntExtra(ch.protonmail.android.settings.swipe.EXTRA_CURRENT_ACTION, 0)
         createOptions()
 
         ringtone_settings.setOnClickListener { onRingtoneChooserClicked() }

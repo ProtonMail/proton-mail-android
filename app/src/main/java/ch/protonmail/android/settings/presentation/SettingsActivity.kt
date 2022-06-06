@@ -16,16 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities
+package ch.protonmail.android.settings.presentation
 
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.TextUtils
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.settings.BaseSettingsActivity
-import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.events.FetchLabelsEvent
+import ch.protonmail.android.settings.presentation.model.SettingsEnum
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint

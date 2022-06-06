@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.settings.domain
 
+import ch.protonmail.android.settings.domain.usecase.UpdateSwipeActions
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify

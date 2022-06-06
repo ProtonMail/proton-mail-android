@@ -17,7 +17,7 @@
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.settings.domain
+package ch.protonmail.android.settings.domain.usecase
 
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import kotlinx.coroutines.withContext

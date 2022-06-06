@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities.settings
+package ch.protonmail.android.settings.presentation
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -39,11 +39,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseConnectivityActivity
-import ch.protonmail.android.activities.DefaultAddressActivity
-import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
-import ch.protonmail.android.activities.EditSettingsItemActivity
-import ch.protonmail.android.activities.SettingsItem
-import ch.protonmail.android.activities.settings.SettingsEnum.*
 import ch.protonmail.android.adapters.SettingsAdapter
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
@@ -65,14 +60,10 @@ import ch.protonmail.android.notifications.presentation.utils.CHANNEL_ID_EMAIL
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.settings.pin.PinSettingsActivity
-import ch.protonmail.android.settings.presentation.AccountSettingsActivity
-import ch.protonmail.android.settings.presentation.AttachmentStorageActivity
-import ch.protonmail.android.settings.presentation.DisplayNameAndSignatureFragment
-import ch.protonmail.android.settings.presentation.EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE
-import ch.protonmail.android.settings.presentation.SettingsDividerItemDecoration
-import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity
-import ch.protonmail.android.settings.presentation.SwipeSettingFragment
+import ch.protonmail.android.settings.presentation.model.SettingsEnum
+import ch.protonmail.android.settings.presentation.model.SettingsEnum.*
 import ch.protonmail.android.settings.presentation.ui.ThemeChooserActivity
+import ch.protonmail.android.settings.swipe.SwipeSettingFragment
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.uiModel.SettingsItemUiModel.SettingsItemTypeEnum
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
@@ -401,7 +392,9 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 } else {
                     mNotificationOptionValue = legacyUser.notificationSetting
                     val notificationSettingsIntent = Intent(this, NotificationSettingsActivity::class.java)
-                    notificationSettingsIntent.putExtra(EXTRA_CURRENT_ACTION, mNotificationOptionValue)
+                    notificationSettingsIntent.putExtra(
+                        ch.protonmail.android.settings.swipe.EXTRA_CURRENT_ACTION, mNotificationOptionValue
+                    )
                     startActivity(AppUtil.decorInAppIntent(notificationSettingsIntent))
                 }
             }

@@ -272,7 +272,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".activities.SettingsActivity"
+            android:name=".settings.presentation.SettingsActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/settings"/>
@@ -282,13 +282,13 @@
             android:screenOrientation="portrait"
             android:label="@string/account_settings"/>
         <activity
-            android:name=".activities.EditSettingsItemActivity"
+            android:name=".settings.presentation.EditSettingsItemActivity"
             android:exported="false"
-            android:parentActivityName=".activities.SettingsActivity"
+            android:parentActivityName=".settings.presentation.SettingsActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.SettingsActivity" />
+                android:value=".settings.presentation.SettingsActivity" />
         </activity>
         <activity
             android:name=".settings.pin.CreatePinActivity"
@@ -319,13 +319,13 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".activities.DefaultAddressActivity"
+            android:name=".settings.presentation.DefaultAddressActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/default_mail_address"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".settings.presentation.SwipeChooserActivity"
+            android:name=".settings.swipe.SwipeChooserActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/swipe_action_chooser_title"
@@ -342,7 +342,7 @@
             android:label="@string/labels_and_folders"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".activities.settings.NotificationSettingsActivity"
+            android:name=".settings.presentation.NotificationSettingsActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/notification_settings"

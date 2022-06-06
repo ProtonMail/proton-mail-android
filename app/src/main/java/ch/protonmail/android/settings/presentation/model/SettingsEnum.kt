@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities.settings
+package ch.protonmail.android.settings.presentation.model
 
 import android.content.Context
 import ch.protonmail.android.R
@@ -247,7 +247,7 @@ enum class SettingsEnum {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String =
             context.resources.getString(R.string.settings_background_sync)
-    }, ;
+    };
 
     abstract fun getHint(context: Context): String
     abstract fun getHeader(context: Context): String

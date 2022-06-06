@@ -23,7 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.settings.SettingsEnum
+import ch.protonmail.android.settings.presentation.model.SettingsEnum
 import ch.protonmail.android.ui.adapter.BaseAdapter
 import ch.protonmail.android.ui.adapter.ClickableAdapter
 import ch.protonmail.android.uiModel.SettingsItemUiModel

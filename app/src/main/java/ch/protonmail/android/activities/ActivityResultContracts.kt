@@ -25,11 +25,12 @@ import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
-import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
-import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.settings.presentation.EXTRA_CURRENT_MAILBOX_LABEL_ID
+import ch.protonmail.android.settings.presentation.EXTRA_CURRENT_MAILBOX_LOCATION
+import ch.protonmail.android.settings.presentation.SettingsActivity
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.MessageUtils
 import java.io.Serializable
