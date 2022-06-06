@@ -18,11 +18,9 @@
  */
 package ch.protonmail.android.core
 
-import android.os.Build
 import android.util.Log
 import ch.protonmail.android.data.remote.OfflineException
 import ch.protonmail.android.domain.entity.EmailAddress
-import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.obfuscateEmail
 import io.sentry.Sentry
 import io.sentry.SentryEvent
@@ -55,9 +53,6 @@ internal class SentryTree : Timber.Tree() {
                 setExtras(throwable.extras)
             }
             setMessage(obfuscatedMessage(message))
-            setTag(TAG_APP_VERSION, AppUtil.getAppVersion())
-            setTag(TAG_SDK_VERSION, "${Build.VERSION.SDK_INT}")
-            setTag(TAG_DEVICE_MODEL, Build.MODEL)
         }
         Sentry.captureEvent(event)
     }
@@ -70,7 +65,6 @@ internal class SentryTree : Timber.Tree() {
         string.replace(EmailAddress.VALIDATION_REGEX) {
             it.value.obfuscateEmail()
         }
-
 
     private fun Throwable?.shouldBeIgnored() = when (this) {
         is CancellationException,
@@ -85,9 +79,6 @@ internal class SentryTree : Timber.Tree() {
 
     private companion object {
 
-        private const val TAG_LOG = "LOG_TAG"
-        private const val TAG_APP_VERSION = "APP_VERSION"
-        private const val TAG_SDK_VERSION = "SDK_VERSION"
-        private const val TAG_DEVICE_MODEL = "DEVICE_MODEL"
+        const val TAG_LOG = "LOG_TAG"
     }
 }
