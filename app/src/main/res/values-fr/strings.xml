@@ -54,7 +54,10 @@
     <string name="mailbox_empty_state_no_results_found">Aucun résultat trouvé</string>
     <string name="mailbox_empty_state_try_a_different_term">Essayez un autre terme de recherche</string>
     <string name="mailbox_no_messages">Aucun message</string>
-    <string name="mailbox_unread_count">%d non lu(s)</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d non lu</item>
+        <item quantity="other">%d non lus</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Mis à jour à l\'instant</string>
     <string name="mailbox_updated_recently">Mis à jour récemment</string>
     <string name="mailbox_updating">Mise à jour…</string>
@@ -81,7 +84,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Le %s, %s &lt; %s&gt; a écrit :</string>
     <string name="set_msg_password_title">Définir le mot de passe</string>
-    <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message pour les utilisateurs non-Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">En savoir plus</a></string>
+    <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message à destination de personnes qui n\'utilisent pas Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">En savoir plus</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Mot de passe du message</string>
     <string name="set_msg_password_msg_password_hint">4 à 21 caractères</string>
@@ -154,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nouvelles fonctionnalités</string>
     <string name="existing_user_onboarding_new_features_description">Profitez de nouvelles fonctionnalités telles que le mode sombre, des notifications améliorées, un filtre de messages non lus et des sous-dossiers.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Nouvelle version, protection unifiée</string>
-    <string name="existing_user_onboarding_updated_proton_description">Présentation du nouveau design de Proton. Plusieurs services, une seule mission. Bienvenue sur un Internet où la confidentialité est la valeur par défaut. <a href="https://proton.me/news/updated-proton">En savoir plus</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Voici le nouveau Proton : plusieurs services, une seule mission. Bienvenue sur un internet où la vie privée est la règle absolue. <a href="https://proton.me/news/updated-proton">En savoir plus</a></string>
     <string name="onboarding_next">Suivant</string>
     <string name="onboarding_get_started">Commencer</string>
     <string name="onboarding_got_it">J\'ai compris</string>
@@ -181,7 +184,7 @@
     <string name="update_app_title">Mise à jour requise</string>
     <string name="update_app">Votre application Proton Mail ne peut pas être utilisée tant qu\'elle n\'est pas mise à jour</string>
     <string name="you_are_offline">Vous êtes hors ligne</string>
-    <string name="api_offline">Proton Mail est actuellement hors-ligne, visitez https://protonstatus.com ou notre Twitter pour consulter l\'état actuel du service : https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail est actuellement hors-ligne, visitez https://protonstatus.com ou notre compte Twitter pour consulter l\'état actuel du service : https://twitter.com/protonmail</string>
     <string name="contact_saved">Contact enregistré</string>
     <string name="contact_saved_offline">Contact enregistré, il sera synchronisé quand une connexion sera disponible</string>
     <string name="contact_exist">L\'adresse e-mail du contact existe déjà</string>
@@ -250,15 +253,15 @@
     <string name="expiration_hours">%dh</string>
     <string name="expiration_minutes">%dmn</string>
     <plurals name="attachments">
-        <item quantity="one">1 pièce jointe</item>
+        <item quantity="one">%d pièce jointe</item>
         <item quantity="other">%d pièces jointes</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 pièce jointe</item>
+        <item quantity="one">\u0020 %d pièce jointe</item>
         <item quantity="other">\u0020 %d pièces jointes</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 pièce jointe</item>
+        <item quantity="one">%d pièce jointe</item>
         <item quantity="other">%d pièces jointes</item>
     </plurals>
     <string name="add_attachment">Ajouter une pièce jointe</string>
@@ -296,7 +299,7 @@
     <string name="cancel">Annuler</string>
     <string name="close">Fermer</string>
     <string name="eo_password_title">Définir le mot de passe</string>
-    <string name="eo_password_subtitle">Définir un mot de passe pour chiffrer ce message pour les utilisateurs qui ne sont pas sur Proton Mail</string>
+    <string name="eo_password_subtitle">Définir un mot de passe pour chiffrer ce message à destination de personnes qui n\'utilisent pas Proton Mail</string>
     <string name="eo_password_more_info">En savoir plus</string>
     <string name="no_attachments">Aucune pièce jointe</string>
     <string name="display_name_banned_chars">Nom d\'affichage invalide. \'&gt;\' et \'&lt;\' ne sont pas autorisés</string>
@@ -477,7 +480,7 @@
     <string name="details_copied">Détails copiés dans le presse-papiers</string>
     <string name="saving">Enregistrement en cours...</string>
     <string name="update_folder">Mettre à jour le dossier</string>
-    <string name="spam_score_100">Cet e-mail semble provenir d\'une adresse Proton Mail, mais il vient de l\'extérieur de notre système et à échoué aux tests d\'authentification. Il a peut-être été falsifié ou transféré incorrectement!</string>
+    <string name="spam_score_100">Cet e-mail semble provenir d\'une adresse Proton Mail, mais il vient de l\'extérieur de notre système et à échoué aux tests d\'authentification. Il a peut-être été falsifié ou transféré incorrectement.</string>
     <string name="spam_score_101">Cet e-mail a échoué aux tests d\'authentification de son domaine. Il a peut-être été falsifié ou transféré incorrectement !</string>
     <string name="spam_score_102">Ce message peut être une tentative d’hameçonnage. Veuillez vérifier l’expéditeur et le contenu afin de vous assurer qu’ils sont légitimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">EN SAVOIR PLUS</a></string>
     <string name="print_from_template">De : %s</string>
@@ -698,8 +701,8 @@
     <string name="snooze_end_time">Heure de fin :</string>
     <string name="snooze_repeat">Répéter :</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Les notifications reprendront dans 1 min.</item>
-        <item quantity="other">Les notifications reprendront dans %d min.</item>
+        <item quantity="one">Les notifications reprendront dans %d min</item>
+        <item quantity="other">Les notifications reprendront dans %d min</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Les notifications reprendront dans %1$d heure(s) et %2$d min(s)</string>
     <string name="minutes">Minutes</string>
@@ -796,13 +799,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problèmes de connexion fréquents et solutions</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Aucune connexion Internet&lt;/i&gt; : veuillez vous assurer que votre connexion Internet fonctionne.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problème de fournisseur d\'accès Internet (FAI)&lt;/i&gt; : essayez de vous connecter à Proton à partir d\'un réseau différent (ou utilisez &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; ou encore &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blocage gouvernemental&lt;/i&gt; : votre pays bloque peut-être l\'accès à Proton. Essayez &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (ou tout autre VPN) ou &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pour accéder à Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférences antivirus&lt;/i&gt; : désactivez ou supprimez temporairement votre logiciel antivirus.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférences proxy/pare-feu&lt;/i&gt; : désactivez tout proxy ou pare-feu, ou contactez votre administrateur réseau.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton est en panne&lt;/i&gt; : vérifiez le &lt;a href=\"http://protonstatus.com/\"&gt;Statut Proton&lt;/a&gt; pour connaître l\'état de notre système.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez pas de solution&lt;/i&gt; : contactez-nous directement via notre &lt;a href=\"https://protonmail.com/support-form\"&gt;formulaire d’assistance&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;par e-mail&lt;/a&gt; (support@protonmail.zendesk.com) ou via &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

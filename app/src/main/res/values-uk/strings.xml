@@ -54,7 +54,12 @@
     <string name="mailbox_empty_state_no_results_found">Результатів не знайдено</string>
     <string name="mailbox_empty_state_try_a_different_term">Спробуйте інший пошуковий термін</string>
     <string name="mailbox_no_messages">Немає повідомлень</string>
-    <string name="mailbox_unread_count">%d непрочитаних</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d непрочитане</item>
+        <item quantity="few">%d непрочитані</item>
+        <item quantity="many">%d непрочитаних</item>
+        <item quantity="other">%d непрочитані</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Щойно оновлено</string>
     <string name="mailbox_updated_recently">Недавно оновлено</string>
     <string name="mailbox_updating">Оновлення…</string>
@@ -250,22 +255,22 @@
     <string name="expiration_hours">%dГОД</string>
     <string name="expiration_minutes">%dХВ</string>
     <plurals name="attachments">
-        <item quantity="one">1 вкладення</item>
+        <item quantity="one">%d вкладення</item>
         <item quantity="few">%d вкладення</item>
         <item quantity="many">%d вкладень</item>
         <item quantity="other">%d вкладення</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 вкладення</item>
+        <item quantity="one">\u0020 %d вкладення</item>
         <item quantity="few">\u0020 %d вкладення</item>
         <item quantity="many">\u0020 %d вкладень</item>
-        <item quantity="other">\u0020 %d вкладень</item>
+        <item quantity="other">\u0020 %d вкладення</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 вкладення</item>
+        <item quantity="one">%d вкладення</item>
         <item quantity="few">%d вкладення</item>
-        <item quantity="many">%d Вкладень</item>
-        <item quantity="other">%d Вкладень</item>
+        <item quantity="many">%d вкладень</item>
+        <item quantity="other">%d вкладення</item>
     </plurals>
     <string name="add_attachment">Додати вкладення</string>
     <string name="select_file">Вибрати файл</string>
@@ -716,10 +721,10 @@
     <string name="snooze_end_time">Час завершення:</string>
     <string name="snooze_repeat">Повторити:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Сповіщення відновляться через 1 хв</item>
-        <item quantity="few">Сповіщення відновляться через %d хв</item>
-        <item quantity="many">Сповіщення відновляться через %d хв</item>
-        <item quantity="other">Сповіщення відновляться через %d хв</item>
+        <item quantity="one">Сповіщення відновляться за %d хв</item>
+        <item quantity="few">Сповіщення відновляться за %d хв</item>
+        <item quantity="many">Сповіщення відновляться за %d хв</item>
+        <item quantity="other">Сповіщення відновляться за %d хв</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Сповіщення відновляться через %1$d год та %2$d хв</string>
     <string name="minutes">Хвилин</string>
@@ -818,13 +823,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Поширені проблеми зв\'язку та їх розв\'язання</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Немає зв\'язку з інтернетом&lt;/i&gt; — Переконайтеся у справності з\'єднання.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Немає з\'єднання з інтернетом&lt;/i&gt; — Переконайтеся у справності з\'єднання.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема з постачальником послуги доступу Інтернету (ISP)&lt;/i&gt; — Спробуйте під\'єднатися до Proton з іншої мережі (або скористайтеся &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; або &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Блокування урядом&lt;/i&gt; — Можливо, ваша країна блокує доступ до Proton. Спробуйте &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (або інший VPN) або &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; для доступу до Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Перешкоджання антивіруса&lt;/i&gt; — Тимчасово вимкніть або вилучіть антивірусне програмне забезпечення.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Перешкоджання проксі/брандмауера&lt;/i&gt; — Вимкніть будь-які проксі-сервери чи брандмауери або зверніться до адміністратора мережі.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton недоступний&lt;/i&gt; — Перегляньте &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt;, щоб дізнатися поточний стан служби.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблему досі не усунено&lt;/i&gt; — Зв\'яжіться з нами безпосередньо через нашу &lt;a href=\"https://protonmail.com/support-form\"&gt;форму підтримки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;електронну пошту&lt;/a&gt; (support@protonmail.zendesk.com), або &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблему досі не усунено&lt;/i&gt; — Зв\'яжіться з нами безпосередньо через нашу &lt;a href=\"https://protonmail.com/support-form\"&gt;форму підтримки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;електронну пошту&lt;/a&gt; (support@protonmail.zendesk.com), або &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

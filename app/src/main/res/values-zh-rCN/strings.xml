@@ -29,7 +29,7 @@
     <string name="x_more">更多</string>
     <string name="x_none">无</string>
     <string name="x_search">搜索</string>
-    <string name="x_set">设置</string>
+    <string name="x_set">确定</string>
     <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Content descriptions: accessibility description for icons -->
@@ -51,13 +51,15 @@
     <string name="mailbox_empty_inbox_subtitle">一切就绪</string>
     <string name="mailbox_empty_spam_subtitle">没有垃圾邮件</string>
     <string name="mailbox_empty_trash_subtitle">废件箱为空</string>
-    <string name="mailbox_empty_state_no_results_found">No results found</string>
-    <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
+    <string name="mailbox_empty_state_no_results_found">搜索无结果</string>
+    <string name="mailbox_empty_state_try_a_different_term">不妨试试其他关键词</string>
     <string name="mailbox_no_messages">无邮件</string>
-    <string name="mailbox_unread_count">%d 封未读邮件</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="other">%d 封未读邮件</item>
+    </plurals>
     <string name="mailbox_updated_just_now">刚刚更新</string>
-    <string name="mailbox_updated_recently">Updated recently</string>
-    <string name="mailbox_updating">Updating…</string>
+    <string name="mailbox_updated_recently">刚刚更新</string>
+    <string name="mailbox_updating">正在更新邮件…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">在Proton日历中打开</string>
@@ -81,7 +83,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s，%s &lt;%s&gt; 来信：</string>
     <string name="set_msg_password_title">设置密码</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
+    <string name="set_msg_password_info">请为非 Proton Mail 用户设置密码将邮件加密。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解详情</a></string>
     <string name="set_msg_password_info_icon_description">信息</string>
     <string name="set_msg_password_msg_password_title">邮件密码</string>
     <string name="set_msg_password_msg_password_hint">4 - 21 个字符</string>
@@ -111,7 +113,7 @@
     <string name="settings_enter_pin_code_title">输入口令</string>
     <string name="settings_storage_limit_mb_value">%1$d MB（已使用 %2$.2f MB）</string>
     <string name="settings_storage_limit_unlimited_value">无限制（已使用 %1$.2f MB）</string>
-    <string name="settings_swipe_settings_info">设置访问常用操作的快捷手势</string>
+    <string name="settings_swipe_settings_info">设置滑动手势来执行常用操作。</string>
     <string name="settings_swipe_left_to_right">从左向右</string>
     <string name="settings_swipe_right_to_left">从右向左</string>
     <string name="settings_swipe_saving">正在保存滑动操作…</string>
@@ -135,8 +137,8 @@
     <string name="notification_summary_text_new_messages">收到新邮件</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
-    <string name="contacts_empty_state_no_contacts">No contacts</string>
-    <string name="contacts_empty_state_no_groups">No groups</string>
+    <string name="contacts_empty_state_no_contacts">无联系人</string>
+    <string name="contacts_empty_state_no_groups">无群组</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">联系人群组不会被导入。开通付费账户即可使用此类高级功能。</string>
@@ -153,11 +155,11 @@
     <string name="existing_user_onboarding_new_look_description">您的安全邮箱现已全面更新，操作更加便捷。</string>
     <string name="existing_user_onboarding_new_features_headline">新功能</string>
     <string name="existing_user_onboarding_new_features_description">畅享深色模式、改良的推送通知、未读邮件筛选、子文件夹等新功能。</string>
-    <string name="existing_user_onboarding_updated_proton_headline">Updated Proton, unified protection</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_headline">新版 Proton，全方位的隐私保护</string>
+    <string name="existing_user_onboarding_updated_proton_description">Proton 界面现已焕然一新。服务繁多，使命不变。欢迎进入隐私优先的互联网。<a href="https://proton.me/news/updated-proton">了解详情</a></string>
     <string name="onboarding_next">继续</string>
     <string name="onboarding_get_started">立即体验</string>
-    <string name="onboarding_got_it">Got it</string>
+    <string name="onboarding_got_it">知道了</string>
     <string name="onboarding_image_view_content_description">Proton Mail 图示</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -179,9 +181,9 @@
     <string name="no_more_messages">没有其他邮件了</string>
     <string name="no_network_queued">网络尚未连接，邮件将稍后发送</string>
     <string name="update_app_title">需要更新</string>
-    <string name="update_app">Your Proton Mail app cannot be used until it is updated</string>
+    <string name="update_app">Proton Mail 应用需要更新方可使用</string>
     <string name="you_are_offline">您已离线</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">暂时无法连接 Proton Mail，可前往 https://protonstatus.com 或 https://twitter.com/protonmail 了解情况</string>
     <string name="contact_saved">联系人已保存</string>
     <string name="contact_saved_offline">联系人已保存，将在联网后同步</string>
     <string name="contact_exist">此联系人已存在</string>
@@ -209,7 +211,7 @@
     <string name="all_mail">全部邮件</string>
     <string name="contacts">通讯录</string>
     <string name="search_contacts">搜索联系人</string>
-    <string name="fetching_contacts">Fetching Proton Mail contacts...</string>
+    <string name="fetching_contacts">正在读取 Proton Mail 通讯录...</string>
     <string name="fetching_contacts_success">刷新联系人成功</string>
     <string name="fetching_contacts_failure">无法刷新联系人</string>
     <string name="compose">撰写邮件</string>
@@ -250,7 +252,7 @@
     <string name="expiration_hours">%d小时</string>
     <string name="expiration_minutes">%d分钟</string>
     <plurals name="attachments">
-        <item quantity="other">%d Attachments</item>
+        <item quantity="other">%d 个附件</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="other">\u0020 %d 个附件</item>
@@ -281,7 +283,7 @@
     <string name="invalid_email_address">地址 %s 无效</string>
     <string name="invalid_email_address_removed">地址 %s 无效，已被删除</string>
     <string name="no_recipients_specified">请添加至少一位收件人</string>
-    <string name="no_password_specified">Expiration times can only be set on fully encrypted messages. Please set a password for your non-Proton Mail recipients.</string>
+    <string name="no_password_specified">只有加密的邮件才能设置有效期，请为没有使用 Proton Mail 的收件人设置邮件密码。</string>
     <string name="attachment_limit">共需上传 %2$s 个附件，但最多只能上传 %1$s 个附件。</string>
     <string name="sending_message">邮件发送中...</string>
     <string name="sending_message_offline">网络尚未连接，邮件将稍后发送</string>
@@ -293,7 +295,7 @@
     <string name="cancel">取消</string>
     <string name="close">关闭</string>
     <string name="eo_password_title">设置密码</string>
-    <string name="eo_password_subtitle">Set a password to encrypt this message for non-Proton Mail users</string>
+    <string name="eo_password_subtitle">为非 Proton Mail 用户设置阅读此邮件所需的密码</string>
     <string name="eo_password_more_info">了解详情</string>
     <string name="no_attachments">0 个附件</string>
     <string name="display_name_banned_chars">名称中不能包含 &gt; 和 &lt; 符号</string>
@@ -394,7 +396,7 @@
     <string name="contact_details">联系人详情</string>
     <string name="email_type_home">家庭</string>
     <string name="type_title">选择类型</string>
-    <string name="sync_local_contacts">Upload to Proton Mail</string>
+    <string name="sync_local_contacts">上传至 Proton Mail</string>
     <string name="please_select_only_phone_contacts">请选择本地手机联系人</string>
     <string name="contact_vcard_hint_email">输入邮箱</string>
     <string name="contact_vcard_hint_phone">输入电话号码</string>
@@ -472,7 +474,7 @@
     <string name="details_copied">已复制</string>
     <string name="saving">保存中...</string>
     <string name="update_folder">更改文件夹</string>
-    <string name="spam_score_100">This email seems to be from a Proton Mail address but came from outside our system and failed our authentication requirements. It may be spoofed or improperly forwarded!</string>
+    <string name="spam_score_100">这封邮件看似来自 Proton Mail 地址，但却是从我们的系统外部发来的，并且没能通过我们的验证。这可能是欺诈邮件，也可能是投递过程出现了问题。</string>
     <string name="spam_score_101">不能确定此邮件是否来自该域名，这可能是欺诈邮件，也可能是投递过程出现了问题。</string>
     <string name="spam_score_102">此邮件可能具有欺诈性质，请检查发件人身份和邮件内容，确认信息真实性。<a href="https://protonmail.com/blog/prevent-phishing-attacks/">了解详情</a></string>
     <string name="print_from_template">发件人：%s</string>
@@ -498,10 +500,10 @@
     <string name="email_empty">邮箱地址缺失</string>
     <string name="encrypted_contact_details">已加密的联系人详细信息</string>
     <string name="convert_question">上传本机通讯录</string>
-    <string name="convert_question_subtitle">This will upload the local contacts on your device to your Proton Mail contacts directory. You will then be able to access these contacts on your other devices through Proton Mail.</string>
+    <string name="convert_question_subtitle">此操作将把本机通讯录上传至 Proton Mail 服务器，今后您就可以在其他设备上登录 Proton Mail 获取联系人信息。</string>
     <string name="refresh_contacts">刷新</string>
     <string name="invalid_email_some_contacts">部分联系人的邮箱地址无效</string>
-    <string name="protonmail_contacts">Proton Mail Contacts</string>
+    <string name="protonmail_contacts">Proton Mail 联系人</string>
     <string name="device_contacts">本机联系人</string>
     <string name="print_date_template">日期：%s</string>
     <string name="print_attachment_template">附件：%s;  </string>
@@ -513,7 +515,7 @@
     <string name="remove_password_question">确定要删除密码吗？</string>
     <string name="attachment_storage_value_current">已选择：%d MB</string>
     <string name="attachment_storage_value_current_unlimited">已选择：无限制</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space Proton Mail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">设置 Proton Mail 在此设备上允许使用的存储空间上限。</string>
     <string name="load_embedded_images_failed_no_network">嵌入图像载入失败，请检查网络状态。</string>
     <string name="load_embedded_images_failed">嵌入图像加载失败。</string>
     <string name="unlimited">无限制</string>
@@ -530,7 +532,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">由您经过端到端加密发送</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Sent by Proton Mail with zero access encryption</string>
+    <string name="sender_lock_sent_autoresponder">通过 Proton Mail 全封闭加密发送</string>
     <string name="sender_lock_verification_failed">发件人验证失败</string>
     <string name="sender_lock_pgp_encrypted">经过 PGP 加密的邮件</string>
     <string name="sender_lock_pgp_encrypted_verified">来自已验证地址的 PGP 加密邮件</string>
@@ -626,7 +628,7 @@
     <string name="need_storage_permissions_download_attachment_text">若要下载附件，您需要给予程序读取文件的权限。</string>
     <string name="need_contacts_permissions_text">若要导入通讯录，您需要给予程序读取通讯录的权限。</string>
     <string name="push_notifications_alert_title">通知推送</string>
-    <string name="push_notifications_alert_subtitle">Push notifications for Proton Mail do not work without updated Google Play services.</string>
+    <string name="push_notifications_alert_subtitle">没有新版 Google Play 服务支持，Proton Mail 无法推送通知。</string>
     <string name="app_locked">程序已锁定</string>
     <string name="use_pin_instead">输入口令</string>
     <!-- strings used for biometric enrollment -->
@@ -657,7 +659,7 @@
     <string name="signature">落款</string>
     <string name="mobile_footer">移动端标识</string>
     <string name="edit_mobile_footer">开启移动端标识</string>
-    <string name="default_mobile_footer">Sent from Proton Mail mobile</string>
+    <string name="default_mobile_footer">通过 Proton Mail 移动端发送</string>
     <string name="mobile_footer_is_premium">开通付费账户方可更改移动端标识</string>
     <string name="mobile_footer_info">这段标识文本将加在您的落款之后</string>
     <!-- region Snooze Settings -->
@@ -681,7 +683,7 @@
     <string name="snooze_end_time">结束时间：</string>
     <string name="snooze_repeat">重复：</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="other">%d 分钟后恢复通知</item>
+        <item quantity="other">%d 分钟后恢复推送通知</item>
     </plurals>
     <string name="quick_snooze_resume_hours">%1$d 小时 %2$d 分钟后恢复通知</string>
     <string name="minutes">分钟</string>
@@ -777,14 +779,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">常见网络问题与对策</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
-    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;网络未连接&lt;/i&gt;：请确认网络状况。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;运营商问题&lt;/i&gt;：尝试更换网络（或使用 &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; 或 &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;）。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;政府封锁&lt;/i&gt;：您所处的国家可能屏蔽了 Proton。尝试通过 &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt;（或其他任何 VPN）或 &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; 连接 Proton。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;杀毒软件干扰&lt;/i&gt;：暂时关闭或卸载杀毒软件。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;代理服务器或防火墙干扰&lt;/i&gt;：关闭所有代理服务器和防火墙，或联系系统管理员。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton 运行故障&lt;/i&gt;：查看 &lt;a href=\"http://protonstatus.com/\"&gt;Proton 运行状态&lt;/a&gt;。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;问题仍未解决&lt;/i&gt;：通过&lt;a href=\"https://protonmail.com/support-form\"&gt;客服表单&lt;/a&gt;、&lt;&lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;&gt;邮箱&lt;/a&gt;（support@protonmail.zendesk.com）或 &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; 直接联系我们。</string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">图片未找到</string>

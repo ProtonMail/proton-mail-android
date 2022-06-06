@@ -54,7 +54,10 @@
     <string name="mailbox_empty_state_no_results_found">Ulac igmaḍ yettwafen</string>
     <string name="mailbox_empty_state_try_a_different_term">Ɛreḍ anadi s wawal-nniḍen</string>
     <string name="mailbox_no_messages">Ulac iznan</string>
-    <string name="mailbox_unread_count">%d ar yettwaɣra ara</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d ur yettwaɣra ara</item>
+        <item quantity="other">%d ur ttwaɣran ara</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Yettwaleqqem tura kan</string>
     <string name="mailbox_updated_recently">Yettwaleqqem melmi kan</string>
     <string name="mailbox_updating">Yettleqqim…</string>
@@ -64,7 +67,7 @@
     <string name="details_open_in_proton_calendar_subtitle">Awitay awgelhan aɣelsan</string>
     <string name="details_open_in_proton_calendar_icon_desc">Tignit n Proton Calendar</string>
     <string name="details_play_store_error">Ulamek alday n Play Store</string>
-    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
+    <string name="details_hyperlink_phishing_dialog_title">Ɣur-k•m: yettban d yir asmel web</string>
     <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Uɣal ɣer deffir (yettwasemter)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Zgel alɣu, tkemmkeḍ</string>
@@ -77,7 +80,7 @@
     <string name="composer_subject">Asentel:</string>
     <string name="composer_to">Ɣer:</string>
     <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
-    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
+    <string name="composer_removing_address_server_error">Tukksa n tansa: %s1. %s2</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; yura:</string>
     <string name="set_msg_password_title">Sbadu awal uffir</string>
@@ -153,7 +156,7 @@
     <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
     <string name="existing_user_onboarding_new_features_headline">Timahilin timaynutin</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
-    <string name="existing_user_onboarding_updated_proton_headline">Updated Proton, unified protection</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Lqem amaynut n Proton, ammesten yezdin</string>
     <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Γer zdat</string>
     <string name="onboarding_get_started">Bdu</string>
@@ -250,15 +253,15 @@
     <string name="expiration_hours">%dSRG</string>
     <string name="expiration_minutes">%dTSD</string>
     <plurals name="attachments">
-        <item quantity="one">1 umedday</item>
-        <item quantity="other">%d n yimeddayen</item>
+        <item quantity="one">%d umedday</item>
+        <item quantity="other">%d yimeddayen</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 n ufaylu yeddan</item>
-        <item quantity="other">\u0020 %d n ifuyla yeddan</item>
+        <item quantity="one">\u0020 %d umedday</item>
+        <item quantity="other">\u0020 %d yimeddayen</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1umedday</item>
+        <item quantity="one">%d umedday</item>
         <item quantity="other">%d n yimeddayen</item>
     </plurals>
     <string name="add_attachment">Rnu afaylu</string>
@@ -490,7 +493,7 @@
     <string name="address_city">Tamdint</string>
     <string name="address_region">Tamnaḍt (tawilayt neɣ agezdu)</string>
     <string name="address_postcode">Tangalt n lpusta</string>
-    <string name="address_po_box">PO Box</string>
+    <string name="address_po_box">Tabewwaḍt n lpusṭa</string>
     <string name="address_country">Tamurt</string>
     <string name="recheck_delinquency">Senqed tikelt nniḍen</string>
     <string name="close_app">Mdel asnas</string>
@@ -503,7 +506,7 @@
     <string name="email_empty">Ulac tansa n imayl</string>
     <string name="encrypted_contact_details">Talqayt n inermisen iwgelhanen</string>
     <string name="convert_question">Sali inermisen idiganen</string>
-    <string name="convert_question_subtitle">This will upload the local contacts on your device to your Proton Mail contacts directory. You will then be able to access these contacts on your other devices through Proton Mail.</string>
+    <string name="convert_question_subtitle">Ayagi ad isali inermisen idiganen deg ibenk-ik ɣer ukaram Proton Mail. Ad tizmireḍ ihi ad tkecmeḍ ɣer inermisen agi deg ibenkan-nniḍen s Proton Mail.</string>
     <string name="refresh_contacts">Smiren</string>
     <string name="invalid_email_some_contacts">Tansa n yimayl mačči d tameɣtut i kra n inermisen-ik</string>
     <string name="protonmail_contacts">Inermisen n Proton Mail</string>
@@ -698,7 +701,7 @@
     <string name="snooze_end_time">Azemz n tagara:</string>
     <string name="snooze_repeat">Ales:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Ilɣa ad d-uɣalen di 1 n tesdat</item>
+        <item quantity="one">Ilɣa ad d-uɣalen di %d n tasinin</item>
         <item quantity="other">Ilɣa ad d-uɣalen di %d n tasinin</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Ilɣa ad d-uɣalen di %1$d n isragen d %2$d n tisdatin</string>
@@ -796,13 +799,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Uguren n tuqqna yezgan akked tifrat</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Ulac tuqqna internet&lt;/i&gt;- Ttxil ḍmen dakken tuqqna-k·m internet tetteddu. 
+         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Ugur deg yimefki n umeẓlu internet (ISP) &lt;/i&gt;- Ëreḍ ad teqqneḍ ɣer Proton seg uẓeṭṭa yemgaraden (neɣ seqdec &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; neɣ &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;). 
+         &lt;br/&gt;&lt;br/&gt;&lt;i&gt; Asewḥel anabaḍan&lt;/i&gt;- Izmer d tamur-ik·im i yeswaḥlen anekcum ɣer Proton. Ɛreḍ &lt;a href=\"https://protonvpn.com/\"&gt;ProtoVPN&lt;/a&gt; (neɣ ameẓlu-nniḍen n VPN) neɣ &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;akken ad tkecmeḍ ɣer Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Amyadef n umgal ivirusen&lt;/i&gt; - Sens neɣ kkes aseɣẓan-ik·im amgal ivirusen i kra n wakud.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Amyadef n upṛuksi/aɣrab n tmes&lt;/i&gt; - Sens akk ipṛuksiyen neɣ iɣraben n tmes, neɣ nermes anedbal-ik·im n uẓeṭṭa.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton ur itteddu ara&lt;/i&gt; - Wali &lt;a href=\"http://protonstatus.com/\"&gt;Addad n Proton&lt;/a&gt; i waddad n unagraw-nneɣ.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Mazal ur d-tufiḍ ara tifrat&lt;/i&gt;- Nermes-aɣ-d srid s ubrid n &lt;a href=\"https://protonmail.com/support-form\"&gt;tferkit n tallelt&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;imayl&lt;/a&gt; (support ProtonMail.zendesk.com), neɣ &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

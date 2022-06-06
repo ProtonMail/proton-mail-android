@@ -51,13 +51,16 @@
     <string name="mailbox_empty_inbox_subtitle">Esteu al dia</string>
     <string name="mailbox_empty_spam_subtitle">La carpeta de correu brossa és buida</string>
     <string name="mailbox_empty_trash_subtitle">La paperera és buida</string>
-    <string name="mailbox_empty_state_no_results_found">No results found</string>
-    <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
+    <string name="mailbox_empty_state_no_results_found">No s\'han trobat resultats</string>
+    <string name="mailbox_empty_state_try_a_different_term">Proveu una altra cerca</string>
     <string name="mailbox_no_messages">Cap missatge</string>
-    <string name="mailbox_unread_count">%d sense llegir</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d sense llegir</item>
+        <item quantity="other">%d sense llegir</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Actualitzat ara mateix</string>
-    <string name="mailbox_updated_recently">Updated recently</string>
-    <string name="mailbox_updating">Updating…</string>
+    <string name="mailbox_updated_recently">Actualitzat fa poc</string>
+    <string name="mailbox_updating">S\'està actualitzant…</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Obrir a Proton Calendar</string>
@@ -66,7 +69,7 @@
     <string name="details_play_store_error">No es pot obrir Play Store</string>
     <string name="details_hyperlink_phishing_dialog_title">Avís: pressumpte lloc web fals</string>
     <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
-    <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Torna (recomanat)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
     <!-- endregion -->
     <!-- region Composer -->
@@ -79,7 +82,7 @@
     <string name="composer_removing_address_generic_error">No es pot verificar l\'adreça: %s1. L\'enviament podria fallar.</string>
     <string name="composer_removing_address_server_error">Eliminant l\'adreça: %s1. %s2</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
-    <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
+    <string name="composer_quote_sender_header">El %s, %s &lt; %s&gt; va escriure:</string>
     <string name="set_msg_password_title">Establir contrasenya</string>
     <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">Informació</string>
@@ -132,32 +135,32 @@
     <string name="parent_picker_header">Si no seleccioneu una carpeta superior, aquesta carpeta nova es crearà a la carpeta arrel.</string>
     <!-- endregion -->
     <!-- region Notifications -->
-    <string name="notification_summary_text_new_messages">New messages</string>
+    <string name="notification_summary_text_new_messages">Missatges nous</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
-    <string name="contacts_empty_state_no_contacts">No contacts</string>
-    <string name="contacts_empty_state_no_groups">No groups</string>
+    <string name="contacts_empty_state_no_contacts">No hi ha contactes</string>
+    <string name="contacts_empty_state_no_groups">No hi ha grups</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
-    <string name="contact_details_remote_content_dialog_title">Remote content</string>
-    <string name="contact_details_remote_content_dialog_message">This contact contains remote content.</string>
-    <string name="contact_details_remote_content_dialog_positive_button">Load content</string>
+    <string name="contact_details_remote_content_dialog_title">Contingut remot</string>
+    <string name="contact_details_remote_content_dialog_message">Aquest contacte conté contingut remot.</string>
+    <string name="contact_details_remote_content_dialog_positive_button">Carrega el contingut</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">Privacy for all</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Privacitat per a tothom</string>
     <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
-    <string name="new_user_onboarding_neat_and_tidy_headline">Neat and tidy</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Polit i endreçat</string>
     <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
-    <string name="existing_user_onboarding_new_look_headline">New look, same protection</string>
-    <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
-    <string name="existing_user_onboarding_new_features_headline">New features</string>
+    <string name="existing_user_onboarding_new_look_headline">Nou aspecte, protecció millorada</string>
+    <string name="existing_user_onboarding_new_look_description">El vostre correu electrònic xifrat s\'ha redissenyat per facilitar l\'ús.</string>
+    <string name="existing_user_onboarding_new_features_headline">Noves funcionalitats</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
-    <string name="existing_user_onboarding_updated_proton_headline">Updated Proton, unified protection</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_headline">Proton actualitzat, protecció unificada</string>
+    <string name="existing_user_onboarding_updated_proton_description">Presentem el nou aspecte de Proton. Molts serveis, una missió. Benvingut/da a l\'Internet on tenim la privacitat per defecte. <a href="https://proton.me/news/updated-proton">Més informació</a></string>
     <string name="onboarding_next">Següent</string>
     <string name="onboarding_get_started">Comença</string>
-    <string name="onboarding_got_it">Got it</string>
+    <string name="onboarding_got_it">Entesos</string>
     <string name="onboarding_image_view_content_description">Ilustració de Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -179,9 +182,9 @@
     <string name="no_more_messages">No hi ha més missatges</string>
     <string name="no_network_queued">No hi ha connexió, el missatge queda a la cua</string>
     <string name="update_app_title">Actualització requerida</string>
-    <string name="update_app">Your Proton Mail app cannot be used until it is updated</string>
+    <string name="update_app">L\'aplicació de Proton Mail no es pot utilitzar fins que no l\'actualitzes</string>
     <string name="you_are_offline">Esteu fora de línia</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail està fora de línia ara mateix, comproveu https://protonstatus.com o el nostre Twitter per saber l\'estat actual: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contacte desat</string>
     <string name="contact_saved_offline">Contacte desat, es sincronitzarà quan hi hagi una connexió disponible</string>
     <string name="contact_exist">L\'adreça electrònica del contacte ja existeix</string>
@@ -250,15 +253,15 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">1 Attachment</item>
-        <item quantity="other">%d Attachments</item>
+        <item quantity="one">%d adjunt</item>
+        <item quantity="other">%d adjunts</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 arxiu adjunt</item>
-        <item quantity="other">\u0020 %d arxius adjunts</item>
+        <item quantity="one">\u0020 %d adjunt</item>
+        <item quantity="other">\u0020 %d adjunts</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 adjunt</item>
+        <item quantity="one">%d adjunt</item>
         <item quantity="other">%d adjunts</item>
     </plurals>
     <string name="add_attachment">Afegeix adjunt</string>
@@ -698,8 +701,8 @@
     <string name="snooze_end_time">Hora de finalització:</string>
     <string name="snooze_repeat">Repeteix:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Les notificacions es reprendran en 1 min</item>
-        <item quantity="other">Les notificacions es reprendran en %d mins</item>
+        <item quantity="one">Notifications will resume in %d min</item>
+        <item quantity="other">Notifications will resume in %d mins</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Les notificacions es reprendran en %1$d hores i %2$d min</string>
     <string name="minutes">Minuts</string>
@@ -802,7 +805,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

@@ -54,7 +54,10 @@
     <string name="mailbox_empty_state_no_results_found">Herhangi bir sonuç bulunamadı</string>
     <string name="mailbox_empty_state_try_a_different_term">Farklı bir ifade ile aramayı deneyin</string>
     <string name="mailbox_no_messages">Herhangi bir ileti yok</string>
-    <string name="mailbox_unread_count">%d okunmamış</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d okunmamış</item>
+        <item quantity="other">%d okunmamış</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Az önce güncellendi</string>
     <string name="mailbox_updated_recently">Yakın zamanda güncellenmiş</string>
     <string name="mailbox_updating">Güncelleniyor…</string>
@@ -250,15 +253,15 @@
     <string name="expiration_hours">%dS</string>
     <string name="expiration_minutes">%dD</string>
     <plurals name="attachments">
-        <item quantity="one">1 ek dosya</item>
+        <item quantity="one">%d ek dosya</item>
         <item quantity="other">%d ek dosya</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 ek dosya</item>
+        <item quantity="one">\u0020 %d ek dosya</item>
         <item quantity="other">\u0020 %d ek dosya</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 ek dosya</item>
+        <item quantity="one">%d ek dosya</item>
         <item quantity="other">%d ek dosya</item>
     </plurals>
     <string name="add_attachment">Dosya ekle</string>
@@ -696,7 +699,7 @@
     <string name="snooze_end_time">Bitiş zamanı:</string>
     <string name="snooze_repeat">Yinelenme:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Bildirimler 1 dakika sonra açılacak</item>
+        <item quantity="one">Bildirimler %d dakika sonra açılacak</item>
         <item quantity="other">Bildirimler %d dakika sonra açılacak</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Bildirimler %1$d saat %2$d dakika sonra açılacak</string>
@@ -800,7 +803,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirüs etkileşimi &lt;/i&gt; - Antivirüs uygulamanızı geçici olarak kapatın ya da aygıtınızdan kaldırın.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vekil sunucu/güvenlik duvarı etkileşimi&lt;/i&gt; - Tüm vekil sunucuları/güvenlik duvarlarını kapatın ya da ağ yöneticinizle görüşün.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton çalışmıyor&lt;/i&gt; - &lt;a href=\"http://protonstatus.com/\"&gt;Proton durumunu&lt;/a&gt; denetleyin.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Çözüm bulamadınız mı?&lt;/i&gt; - &lt;a href=\"https://protonmail.com/support-form\"&gt;Destek formu&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-posta&lt;/a&gt; (support@protonmail.zendesk.com) ya da &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt; aracılığıyla bizimle doğrudan görüşün.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Çözüm bulamadınız mı?&lt;/i&gt; - &lt;a href=\"https://protonmail.com/support-form\"&gt;Destek formu&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-posta&lt;/a&gt; (support@protonmail.zendesk.com) ya da &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; aracılığıyla bizimle doğrudan görüşün.
     </string>
     <!-- endregion -->
     <!-- region errors -->

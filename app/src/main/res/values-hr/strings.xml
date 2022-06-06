@@ -54,7 +54,11 @@
     <string name="mailbox_empty_state_no_results_found">Nema rezultata</string>
     <string name="mailbox_empty_state_try_a_different_term">Pokušajte s drugim pojmom za pretraživanje</string>
     <string name="mailbox_no_messages">Nema poruka</string>
-    <string name="mailbox_unread_count">%d nepročitano</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d unread</item>
+        <item quantity="few">%d unread</item>
+        <item quantity="other">%d unread</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Upravo ažurirano</string>
     <string name="mailbox_updated_recently">Nedavno ažurirano</string>
     <string name="mailbox_updating">Ažuriranje…</string>
@@ -250,19 +254,19 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">1 Privitak</item>
-        <item quantity="few">%d Privitka</item>
-        <item quantity="other">%d Privitka</item>
+        <item quantity="one">%d Attachment</item>
+        <item quantity="few">%d Attachments</item>
+        <item quantity="other">%d Attachments</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 privitak</item>
-        <item quantity="few">\u0020 %d privitka</item>
-        <item quantity="other">\u0020 %d privitaka</item>
+        <item quantity="one">\u0020 %d Attachment</item>
+        <item quantity="few">\u0020 %d Attachments</item>
+        <item quantity="other">\u0020 %d Attachments</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 privitak</item>
-        <item quantity="few">%d privitka</item>
-        <item quantity="other">%d privitaka</item>
+        <item quantity="one">%d Attachment</item>
+        <item quantity="few">%d Attachments</item>
+        <item quantity="other">%d Attachments</item>
     </plurals>
     <string name="add_attachment">Dodavanje privitka</string>
     <string name="select_file">Odaberi datoteku</string>
@@ -707,9 +711,9 @@
     <string name="snooze_end_time">Vrijeme završetka:</string>
     <string name="snooze_repeat">Ponovi:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Obavijesti će nastaviti za 1 minutu</item>
-        <item quantity="few">Obavijesti će nastaviti za %d minute</item>
-        <item quantity="other">Obavijesti će nastaviti za %d minuta</item>
+        <item quantity="one">Notifications will resume in %d min</item>
+        <item quantity="few">Notifications will resume in %d mins</item>
+        <item quantity="other">Notifications will resume in %d mins</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Obavijesti će nastaviti za %1$d sati i %2$d minuta</string>
     <string name="minutes">Minute</string>
@@ -807,11 +811,14 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Česti problemi s povezivanjem i rješenja</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Nema internetske veze&lt;/i&gt; - Provjerite radi li vaša internetska veza.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problem davatelja internetskih usluga (ISP).&lt;/i&gt; - Pokušajte se povezati na Proton s druge mreže (ili upotrijebite &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vladin blok&lt;/i&gt; - Vaša zemlja možda blokira pristup Proton. Pokušaj &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (ili bilo koji drugi VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; za pristup Protonu.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirusne smetnje&lt;/i&gt; - Privremeno onemogućite ili uklonite svoj antivirusni softver.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Smetnje proxy-a/vatrozida&lt;/i&gt; - Onemogućite sve proxy servere ili vatrozide ili se obratite administratoru mreže.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Još uvijek niste pronašli rješenje&lt;/i&gt; - Kontaktirajte nas izravno putem naše &lt;a href=\"https://protonmail.com/support-form\"&gt;obrazac za podršku&lt;/a&gt;. &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-pošta&lt;/a&gt;(support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Slika nije pronađena</string>

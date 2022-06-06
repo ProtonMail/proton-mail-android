@@ -54,7 +54,12 @@
     <string name="mailbox_empty_state_no_results_found">Nie znaleziono żadnych wyników</string>
     <string name="mailbox_empty_state_try_a_different_term">Spróbuj użyć innego zapytania</string>
     <string name="mailbox_no_messages">Brak wiadomości</string>
-    <string name="mailbox_unread_count">%d unread</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d nieprzeczytana</item>
+        <item quantity="few">%d nieprzeczytane</item>
+        <item quantity="many">%d nieprzeczytanych</item>
+        <item quantity="other">%d nieprzeczytanych</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Zaktualizowano teraz</string>
     <string name="mailbox_updated_recently">Zaktualizowano ostatnio</string>
     <string name="mailbox_updating">Aktualizowanie…</string>
@@ -250,19 +255,19 @@
     <string name="expiration_hours">%dg</string>
     <string name="expiration_minutes">%dmin</string>
     <plurals name="attachments">
-        <item quantity="one">1 załącznik</item>
+        <item quantity="one">%d załącznik</item>
         <item quantity="few">%d załączniki</item>
         <item quantity="many">%d załączników</item>
         <item quantity="other">%d załączników</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 1 załącznik</item>
+        <item quantity="one">\u0020 %d załącznik</item>
         <item quantity="few">\u0020 %d załączniki</item>
         <item quantity="many">\u0020 %d załączników</item>
         <item quantity="other">\u0020 %d załączników</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 załącznik</item>
+        <item quantity="one">%d załącznik</item>
         <item quantity="few">%d załączniki</item>
         <item quantity="many">%d załączników</item>
         <item quantity="other">%d załączników</item>
@@ -465,7 +470,7 @@
     <string name="logged_out_description">Zostałeś wylogowany. Zaloguj się ponownie.</string>
     <string name="print_error">Błąd wydruku</string>
     <string name="download_complete">Pobieranie zostało zakończone</string>
-    <string name="message_expires_in">Ta wiadomość wygaśnie za %s</string>
+    <string name="message_expires_in">Wiadomość wygaśnie za %s</string>
     <string name="unsaved_changes_title">Niezapisane zmiany</string>
     <string name="unsaved_changes_subtitle">W formularzu są niezapisane dane. Czy na pewno chcesz je odrzucić?</string>
     <string name="request_timeout">Upłynął limit czasu żądania, spróbuj ponownie</string>
@@ -714,7 +719,7 @@
     <string name="snooze_end_time">Czas zakończenia:</string>
     <string name="snooze_repeat">Powtarzaj:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Powiadomienia zostaną wznowione za 1 minutę</item>
+        <item quantity="one">Powiadomienia zostaną wznowione za %d minutę</item>
         <item quantity="few">Powiadomienia zostaną wznowione za %d minuty</item>
         <item quantity="many">Powiadomienia zostaną wznowione za %d minut</item>
         <item quantity="other">Powiadomienia zostaną wznowione za %d minuty</item>

@@ -54,7 +54,12 @@
     <string name="mailbox_empty_state_no_results_found">Nebyly nalezeny žádné výsledky</string>
     <string name="mailbox_empty_state_try_a_different_term">Zkuste jiný hledaný výraz</string>
     <string name="mailbox_no_messages">Žádné zprávy</string>
-    <string name="mailbox_unread_count">%d nepřečtených</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d nepřečteno</item>
+        <item quantity="few">%d unread</item>
+        <item quantity="many">%d unread</item>
+        <item quantity="other">%d unread</item>
+    </plurals>
     <string name="mailbox_updated_just_now">Právě aktualizováno</string>
     <string name="mailbox_updated_recently">Nedávno aktualizováno</string>
     <string name="mailbox_updating">Aktualizuji…</string>
@@ -250,22 +255,22 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">1 příloha</item>
-        <item quantity="few">%d přílohy</item>
-        <item quantity="many">%d příloh</item>
-        <item quantity="other">%d příloh</item>
+        <item quantity="one">%d Příloha</item>
+        <item quantity="few">%d Attachments</item>
+        <item quantity="many">%d Attachments</item>
+        <item quantity="other">%d Attachments</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="one">\u0020 %d příloha</item>
-        <item quantity="few">\u0020 %d přílohy</item>
-        <item quantity="many">\u0020 %d příloh</item>
-        <item quantity="other">\u0020 %d příloh</item>
+        <item quantity="few">\u0020 %d Attachments</item>
+        <item quantity="many">\u0020 %d Attachments</item>
+        <item quantity="other">\u0020 %d Attachments</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 příloha</item>
-        <item quantity="few">%d přílohy</item>
-        <item quantity="many">%d příloh</item>
-        <item quantity="other">%d příloh</item>
+        <item quantity="one">%d Příloha</item>
+        <item quantity="few">%d Attachments</item>
+        <item quantity="many">%d Attachments</item>
+        <item quantity="other">%d Attachments</item>
     </plurals>
     <string name="add_attachment">Přidat přílohu</string>
     <string name="select_file">Vybrat soubor</string>
@@ -716,10 +721,10 @@
     <string name="snooze_end_time">Čas ukončení:</string>
     <string name="snooze_repeat">Opakovat:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Oznámení bude pokračovat za 1 minutu</item>
-        <item quantity="few">Oznámení bude pokračovat za %d minuty</item>
-        <item quantity="many">Oznámení bude pokračovat za %d minut</item>
-        <item quantity="other">Oznámení bude pokračovat za %d minut</item>
+        <item quantity="one">Oznámení budou obnovena za %d min</item>
+        <item quantity="few">Notifications will resume in %d mins</item>
+        <item quantity="many">Notifications will resume in %d mins</item>
+        <item quantity="other">Notifications will resume in %d mins</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Oznámení bude pokračovat za %1$d hodin/u a %2$d minut/y</string>
     <string name="minutes">Minut(a/y)</string>
@@ -818,13 +823,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problémy a řešení běžného připojení</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Není připojení k internetu&lt;/i&gt; - Ujistěte se, že vaše internetové připojení funguje.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problém s poskytovatelem internetového připojení&lt;/i&gt; - Zkuste se připojit k Protonu z jiné sítě (nebo použijte &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; nebo &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vládní blokování&lt;/i&gt; - Vaše země může přístup k Protonu blokovat. Zkuste &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (nebo jinou VPN) nebo &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pro přístup k Protonu.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Dočasně vypněte nebo odstraňte antivirový software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Vypněte všechny proxy servery nebo firewally nebo kontaktujte správce sítě.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton je mimo provoz&lt;/i&gt; - Zkontrolujte &lt;a href=\"http://protonstatus.com/\"&gt;Proton status&lt;/a&gt; stav našeho systému.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Stále nemůžete najít řešení&lt;/i&gt; - Kontaktujte nás přímo prostřednictvím našeho &lt;a href=\"https://protonmail.com/support-form\"&gt;formuláře podpory&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), nebo &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
