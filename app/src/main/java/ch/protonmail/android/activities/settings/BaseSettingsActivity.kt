@@ -19,6 +19,7 @@
 package ch.protonmail.android.activities.settings
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
@@ -31,7 +32,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -54,8 +54,6 @@ import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
-import ch.protonmail.android.pendingaction.data.PendingActionDao
-import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
@@ -64,6 +62,8 @@ import ch.protonmail.android.labels.presentation.ui.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.ui.LabelsManagerActivity
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.notifications.presentation.utils.CHANNEL_ID_EMAIL
+import ch.protonmail.android.pendingaction.data.PendingActionDao
+import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.settings.presentation.AccountSettingsActivity
 import ch.protonmail.android.settings.presentation.AttachmentStorageActivity

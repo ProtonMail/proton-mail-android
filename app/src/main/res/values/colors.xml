@@ -34,13 +34,6 @@
     <color name="plus">#c6e422</color>
     <color name="free">@color/cornflower_blue</color>
 
-    <array name="account_type_colors">
-        <item>@color/free</item>
-        <item>@color/plus</item>
-        <item>@color/visionary</item>
-        <item>@color/professional</item>
-    </array>
-
     <color name="aqua_base">#5EC7B7</color>
     <color name="sage_base">#97C9C1</color>
 
