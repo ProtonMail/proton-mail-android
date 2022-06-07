@@ -192,6 +192,11 @@ public class User {
         return user;
     }
 
+    public static User loadFromPrefs(UserId userId, Context context) {
+        final SharedPreferences securePrefs = SecureSharedPreferences.Companion.getPrefsForUser(context, userId);
+        return loadFromPrefs(userId, securePrefs);
+    }
+
     private static User loadFromPrefs(UserId userId, SharedPreferences securePrefs) {
         final User user = new User();
         user.id = userId.getId();
