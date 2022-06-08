@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.labels.presentation.ui
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.MenuItem
@@ -25,7 +26,6 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
