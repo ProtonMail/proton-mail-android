@@ -452,23 +452,24 @@ internal class MessageDetailsViewModel @Inject constructor(
             // signature verification failed with special case, try to decrypt again without verification
             // and hardcode verification error
             if (verificationKeys != null &&
-                verificationKeys.isNotEmpty() &&
-                exception.isSignatureError()
+                verificationKeys.isNotEmpty()
             ) {
                 Timber.i(exception, "Decrypting message again without verkeys")
-                decrypt(userManager, userManager.requireCurrentUserId())
-                this.hasValidSignature = false
-                this.hasInvalidSignature = !exception.isMessageNotSignedError()
-                true
+                runCatching {
+                    decrypt(userManager, userManager.requireCurrentUserId())
+                    this.hasValidSignature = false
+                    this.hasInvalidSignature = !exception.isMessageNotSignedError()
+                    true
+                }.getOrElse {
+                    Timber.w(it, "Cannot decrypt message")
+                    false
+                }
             } else {
                 Timber.w(exception, "Cannot decrypt message")
                 false
             }
         }
     }
-
-    private fun Exception.isSignatureError() =
-        message?.matches("Signature Verification Error: .+".toRegex()) == true
 
     private fun Exception.isMessageNotSignedError() =
         message?.equals("Signature Verification Error: Missing signature") == true
