@@ -217,8 +217,13 @@ public class User {
         user.keys = deserializeKeys(securePrefs.getString(PREF_KEYS, ""));
         user.addresses = deserializeAddresses(securePrefs.getString(PREF_ALIASES, ""));
 
-        user.defaultAddressId = user.addresses.get(0).getID();
-        user.defaultAddressEmail = user.addresses.get(0).getEmail();
+        if (user.addresses.size() >= 1) {
+            user.defaultAddressId = user.addresses.get(0).getID();
+            user.defaultAddressEmail = user.addresses.get(0).getEmail();
+        } else {
+            user.defaultAddressId = securePrefs.getString(PREF_ADDRESS_ID, "");
+            user.defaultAddressEmail = securePrefs.getString(PREF_ADDRESS, "");
+        }
 
         loadLocalSettings(user, securePrefs);
 
