@@ -215,10 +215,10 @@ public class User {
         user.maxUpload = securePrefs.getInt(PREF_MAX_UPLOAD_FILE_SIZE, 0);
 
         user.keys = deserializeKeys(securePrefs.getString(PREF_KEYS, ""));
-
-        user.defaultAddressId = securePrefs.getString(PREF_ADDRESS_ID, "");
-        user.defaultAddressEmail = securePrefs.getString(PREF_ADDRESS, "");
         user.addresses = deserializeAddresses(securePrefs.getString(PREF_ALIASES, ""));
+
+        user.defaultAddressId = user.addresses.get(0).getID();
+        user.defaultAddressEmail = user.addresses.get(0).getEmail();
 
         loadLocalSettings(user, securePrefs);
 
