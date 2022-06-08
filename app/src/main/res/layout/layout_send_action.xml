@@ -18,17 +18,17 @@
   ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/toolbar_action_layout_size"
-    android:layout_height="@dimen/toolbar_action_layout_size">
+    android:layout_height="@dimen/toolbar_action_layout_size"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageButton
         android:id="@+id/send_button"
         android:layout_width="@dimen/button_nav_size"
         android:layout_height="@dimen/button_nav_size"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_proton_paper_plane"
+        app:srcCompat="@drawable/ic_proton_paper_plane"
         android:background="@color/transparent"
         android:contentDescription="@string/send" />
 

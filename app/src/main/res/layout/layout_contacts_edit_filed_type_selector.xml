@@ -46,7 +46,7 @@
         android:layout_width="@dimen/padding_3xl"
         android:layout_height="@dimen/padding_3xl"
         android:background="?selectableItemBackground"
-        android:src="@drawable/ic_proton_chevron_down_filled"
+        app:srcCompat="@drawable/ic_proton_chevron_down_filled"
         app:tint="@color/icon_hint"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

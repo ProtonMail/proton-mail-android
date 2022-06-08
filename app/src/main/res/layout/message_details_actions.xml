@@ -45,7 +45,7 @@
         android:padding="@dimen/padding_m"
         android:contentDescription="@string/more"
         android:background="?selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_proton_three_dots_horizontal"
+        app:srcCompat="@drawable/ic_proton_three_dots_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

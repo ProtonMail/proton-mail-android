@@ -39,7 +39,7 @@
         android:paddingTop="@dimen/padding_l"
         android:paddingEnd="@dimen/padding_l"
         android:paddingBottom="@dimen/padding_m"
-        android:src="@drawable/ic_proton_cross"
+        app:srcCompat="@drawable/ic_proton_cross"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
