@@ -34,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:src="@drawable/ic_logo_calendar"
+        app:srcCompat="@drawable/ic_logo_calendar"
         android:contentDescription="@string/details_open_in_proton_calendar_icon_desc" />
 
     <TextView

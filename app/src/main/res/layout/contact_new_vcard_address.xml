@@ -74,7 +74,7 @@
                 android:layout_width="@dimen/padding_xl"
                 android:layout_height="@dimen/padding_xl"
                 android:background="?android:selectableItemBackground"
-                android:src="@drawable/ic_proton_chevron_down_filled"
+                app:srcCompat="@drawable/ic_proton_chevron_down_filled"
                 app:tint="@color/icon_hint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -95,7 +95,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_proton_cross_circle" />
+                app:srcCompat="@drawable/ic_proton_cross_circle" />
 
             <FrameLayout
                 android:layout_width="match_parent"

@@ -86,7 +86,7 @@
         android:contentDescription="@string/close"
         android:gravity="center"
         android:padding="@dimen/padding_l"
-        android:src="@drawable/ic_proton_cross"
+        app:srcCompat="@drawable/ic_proton_cross"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

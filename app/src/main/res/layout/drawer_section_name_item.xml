@@ -54,7 +54,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/ic_proton_plus"
+        app:srcCompat="@drawable/ic_proton_plus"
         app:tint="?attr/proton_sidebar_icon_weak"
         android:visibility="gone"
         tools:visibility="visible"

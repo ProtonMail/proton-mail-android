@@ -40,7 +40,7 @@
         android:id="@+id/label_icon_image_view"
         android:layout_width="@dimen/padding_l"
         android:layout_height="@dimen/padding_l"
-        android:src="@drawable/circle_labels_selection"
+        app:srcCompat="@drawable/circle_labels_selection"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/label_name_text_view"
         app:layout_constraintStart_toEndOf="@id/label_check_box"
@@ -65,7 +65,7 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginStart="@dimen/padding_m"
-        android:src="@drawable/ic_proton_pen"
+        app:srcCompat="@drawable/ic_proton_pen"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

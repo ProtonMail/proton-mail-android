@@ -65,7 +65,7 @@
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1"
         android:background="?attr/selectableItemBackground"
-        android:src="@drawable/ic_proton_paper_clip"
+        app:srcCompat="@drawable/ic_proton_paper_clip"
         app:layout_constraintEnd_toEndOf="@id/composer_bottom_bar_end_guideline"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

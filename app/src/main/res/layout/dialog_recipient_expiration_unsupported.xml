@@ -89,7 +89,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:background="@null"
-                    android:src="@drawable/ic_proton_chevron_down"
+                    app:srcCompat="@drawable/ic_proton_chevron_down"
                     app:tint="@color/icon_weak" />
 
             </LinearLayout>
@@ -123,7 +123,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:background="@null"
-                    android:src="@drawable/ic_proton_chevron_down"
+                    app:srcCompat="@drawable/ic_proton_chevron_down"
                     app:tint="@color/icon_weak" />
 
             </LinearLayout>

@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@null"
             android:scaleType="center"
-            android:src="@drawable/ic_proton_paper_clip" />
+            app:srcCompat="@drawable/ic_proton_paper_clip" />
 
         <TextView
             style="@style/Proton.Text.DefaultSmall"
@@ -79,7 +79,7 @@
         android:layout_alignParentRight="true"
         android:background="@color/transparent"
         android:contentDescription="@null"
-        android:src="@drawable/ic_proton_cross_circle"
+        app:srcCompat="@drawable/ic_proton_cross_circle"
         app:tint="@color/notification_error" />
 
 </RelativeLayout>

@@ -130,7 +130,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="end|center_vertical"
             android:duplicateParentState="true"
-            android:src="@drawable/ic_proton_arrow_out_square"
+            app:srcCompat="@drawable/ic_proton_arrow_out_square"
             app:tint="@color/icon_hint"
             android:visibility="invisible" />
     </LinearLayout>
