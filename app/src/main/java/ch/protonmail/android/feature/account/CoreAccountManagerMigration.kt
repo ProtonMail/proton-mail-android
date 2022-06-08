@@ -125,7 +125,7 @@ class CoreAccountManagerMigration @Inject constructor(
                     runCatching {
                         // Migrate User/Addresses/Keys to Core.
                         val userId = migration.account.userId
-                        val user = loadLegacyUser(userId).orThrow()
+                        val user = User.loadFromPrefs(userId, context)
                         val addresses = user.addresses
                         userManager.addUser(
                             user = user.toCoreUser(encryptedPassphrase),
@@ -134,6 +134,7 @@ class CoreAccountManagerMigration @Inject constructor(
                         // Unlock Account/User with provided passphrase.
                         userManager.unlockWithPassphrase(migration.account.userId, encryptedPassphrase)
                     }.onFailure {
+                        Timber.w(it, "Failure while migrating User/Addresses/Keys to Core.")
                         // Nothing else to do than disabling this account.
                         accountManager.disableAccount(migration.account.userId)
                     }
