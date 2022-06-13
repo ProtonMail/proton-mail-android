@@ -200,7 +200,7 @@ public class OpenPGP {
             Crypto.newKeyFromArmored(armoredKey).unlock(passphrase);
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.d(e, "Key unlocking failed");
         }
         return false;
     }
