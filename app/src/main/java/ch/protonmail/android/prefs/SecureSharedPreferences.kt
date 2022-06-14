@@ -141,6 +141,10 @@ class SecureSharedPreferences(
     override fun getString(key: String, defValue: String?): String? =
         delegate.getString(encryptProxyKey(key), null)?.let(::decrypt) ?: defValue
 
+    @Synchronized
+    fun getStringOrNull(key: String): String? =
+        delegate.getString(encryptProxyKey(key), null)?.let(::decryptOrNull)
+
     override fun contains(key: String): Boolean =
         delegate.contains(encryptProxyKey(key))
 
@@ -173,20 +177,31 @@ class SecureSharedPreferences(
 
     private fun decrypt(value: String?): String? {
         return try {
-            // String out = OpenPgp.createInstance().decryptMailboxPwd(value, SEKRIT);
-            // return out;
-            val bytes = if (value != null) Base64.decode(value, Base64.NO_WRAP) else ByteArray(0)
-            val digester = MessageDigest.getInstance("SHA-256")
-            digester.update(String(sekrit).toByteArray(charset("UTF-8")))
-            val key = digester.digest()
-            val spec = SecretKeySpec(key, "AES")
-            val pbeCipher = Cipher.getInstance(ALGORITHM_AES)
-            pbeCipher.init(Cipher.DECRYPT_MODE, spec)
-            String(pbeCipher.doFinal(bytes), charset(UTF8))
+            decryptOrThrow(value)
         } catch (e: Exception) {
             Timber.e(e)
             value
         }
+    }
+
+    private fun decryptOrNull(value: String?): String? {
+        return try {
+            decryptOrThrow(value)
+        } catch (e: Exception) {
+            Timber.e(e)
+            null
+        }
+    }
+
+    private fun decryptOrThrow(value: String?): String? {
+        val bytes = if (value != null) Base64.decode(value, Base64.NO_WRAP) else ByteArray(0)
+        val digester = MessageDigest.getInstance("SHA-256")
+        digester.update(String(sekrit).toByteArray(charset("UTF-8")))
+        val key = digester.digest()
+        val spec = SecretKeySpec(key, "AES")
+        val pbeCipher = Cipher.getInstance(ALGORITHM_AES)
+        pbeCipher.init(Cipher.DECRYPT_MODE, spec)
+        return String(pbeCipher.doFinal(bytes), charset(UTF8))
     }
 
     fun encryptProxyKey(value: String) = encrypt(value)
@@ -269,8 +284,9 @@ class SecureSharedPreferences(
         private fun migrateForUser(username: String): Pair<String, UserId>? {
             Timber.v("Migrating SecureSharedPreferences for ${username.obfuscateUsername()}")
 
-            @Suppress("DEPRECATION") val oldPrefs = preferencesFactory._usernamePreferences(username)
-            val userId = oldPrefs.get<String>(PREF_USER_ID)?.let(::UserId)
+            @Suppress("DEPRECATION")
+            val oldPrefs = preferencesFactory._usernamePreferences(username) as SecureSharedPreferences
+            val userId = oldPrefs.getStringOrNull(PREF_USER_ID)?.let(::UserId)
 
             return if (userId != null) {
                 val newPrefs = preferencesFactory.userPreferences(userId)
