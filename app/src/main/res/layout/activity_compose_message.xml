@@ -305,12 +305,13 @@
                 style="@style/Proton.Text.Default"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/composer_subject_edit_text"
-                android:padding="@dimen/padding_composer_body"
-                android:focusable="true"
                 android:background="@color/transparent"
+                android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:hint="@string/composer_compose_email"
+                android:inputType="textMultiLine|textLongMessage|textCapSentences"
+                android:padding="@dimen/padding_composer_body"
+                app:layout_constraintTop_toBottomOf="@id/composer_subject_edit_text"
                 android:paddingBottom="@dimen/padding_s" />
 
             <androidx.constraintlayout.widget.Guideline
