@@ -250,23 +250,6 @@ class SecureSharedPreferences(
             throw UnsupportedOperationException("This class does not work with String Sets.")
     }
 
-    fun buildLongSharedPrefsListener(watchForKey: String, onKeyUpdated: Function1<Long, Unit>) =
-        object : LongOnSharedPreferenceChangeListener(watchForKey) {
-            override fun onKeyUpdated(newValue: Long) {
-                onKeyUpdated.invoke(newValue)
-            }
-        }
-
-    abstract inner class LongOnSharedPreferenceChangeListener(private val mWatchForKey: String) :
-        SharedPreferences.OnSharedPreferenceChangeListener {
-        abstract fun onKeyUpdated(newValue: Long)
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
-            if (key == encryptProxyKey(mWatchForKey)) {
-                onKeyUpdated(getLong(mWatchForKey, 0L))
-            }
-        }
-    }
-
     /**
      * Migrate [SecureSharedPreferences] to use Users' [Id] instead of username
      *
@@ -340,33 +323,25 @@ class SecureSharedPreferences(
             )
 
         private fun generateSekrit(): CharArray {
+            val keyPair = retrieveAsymmetricKeyPair(asymmetricKeyAlias)
+                ?: generateKeyPair(asymmetricKeyAlias)
 
-            var keyPair = retrieveAsymmetricKeyPair(asymmetricKeyAlias)
-            if (keyPair == null) {
-                keyPair = generateKeyPair(asymmetricKeyAlias)
+            val storedSymmetricKey = defaultSharedPreferences.get<String>(PREF_SYMMETRIC_KEY).let { key ->
+                if (key == null) {
+                    AppUtil.deletePrefs()
+                    null
+                } else {
+                    decryptAsymmetric(key, keyPair.private)
+                }
             }
 
-
-            var symmetricKey =
-                decryptAsymmetric(defaultSharedPreferences[PREF_SYMMETRIC_KEY] ?: "", keyPair.private)
-
-            when (symmetricKey) {
-                null -> { // error decrypting, we lost the key
-                    symmetricKey = UUID.randomUUID().toString()
-                    defaultSharedPreferences[PREF_SYMMETRIC_KEY] = encryptAsymmetric(symmetricKey, keyPair.public)
-                    AppUtil.deletePrefs() // force re-login
-                    // don't call ProtonMailApplication#notifyLoggedOut because UserManager is needed for that
-                    // and it can't be properly instantiated because of this error here
-                }
-                "" -> { // no previous key stored
-                    symmetricKey = UUID.randomUUID().toString()
-                    defaultSharedPreferences[PREF_SYMMETRIC_KEY] = encryptAsymmetric(symmetricKey, keyPair.public)
+            val sekritString = storedSymmetricKey
+                ?: UUID.randomUUID().toString().also {
+                    defaultSharedPreferences[PREF_SYMMETRIC_KEY] = encryptAsymmetric(it, keyPair.public)
                 }
 
-                // else successfully decrypted secret key
-            }
 
-            return symmetricKey!!.toCharArray()
+            return sekritString.toCharArray()
         }
 
         private fun generateKeyPair(alias: String): KeyPair {
