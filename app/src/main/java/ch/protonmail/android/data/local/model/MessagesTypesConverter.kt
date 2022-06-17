@@ -63,7 +63,7 @@ class MessagesTypesConverter {
             ObjectInputStream(inputStream).readObject() as List<MessageRecipient>
 
         } catch (e: Exception) {
-            Timber.e(e, "Deserialization of recipients failed")
+            Timber.i(e, "Deserialization of recipients failed")
             emptyList()
         }
     }

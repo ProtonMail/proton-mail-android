@@ -165,7 +165,7 @@ class FullContactDetailsConverter {
             val resultArray = ObjectInputStream(inputStream).readObject() as Array<ContactEncryptedData>
             resultArray.toList()
         } catch (e: Exception) {
-            Timber.e(e, "Deserialization of contact encrypted data failed")
+            Timber.i(e, "Deserialization of contact encrypted data failed")
             null
         }
     }
