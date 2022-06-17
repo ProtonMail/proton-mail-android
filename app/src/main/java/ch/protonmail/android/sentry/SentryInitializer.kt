@@ -17,12 +17,13 @@
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.core
+package ch.protonmail.android.sentry
 
 import android.content.Context
 import android.os.Build
 import androidx.startup.Initializer
 import ch.protonmail.android.BuildConfig
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.AppUtil
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
