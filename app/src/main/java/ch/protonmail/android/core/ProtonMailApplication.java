@@ -92,6 +92,8 @@ import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import ch.protonmail.android.onboarding.base.presentation.AddStartOnboardingObserverIfNeeded;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.security.presentation.SecurityManagerInitializer;
+import ch.protonmail.android.sentry.SentryInitializer;
+import ch.protonmail.android.sentry.SentryTree;
 import ch.protonmail.android.settings.domain.usecase.ApplyAppThemeFromSettings;
 import ch.protonmail.android.utils.CoreTimberLogger;
 import ch.protonmail.android.utils.CustomLocale;
