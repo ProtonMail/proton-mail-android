@@ -20,96 +20,136 @@
 package ch.protonmail.android.prefs
 
 import android.content.SharedPreferences
-import assert4k.assert
-import assert4k.equals
-import assert4k.that
+import android.util.Base64
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
 import ch.protonmail.android.core.PREF_USERNAME
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import me.proton.core.domain.entity.UserId
-import me.proton.core.test.android.mocks.newMockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.android.sharedpreferences.isEmpty
 import me.proton.core.util.android.sharedpreferences.set
+import org.junit.experimental.runners.Enclosed
+import org.junit.runner.RunWith
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-/**
- * Test suite for [SecureSharedPreferences]
- */
+@RunWith(Enclosed::class)
 class SecureSharedPreferencesTest {
 
-    /**
-     * Test suite for [SecureSharedPreferences.UsernameToIdMigration]
-     */
+    @Suppress("DEPRECATION")
     class UsernameToIdMigrationTest : CoroutinesTest {
 
         private val user1 = "username1" to UserId("id1")
         private val user2 = "username2" to UserId("id2")
 
-        private val user1Prefs = newMockSharedPreferences.apply {
+        private val user1Prefs = mockSecureSharedPreferences {
             this[PREF_USER_ID] = user1.second.id
             this[PREF_USER_NAME] = user1.first
         }
-        private val user2Prefs = newMockSharedPreferences.apply {
+        private val user2Prefs = mockSecureSharedPreferences {
             this[PREF_USER_ID] = user2.second.id
             this[PREF_USER_NAME] = user2.first
         }
 
         private val preferencesFactory: SecureSharedPreferences.Factory = mockk {
-            val appPreferences = newMockSharedPreferences
+            val appPreferences: SecureSharedPreferences = mockSecureSharedPreferences()
             val usersPreferences = mutableMapOf<UserId, SharedPreferences>()
 
             every { appPreferences() } returns appPreferences
             every { userPreferences(any()) } answers {
-                usersPreferences.getOrPut(firstArg()) { newMockSharedPreferences }
+                usersPreferences.getOrPut(firstArg()) { mockSecureSharedPreferences() }
             }
-            every { _usernamePreferences(any()) } returns newMockSharedPreferences
+            every { _usernamePreferences(any()) } returns mockSecureSharedPreferences()
             every { _usernamePreferences(user1.first) } returns user1Prefs
             every { _usernamePreferences(user2.first) } returns user2Prefs
         }
         private val migration =
             SecureSharedPreferences.UsernameToIdMigration(preferencesFactory, dispatchers)
 
+        @BeforeTest
+        fun setup() {
+            mockkStatic(Base64::class)
+            every { Base64.encode(any(), any()) } answers { firstArg() }
+        }
+
+        @AfterTest
+        fun teardown() {
+            unmockkStatic(Base64::class)
+        }
+
         @Test
         fun `does remove old preferences`() = coroutinesTest {
 
             migration(listOf(user1, user2).map { it.first })
 
-            assert that user1Prefs.isEmpty()
-            assert that user2Prefs.isEmpty()
+            assertTrue(user1Prefs.isEmpty())
+            assertTrue(user2Prefs.isEmpty())
         }
 
         @Test
         fun `new preferences have all the values`() = coroutinesTest {
-
-            migration(listOf(user1, user2).map { it.first })
-
-            assert that preferencesFactory.userPreferences(user1.second).all equals mapOf(
+            // given
+            val expectedUser1Preferences = mapOf(
                 PREF_USER_ID to user1.second.id,
                 PREF_USERNAME to user1.first,
                 PREF_USER_NAME to user1.first
             )
-            assert that preferencesFactory.userPreferences(user2.second).all equals mapOf(
+            val expectedUser2Preferences = mapOf(
                 PREF_USER_ID to user2.second.id,
                 PREF_USERNAME to user2.first,
                 PREF_USER_NAME to user2.first
             )
+
+            // when
+            migration(listOf(user1, user2).map { it.first })
+
+            // then
+            assertEquals(expectedUser1Preferences, preferencesFactory.userPreferences(user1.second).all)
+            assertEquals(expectedUser2Preferences, preferencesFactory.userPreferences(user2.second).all)
         }
 
         @Test
         fun `returns correct map of usernames to ids`() = coroutinesTest {
+            // given
+            val expected = listOf(user1, user2).toMap()
 
+            // when
             val result = migration(listOf(user1, user2).map { it.first })
-            assert that result equals listOf(user1, user2).toMap()
+
+            // then
+            assertEquals(expected, result)
         }
 
         @Test
         fun `correctly skips preferences without an user id`() = coroutinesTest {
+            // given
+            val expected = listOf(user1, user2).toMap()
 
+            // when
             val result = migration(listOf(user1, user2).map { it.first } + "username3")
-            assert that result equals listOf(user1, user2).toMap()
+
+            // then
+            assertEquals(expected, result)
+        }
+
+        @Test
+        fun `correctly skips preferences with mismatching user id`() = coroutinesTest {
+            // given
+            every { preferencesFactory._usernamePreferences(user1.first) } returns mockSecureSharedPreferences()
+            val expected = listOf(user2).toMap()
+
+            // when
+            val result = migration(listOf(user1, user2).map { it.first })
+
+            // then
+            assertEquals(expected, result)
         }
     }
 }

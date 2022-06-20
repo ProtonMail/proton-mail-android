@@ -30,12 +30,12 @@ import assert4k.that
 import assert4k.times
 import assert4k.unaryPlus
 import ch.protonmail.android.core.UserManager
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.getStringList
 import ch.protonmail.android.utils.putStringList
 import io.mockk.coEvery
 import io.mockk.mockk
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
@@ -56,11 +56,11 @@ class AccountManagerTest : CoroutinesTest {
         }
         private val userManagerMigration: UserManager.UsernameToIdMigration = mockk(relaxed = true)
         private val migration = AccountManager.UsernameToIdMigration(
-            dispatchers,
-            accountManager,
-            secureSharedPreferencesMigration,
-            userManagerMigration,
-            defaultPreferences.apply {
+            dispatchers = dispatchers,
+            accountManager = accountManager,
+            secureSharedPreferencesMigration = secureSharedPreferencesMigration,
+            userManagerMigration = userManagerMigration,
+            defaultSharedPreferences = defaultPreferences.apply {
                 edit {
                     putStringList(PREF_USERNAMES_LOGGED_IN, listOf(user1, user2).map { it.first })
                     putStringList(PREF_USERNAMES_LOGGED_OUT, listOf(user3, user4).map { it.first })

@@ -285,7 +285,7 @@ class SecureSharedPreferences(
             Timber.v("Migrating SecureSharedPreferences for ${username.obfuscateUsername()}")
 
             @Suppress("DEPRECATION")
-            val oldPrefs = preferencesFactory._usernamePreferences(username) as SecureSharedPreferences
+            val oldPrefs = preferencesFactory._usernamePreferences(username)
             val userId = oldPrefs.getStringOrNull(PREF_USER_ID)?.let(::UserId)
 
             return if (userId != null) {
@@ -324,7 +324,7 @@ class SecureSharedPreferences(
         @Deprecated("This should not be used! needed only for migration!")
         fun _usernamePreferences(
             username: String
-        ): SharedPreferences {
+        ): SecureSharedPreferences {
             val name = "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-SSP"
             return SecureSharedPreferences(
                 delegate = context.getSharedPreferences(name, Context.MODE_PRIVATE),
