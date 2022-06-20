@@ -581,7 +581,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="contact_vcard_note">Catatan</string>
     <string name="edit_contact">Ubah Kontak</string>
     <string name="create_contact_group">Buat Grup Kontak</string>
-    <string name="edit_contact_group">Edit Grup Kontak</string>
+    <string name="edit_contact_group">Sunting Grup Kontak</string>
     <string name="contact_groups_manage_members">Kelola Anggota</string>
     <string name="contact_group_display_name">Nama Tampilan</string>
     <string name="contact_group_groups_icon">\ue91a </string>
