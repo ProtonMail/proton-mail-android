@@ -114,7 +114,9 @@ class AddressCrypto @AssistedInject constructor(
                 }
             }
         }
-        Timber.e("Failed getting passphrase for key (id = ${key.id.id}) using user keys")
+        if (key.active) {
+            Timber.e("Failed getting passphrase for active key (id = ${key.id.id}) using user keys")
+        }
         return null
     }
 
