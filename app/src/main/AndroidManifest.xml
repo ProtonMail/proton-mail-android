@@ -110,7 +110,7 @@
                 tools:node="remove" />
 
             <meta-data
-                android:name="ch.protonmail.android.core.SentryInitializer"
+                android:name="ch.protonmail.android.sentry.SentryInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
 

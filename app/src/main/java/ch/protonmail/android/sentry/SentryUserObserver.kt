@@ -17,15 +17,14 @@
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.core
+package ch.protonmail.android.sentry
 
 import android.provider.Settings
 import io.sentry.Sentry
 import io.sentry.protocol.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import me.proton.core.accountmanager.data.AccountStateHandlerCoroutineScope
+import kotlinx.coroutines.flow.onEach
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.getPrimaryAccount
 import javax.inject.Inject
@@ -33,14 +32,14 @@ import javax.inject.Singleton
 
 @Singleton
 class SentryUserObserver @Inject constructor(
-    @AccountStateHandlerCoroutineScope
+    @SentryInitialisationCoroutineScope
     internal val scope: CoroutineScope,
     internal val accountManager: AccountManager,
 ) {
 
     fun start() {
         accountManager.getPrimaryAccount()
-            .map { account ->
+            .onEach { account ->
                 val user = User().apply { id = account?.userId?.id ?: Settings.Secure.ANDROID_ID }
                 Sentry.setUser(user)
             }

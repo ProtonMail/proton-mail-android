@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.core
+package ch.protonmail.android.sentry
 
 import android.util.Log
+import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.data.remote.OfflineException
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.utils.extensions.obfuscateEmail

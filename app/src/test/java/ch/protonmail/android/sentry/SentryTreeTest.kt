@@ -16,8 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.core
+package ch.protonmail.android.sentry
 
+import ch.protonmail.android.core.apiError
+import ch.protonmail.android.core.toDetailedException
+import ch.protonmail.android.core.userId
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.slot
