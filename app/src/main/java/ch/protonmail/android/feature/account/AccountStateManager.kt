@@ -79,6 +79,7 @@ import me.proton.core.humanverification.presentation.onHumanVerificationNeeded
 import me.proton.core.user.domain.UserManager
 import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.kotlin.DispatcherProvider
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -151,8 +152,12 @@ internal class AccountStateManager @Inject constructor(
             .onAccountRemoved { onAccountDisabled(it) }
             .onAccountDisabled { onAccountDisabled(it) }
             .onAccountReady { onAccountReady(it) }
-            .onUserKeyCheckFailed { /* errorToast("UserKeyCheckFailed")*/ }
-            .onUserAddressKeyCheckFailed { /*errorToast("UserAddressKeyCheckFailed")*/ }
+            .onUserKeyCheckFailed {
+                Timber.e("Account has invalid user key (user id = ${it.userId.id})")
+            }
+            .onUserAddressKeyCheckFailed {
+                Timber.e("Account has invalid address key (user id = ${it.userId.id}")
+            }
     }
 
     /**
