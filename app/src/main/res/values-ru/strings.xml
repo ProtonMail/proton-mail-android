@@ -26,7 +26,7 @@
     <string name="x_done">Готово</string>
     <string name="x_edit">Изменить</string>
     <string name="x_hours">Часов</string>
-    <string name="x_more">Ещё</string>
+    <string name="x_more">Еще</string>
     <string name="x_none">Нет</string>
     <string name="x_search">Поиск</string>
     <string name="x_set">Установить</string>
@@ -185,7 +185,7 @@
     <string name="no_network_queued">Нет подключения к сети. Сообщение поставлено в очередь</string>
     <string name="update_app_title">Требуется обновление</string>
     <string name="update_app">Вашим приложением Proton Мail нельзя пользоваться, пока оно не будет обновлено</string>
-    <string name="you_are_offline">Вы не подключены к сети</string>
+    <string name="you_are_offline">Вы офлайн</string>
     <string name="api_offline">Proton Mail в настоящее время не в сети, проверьте текущее состояние тут: https://protonstatus.com или в нашем Twitter: https://twitter.com/protonmail</string>
     <string name="contact_saved">Контакт сохранён</string>
     <string name="contact_saved_offline">Контакт сохранён. Он будет синхронизирован, когда подключение станет доступно</string>
@@ -286,13 +286,13 @@
     <string name="email">Эл. почта</string>
     <string name="phone">Hомер телефона</string>
     <string name="save">Сохранить</string>
-    <string name="no_subject">Отправить сообщение без указания темы?</string>
+    <string name="no_subject">Отправить сообщение без темы?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-    <string name="okay">Ладно</string>
+    <string name="okay">Хорошо</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Исходное сообщение --------</string>
-    <string name="invalid_email_address">Адрес \'%s\' неверен</string>
+    <string name="invalid_email_address">Адрес \'%s\' недействителен</string>
     <string name="invalid_email_address_removed">Адрес \'%s\' недействителен и был удален</string>
     <string name="no_recipients_specified">Пожалуйста, укажите хотя бы одного получателя</string>
     <string name="no_password_specified">Срок действия можно установить только для полностью зашифрованных сообщений. Пожалуйста, установите пароль для получателей, не являющихся пользователями Proton Mail.</string>
@@ -710,8 +710,8 @@
         <item>4 часа</item>
         <item>8 часов</item>
         <item>12 часов</item>
-        <item>Своё значение</item>
-        <item>Запланировано</item>
+        <item>Свое значение</item>
+        <item>Запланированные</item>
     </string-array>
     <string name="notifications_snoozed">Уведомления приглушены</string>
     <string name="notifications_snooze_scheduled">Запланировано</string>
@@ -822,7 +822,7 @@
     <string name="shortcut_compose_new_message">Написать новое сообщение</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_dialog_title">Наиболее часто встречающиеся проблемы с соединением и их решения</string>
+    <string name="troubleshoot_dialog_title">Общие проблемы с подключением и их решения</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;Нет подключения к интернет&lt;/i&gt; - Пожалуйста, убедитесь, что ваше соединение с интернет работает.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема с интернет-провайдером (ISP)&lt;/i&gt; - Попробуйте подлключиться к сервисам Proton через другую сеть (или используйте &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Правительственные блокировки&lt;/i&gt; - Возможно, что ваша страна блокирует доступ к сервисам Proton. Попробуйте &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (или любой другой VPN-сервис) или &lt;a href=\"https://www.torproject.org/\"&gt;Tor,&lt;/a&gt; чтобы получить доступ к Proton.
@@ -839,13 +839,13 @@
     <!-- endregion -->
     <string name="allowed">Разрешена</string>
     <string name="denied">Запрещена</string>
-    <string name="more">Ещё</string>
+    <string name="more">Еще</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Жесты свайпа изменены</string>
     <string name="swipe_gestures_changed_message">В результате последнего обновления настройки жестов были изменены. Если хотите, их можно сбросить в настройках.</string>
     <string name="go_to_settings">Перейти в настройки</string>
     <!-- endregion -->
-    <string name="invalid_firebase_api_key_message">Неверный ключ API Firebase. Push-уведомления не будут работать.</string>
+    <string name="invalid_firebase_api_key_message">Недействительный ключ API Firebase. Push-уведомления не будут работать.</string>
     <string name="failed_saving_draft_online">Не удалось сохранить онлайн черновик сообщения: \"%s\"</string>
     <string name="failed_uploading_attachment_online">Ошибка вложения для сообщения: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Невозможно открыть сообщение пока оно отправляется</string>
@@ -886,5 +886,5 @@
     <string name="edit_draft">Редактировать черновик</string>
     <string name="details_show_history">Показать историю</string>
     <string name="could_not_complete_action">Невозможно закончить действие</string>
-    <string name="decryption_of_message_failed">Ошибка расшифровки: при расшифровке зашифрованного содержимого этого сообщения произошёл сбой.</string>
+    <string name="decryption_of_message_failed">Ошибка расшифровки: при расшифровке зашифрованного содержимого этого сообщения произошел сбой.</string>
 </resources>

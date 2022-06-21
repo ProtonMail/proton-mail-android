@@ -55,8 +55,8 @@
     <string name="mailbox_empty_state_try_a_different_term">Reyndu annað leitarhugtak</string>
     <string name="mailbox_no_messages">Engin skilaboð</string>
     <plurals name="mailbox_unread_count">
-        <item quantity="one">%d unread</item>
-        <item quantity="other">%d unread</item>
+        <item quantity="one">%d ólesið</item>
+        <item quantity="other">%d ólesin</item>
     </plurals>
     <string name="mailbox_updated_just_now">Uppfært núna</string>
     <string name="mailbox_updated_recently">Uppfært nýlega</string>
@@ -799,13 +799,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Algeng tengivandamál og lausnir á þeim</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Engin nettenging&lt;/i&gt; - Vinsamlega gakktu úr skugga um að nettengingin þín virki.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vandamál hjá internet þjónustuaðila (ISP)&lt;/i&gt; - Reyndu að tengjast Proton frá öðru netkerfi (eða notaðu &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; eða &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Lokun stjórnvalda&lt;/i&gt; - Landið þitt gæti verið að loka fyrir aðgang að Proton. Reyndu &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (eða einhvað annað VPN) eða &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; til að tengjast Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Truflun vegna vírusvarna&lt;/i&gt; - Slökktu tímabundið á eða fjarlægðu vírusvarnarforritið þitt.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Truflun vegna milliþjóna/eldveggja&lt;/i&gt; - Slökktu á öllum milliþjónum eða eldveggjum eða hafðu samband við netkerfisstjórann þinn.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton er niðri&lt;/i&gt; - Athugaðu &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; fyrir kerfisstöðu okkar.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Get samt ekki fundið lausn&lt;/i&gt; - Hafðu beint samband við okkur í gegnum okkar&lt;a href=\"https://protonmail.com/support-form\"&gt;þjónustusíðu&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), eða &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

@@ -799,13 +799,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemi di connessione comuni e soluzioni</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Nessuna connessione a internet&lt;/i&gt; - Sei pregato d\'assicurarti che la tua connessione a internet stia funzionando.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema dell\'Internet Service Provider (ISP)&lt;/i&gt; - Prova a connetterti a Proton da una rete differente (o usa &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blocco governativo&lt;/i&gt; - Il tuo paese potrebbe bloccare l\'accesso a Proton. Prova &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (od ogni altra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; per accedere a Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferenza dell\'antivirus&lt;/i&gt; - Disabilita temporaneamente o rimuovi il software del tuo antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferenza del Proxy/Firewall&lt;/i&gt; - Disabilita ogni proxy o firewall, o contatta l\'amministratore della tua rete.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton non sta funzionando&lt;/i&gt; - Controlla lo &lt;a href=\"http://protonstatus.com/\"&gt;Stato di Proton&lt;/a&gt; per lo stato del nostro sistema.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Impossibile trovare una soluzione&lt;/i&gt; - Contattaci direttamente tramite il nostro &lt;a href=\"https://protonmail.com/support-form\"&gt;modulo di supporto&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

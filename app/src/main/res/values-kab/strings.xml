@@ -43,7 +43,7 @@
     <string name="drawer_report_bug">Azen abug</string>
     <string name="drawer_settings">Iɣewwaṛen</string>
     <string name="drawer_sign_out">Ffeɣ</string>
-    <string name="drawer_create_folder_description">Rnu akaram amaynut</string>
+    <string name="drawer_create_folder_description">Snulfu-d akaram amaynut</string>
     <string name="drawer_create_label_description">Rnu tabzimt tamaynut</string>
     <!-- endregion -->
     <!-- region Mailbox -->
@@ -235,7 +235,7 @@
     <string name="bcc">Anɣ. Uff. I</string>
     <string name="to_prefix">I:</string>
     <string name="reply">Err</string>
-    <string name="reply_all">Aerr i meṛṛa</string>
+    <string name="reply_all">Err-asen akk</string>
     <string name="forward">Seḍfeṛ</string>
     <string name="email_subject">Asentel n imayl</string>
     <string name="define_message_password">Awal uffir n yizen</string>

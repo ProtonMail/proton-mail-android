@@ -158,7 +158,7 @@
     <string name="existing_user_onboarding_new_features_headline">Caracteristici noi</string>
     <string name="existing_user_onboarding_new_features_description">Bucurați-vă de caracteristici noi, cum ar fi modul întunecat, notificări îmbunătățite, un filtru pentru mesajele necitite și subfoldere.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualizat, protecție unificată</string>
-    <string name="existing_user_onboarding_updated_proton_description">Vă prezentăm noua față împrospătată a lui Proton. Multe servicii, o singură misiune. Bun venit la un Internet unde intimitatea este implicită. <a href="https://proton.me/news/updated-proton">Detalii</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Vă prezentăm noua față împrospătată a lui Proton. Multe servicii, o singură misiune. Bun venit la un internet unde intimitatea este implicită. <a href="https://proton.me/news/updated-proton">Detalii</a></string>
     <string name="onboarding_next">Înainte</string>
     <string name="onboarding_get_started">Începeți</string>
     <string name="onboarding_got_it">Am înțeles</string>
@@ -182,7 +182,7 @@
     <string name="message_details_load_failure">Nu s-au putut descărca detaliile mesajului</string>
     <string name="no_more_messages">Nu mai există mesaje</string>
     <string name="no_network_queued">Nu există conexiune, mesaj pus în așteptare</string>
-    <string name="update_app_title">Actualizare necesară</string>
+    <string name="update_app_title">Necesită actualizare</string>
     <string name="update_app">Nu puteți folosi aplicația Proton Mail înainte de a o actualiza</string>
     <string name="you_are_offline">Sunteți deconectat</string>
     <string name="api_offline">Proton Mail este momentan indisponibil. Verificați la https://protonstatus.com sau pe pagina nostră de Twitter pentru starea actuală: https://twitter.com/protonmail</string>
@@ -812,7 +812,7 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Probleme comune conexiune și soluții</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;Fără conexiune la internet&lt;/i&gt; - Asigurați-vă că funcționează conexiunea la internet.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problemă (ISP) Furnizor Servicii Internet&lt;/i&gt; - Încercați să vă conectați la Proton dintr-o altă rețea (sau folosiți &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; sau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problemă (ISP) furnizor servicii internet&lt;/i&gt; - Încercați să vă conectați la Proton dintr-o altă rețea (sau folosiți &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; sau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blocare guvernamentală&lt;/i&gt; - Țara dvs. s-ar putea să blocheze accesul către Proton. Încercați &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (sau oricare alt VPN) sau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pentru a accesa Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferență antivirus&lt;/i&gt; - Dezactivați temporar sau eliminați programul antivirus.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferențe Proxy/Paravan de protecție&lt;/i&gt; - Dezactivați orice paravan de protecție sau proxy sau contactați administratorul de rețea.

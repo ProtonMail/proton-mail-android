@@ -20,8 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
-    <string name="x_add_folder">添加文件夹</string>
-    <string name="x_add_label">添加标签</string>
+    <string name="x_add_folder">创建文件夹</string>
+    <string name="x_add_label">创建标签</string>
     <string name="x_days">天</string>
     <string name="x_done">完成</string>
     <string name="x_edit">编辑</string>
@@ -126,11 +126,11 @@
     <string name="app_theme_system">跟随系统</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">选择上一级文件夹（可选）</string>
-    <string name="labels_manager_parent_folder_selected"><b>上级文件夹已指定</b> 点击修改</string>
+    <string name="labels_manager_select_parent_folder">选择上层文件夹（非必需）</string>
+    <string name="labels_manager_parent_folder_selected"><b>已选择上层文件夹</b>，点击更改</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
-    <string name="parent_picker_title">上一级文件夹</string>
+    <string name="parent_picker_title">上层文件夹</string>
     <string name="parent_picker_header">若不选取上层文件夹，则将创建顶层文件夹。</string>
     <!-- endregion -->
     <!-- region Notifications -->
@@ -182,7 +182,7 @@
     <string name="no_network_queued">网络尚未连接，邮件将稍后发送</string>
     <string name="update_app_title">需要更新</string>
     <string name="update_app">Proton Mail 应用需要更新方可使用</string>
-    <string name="you_are_offline">您已离线</string>
+    <string name="you_are_offline">网络未连接</string>
     <string name="api_offline">暂时无法连接 Proton Mail，可前往 https://protonstatus.com 或 https://twitter.com/protonmail 了解情况</string>
     <string name="contact_saved">联系人已保存</string>
     <string name="contact_saved_offline">联系人已保存，将在联网后同步</string>
@@ -298,7 +298,7 @@
     <string name="eo_password_subtitle">为非 Proton Mail 用户设置阅读此邮件所需的密码</string>
     <string name="eo_password_more_info">了解详情</string>
     <string name="no_attachments">0 个附件</string>
-    <string name="display_name_banned_chars">名称中不能包含 &gt; 和 &lt; 符号</string>
+    <string name="display_name_banned_chars">称呼中不能使用 &gt; 和 &lt; 符号</string>
     <string name="cont">继续</string>
     <string name="reply_prefix_on">在</string>
     <string name="label_name">标签名称</string>
@@ -483,11 +483,11 @@
     <string name="print_bcc_template">密送：%s; </string>
     <string name="address">地址：</string>
     <string name="address_street">街道</string>
-    <string name="address_extended_street">延长段</string>
+    <string name="address_extended_street">详细地址</string>
     <string name="address_city">城市</string>
     <string name="address_region">地区（州或省）</string>
     <string name="address_postcode">邮编</string>
-    <string name="address_po_box">邮政邮箱</string>
+    <string name="address_po_box">邮政信箱</string>
     <string name="address_country">国家</string>
     <string name="recheck_delinquency">重试</string>
     <string name="close_app">关闭应用</string>
@@ -545,8 +545,8 @@
     <string name="composer_lock_internal_pinned">经过端到端加密发往已验证的地址</string>
     <string name="composer_lock_pgp_encrypted_pinned">经 PGP 加密发往已验证的收件人</string>
     <string name="composer_lock_pgp_signed">经过 PGP 签名</string>
-    <string name="recipient_not_found_and_removed">找不到收件人 %s，已将其移除</string>
-    <string name="recipient_error_and_removed">获取收件人 %s 的信息时出错，已将其移除</string>
+    <string name="recipient_not_found_and_removed">收件人 %s 不存在，因此已被移除</string>
+    <string name="recipient_error_and_removed">收件人 %s 的信息获取失败，因此已被移除</string>
     <string name="send_anyway">坚持发送</string>
     <string name="expiration_error_title">您设置了邮件有效期，但并非所有收件人都能直接使用此功能。</string>
     <string name="expiration_error_add_msg_password">请为下列收件人设置邮件密码：</string>
@@ -653,9 +653,9 @@
     <string name="addresses">邮箱地址</string>
     <string name="default_mail_address">首选邮箱地址</string>
     <string name="default_address">首选地址</string>
-    <string name="display_name_n_signature">对外名称与落款</string>
-    <string name="display_name">对外名称</string>
-    <string name="edit_display_name">更改对外名称</string>
+    <string name="display_name_n_signature">称呼与落款</string>
+    <string name="display_name">称呼</string>
+    <string name="edit_display_name">更改称呼</string>
     <string name="signature">落款</string>
     <string name="mobile_footer">移动端标识</string>
     <string name="edit_mobile_footer">开启移动端标识</string>
@@ -797,7 +797,7 @@
     <string name="more">更多</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">滑动手势已更改</string>
-    <string name="swipe_gestures_changed_message">程序升级导致滑动手势发生变化。您可以在设置中将其重置。</string>
+    <string name="swipe_gestures_changed_message">程序升级导致滑动手势发生变化。您可以在设置中予以重置。</string>
     <string name="go_to_settings">前往设置</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">无效的 Firebase API 密钥。推送通知将无法使用。</string>
@@ -811,8 +811,8 @@
     <string name="star">星标</string>
     <string name="unstar">取消星标</string>
     <string name="star_unstar">星标/取消星标</string>
-    <string name="send_to_archive">确定将其存档？</string>
-    <string name="label_as">标为…</string>
+    <string name="send_to_archive">同时存档</string>
+    <string name="label_as">加标签…</string>
     <string name="mark_as_unread">标为未读</string>
     <string name="mark_as_read">标为已读</string>
     <string name="move_message">移动邮件</string>

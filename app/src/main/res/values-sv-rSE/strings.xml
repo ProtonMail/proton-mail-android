@@ -519,8 +519,8 @@
     <string name="load_embedded_images">Ladda inbäddade bilder</string>
     <string name="remove_password">Ta bort lösenordet</string>
     <string name="remove_password_question">Ta bort lösenordet?</string>
-    <string name="attachment_storage_value_current">Nuvarande val: %dMB</string>
-    <string name="attachment_storage_value_current_unlimited">Nuvarande val: obegränsat</string>
+    <string name="attachment_storage_value_current">För närvarande vald: %d MB</string>
+    <string name="attachment_storage_value_current_unlimited">För närvarande vald: obegränsad</string>
     <string name="attachment_offline_max_storage">Ställer in den maximala mängden lagringsutrymme som Proton Mail kan använda på din mobila enhet.</string>
     <string name="load_embedded_images_failed_no_network">Misslyckades att ladda inbäddade bilder. Kontrollera din nätverksanslutning.</string>
     <string name="load_embedded_images_failed">Misslyckades att ladda inbäddade bilder.</string>

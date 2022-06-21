@@ -51,7 +51,7 @@
     <string name="mailbox_empty_inbox_subtitle">最新です</string>
     <string name="mailbox_empty_spam_subtitle">迷惑メールフォルダーは空です。</string>
     <string name="mailbox_empty_trash_subtitle">ごみ箱は空です</string>
-    <string name="mailbox_empty_state_no_results_found">結果が見つかりませんでした</string>
+    <string name="mailbox_empty_state_no_results_found">該当する結果が見つかりませんでした</string>
     <string name="mailbox_empty_state_try_a_different_term">違う単語で検索してみてください</string>
     <string name="mailbox_no_messages">メッセージはありません</string>
     <plurals name="mailbox_unread_count">
@@ -202,7 +202,7 @@
     <string name="spam_option">迷惑メール</string>
     <string name="allmail_option">すべてのメール</string>
     <string name="inbox">受信トレイ</string>
-    <string name="starred">星付き</string>
+    <string name="starred">星印付き</string>
     <string name="drafts">下書き</string>
     <string name="sent">送信済み</string>
     <string name="archive">アーカイブ</string>
@@ -809,8 +809,8 @@
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="star">星印</string>
-    <string name="unstar">星印をはずす</string>
+    <string name="star">星印を付ける</string>
+    <string name="unstar">星印を外す</string>
     <string name="star_unstar">星印を 付ける/外す</string>
     <string name="send_to_archive">アーカイブに送る</string>
     <string name="label_as">ラベルを付ける</string>
