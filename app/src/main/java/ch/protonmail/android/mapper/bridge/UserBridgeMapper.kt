@@ -20,7 +20,6 @@
 
 package ch.protonmail.android.mapper.bridge
 
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.ValidationException
@@ -30,6 +29,8 @@ import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.domain.entity.user.Role
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.domain.entity.user.UserSpace
+import ch.protonmail.android.utils.extensions.obfuscateUsername
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.invoke
 import me.proton.core.util.kotlin.takeIfNotBlank
 import me.proton.core.util.kotlin.toBoolean
@@ -63,7 +64,9 @@ class UserBridgeMapper @Inject constructor(
                 dedicatedSpace = UserSpace(usedSpace.bytes, maxSpace.bytes)
             )
         } catch (e: ValidationException) {
-            throw ValidationException("Cannot map user with id '$id', name '$name' and username '$username'", e)
+            throw ValidationException(
+                "Cannot map user with id '$id', name '${name.obfuscateUsername()}' and username '${username.obfuscateUsername()}'", e
+            )
         }
     }
 
