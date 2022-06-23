@@ -21,48 +21,23 @@ package ch.protonmail.android.navigation.presentation
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import ch.protonmail.android.R
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.navigation.presentation.model.NavigationViewAction
 import ch.protonmail.android.navigation.presentation.model.NavigationViewState
 import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
-import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.IsAppInDarkMode
-import ch.protonmail.android.utils.notifier.UserNotifier
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.withContext
-import me.proton.core.domain.entity.UserId
 import me.proton.core.report.presentation.entity.BugReportOutput
-import me.proton.core.util.kotlin.DispatcherProvider
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 internal class NavigationViewModel @Inject constructor(
-    private val isAppInDarkMode: IsAppInDarkMode,
-    private val secureSharedPreferencesFactory: SecureSharedPreferences.Factory,
-    private val accountStateManager: AccountStateManager,
-    private val userNotifier: UserNotifier,
-    private val dispatchers: DispatcherProvider
+    private val isAppInDarkMode: IsAppInDarkMode
 ) : ViewModel() {
 
     private val viewStateMutableFlow = MutableStateFlow(NavigationViewState.INITIAL)
     val viewStateFlow = viewStateMutableFlow.asStateFlow()
-
-    suspend fun verifyPrimaryUserId(userId: UserId): Boolean = withContext(dispatchers.Io) {
-        val prefs = secureSharedPreferencesFactory.userPreferences(userId)
-        return@withContext if (prefs.getString(Constants.Prefs.PREF_USER_NAME, null) == null) {
-            Timber.e("Did not find username for the current primary user id. Logging the user out.")
-            accountStateManager.signOut(userId)
-            userNotifier.showError(R.string.logged_out_description)
-            false
-        } else {
-            true
-        }
-    }
 
     fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)
 

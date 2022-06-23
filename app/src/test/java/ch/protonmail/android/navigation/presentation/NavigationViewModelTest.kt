@@ -23,7 +23,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import app.cash.turbine.test
 import ch.protonmail.android.R
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.navigation.presentation.model.NavigationViewState
 import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
@@ -31,19 +30,16 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.testdata.UserIdTestData
 import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.utils.notifier.UserNotifier
-import io.mockk.called
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
-import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.report.presentation.entity.BugReportOutput
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NavigationViewModelTest : ArchTest, CoroutinesTest {
@@ -61,39 +57,8 @@ class NavigationViewModelTest : ArchTest, CoroutinesTest {
         every { showError(R.string.logged_out_description) } just runs
     }
     private val navigationViewModel = NavigationViewModel(
-        isAppInDarkMode,
-        sharedPreferencesFactoryMock,
-        accountStateManagerMock,
-        userNotifierMock,
-        dispatchers
+        isAppInDarkMode
     )
-
-    @Test
-    fun `should not log out and return true if user id verified correctly`() = runBlockingTest {
-        // given
-        every { sharedPrefsMock.getString(Constants.Prefs.PREF_USER_NAME, null) } returns USERNAME
-
-        // when
-        val userIdVerified = navigationViewModel.verifyPrimaryUserId(UserIdTestData.userId)
-
-        // then
-        assertTrue(userIdVerified)
-        verify { accountStateManagerMock wasNot called }
-    }
-
-    @Test
-    fun `should log out, show error, and return false if user id not verified correctly`() = runBlockingTest {
-        // given
-        every { sharedPrefsMock.getString(Constants.Prefs.PREF_USER_NAME, null) } returns null
-
-        // when
-        val userIdVerified = navigationViewModel.verifyPrimaryUserId(UserIdTestData.userId)
-
-        // then
-        assertFalse(userIdVerified)
-        verify { accountStateManagerMock.signOut(UserIdTestData.userId) }
-        verify { userNotifierMock.showError(R.string.logged_out_description) }
-    }
 
     @Test
     fun `should check if app is in dark mode`() {

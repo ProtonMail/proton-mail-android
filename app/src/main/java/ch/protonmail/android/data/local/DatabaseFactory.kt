@@ -26,8 +26,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import ch.protonmail.android.core.Constants
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.prefs.SecureSharedPreferences
+import me.proton.core.domain.entity.UserId
 import kotlin.reflect.KClass
 
 open class DatabaseFactory<T : RoomDatabase>(
@@ -44,9 +44,7 @@ open class DatabaseFactory<T : RoomDatabase>(
 
     @Synchronized
     fun deleteDatabase(context: Context, userId: UserId) {
-        val username = usernameForUserId(context, userId)
-
-        val baseFileName = databaseName(username)
+        val baseFileName = databaseName(userId)
         val databaseFile = context.getDatabasePath(baseFileName)
         val databaseFileShm = context.getDatabasePath("$baseFileName-shm")
         val databaseFileWal = context.getDatabasePath("$baseFileName-wal")
@@ -62,9 +60,9 @@ open class DatabaseFactory<T : RoomDatabase>(
         context: Context,
         userId: UserId
     ): T {
-        val username = usernameForUserId(context, userId)
+        tryMigrateDatabase(context, userId)
 
-        val baseFileName = databaseName(username)
+        val baseFileName = databaseName(userId)
 
         return Room.databaseBuilder(context.applicationContext, databaseClass.java, baseFileName)
             .fallbackToDestructiveMigration()
@@ -72,13 +70,38 @@ open class DatabaseFactory<T : RoomDatabase>(
             .build()
     }
 
-    private fun usernameForUserId(context: Context, userId: UserId): String {
+    private fun tryMigrateDatabase(context: Context, userId: UserId) {
+        val username = usernameForUserIdOrNull(context, userId)
+            ?: return
+
+        val oldBaseFileName = databaseName(username)
+        val newBaseFileName = databaseName(userId)
+
+        val databaseFile = context.getDatabasePath(oldBaseFileName)
+        val databaseFileShm = context.getDatabasePath("$oldBaseFileName-shm")
+        val databaseFileWal = context.getDatabasePath("$oldBaseFileName-wal")
+
+        if (databaseFile.exists()) {
+            databaseFile.renameTo(context.getDatabasePath(newBaseFileName))
+        }
+        if (databaseFileShm.exists()) {
+            databaseFileShm.renameTo(context.getDatabasePath("$newBaseFileName-shm"))
+        }
+        if (databaseFileWal.exists()) {
+            databaseFileWal.renameTo(context.getDatabasePath("$newBaseFileName-wal"))
+        }
+    }
+
+    private fun usernameForUserIdOrNull(context: Context, userId: UserId): String? {
         val prefs = SecureSharedPreferences.getPrefsForUser(context, userId)
-        return checkNotNull(prefs.getString(Constants.Prefs.PREF_USER_NAME, null))
+        return prefs.getString(Constants.Prefs.PREF_USER_NAME, null)
     }
 
     private fun databaseName(username: String) =
         "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-$baseDatabaseName"
+
+    private fun databaseName(userId: UserId) =
+        "${Base64.encodeToString(userId.id.toByteArray(), Base64.NO_WRAP)}-$baseDatabaseName"
 
     @VisibleForTesting
     fun buildInMemoryDatabase(context: Context) =

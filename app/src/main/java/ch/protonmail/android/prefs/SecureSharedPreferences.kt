@@ -23,10 +23,8 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Build
 import android.preference.PreferenceManager
-import android.provider.Settings
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import android.text.TextUtils
 import android.util.Base64
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
@@ -57,6 +55,7 @@ import java.util.UUID
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
+import javax.inject.Singleton
 import javax.security.auth.x500.X500Principal
 
 // region constants
@@ -66,84 +65,9 @@ const val PREF_SYMMETRIC_KEY = "SEKRIT"
 // endregion
 
 class SecureSharedPreferences(
-    private val context: Context,
     private val delegate: SharedPreferences,
-    defaultSharedPreferences: SharedPreferences
+    private val sekrit: CharArray
 ) : SharedPreferences {
-
-    private var keyStore: KeyStore
-
-    init {
-        keyStore = KeyStore.getInstance(keyStoreName)
-        keyStore.load(null)
-
-        var keyPair = retrieveAsymmetricKeyPair(asymmetricKeyAlias)
-        if (keyPair == null) {
-            keyPair = generateKeyPair(context, asymmetricKeyAlias)
-        }
-
-        var symmetricKey =
-            decryptAsymmetric(defaultSharedPreferences[PREF_SYMMETRIC_KEY] ?: "", keyPair.private)
-
-        when (symmetricKey) {
-            null -> { // error decrypting, we lost the key
-                symmetricKey = UUID.randomUUID().toString()
-                defaultSharedPreferences[PREF_SYMMETRIC_KEY] = encryptAsymmetric(symmetricKey, keyPair.public)
-                AppUtil.deletePrefs() // force re-login
-                // don't call ProtonMailApplication#notifyLoggedOut because UserManager is needed for that
-                // and it can't be properly instantiated because of this error here
-            }
-            "" -> { // no previous key stored
-                symmetricKey = UUID.randomUUID().toString()
-                defaultSharedPreferences[PREF_SYMMETRIC_KEY] = encryptAsymmetric(symmetricKey, keyPair.public)
-                migrateToKeyStore(symmetricKey.toCharArray())
-            }
-
-            // else successfully decrypted secret key
-        }
-
-        SEKRIT = symmetricKey!!.toCharArray()
-    }
-
-    private fun migrateToKeyStore(newSEKRIT: CharArray) {
-
-        // old code for getting encryption key
-        var secretKey: String? =
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        if (TextUtils.isEmpty(secretKey)) {
-            secretKey = delegate.getString("AUIDSP", null)
-            if (TextUtils.isEmpty(secretKey)) {
-                secretKey = UUID.randomUUID().toString()
-                delegate.edit().putString("AUIDSP", secretKey).apply()
-            }
-            SEKRIT = secretKey!!.toCharArray()
-        } else {
-            SEKRIT = secretKey!!.toCharArray()
-        }
-
-        val oldPreferences = mutableMapOf<String, String>()
-        val oldPreferencesKeysToRemove = mutableListOf<String>()
-
-        // decrypt old preferences
-        delegate.all.forEach {
-            val key = decrypt(it.key)
-            val value = decrypt(it.value as String)
-            if (key != null && value != null) {
-                oldPreferences[key] = value
-                oldPreferencesKeysToRemove.add(it.key)
-            }
-        }
-
-        // change current key to new one
-        SEKRIT = newSEKRIT
-
-        // encrypt old preferences with new key
-        val newPreferencesEditor = edit()
-        oldPreferences.forEach { newPreferencesEditor.putString(it.key, it.value) }
-        oldPreferencesKeysToRemove.forEach { newPreferencesEditor.remove(it) }
-        newPreferencesEditor.apply()
-
-    }
 
     override fun edit() = Editor()
 
@@ -217,6 +141,10 @@ class SecureSharedPreferences(
     override fun getString(key: String, defValue: String?): String? =
         delegate.getString(encryptProxyKey(key), null)?.let(::decrypt) ?: defValue
 
+    @Synchronized
+    fun getStringOrNull(key: String): String? =
+        delegate.getString(encryptProxyKey(key), null)?.let(::decryptOrNull)
+
     override fun contains(key: String): Boolean =
         delegate.contains(encryptProxyKey(key))
 
@@ -236,28 +164,10 @@ class SecureSharedPreferences(
     override fun getStringSet(key: String, defValues: Set<String>?): Set<String>? =
         throw UnsupportedOperationException("This class does not support String Sets")
 
-    /**
-     * Helper method for removing all empty keys from a list.
-     */
-    fun deleteAllEmptyEntries() {
-        val listOfEmptyKeys = mutableListOf<String>()
-        delegate.all.forEach {
-            val key = decrypt(it.key)
-            val value = decrypt(it.value as String)
-            if (key != null && value != null && value.isNotEmpty()) {
-                listOfEmptyKeys.add(key)
-            }
-        }
-        val editor = delegate.edit()
-        listOfEmptyKeys.forEach {
-            editor.remove(it).apply()
-        }
-    }
-
     fun encrypt(value: String?): String {
         val bytes = value?.toByteArray(charset(UTF8)) ?: ByteArray(0)
         val digester = MessageDigest.getInstance("SHA-256")
-        digester.update(String(SEKRIT).toByteArray(charset("UTF-8")))
+        digester.update(String(sekrit).toByteArray(charset("UTF-8")))
         val key = digester.digest()
         val spec = SecretKeySpec(key, "AES")
         val pbeCipher = Cipher.getInstance(ALGORITHM_AES)
@@ -267,102 +177,31 @@ class SecureSharedPreferences(
 
     private fun decrypt(value: String?): String? {
         return try {
-            // String out = OpenPgp.createInstance().decryptMailboxPwd(value, SEKRIT);
-            // return out;
-            val bytes = if (value != null) Base64.decode(value, Base64.NO_WRAP) else ByteArray(0)
-            val digester = MessageDigest.getInstance("SHA-256")
-            digester.update(String(SEKRIT).toByteArray(charset("UTF-8")))
-            val key = digester.digest()
-            val spec = SecretKeySpec(key, "AES")
-            val pbeCipher = Cipher.getInstance(ALGORITHM_AES)
-            pbeCipher.init(Cipher.DECRYPT_MODE, spec)
-            String(pbeCipher.doFinal(bytes), charset(UTF8))
+            decryptOrThrow(value)
         } catch (e: Exception) {
             Timber.e(e)
             value
         }
     }
 
-    private fun generateKeyPair(context: Context, alias: String): KeyPair {
-
-        // workaround for BouncyCastle crashing when parsing Date in RTL languages
-        // we set locale temporarily to US and then go back
-        val defaultLocale = Locale.getDefault()
-        setLocale(Locale.US)
-
-        val start = GregorianCalendar()
-        val end = GregorianCalendar()
-        end.add(Calendar.YEAR, 5)
-
-        val keyPairGenerator = KeyPairGenerator.getInstance("RSA", keyStoreName)
-
-        // The KeyPairGeneratorSpec object is how parameters for your key pair are passed
-        // to the KeyPairGenerator.
-        val algorithmParameterSpec = KeyGenParameterSpec
-            .Builder(alias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-            .setCertificateSubject(X500Principal("CN=ProtonMail, O=Android Authority"))
-            .setBlockModes(KeyProperties.BLOCK_MODE_ECB)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-            .setCertificateSerialNumber(BigInteger.ONE)
-            .setCertificateNotBefore(start.time)
-            .setCertificateNotAfter(end.time)
-            .build()
-
-        keyPairGenerator.initialize(algorithmParameterSpec)
-        val keyPair = keyPairGenerator.generateKeyPair()
-
-        setLocale(defaultLocale)
-
-        return keyPair
-    }
-
-    private fun setLocale(locale: Locale) {
-        Locale.setDefault(locale)
-        val resources = context.resources
-        val configuration = Configuration(resources.configuration)
-        configuration.setLocale(locale)
-        context.createConfigurationContext(configuration)
-    }
-
-    private fun retrieveAsymmetricKeyPair(alias: String): KeyPair? {
-        val privateKey = try {
-            keyStore.getKey(alias, null) as PrivateKey?
-        } catch (e: UnrecoverableKeyException) {
-            Timber.i(e)
-            null
-        }
-        val publicKey = keyStore.getCertificate(alias)?.publicKey
-
-        return if (privateKey != null && publicKey != null) {
-            KeyPair(publicKey, privateKey)
-        } else {
-            null
-        }
-    }
-
-    private fun encryptAsymmetric(plainText: String, key: Key): String {
-        val asymmetricCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-        asymmetricCipher.init(Cipher.ENCRYPT_MODE, key)
-        val bytes = asymmetricCipher.doFinal(plainText.toByteArray())
-        return Base64.encodeToString(bytes, Base64.NO_WRAP)
-    }
-
-    /**
-     * @return null when decryption key couldn't decrypt value
-     */
-    private fun decryptAsymmetric(cipherText: String, key: Key): String? {
-        if (cipherText.isBlank()) {
-            return ""
-        }
-        val asymmetricCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-        asymmetricCipher.init(Cipher.DECRYPT_MODE, key)
-        val encryptedData = Base64.decode(cipherText, Base64.NO_WRAP)
+    private fun decryptOrNull(value: String?): String? {
         return try {
-            String(asymmetricCipher.doFinal(encryptedData))
+            decryptOrThrow(value)
         } catch (e: Exception) {
-            Timber.i(e)
+            Timber.e(e)
             null
         }
+    }
+
+    private fun decryptOrThrow(value: String?): String? {
+        val bytes = if (value != null) Base64.decode(value, Base64.NO_WRAP) else ByteArray(0)
+        val digester = MessageDigest.getInstance("SHA-256")
+        digester.update(String(sekrit).toByteArray(charset("UTF-8")))
+        val key = digester.digest()
+        val spec = SecretKeySpec(key, "AES")
+        val pbeCipher = Cipher.getInstance(ALGORITHM_AES)
+        pbeCipher.init(Cipher.DECRYPT_MODE, spec)
+        return String(pbeCipher.doFinal(bytes), charset(UTF8))
     }
 
     fun encryptProxyKey(value: String) = encrypt(value)
@@ -426,23 +265,6 @@ class SecureSharedPreferences(
             throw UnsupportedOperationException("This class does not work with String Sets.")
     }
 
-    fun buildLongSharedPrefsListener(watchForKey: String, onKeyUpdated: Function1<Long, Unit>) =
-        object : LongOnSharedPreferenceChangeListener(watchForKey) {
-            override fun onKeyUpdated(newValue: Long) {
-                onKeyUpdated.invoke(newValue)
-            }
-        }
-
-    abstract inner class LongOnSharedPreferenceChangeListener(private val mWatchForKey: String) :
-        SharedPreferences.OnSharedPreferenceChangeListener {
-        abstract fun onKeyUpdated(newValue: Long)
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
-            if (key == encryptProxyKey(mWatchForKey)) {
-                onKeyUpdated(getLong(mWatchForKey, 0L))
-            }
-        }
-    }
-
     /**
      * Migrate [SecureSharedPreferences] to use Users' [Id] instead of username
      *
@@ -462,8 +284,9 @@ class SecureSharedPreferences(
         private fun migrateForUser(username: String): Pair<String, UserId>? {
             Timber.v("Migrating SecureSharedPreferences for ${username.obfuscateUsername()}")
 
-            @Suppress("DEPRECATION") val oldPrefs = preferencesFactory._usernamePreferences(username)
-            val userId = oldPrefs.get<String>(PREF_USER_ID)?.let(::UserId)
+            @Suppress("DEPRECATION")
+            val oldPrefs = preferencesFactory._usernamePreferences(username)
+            val userId = oldPrefs.getStringOrNull(PREF_USER_ID)?.let(::UserId)
 
             return if (userId != null) {
                 val newPrefs = preferencesFactory.userPreferences(userId)
@@ -483,45 +306,147 @@ class SecureSharedPreferences(
 
     }
 
+    @Singleton
     class Factory @Inject constructor(
         private val context: Context,
         @DefaultSharedPreferences private val defaultSharedPreferences: SharedPreferences
     ) {
 
+        private val keyStore = KeyStore.getInstance(keyStoreName).also { it.load(null) }
+        private val sekrit by lazy { generateSekrit() }
+
         fun appPreferences(): SharedPreferences = SecureSharedPreferences(
-            context,
-            context.getSharedPreferences("ProtonMailSSP", Context.MODE_PRIVATE),
-            defaultSharedPreferences
+            delegate = context.getSharedPreferences("ProtonMailSSP", Context.MODE_PRIVATE),
+            sekrit = sekrit
         )
 
         @Suppress("FunctionName")
         @Deprecated("This should not be used! needed only for migration!")
         fun _usernamePreferences(
             username: String
-        ): SharedPreferences {
+        ): SecureSharedPreferences {
             val name = "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-SSP"
             return SecureSharedPreferences(
-                context,
-                context.getSharedPreferences(name, Context.MODE_PRIVATE),
-                defaultSharedPreferences
+                delegate = context.getSharedPreferences(name, Context.MODE_PRIVATE),
+                sekrit = sekrit
             )
         }
 
         fun userPreferences(userId: UserId): SharedPreferences =
             SecureSharedPreferences(
-                context,
-                context.getSharedPreferences(userId.id, Context.MODE_PRIVATE),
-                defaultSharedPreferences
+                delegate = context.getSharedPreferences(userId.id, Context.MODE_PRIVATE),
+                sekrit = sekrit
             )
 
+        private fun generateSekrit(): CharArray {
+            val keyPair = retrieveAsymmetricKeyPair(asymmetricKeyAlias)
+                ?: generateKeyPair(asymmetricKeyAlias)
+
+            val storedSymmetricKey = defaultSharedPreferences.get<String>(PREF_SYMMETRIC_KEY).let { key ->
+                if (key == null) {
+                    AppUtil.deletePrefs()
+                    null
+                } else {
+                    decryptAsymmetric(key, keyPair.private)
+                }
+            }
+
+            val sekritString = storedSymmetricKey
+                ?: UUID.randomUUID().toString().also {
+                    defaultSharedPreferences[PREF_SYMMETRIC_KEY] = encryptAsymmetric(it, keyPair.public)
+                }
+
+
+            return sekritString.toCharArray()
+        }
+
+        private fun generateKeyPair(alias: String): KeyPair {
+
+            // workaround for BouncyCastle crashing when parsing Date in RTL languages
+            // we set locale temporarily to US and then go back
+            val defaultLocale = Locale.getDefault()
+            setLocale(Locale.US)
+
+            val start = GregorianCalendar()
+            val end = GregorianCalendar()
+            end.add(Calendar.YEAR, 5)
+
+            val keyPairGenerator = KeyPairGenerator.getInstance("RSA", keyStoreName)
+
+            // The KeyPairGeneratorSpec object is how parameters for your key pair are passed
+            // to the KeyPairGenerator.
+            val algorithmParameterSpec = KeyGenParameterSpec
+                .Builder(alias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                .setCertificateSubject(X500Principal("CN=ProtonMail, O=Android Authority"))
+                .setBlockModes(KeyProperties.BLOCK_MODE_ECB)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                .setCertificateSerialNumber(BigInteger.ONE)
+                .setCertificateNotBefore(start.time)
+                .setCertificateNotAfter(end.time)
+                .build()
+
+            keyPairGenerator.initialize(algorithmParameterSpec)
+            val keyPair = keyPairGenerator.generateKeyPair()
+
+            setLocale(defaultLocale)
+
+            return keyPair
+        }
+
+        private fun retrieveAsymmetricKeyPair(alias: String): KeyPair? {
+            val privateKey = try {
+                keyStore.getKey(alias, null) as PrivateKey?
+            } catch (e: UnrecoverableKeyException) {
+                Timber.i(e)
+                null
+            }
+            val publicKey = keyStore.getCertificate(alias)?.publicKey
+
+            return if (privateKey != null && publicKey != null) {
+                KeyPair(publicKey, privateKey)
+            } else {
+                null
+            }
+        }
+
+        private fun encryptAsymmetric(plainText: String, key: Key): String {
+            val asymmetricCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+            asymmetricCipher.init(Cipher.ENCRYPT_MODE, key)
+            val bytes = asymmetricCipher.doFinal(plainText.toByteArray())
+            return Base64.encodeToString(bytes, Base64.NO_WRAP)
+        }
+
+        /**
+         * @return null when decryption key couldn't decrypt value
+         */
+        private fun decryptAsymmetric(cipherText: String, key: Key): String? {
+            if (cipherText.isBlank()) {
+                return ""
+            }
+            val asymmetricCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+            asymmetricCipher.init(Cipher.DECRYPT_MODE, key)
+            val encryptedData = Base64.decode(cipherText, Base64.NO_WRAP)
+            return try {
+                String(asymmetricCipher.doFinal(encryptedData))
+            } catch (e: Exception) {
+                Timber.i(e)
+                null
+            }
+        }
+
+        private fun setLocale(locale: Locale) {
+            Locale.setDefault(locale)
+            val resources = context.resources
+            val configuration = Configuration(resources.configuration)
+            configuration.setLocale(locale)
+            context.createConfigurationContext(configuration)
+        }
     }
 
     companion object {
 
         private const val keyStoreName = "AndroidKeyStore"
         private const val asymmetricKeyAlias = "ProtonMailKey"
-
-        private lateinit var SEKRIT: CharArray
 
         @Deprecated(
             "Use SecureSharedPreferences.Factory",

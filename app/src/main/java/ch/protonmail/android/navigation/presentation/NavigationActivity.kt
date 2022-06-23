@@ -61,7 +61,6 @@ import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -212,7 +211,6 @@ internal abstract class NavigationActivity : BaseActivity() {
 
             getPrimaryUserId().filterNotNull()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
-                .filter { userId -> navigationViewModel.verifyPrimaryUserId(userId) }
                 .onEach { userId -> onPrimaryUserId(userId) }
                 .launchIn(lifecycleScope)
         }
