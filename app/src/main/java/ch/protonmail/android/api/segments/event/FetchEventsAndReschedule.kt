@@ -32,7 +32,7 @@ internal class FetchEventsAndReschedule @Inject constructor(
     private val alarmReceiver: AlarmReceiver,
     private val context: Context,
     private val dispatchers: DispatcherProvider
-){
+) {
 
     suspend operator fun invoke() {
         withContext(dispatchers.Io) {
