@@ -30,12 +30,13 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.model.PendingUpload
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -69,6 +70,10 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
         every { findPendingUploadByMessageIdBlocking(any()) } returns null
     }
 
+    private val databaseProvider: DatabaseProvider = mockk {
+        every { providePendingActionDao(any()) } returns pendingActionDao
+    }
+
     private val attachmentsRepository: AttachmentsRepository = mockk(relaxed = true) {
         coEvery { upload(any(), any()) } returns AttachmentsRepository.Result.Success("8237423")
     }
@@ -91,15 +96,15 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
     private val crypto: AddressCrypto = mockk(relaxed = true)
 
     private val uploadAttachmentsWorker = UploadAttachmentsWorker(
-        context,
-        parameters,
-        dispatchers,
-        attachmentsRepository,
-        pendingActionDao,
-        messageDetailsRepository,
-        cryptoFactory,
-        testUserId,
-        mailSettings,
+        context = context,
+        params = parameters,
+        dispatchers = dispatchers,
+        attachmentsRepository = attachmentsRepository,
+        databaseProvider = databaseProvider,
+        messageDetailsRepository = messageDetailsRepository,
+        addressCryptoFactory = cryptoFactory,
+        userManager = userManager,
+        mailSettings = mailSettings,
     )
 
     @Test

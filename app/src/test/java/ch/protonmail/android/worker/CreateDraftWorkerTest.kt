@@ -54,6 +54,7 @@ import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKeys
+import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
@@ -108,6 +109,8 @@ class CreateDraftWorkerTest : CoroutinesTest {
     private val messageDetailsRepository: MessageDetailsRepository = mockk {
         coEvery { saveMessage(any()) } returns 0
     }
+    
+    private val messageRepository: MessageRepository = mockk()
 
     private val workManager: WorkManager = mockk(relaxed = true)
 
@@ -125,14 +128,15 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
     private val worker = CreateDraftWorker(
         context = mockk(),
-        parameters,
-        messageDetailsRepository,
-        messageFactory,
-        userManager,
-        addressCryptoFactory,
-        base64,
-        apiManager,
-        userNotifier
+        params = parameters,
+        messageDetailsRepository = messageDetailsRepository,
+        messageRepository = messageRepository,
+        messageFactory = messageFactory,
+        userManager = userManager,
+        addressCryptoFactory = addressCryptoFactory,
+        base64 = base64,
+        apiManager = apiManager,
+        userNotifier = userNotifier
     )
 
     @BeforeTest
@@ -197,7 +201,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             // Given
             val messageDbId = 345L
             givenMessageIdInput(messageDbId)
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(null)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns null
 
             // When
             val result = worker.doWork()
@@ -228,7 +232,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenMessageIdInput(messageDbId)
             givenParentIdInput(parentId)
             givenActionTypeInput(actionType)
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
             val parentMessage = mockk<Message> {
@@ -277,7 +281,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             )
             givenMessageIdInput(messageDbId)
             givenActionTypeInput()
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { userManager.currentUserId } returns testUserId
             coEvery { userManager.getUser(testUserId) } returns mockk {
@@ -317,7 +321,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val apiDraftMessage = DraftBody(message = testMessagePayload)
             givenMessageIdInput(messageDbId)
             givenActionTypeInput()
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
             val parentMessage = mockk<Message> {
@@ -373,7 +377,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(actionType)
             givenPreviousSenderAddress(previousSenderAddressId)
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { messageDetailsRepository.findMessageById(parentId) } returns flowOf(parentMessage)
             every { userManager.currentUserId } returns testUserId
@@ -433,7 +437,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(REPLY_ALL)
             givenPreviousSenderAddress(previousSenderAddressId)
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { messageDetailsRepository.findMessageById(parentId) } returns flowOf(parentMessage)
             every { userManager.currentUserId } returns UserId("another")
@@ -473,7 +477,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(FORWARD)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { messageDetailsRepository.findMessageById(parentId) } returns flowOf(parentMessage)
 
@@ -519,7 +523,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(FORWARD)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { messageDetailsRepository.findMessageById(parentId) } returns flowOf(null)
             every { apiManager.fetchMessageDetailsBlocking(parentId) } returns mockk {
@@ -566,7 +570,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(REPLY)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { messageDetailsRepository.findMessageById(parentId) } returns flowOf(parentMessage)
 
@@ -602,7 +606,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
             val parentMessage = mockk<Message> {
@@ -638,7 +642,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(FORWARD)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
             val parentMessage = mockk<Message> {
@@ -679,7 +683,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             val previousSenderAddressId = "senderAddressUsedInFirstDraftCreation1"
             givenPreviousSenderAddress(previousSenderAddressId)
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             coEvery { messageDetailsRepository.findAttachmentsByMessageId(messageId) } returns messageAttachments
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
 
@@ -728,7 +732,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             val previousSenderAddressId = "senderAddressUsedInFirstDraftCreation"
             givenPreviousSenderAddress(previousSenderAddressId)
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             coEvery { messageDetailsRepository.findAttachmentsByMessageId(messageId) } returns messageAttachments
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
 
@@ -804,7 +808,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenMessageIdInput(messageDbId)
             givenParentIdInput(parentId)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             coEvery { messageDetailsRepository.findAttachmentsByMessageId(messageId) } returns messageAttachments
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
 
@@ -857,7 +861,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } returns apiDraftRequest
             coEvery { apiManager.createDraft(any()) } returns apiDraftResponse
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
@@ -930,7 +934,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } returns apiDraftRequest
             coEvery { apiManager.createDraft(any()) } returns apiDraftResponse
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
@@ -974,7 +978,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } returns
                 DraftBody(message = testMessagePayload.copy(subject = "Subject002"))
             coEvery { apiManager.createDraft(any()) } returns errorAPIResponse
@@ -1017,7 +1021,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } returns mockk(relaxed = true) {
                 every { this@mockk.message.subject } returns "Subject001"
             }
@@ -1056,7 +1060,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } returns
                 DraftBody(message = testMessagePayload.copy(subject = "Subject001"))
             coEvery { apiManager.createDraft(any()) } throws IOException(errorMessage)
@@ -1115,7 +1119,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } returns apiDraftRequest
             coEvery { apiManager.updateDraft(remoteMessageId, any(), retrofitTag) } returns apiDraftResponse
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
@@ -1188,7 +1192,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(localMessage)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns localMessage
             every { messageFactory.createDraftApiRequest(localMessage) } returns apiDraftRequest
             coEvery { apiManager.updateDraft(remoteMessageId, any(), retrofitTag) } returns apiDraftResponse
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
@@ -1231,7 +1235,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
         val message = Message().apply {
             addressID = "addressId"
         }
-        every { messageDetailsRepository.findMessageByDatabaseId(any()) } returns flowOf(message)
+        coEvery { messageRepository.getMessage(any(), messageDatabaseId = any()) } returns message
         val expectedErrorData = workDataOf(
             Pair(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
@@ -1254,7 +1258,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             messageId = "messageId"
             addressID = "addressId"
         }
-        every { messageDetailsRepository.findMessageByDatabaseId(any()) } returns flowOf(message)
+        coEvery { messageRepository.getMessage(any(), messageDatabaseId = any()) } returns message
         val expectedErrorData = workDataOf(
             Pair(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
@@ -1278,7 +1282,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             addressID = "addressId"
             messageBody = "  "
         }
-        every { messageDetailsRepository.findMessageByDatabaseId(any()) } returns flowOf(message)
+        coEvery { messageRepository.getMessage(any(), messageDatabaseId = any()) } returns message
         val expectedErrorData = workDataOf(
             Pair(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
@@ -1346,7 +1350,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenMessageIdInput(messageDbId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } returns mockk(relaxed = true) {
                 every { this@mockk.message.subject } returns "Subject002"
             }

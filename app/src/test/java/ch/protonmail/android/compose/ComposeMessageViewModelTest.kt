@@ -30,6 +30,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
+import ch.protonmail.android.testdata.UserIdTestData.userId
 import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.compose.SaveDraft
@@ -72,6 +73,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val userManager: UserManager = mockk(relaxed = true) {
         every { requireCurrentLegacyUser().senderEmailAddresses } returns mutableListOf()
+        every { currentUserId } returns userId
     }
 
     private val accountManager: AccountManager = mockk(relaxed = true) {
@@ -148,12 +150,13 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
             // Then
             val parameters = SaveDraft.SaveDraftParameters(
-                message,
-                emptyList(),
-                "parentId823",
-                Constants.MessageActionType.FORWARD,
-                "previousSenderAddressId",
-                SaveDraft.SaveDraftTrigger.UserRequested
+                userId = userId,
+                message = message,
+                newAttachmentIds = emptyList(),
+                parentId = "parentId823",
+                actionType = Constants.MessageActionType.FORWARD,
+                previousSenderAddressId = "previousSenderAddressId",
+                trigger = SaveDraft.SaveDraftTrigger.UserRequested
             )
             coVerify { saveDraft(parameters) }
         }
@@ -175,12 +178,13 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
             // Then
             val parameters = SaveDraft.SaveDraftParameters(
-                message,
-                emptyList(),
-                "parentId823",
-                Constants.MessageActionType.FORWARD,
-                "previousSenderAddressId",
-                SaveDraft.SaveDraftTrigger.AutoSave
+                userId = userId,
+                message = message,
+                newAttachmentIds = emptyList(),
+                parentId = "parentId823",
+                actionType = Constants.MessageActionType.FORWARD,
+                previousSenderAddressId = "previousSenderAddressId",
+                trigger = SaveDraft.SaveDraftTrigger.AutoSave
             )
             coVerify { saveDraft(parameters) }
         }
@@ -242,12 +246,13 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
             // Then
             val parameters = SaveDraft.SaveDraftParameters(
-                message,
-                emptyList(),
-                "parentId823",
-                Constants.MessageActionType.FORWARD,
-                "previousSenderAddressId",
-                SaveDraft.SaveDraftTrigger.UserRequested
+                userId = userId,
+                message = message,
+                newAttachmentIds = emptyList(),
+                parentId = "parentId823",
+                actionType = Constants.MessageActionType.FORWARD,
+                previousSenderAddressId = "previousSenderAddressId",
+                trigger = SaveDraft.SaveDraftTrigger.UserRequested
             )
             coVerify { saveDraft(parameters) }
         }

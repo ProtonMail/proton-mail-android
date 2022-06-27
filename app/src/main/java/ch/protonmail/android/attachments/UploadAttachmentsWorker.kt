@@ -34,12 +34,12 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.segments.TEN_SECONDS
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.di.CurrentUserMailSettings
 import ch.protonmail.android.pendingaction.data.model.PendingUpload
 import dagger.assisted.Assisted
@@ -70,10 +70,10 @@ class UploadAttachmentsWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val dispatchers: DispatcherProvider,
     private val attachmentsRepository: AttachmentsRepository,
-    private val pendingActionDao: PendingActionDao,
+    private val databaseProvider: DatabaseProvider,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val addressCryptoFactory: AddressCrypto.Factory,
-    @CurrentUserId private val userId: UserId,
+    private val userManager: UserManager,
     @CurrentUserMailSettings private val mailSettings: MailSettings
 ) : CoroutineWorker(context, params) {
 
@@ -85,9 +85,19 @@ class UploadAttachmentsWorker @AssistedInject constructor(
 
         messageDetailsRepository.findMessageById(messageId).first()?.let { message ->
             val addressId = requireNotNull(message.addressID)
+            val userId = userManager.currentUserId ?: return@withContext failureWithError(
+                "User logged out", messageId = messageId
+            )
             val addressCrypto = addressCryptoFactory.create(userId, AddressId(addressId))
 
-            return@withContext when (val result = upload(newAttachments, message, addressCrypto, isMessageSending)) {
+            val result = upload(
+                userId = userId,
+                attachmentIds = newAttachments,
+                message = message,
+                crypto = addressCrypto,
+                isMessageSending = isMessageSending
+            )
+            return@withContext when (result) {
                 is Result.Success -> ListenableWorker.Result.success()
                 is Result.Failure.UploadAttachment -> retryOrFail(
                     result.error,
@@ -104,6 +114,7 @@ class UploadAttachmentsWorker @AssistedInject constructor(
     }
 
     private suspend fun upload(
+        userId: UserId,
         attachmentIds: List<String>,
         message: Message,
         crypto: AddressCrypto,
@@ -113,6 +124,7 @@ class UploadAttachmentsWorker @AssistedInject constructor(
             val messageId = requireNotNull(message.messageId)
             Timber.i("UploadAttachments started for messageId $messageId - attachmentIds $attachmentIds")
 
+            val pendingActionDao = databaseProvider.providePendingActionDao(userId)
             pendingActionDao.insertPendingForUpload(PendingUpload(messageId))
 
             performAttachmentsUpload(attachmentIds, message, crypto, messageId)?.let { failure ->
@@ -174,6 +186,8 @@ class UploadAttachmentsWorker @AssistedInject constructor(
                 }
                 is AttachmentsRepository.Result.Failure -> {
                     Timber.e("UploadAttachment $attachmentId to API for messageId $messageId FAILED.")
+                    val userId = userManager.currentUserId ?: return Result.Failure.UploadAttachment("User logged out")
+                    val pendingActionDao = databaseProvider.providePendingActionDao(userId)
                     pendingActionDao.deletePendingUploadByMessageId(messageId)
                     return Result.Failure.UploadAttachment(result.error)
                 }
@@ -223,6 +237,9 @@ class UploadAttachmentsWorker @AssistedInject constructor(
         val errorData = workDataOf(
             KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to error,
         )
+        val userId = userManager.currentUserId ?: return ListenableWorker.Result.failure(errorData)
+        val pendingActionDao = databaseProvider.providePendingActionDao(userId)
+
         messageId?.let { pendingActionDao.deletePendingUploadByMessageId(it) }
         return ListenableWorker.Result.failure(errorData)
     }

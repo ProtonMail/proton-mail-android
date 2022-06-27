@@ -20,13 +20,13 @@
 package ch.protonmail.android.compose.send
 
 enum class SendMessageWorkerError {
-    MessageNotFound,
-    DraftCreationFailed,
-    FetchSendPreferencesFailed,
-    SavedDraftMessageNotFound,
-    FailureBuildingApiRequest,
-    ErrorPerformingApiRequest,
     ApiRequestReturnedBadBodyCode,
+    DraftCreationFailed,
+    ErrorPerformingApiRequest,
+    FailureBuildingApiRequest,
+    FetchSendPreferencesFailed,
     MessageAlreadySent,
+    MessageNotFound,
+    SavedDraftMessageNotFound,
     UploadAttachmentsFailed
 }
