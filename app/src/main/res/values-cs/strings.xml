@@ -126,7 +126,7 @@
     <string name="app_theme_title">Použit motiv</string>
     <string name="app_theme_light">Světlý</string>
     <string name="app_theme_dark">Tmavý</string>
-    <string name="app_theme_system">Podle systému</string>
+    <string name="app_theme_system">Výchozí</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Vybrat hlavní složku (volitelné)</string>

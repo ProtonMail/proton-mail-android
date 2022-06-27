@@ -201,7 +201,7 @@
     <string name="archive_option">Αρχειοθετημένα</string>
     <string name="trash_option">Διαγραμμένα</string>
     <string name="spam_option">Ενοχλητικά</string>
-    <string name="allmail_option">Όλα τα Μηνύματα</string>
+    <string name="allmail_option">Όλα τα μηνύματα</string>
     <string name="inbox">Εισερχόμενα</string>
     <string name="starred">Με αστέρι</string>
     <string name="drafts">Πρόχειρα</string>
@@ -209,7 +209,7 @@
     <string name="archive">Αρχειοθετημένα</string>
     <string name="trash">Διαγραμμένα</string>
     <string name="spam">Ενοχλητικά</string>
-    <string name="all_mail">Όλα τα Μηνύματα</string>
+    <string name="all_mail">Όλα τα μηνύματα</string>
     <string name="contacts">Επαφές</string>
     <string name="search_contacts">Αναζήτηση επαφών</string>
     <string name="fetching_contacts">Ανάκτηση επαφών Proton Mail...</string>
