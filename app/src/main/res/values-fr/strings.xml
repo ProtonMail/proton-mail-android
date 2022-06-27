@@ -208,7 +208,7 @@
     <string name="sent">Envoyés</string>
     <string name="archive">Archives</string>
     <string name="trash">Corbeille</string>
-    <string name="spam">Spam</string>
+    <string name="spam">Indésirables/spam</string>
     <string name="all_mail">Tous les messages</string>
     <string name="contacts">Contacts</string>
     <string name="search_contacts">Rechercher des contacts</string>
@@ -302,18 +302,18 @@
     <string name="eo_password_subtitle">Définir un mot de passe pour chiffrer ce message à destination de personnes qui n\'utilisent pas Proton Mail</string>
     <string name="eo_password_more_info">En savoir plus</string>
     <string name="no_attachments">Aucune pièce jointe</string>
-    <string name="display_name_banned_chars">Nom d\'affichage invalide. \'&gt;\' et \'&lt;\' ne sont pas autorisés</string>
+    <string name="display_name_banned_chars">Nom d\'affichage non valide. \'&gt;\' et \'&lt;\' ne sont pas autorisés</string>
     <string name="cont">Continuer</string>
     <string name="reply_prefix_on">Le</string>
     <string name="label_name">Nom du Label</string>
     <string name="label_created">Label créé</string>
-    <string name="label_invalid">Label non ajouté à cause d\'un nom invalide.</string>
+    <string name="label_invalid">Label non ajouté en raison d\'un nom qui n\'est pas valide.</string>
     <string name="undo">Annuler</string>
     <string name="label_apply">Appliquer</string>
     <string name="label_add">Ajouter</string>
     <string name="no_browser_found">Veuillez installer un navigateur afin de terminer cette action</string>
     <string name="no_application_found">Aucune application n’a été trouvée pour gérer cette action</string>
-    <string name="no_application_found_or_link_invalid">Aucune application n’a été trouvée pour gérer cette action ou URL invalide</string>
+    <string name="no_application_found_or_link_invalid">Aucune application n’a été trouvée pour gérer cette action ou URL non valide</string>
     <string name="label_deleted">Label supprimé</string>
     <string name="label_deleted_error">Erreur lors de la suppression du label</string>
     <string name="message_deleted_error">Erreur lors de la suppression de certains messages. Certains des messages sélectionnés sont en cours d\'envoi ?!</string>
@@ -344,7 +344,7 @@
     <string name="delete_label_confirmation_title">Supprimer les labels sélectionnés ?</string>
     <string name="delete_folder_confirmation_title">Supprimer les dossiers sélectionnés ?</string>
     <string name="delete_label_confirmation_message">Les e-mails contenus ici seront trouvés dans <b>Tous les messages</b></string>
-    <string name="pin_invalid">Code PIN invalide, entrez les 4 chiffres corrects</string>
+    <string name="pin_invalid">Code PIN non valide, entrez les 4 chiffres corrects</string>
     <string name="pin_not_match">Le code PIN ne correspond pas</string>
     <string name="new_pin_saved">Nouveau code PIN enregistré</string>
     <string name="new_emails">%d nouveaux messages</string>
@@ -467,7 +467,7 @@
     <string name="folder_name">Nom du dossier</string>
     <string name="available_folders">Dossiers disponibles</string>
     <string name="folder_created">Dossier créé</string>
-    <string name="folder_invalid">Le dossier n\'a pas été créé en raison d\'un nom invalide.</string>
+    <string name="folder_invalid">Dossier non créé en raison d\'un nom qui n\'est pas valide.</string>
     <string name="folder_deleted">Dossier supprimé</string>
     <string name="folder_deleted_error">Erreur lors de la suppression du dossier</string>
     <string name="empty_emails">Aucun message</string>
@@ -481,7 +481,7 @@
     <string name="saving">Enregistrement en cours...</string>
     <string name="update_folder">Mettre à jour le dossier</string>
     <string name="spam_score_100">Cet e-mail semble provenir d\'une adresse Proton Mail, mais il vient de l\'extérieur de notre système et à échoué aux tests d\'authentification. Il a peut-être été falsifié ou transféré incorrectement.</string>
-    <string name="spam_score_101">Cet e-mail a échoué aux tests d\'authentification de son domaine. Il a peut-être été falsifié ou transféré incorrectement !</string>
+    <string name="spam_score_101">Cet e-mail a échoué aux tests d\'authentification de son domaine. Il a peut-être été falsifié ou transféré incorrectement.</string>
     <string name="spam_score_102">Ce message peut être une tentative d’hameçonnage. Veuillez vérifier l’expéditeur et le contenu afin de vous assurer qu’ils sont légitimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">EN SAVOIR PLUS</a></string>
     <string name="print_from_template">De : %s</string>
     <string name="print_to_template">À : %s; </string>
@@ -575,7 +575,7 @@
     <string name="phishing_dialog_message">Signaler un message comme une tentative d\'hameçonnage nous enverra le
 		message afin que nous puissions l\'analyser et améliorer nos filtres. Cela signifie que nous serons capable
 		d\'en voir le contenu dans son intégralité.</string>
-    <string name="phishing_report_send_message_moved_to_spam">Rapport envoyé. Message déplacé vers les spams.</string>
+    <string name="phishing_report_send_message_moved_to_spam">Rapport envoyé. Message déplacé vers les indésirables/spam.</string>
     <string name="cannot_send_report_send">Impossible d\'envoyer le rapport</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
@@ -748,7 +748,7 @@
     <string name="swipe_action_trash_short">Déplacer vers la corbeille</string>
     <string name="swipe_action_star">Message favori mis à jour</string>
     <string name="swipe_action_star_short">Mettre à jour le favori</string>
-    <string name="swipe_action_spam">Message marqué comme spam</string>
+    <string name="swipe_action_spam">Message marqué comme indésirable/spam</string>
     <string name="swipe_action_spam_short">Indésirable/spam</string>
     <string name="swipe_action_archive">Message archivé</string>
     <string name="swipe_action_archive_short">Archiver</string>
@@ -810,7 +810,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Image non trouvée</string>
-    <string name="error_image_bad_url">URL d\'image invalide</string>
+    <string name="error_image_bad_url">URL d\'image non valide</string>
     <string name="error_saving_try_again">Erreur lors de l\'enregistrement du message. Veuillez réessayer.</string>
     <!-- endregion -->
     <string name="allowed">Autorisé</string>
@@ -821,7 +821,7 @@
     <string name="swipe_gestures_changed_message">Après la dernière mise à jour, les gestes de balayage ont été changés. Si vous le souhaitez, vous pouvez les réinitialiser dans les paramètres.</string>
     <string name="go_to_settings">Accéder aux paramètres</string>
     <!-- endregion -->
-    <string name="invalid_firebase_api_key_message">Clé API pour Firebase invalide. Les notifications push ne fonctionneront pas.</string>
+    <string name="invalid_firebase_api_key_message">Clé API pour Firebase non valide. Les notifications push ne fonctionneront pas.</string>
     <string name="failed_saving_draft_online">Échec de l\'enregistrement du brouillon en ligne pour le message : \"%s\"</string>
     <string name="failed_uploading_attachment_online">Erreur de pièce jointe pour le message : « %s »</string>
     <string name="cannot_open_message_while_being_sent">Impossible d\'ouvrir ce message lors de son envoi</string>

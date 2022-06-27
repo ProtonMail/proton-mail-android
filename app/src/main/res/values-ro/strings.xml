@@ -76,7 +76,7 @@
     <!-- region Composer -->
     <string name="composer_bcc">CA:</string>
     <string name="composer_cc">Ci:</string>
-    <string name="composer_compose_email">Compune e-mail</string>
+    <string name="composer_compose_email">Compunere e-mail</string>
     <string name="composer_from">De la:</string>
     <string name="composer_subject">Subiect:</string>
     <string name="composer_to">Către:</string>
