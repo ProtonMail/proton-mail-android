@@ -115,8 +115,10 @@ internal sealed class DrawerItemUiModel {
 
                 INBOX(MessageLocationType.INBOX.messageLocationTypeValue, DrawerOptionType.INBOX),
                 STARRED(MessageLocationType.STARRED.messageLocationTypeValue, DrawerOptionType.STARRED),
-                DRAFTS(MessageLocationType.ALL_DRAFT.messageLocationTypeValue, DrawerOptionType.DRAFTS),
-                SENT(MessageLocationType.ALL_SENT.messageLocationTypeValue, DrawerOptionType.SENT),
+                DRAFTS(MessageLocationType.DRAFT.messageLocationTypeValue, DrawerOptionType.DRAFTS),
+                ALL_DRAFTS(MessageLocationType.ALL_DRAFT.messageLocationTypeValue, DrawerOptionType.ALL_DRAFTS),
+                SENT(MessageLocationType.SENT.messageLocationTypeValue, DrawerOptionType.SENT),
+                ALL_SENT(MessageLocationType.ALL_SENT.messageLocationTypeValue, DrawerOptionType.ALL_SENT),
                 ARCHIVE(MessageLocationType.ARCHIVE.messageLocationTypeValue, DrawerOptionType.ARCHIVE),
                 TRASH(MessageLocationType.TRASH.messageLocationTypeValue, DrawerOptionType.TRASH),
                 SPAM(MessageLocationType.SPAM.messageLocationTypeValue, DrawerOptionType.SPAM),

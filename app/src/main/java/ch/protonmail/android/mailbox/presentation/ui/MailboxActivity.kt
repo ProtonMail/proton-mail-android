@@ -539,7 +539,6 @@ internal class MailboxActivity :
         mJobManager.start()
         pendingActionDao = PendingActionDatabase.getInstance(this, userId).getDao()
 
-        setUpDrawer()
         checkRegistration()
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 

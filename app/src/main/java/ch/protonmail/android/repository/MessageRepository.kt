@@ -25,8 +25,6 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.core.Constants.MAX_MESSAGE_ID_WORKER_ARGUMENTS
 import ch.protonmail.android.core.Constants.MessageLocationType
-import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
-import ch.protonmail.android.core.Constants.MessageLocationType.ALL_SENT
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.NoProtonStoreMapper
@@ -360,9 +358,6 @@ class MessageRepository @Inject constructor(
 
         return if (params.keyword != null) {
             dao.searchMessages(params.keyword)
-        } else if (params.labelId!!.id in arrayOf(ALL_SENT.asLabelIdString(), ALL_DRAFT.asLabelIdString())) {
-            requireNotNull(params.labelId) { "Label Id is required" }
-            dao.observeNonTrashedMessages(params.labelId.id, unread = unreadFilter)
         } else {
             requireNotNull(params.labelId) { "Label Id is required" }
             dao.observeMessages(params.labelId.id, unread = unreadFilter)

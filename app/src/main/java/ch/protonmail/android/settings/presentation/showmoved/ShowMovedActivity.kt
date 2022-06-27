@@ -76,10 +76,10 @@ class ShowMovedActivity : BaseActivity() {
 
     private fun handleState(state: ShowMovedViewModel.State) {
         when (state) {
-            ShowMovedViewModel.State.Idle -> { /* noop */
+            is ShowMovedViewModel.State.Idle -> { /* noop */
             }
-            ShowMovedViewModel.State.Fetched -> {
-                actionSwitch.isChecked = when (showMovedViewModel.mailSettings.showMoved?.enum) {
+            is ShowMovedViewModel.State.Fetched -> {
+                actionSwitch.isChecked = when (state.showMoved) {
                     ShowMoved.None -> false
                     ShowMoved.Both -> true
                     else -> true
@@ -89,13 +89,12 @@ class ShowMovedActivity : BaseActivity() {
                         true -> ShowMoved.Both
                         false -> ShowMoved.None
                     }
-                    showMovedViewModel.setValue(valueToSave)
-                    showMovedViewModel.onToggle()
+                    showMovedViewModel.onToggle(valueToSave)
                 }
             }
-            ShowMovedViewModel.State.Saving -> showToast("Saving")
-            ShowMovedViewModel.State.Success -> showToast("Saved")
-            ShowMovedViewModel.State.GenericError -> {
+            is ShowMovedViewModel.State.Saving -> showToast("Saving")
+            is ShowMovedViewModel.State.Success -> showToast("Saved")
+            is ShowMovedViewModel.State.GenericError -> {
                 showToast("Cannot save")
                 showMovedViewModel.setSettingCurrentValue()
             }

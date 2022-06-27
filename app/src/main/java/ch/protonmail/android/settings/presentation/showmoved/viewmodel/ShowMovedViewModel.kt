@@ -27,13 +27,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.dropWhile
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
-import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.mailsettings.domain.entity.ShowMoved
 import javax.inject.Inject
 
@@ -47,41 +46,25 @@ class ShowMovedViewModel @Inject constructor(
     private val mutableState = MutableStateFlow<State>(State.Idle)
     val state: StateFlow<State> = mutableState.asStateFlow()
 
-    lateinit var mailSettings: MailSettings
-
-    private var valueToSave: ShowMoved? = null
-
     fun setSettingCurrentValue() {
         viewModelScope.launch {
-            getMailSettings()
-                .dropWhile { it !is GetMailSettings.MailSettingsState.Success }
+            val userId = accountManager.getPrimaryUserId().first()
+                ?: return@launch
+            getMailSettings(userId)
+                .filterIsInstance<GetMailSettings.Result.Success>()
                 .onEach { result ->
-                    when (result) {
-                        is GetMailSettings.MailSettingsState.Success -> {
-                            result.mailSettings?.let {
-                                mailSettings = it
-                                mutableState.emit(State.Fetched)
-                            }
-                        }
+                    result.mailSettings.let { mailSettings ->
+                        mutableState.emit(State.Fetched(mailSettings.showMoved?.enum))
                     }
                 }.launchIn(viewModelScope)
         }
     }
 
-    fun setValue(value: ShowMoved) {
-        valueToSave = value
-    }
-
-    fun onToggle() {
-        if (valueToSave == null) {
-            mutableState.tryEmit(State.Success)
-            return
-        }
-
+    fun onToggle(value: ShowMoved) {
         viewModelScope.launch {
             mutableState.emit(State.Saving)
             accountManager.getPrimaryUserId().first()?.let { userId ->
-                val newState = when (updateShowMoved(userId, valueToSave)) {
+                val newState = when (updateShowMoved(userId, value)) {
                     UpdateShowMoved.Result.Success -> State.Success
                     UpdateShowMoved.Result.Error -> State.GenericError
                 }
@@ -97,7 +80,7 @@ class ShowMovedViewModel @Inject constructor(
         /**
          * Setting is successfully fetched
          */
-        object Fetched : State()
+        data class Fetched(public val showMoved: ShowMoved?) : State()
 
         /**
          * Setting is being saved online

@@ -60,8 +60,7 @@ import ch.protonmail.android.notifications.presentation.utils.CHANNEL_ID_EMAIL
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.settings.pin.PinSettingsActivity
-import ch.protonmail.android.settings.presentation.model.SettingsEnum
-import ch.protonmail.android.settings.presentation.model.SettingsEnum.*
+import ch.protonmail.android.settings.presentation.SettingsEnum.*
 import ch.protonmail.android.settings.presentation.showmoved.ShowMovedActivity
 import ch.protonmail.android.settings.presentation.ui.ThemeChooserActivity
 import ch.protonmail.android.settings.swipe.SwipeSettingFragment

@@ -33,7 +33,6 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.security.domain.usecase.GetIsPreventTakingScreenshots
 import ch.protonmail.android.security.domain.usecase.SavePreventTakingScreenshots
 import ch.protonmail.android.settings.data.AccountSettingsRepository
-import ch.protonmail.android.settings.presentation.model.SettingsEnum
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.utils.extensions.showToast
 import com.google.gson.Gson

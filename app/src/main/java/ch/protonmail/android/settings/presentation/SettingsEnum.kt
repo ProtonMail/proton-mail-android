@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.settings.presentation.model
+package ch.protonmail.android.settings.presentation
 
 import android.content.Context
 import ch.protonmail.android.R

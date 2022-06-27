@@ -27,7 +27,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.UNLIMITED_ATTACHMENT_STORAGE
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.settings.domain.usecase.GetMailSettings
-import ch.protonmail.android.settings.presentation.model.SettingsEnum
 import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterIsInstance

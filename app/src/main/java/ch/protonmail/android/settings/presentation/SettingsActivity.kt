@@ -24,7 +24,6 @@ import android.text.TextUtils
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.events.FetchLabelsEvent
-import ch.protonmail.android.settings.presentation.model.SettingsEnum
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint

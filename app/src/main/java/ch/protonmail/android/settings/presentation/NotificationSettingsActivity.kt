@@ -34,6 +34,7 @@ import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.activities.settings.RingtoneSettingsUiModel
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.settings.swipe.EXTRA_CURRENT_ACTION
 import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_notification_settings.*
@@ -82,7 +83,7 @@ internal class NotificationSettingsActivity : BaseActivity(), ViewStateActivity 
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        currentAction = intent.getIntExtra(ch.protonmail.android.settings.swipe.EXTRA_CURRENT_ACTION, 0)
+        currentAction = intent.getIntExtra(EXTRA_CURRENT_ACTION, 0)
         createOptions()
 
         ringtone_settings.setOnClickListener { onRingtoneChooserClicked() }
