@@ -32,7 +32,6 @@ import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
-import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -49,20 +48,22 @@ const val PREF_LATEST_EVENT = "latest_event"
 class EventManager @Inject constructor(
     private val context: Context,
     protonMailApiManager: ProtonMailApiManager,
-    private val eventHandlerFactory: EventHandler.AssistedFactory,
-    private val dispatchers: DispatcherProvider
+    private val eventHandlerFactory: EventHandler.AssistedFactory
 ) {
 
     private var service: EventService = protonMailApiManager.getSecuredServices().event
     private val sharedPrefs = mutableMapOf<UserId, SharedPreferences>()
     private val eventHandlers = mutableMapOf<UserId, EventHandler>()
 
+    @OptIn(ObsoleteCoroutinesApi::class)
+    private val hasMoreEventContext = newSingleThreadContext("EventHandler.hasMoreEvent")
+
+    @OptIn(ObsoleteCoroutinesApi::class)
+    private val consumeEventsContext = newSingleThreadContext("EventHandler.consumeEventsFor")
+
     fun reconfigure(service: EventService) {
         this.service = service
     }
-
-    @OptIn(ObsoleteCoroutinesApi::class)
-    private val hasMoreEventContext = newSingleThreadContext("EventHandler.hasMoreEvent")
 
     /**
      * Handle next event for given [EventHandler]
@@ -97,7 +98,7 @@ class EventManager @Inject constructor(
         }
     }
 
-    suspend fun consumeEventsFor(loggedInUsers: Collection<UserId>) = withContext(dispatchers.Io) {
+    suspend fun consumeEventsFor(loggedInUsers: Collection<UserId>) = withContext(consumeEventsContext) {
         for (user in loggedInUsers) {
             eventHandlers.putIfAbsentApi23(user, eventHandlerFactory.create(user))
         }
