@@ -44,6 +44,7 @@ import me.proton.core.user.data.entity.AddressKeyEntity
 import me.proton.core.user.data.entity.UserEntity
 import me.proton.core.user.data.entity.UserKeyEntity
 import me.proton.core.usersettings.data.db.OrganizationDatabase
+import me.proton.core.usersettings.data.db.UserSettingsDatabase
 import me.proton.core.usersettings.data.entity.UserSettingsEntity
 import timber.log.Timber
 
@@ -139,6 +140,12 @@ object AppDatabaseMigrations {
     val MIGRATION_5_6 = object : Migration(5, 6) {
         override fun migrate(database: SupportSQLiteDatabase) {
             ChallengeDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_6_7 = object : Migration(6, 7) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            UserSettingsDatabase.MIGRATION_1.migrate(database)
         }
     }
 }
