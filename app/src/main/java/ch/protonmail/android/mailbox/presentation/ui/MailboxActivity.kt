@@ -36,7 +36,6 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
@@ -1409,21 +1408,6 @@ internal class MailboxActivity :
             ) {
                 syncUUID = UUID.randomUUID().toString()
                 checkUserAndFetchNews()
-                if ((mailboxRecyclerView.layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition() > 1) {
-                    handler.postDelayed(750) {
-                        val newMessageSnack =
-                            Snackbar.make(
-                                findViewById(R.id.drawer_layout),
-                                getString(R.string.new_message_arrived),
-                                Snackbar.LENGTH_LONG
-                            ).apply { anchorView = mailboxActionsView }
-                        val view = newMessageSnack.view
-                        val tv =
-                            view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-                        tv.setTextColor(context.getColor(R.color.text_inverted))
-                        newMessageSnack.show()
-                    }
-                }
                 mailboxAdapter.notifyDataSetChanged()
             }
         }

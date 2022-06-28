@@ -357,7 +357,6 @@
     <string name="attaching_photo_failed">Attaching Photo Failed</string>
 
     <string name="empty_message">Empty message</string>
-    <string name="new_message_arrived">New message!</string>
     <string name="display_images">Show remote content</string>
     <string name="retry">Retry</string>
     <string name="saving_failed_no_conn">Saving failed, no connection</string>
