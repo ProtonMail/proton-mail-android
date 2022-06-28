@@ -77,7 +77,7 @@ class MessageLocationResolver @Inject constructor(
         }
 
         // special case handling of starred type if all the previous checks have failed
-        if (shortLabels.last().toInt() == Constants.MessageLocationType.STARRED.messageLocationTypeValue) {
+        if (shortLabels.contains(Constants.MessageLocationType.STARRED.asLabelIdString())) {
             return Constants.MessageLocationType.STARRED
         }
 
