@@ -19,11 +19,11 @@
 
 package ch.protonmail.android
 
-import ch.protonmail.android.di.AlternativeApiPins
 import ch.protonmail.android.di.BaseUrl
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.core.humanverification.presentation.HumanVerificationApiHost
+import me.proton.core.network.data.di.AlternativeApiPins
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import javax.inject.Inject

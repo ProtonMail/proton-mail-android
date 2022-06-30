@@ -57,6 +57,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.util.kotlin.DispatcherProvider
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -79,7 +80,10 @@ internal class ViewModelModule {
     ) = NotificationSettingsViewModel.Factory(application, userManager)
 
     @Provides
-    internal fun provideAccountManager(application: ProtonMailApplication) = AccountManager.getInstance(application)
+    internal fun provideAccountManager(
+        application: ProtonMailApplication,
+        dispatcherProvider: DispatcherProvider
+    ) = AccountManager.getInstance(application, dispatcherProvider)
 
     @Provides
     fun providePinFragmentViewModelFactory(

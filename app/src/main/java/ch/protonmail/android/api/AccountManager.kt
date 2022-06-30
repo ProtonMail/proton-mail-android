@@ -146,10 +146,10 @@ class AccountManager(
     companion object {
 
         @Deprecated("Inject the constructor directly", ReplaceWith("accountManager"))
-        fun getInstance(context: Context): AccountManager =
+        fun getInstance(context: Context, dispatcherProvider: DispatcherProvider): AccountManager =
             AccountManager(
                 PreferenceManager.getDefaultSharedPreferences(context),
-                ApplicationModule.dispatcherProvider()
+                dispatcherProvider
             )
     }
 }

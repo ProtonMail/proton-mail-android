@@ -321,6 +321,7 @@ dependencies {
         `Proton-report`,
         `Proton-report-dagger`,
         `Proton-feature-flag`,
+        `Proton-util-android-dagger`,
 
         // Modules
         project(Module.domain),

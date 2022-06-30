@@ -65,11 +65,11 @@ import javax.inject.Inject
 @Deprecated("Use new ContactDetailsViewModel")
 @HiltViewModel
 open class ContactDetailsViewModelOld @Inject constructor(
-    dispatchers: DispatcherProvider,
+    private val dispatchers: DispatcherProvider,
     private val downloadFile: DownloadFile,
     private val contactDetailsRepository: ContactDetailsRepository,
     protected val userManager: UserManager
-) : BaseViewModel(dispatchers) {
+) : BaseViewModel() {
 
     protected lateinit var allContactGroups: List<ContactLabelUiModel>
     protected lateinit var allContactEmails: List<ContactEmail>
@@ -170,7 +170,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
     }
 
     fun getBitmapFromURL(src: String) {
-        viewModelScope.launch(Comp) {
+        viewModelScope.launch(dispatchers.Comp) {
 
             runCatching {
                 if (!PatternsCompat.WEB_URL.matcher(src).matches()) throw BadImageUrlException(src)

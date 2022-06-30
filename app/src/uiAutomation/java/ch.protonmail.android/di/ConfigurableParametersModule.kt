@@ -26,6 +26,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.humanverification.presentation.HumanVerificationApiHost
+import me.proton.core.network.data.di.AlternativeApiPins
+import me.proton.core.network.data.di.CertificatePins
 import me.proton.core.network.data.di.Constants as CoreConstants
 
 @Module
@@ -49,7 +51,7 @@ object ConfigurableParametersModule {
     }
 
     @Provides
-    @DefaultApiPins
+    @CertificatePins
     fun defaultApiPins() = if (BuildConfig.TEST_ON_LIVE) {
         CoreConstants.DEFAULT_SPKI_PINS
     } else {

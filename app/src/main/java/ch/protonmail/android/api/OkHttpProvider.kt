@@ -19,10 +19,10 @@
 package ch.protonmail.android.api
 
 import ch.protonmail.android.api.interceptors.RetryRequestInterceptor
-import ch.protonmail.android.di.AlternativeApiPins
 import ch.protonmail.android.di.BaseUrl
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
 import me.proton.core.network.data.ProtonCookieStore
+import me.proton.core.network.data.di.AlternativeApiPins
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
