@@ -296,7 +296,6 @@ dependencies {
         `Proton-domain`,
         `Proton-presentation`,
         `Proton-network`,
-        `Proton-network-dagger`,
         `Proton-kotlin-util`,
         `Proton-shared-preferences`,
         `Proton-work-manager`,
@@ -319,7 +318,6 @@ dependencies {
         `Proton-payment`,
         `Proton-plan`,
         `Proton-report`,
-        `Proton-report-dagger`,
         `Proton-feature-flag`,
         `Proton-util-android-dagger`,
 
