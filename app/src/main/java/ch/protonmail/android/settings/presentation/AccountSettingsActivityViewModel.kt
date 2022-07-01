@@ -21,7 +21,11 @@ package ch.protonmail.android.settings.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import arrow.core.Either
+import arrow.core.Right
+import arrow.core.left
 import ch.protonmail.android.R
+import ch.protonmail.android.feature.NotLoggedIn
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.domain.UpdateViewMode
 import ch.protonmail.android.settings.domain.usecase.ObserveUserSettings
@@ -32,6 +36,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
@@ -48,7 +53,14 @@ class AccountSettingsActivityViewModel @Inject constructor(
     private val observeUserSettings: ObserveUserSettings
 ) : ViewModel() {
 
-    suspend fun getMailSettings() = getMailSettings.invoke()
+    suspend fun getMailSettings(): Flow<Either<NotLoggedIn, GetMailSettings.Result>> =
+        accountManager.getPrimaryUserId().flatMapLatest { userId ->
+            if (userId == null) {
+                return@flatMapLatest flowOf(NotLoggedIn.left())
+            }
+
+            getMailSettings(userId).map(::Right)
+        }
 
     fun changeViewMode(viewMode: ViewMode) {
         viewModelScope.launch {

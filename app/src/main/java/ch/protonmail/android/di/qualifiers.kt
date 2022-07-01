@@ -63,11 +63,6 @@ annotation class CurrentUserId
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
-annotation class CurrentUserMailSettings
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
 @Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.FIELD])
 annotation class DefaultSharedPreferences
 

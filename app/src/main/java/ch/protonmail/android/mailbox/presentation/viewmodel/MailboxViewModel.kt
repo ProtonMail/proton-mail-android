@@ -26,6 +26,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import arrow.core.Either
+import arrow.core.Right
+import arrow.core.left
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.NetworkConfigurator
@@ -40,6 +43,7 @@ import ch.protonmail.android.domain.loadMoreCombine
 import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
+import ch.protonmail.android.feature.NotLoggedIn
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -738,7 +742,11 @@ internal class MailboxViewModel @Inject constructor(
         }
     }
 
-    suspend fun getMailSettingsState() = getMailSettings()
+    suspend fun getMailSettingsState(): Flow<Either<NotLoggedIn, GetMailSettings.Result>> {
+        val userId = userManager.currentUserId
+            ?: return flowOf(NotLoggedIn.left())
+        return getMailSettings(userId).map(::Right)
+    }
 
     data class GetMailboxItemsParameters(
         val userId: UserId,

@@ -19,18 +19,13 @@
 
 package ch.protonmail.android.settings.domain
 
-import io.mockk.MockKAnnotations
+import ch.protonmail.android.testdata.UserIdTestData.userId
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.account.domain.entity.Account
-import me.proton.core.account.domain.entity.AccountDetails
-import me.proton.core.account.domain.entity.AccountState
-import me.proton.core.accountmanager.domain.AccountManager
-import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
@@ -48,53 +43,27 @@ import me.proton.core.mailsettings.domain.entity.SwipeAction
 import me.proton.core.mailsettings.domain.entity.ViewLayout
 import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
-import me.proton.core.test.kotlin.TestDispatcherProvider
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class GetMailSettingsTest {
 
-    private var accountManager: AccountManager = mockk(relaxed = true)
-
     private var repository: MailSettingsRepository = mockk()
-
-    private lateinit var getMailSettings: GetMailSettings
-
-    private val userId = UserId("userId")
-    private val account = Account(
-        userId,
-        "username",
-        "email",
-        AccountState.Ready,
-        null,
-        null,
-        AccountDetails(null, null)
-    )
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        getMailSettings = GetMailSettings(accountManager, repository, TestDispatcherProvider)
-    }
+    private val getMailSettings = GetMailSettings(repository)
 
     @Test
     fun verifyMailSettingsAreFetched() = runBlockingTest {
 
         // given
-        coEvery { accountManager.getPrimaryAccount() } returns flowOf(account)
-        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        coEvery { accountManager.getAccount(userId) } returns flowOf(account)
-
         coEvery { repository.getMailSettingsFlow(userId) } returns flowOf(
             DataResult.Processing(ResponseSource.Remote), DataResult.Success(ResponseSource.Remote, mailSettings())
         )
 
         // when
-        val result = getMailSettings().take(2).toList()
+        val result = getMailSettings(userId).take(2).toList()
 
         // then
-        assertEquals(GetMailSettings.MailSettingsState.Success(mailSettings()), result[1])
+        assertEquals(GetMailSettings.Result.Success(mailSettings()), result[1])
     }
 
     private fun mailSettings() = MailSettings(

@@ -121,12 +121,6 @@ object ApplicationModule {
         userManager.requireCurrentUserId()
 
     @Provides
-    @CurrentUserMailSettings
-    fun currentUserMailSettings(
-        userManager: UserManager
-    ) = userManager.requireCurrentUserMailSettingsBlocking()
-
-    @Provides
     @Singleton
     @DefaultSharedPreferences
     fun defaultSharedPreferences(app: ProtonMailApplication): SharedPreferences =

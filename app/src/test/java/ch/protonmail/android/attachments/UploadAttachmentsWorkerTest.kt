@@ -31,13 +31,13 @@ import androidx.work.workDataOf
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.model.PendingUpload
+import ch.protonmail.android.settings.domain.GetMailSettings
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
@@ -49,6 +49,7 @@ import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
+import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.user.domain.entity.AddressId
 import org.junit.Assert.assertArrayEquals
@@ -92,6 +93,9 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
     }
 
     private val mailSettings: MailSettings = mockk(relaxed = true)
+    private val getMailSettings: GetMailSettings = mockk {
+        every { this@mockk(any()) } returns flowOf(GetMailSettings.Result.Success(mailSettings))
+    }
 
     private val crypto: AddressCrypto = mockk(relaxed = true)
 
@@ -104,7 +108,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
         messageDetailsRepository = messageDetailsRepository,
         addressCryptoFactory = cryptoFactory,
         userManager = userManager,
-        mailSettings = mailSettings,
+        getMailSettings = getMailSettings,
     )
 
     @Test
@@ -355,7 +359,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
             every { userManager.currentUserId } returns userId
             every { userManager.requireCurrentUserId() } returns userId
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
-            every { mailSettings.getAttachPublicKey() } returns true
+            every { mailSettings.attachPublicKey } returns true
             coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } answers {
                 AttachmentsRepository.Result.Failure("Failed to upload public key")
             }
@@ -387,7 +391,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
             every { userManager.currentUserId } returns userId
             every { userManager.requireCurrentUserId() } returns userId
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
-            every { mailSettings.getAttachPublicKey() } returns true
+            every { mailSettings.attachPublicKey } returns true
             coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } answers {
                 AttachmentsRepository.Result.Failure("Failed to upload public key")
             }
@@ -551,7 +555,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
             givenFullValidInput(messageId, attachments = emptyArray(), isMessageSending = true)
             every { cryptoFactory.create(userId, AddressId("senderAddress6")) } returns crypto
             coEvery { messageDetailsRepository.findMessageById(messageId) } returns flowOf(message)
-            every { mailSettings.getAttachPublicKey() } returns true
+            every { mailSettings.attachPublicKey } returns true
             coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } answers {
                 AttachmentsRepository.Result.Success("23421")
             }
@@ -750,7 +754,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
             every { userManager.currentUserId } returns userId
             every { userManager.requireCurrentUserId() } returns userId
             every { pendingActionDao.findPendingUploadByMessageIdBlocking(messageId) } returns null
-            every { mailSettings.getAttachPublicKey() } returns true
+            every { mailSettings.attachPublicKey } returns true
             coEvery {
                 messageDetailsRepository.findMessageById(
                     messageId
@@ -775,7 +779,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
             every { userManager.currentUserId } returns userId
             every { userManager.requireCurrentUserId() } returns userId
             every { pendingActionDao.findPendingUploadByMessageIdBlocking(messageId) } returns null
-            every { mailSettings.getAttachPublicKey() } returns true
+            every { mailSettings.attachPublicKey } returns true
             coEvery { messageDetailsRepository.findMessageById(messageId) } returns flowOf(message)
             every { cryptoFactory.create(userId, AddressId("addressId")) } returns crypto
             coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } answers {
