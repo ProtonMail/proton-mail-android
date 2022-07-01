@@ -50,7 +50,6 @@ import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import ch.protonmail.android.utils.BuildInfo
 import ch.protonmail.android.utils.base64.AndroidBase64Encoder
 import ch.protonmail.android.utils.base64.Base64Encoder
-import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.notifier.AndroidUserNotifier
 import ch.protonmail.android.utils.notifier.UserNotifier
@@ -106,14 +105,6 @@ object ApplicationModule {
     @BackupSharedPreferences
     fun backupSharedPreferences(context: Context): SharedPreferences =
         context.getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE)
-
-    @Provides
-    @CurrentUserCrypto
-    fun currentUserCrypto(
-        userManager: UserManager,
-        openPgp: OpenPGP,
-        @CurrentUserId userId: UserId
-    ): UserCrypto = UserCrypto(userManager, openPgp, userId)
 
     @Provides
     @CurrentUserId

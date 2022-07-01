@@ -330,7 +330,9 @@ class EditContactDetailsViewModel @Inject constructor(
                 }
                 FLOW_CONVERT_CONTACT,
                 FLOW_NEW_CONTACT -> {
-                    createContact(contactName, emails, _vCardEncrypted.write(), _vCardSigned.write())
+                    val userId = userManager.currentUserId
+                        ?: return@launch
+                    createContact(userId, contactName, emails, _vCardEncrypted.write(), _vCardSigned.write())
                         .observeForever { result: CreateContact.Result ->
                             val resultMessage = getMessageForResult(result)
                             createContactResult.postValue(resultMessage)

@@ -745,12 +745,13 @@ class ComposeMessageViewModel @Inject constructor(
 
                 sendMessage(
                     SendMessage.SendMessageParameters(
-                        messageWithExpirationTime,
-                        newAttachments,
-                        parentId,
-                        _actionId,
-                        _oldSenderAddressId,
-                        MessageSecurityOptions(
+                        userId = userId,
+                        message = messageWithExpirationTime,
+                        newAttachmentIds = newAttachments,
+                        parentId = parentId,
+                        actionType = _actionId,
+                        previousSenderAddressId = _oldSenderAddressId,
+                        securityOptions = MessageSecurityOptions(
                             messageDataResult.messagePassword,
                             messageDataResult.passwordHint,
                             messageDataResult.expiresAfterInSeconds

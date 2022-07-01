@@ -42,7 +42,6 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.di.CurrentUserCrypto
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.ContactAlreadyExistsError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.DuplicatedEmailError
@@ -53,28 +52,32 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
-internal const val KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH = "keyCreateContactInputDataEncryptedData"
-internal const val KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA = "keyCreateContactInputDataSignedData"
-internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM = "keyCreateContactWorkerResultError"
-internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID = "keyCreateContactWorkerResultServerId"
-internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON = "keyCreateContactWorkerResultEmailsSerialised"
+internal const val KEY_IN_CREATE_CONTACT_USER_ID = "createContact.data.in.userId"
+internal const val KEY_IN_CREATE_CONTACT_ENC_DATA_PATH = "keyCreateContactInputDataEncryptedData"
+internal const val KEY_IN_CREATE_CONTACT_SIGNED_DATA = "keyCreateContactInputDataSignedData"
+internal const val KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM = "keyCreateContactWorkerResultError"
+internal const val KEY_OUT_CREATE_CONTACT_SERVER_ID = "keyCreateContactWorkerResultServerId"
+internal const val KEY_OUT_CREATE_CONTACT_EMAILS_JSON = "keyCreateContactWorkerResultEmailsSerialised"
 
 @HiltWorker
 class CreateContactWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
-    @CurrentUserCrypto private val crypto: UserCrypto,
+    private val cryptoFactory: UserCrypto.AssistedFactory,
     private val fileHelper: FileHelper,
     private val dispatcherProvider: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
 
     override suspend fun doWork(): Result {
-        val request = buildCreateContactRequestBody()
+        val userId = requireInputUserId()
+
+        val request = buildCreateContactRequestBody(userId)
         val response = withContext(dispatcherProvider.Io) { apiManager.createContact(request) }
 
         return when {
@@ -115,8 +118,8 @@ class CreateContactWorker @AssistedInject constructor(
         }
 
         return workDataOf(
-            KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to apiResponse.contactId,
-            KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON to Json.encodeToString(
+            KEY_OUT_CREATE_CONTACT_SERVER_ID to apiResponse.contactId,
+            KEY_OUT_CREATE_CONTACT_EMAILS_JSON to Json.encodeToString(
                 ListSerializer(ContactEmail.serializer()),
                 contactEmails
             )
@@ -124,11 +127,13 @@ class CreateContactWorker @AssistedInject constructor(
     }
 
     private fun failureWithError(error: CreateContactWorkerErrors): Result {
-        val errorData = workDataOf(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM to error.name)
+        val errorData = workDataOf(KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM to error.name)
         return Result.failure(errorData)
     }
 
-    private fun buildCreateContactRequestBody(): CreateContact {
+    private fun buildCreateContactRequestBody(userId: UserId): CreateContact {
+        val crypto = cryptoFactory.create(userId)
+
         val encryptedDataParamPath = getInputEncryptedData()
         val signedDataParam = getInputSignedData()
 
@@ -150,20 +155,27 @@ class CreateContactWorker @AssistedInject constructor(
         return CreateContact(contactEncryptedDataList)
     }
 
-    private fun getInputSignedData() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA) ?: ""
+    private fun requireInputUserId(): UserId {
+        val userIdString = requireNotNull(inputData.getString(KEY_IN_CREATE_CONTACT_USER_ID)) {
+            "No UserId provided"
+        }
+        return UserId(userIdString)
+    }
 
-    private fun getInputEncryptedData() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH) ?: ""
+    private fun getInputSignedData() = inputData.getString(KEY_IN_CREATE_CONTACT_SIGNED_DATA) ?: ""
+
+    private fun getInputEncryptedData() = inputData.getString(KEY_IN_CREATE_CONTACT_ENC_DATA_PATH) ?: ""
 
     enum class CreateContactWorkerErrors {
-        ServerError,
         ContactAlreadyExistsError,
+        DuplicatedEmailError,
         InvalidEmailError,
-        DuplicatedEmailError
+        ServerError
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        fun enqueue(encryptedContactDataPath: String, signedContactData: String): LiveData<WorkInfo> {
+        fun enqueue(userId: UserId, encryptedContactDataPath: String, signedContactData: String): LiveData<WorkInfo> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -171,14 +183,14 @@ class CreateContactWorker @AssistedInject constructor(
                 .setConstraints(constraints)
                 .setInputData(
                     workDataOf(
-                        KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH to encryptedContactDataPath,
-                        KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA to signedContactData
+                        KEY_IN_CREATE_CONTACT_USER_ID to userId.id,
+                        KEY_IN_CREATE_CONTACT_ENC_DATA_PATH to encryptedContactDataPath,
+                        KEY_IN_CREATE_CONTACT_SIGNED_DATA to signedContactData
                     )
                 ).build()
 
             workManager.enqueue(createContactRequest)
             return workManager.getWorkInfoByIdLiveData(createContactRequest.id)
         }
-
     }
 }

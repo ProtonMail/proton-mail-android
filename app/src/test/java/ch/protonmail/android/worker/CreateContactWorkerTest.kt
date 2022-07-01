@@ -36,6 +36,7 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.testdata.UserIdTestData.userId
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
 import io.mockk.MockKAnnotations
@@ -95,12 +96,12 @@ class CreateContactWorkerTest {
         val requestSlot = slot<OneTimeWorkRequest>()
         every { workManager.enqueue(capture(requestSlot)) } answers { mockk() }
 
-        CreateContactWorker.Enqueuer(workManager).enqueue(encryptedData, signedData)
+        CreateContactWorker.Enqueuer(workManager).enqueue(userId, encryptedData, signedData)
 
         val constraints = requestSlot.captured.workSpec.constraints
         val inputData = requestSlot.captured.workSpec.input
-        val actualEncryptedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH)
-        val actualSignedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA)
+        val actualEncryptedData = inputData.getString(KEY_IN_CREATE_CONTACT_ENC_DATA_PATH)
+        val actualSignedData = inputData.getString(KEY_IN_CREATE_CONTACT_SIGNED_DATA)
         assertEquals(encryptedData, actualEncryptedData)
         assertEquals(signedData, actualSignedData)
         assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
@@ -140,7 +141,7 @@ class CreateContactWorkerTest {
 
             val error = CreateContactWorkerErrors.ServerError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
+                Data.Builder().putString(KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -174,8 +175,8 @@ class CreateContactWorkerTest {
             val contactEmailsOutputJson = readTextFileContent("contact-emails-output.json")
             val expectedResult = Result.success(
                 Data.Builder()
-                    .putString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID, contactId)
-                    .putString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON, contactEmailsOutputJson)
+                    .putString(KEY_OUT_CREATE_CONTACT_SERVER_ID, contactId)
+                    .putString(KEY_OUT_CREATE_CONTACT_EMAILS_JSON, contactEmailsOutputJson)
                     .build()
             )
 
@@ -195,7 +196,7 @@ class CreateContactWorkerTest {
 
             val error = CreateContactWorkerErrors.ContactAlreadyExistsError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
+                Data.Builder().putString(KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -213,7 +214,7 @@ class CreateContactWorkerTest {
 
             val error = CreateContactWorkerErrors.InvalidEmailError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
+                Data.Builder().putString(KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -231,7 +232,7 @@ class CreateContactWorkerTest {
 
             val error = CreateContactWorkerErrors.DuplicatedEmailError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
+                Data.Builder().putString(KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -244,11 +245,11 @@ class CreateContactWorkerTest {
     }
 
     private fun givenEncryptedContactDataParamsIsValid(encryptedContactData: String? = "encrypted-data") {
-        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH) } answers { encryptedContactData!! }
+        every { parameters.inputData.getString(KEY_IN_CREATE_CONTACT_ENC_DATA_PATH) } answers { encryptedContactData!! }
     }
 
     private fun givenSignedContactDataParamsIsValid(signedContactData: String? = "signed-data") {
-        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA) } answers { signedContactData!! }
+        every { parameters.inputData.getString(KEY_IN_CREATE_CONTACT_SIGNED_DATA) } answers { signedContactData!! }
     }
 
     private fun readTextFileContent(fileName: String): String {

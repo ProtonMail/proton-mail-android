@@ -327,7 +327,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             val messageId = requireNotNull(message.messageId)
             val fetchedMessage = messageRepository.getMessage(userId, messageId, true) ?: return@flow
             val verificationKeys = runCatching {
-                fetchVerificationKeys.invoke(message.senderEmail)
+                fetchVerificationKeys(userId, message.senderEmail)
             }.getOrNull()
             val isDecrypted = fetchedMessage.tryDecrypt(verificationKeys)
             Timber.v("message $messageId isDecrypted, isRead: ${fetchedMessage.isRead}")

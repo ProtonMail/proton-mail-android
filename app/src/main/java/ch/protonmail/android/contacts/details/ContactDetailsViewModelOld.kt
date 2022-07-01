@@ -68,7 +68,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
     dispatchers: DispatcherProvider,
     private val downloadFile: DownloadFile,
     private val contactDetailsRepository: ContactDetailsRepository,
-    private val userManager: UserManager
+    protected val userManager: UserManager
 ) : BaseViewModel(dispatchers) {
 
     protected lateinit var allContactGroups: List<ContactLabelUiModel>

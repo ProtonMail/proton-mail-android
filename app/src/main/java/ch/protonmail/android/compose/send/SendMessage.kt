@@ -23,9 +23,8 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.di.CurrentUserId
+import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
 import ch.protonmail.android.utils.ServerTime
@@ -47,7 +46,6 @@ class SendMessage @Inject constructor(
     private val sendMessageScheduler: SendMessageWorker.Enqueuer,
     private val pendingSendRepository: PendingSendRepository,
     private val addressCryptoFactory: AddressCrypto.Factory,
-    @CurrentUserId private val currentUserId: UserId,
     private val uuidProvider: UuidProvider
 ) {
 
@@ -56,7 +54,7 @@ class SendMessage @Inject constructor(
         Timber.d("Send Message use case called with messageId ${message.messageId}")
         val addressId = requireNotNull(message.addressID)
 
-        val addressCrypto = addressCryptoFactory.create(currentUserId, AddressId(addressId))
+        val addressCrypto = addressCryptoFactory.create(parameters.userId, AddressId(addressId))
         val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
         message.messageBody = encryptedBody
 
@@ -101,6 +99,7 @@ class SendMessage @Inject constructor(
     }
 
     data class SendMessageParameters(
+        val userId: UserId,
         val message: Message,
         val newAttachmentIds: List<String>,
         val parentId: String?,
