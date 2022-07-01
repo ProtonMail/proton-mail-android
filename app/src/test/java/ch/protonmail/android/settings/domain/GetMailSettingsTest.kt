@@ -19,12 +19,11 @@
 
 package ch.protonmail.android.settings.domain
 
+import app.cash.turbine.test
 import ch.protonmail.android.testdata.UserIdTestData.userId
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
@@ -60,10 +59,12 @@ class GetMailSettingsTest {
         )
 
         // when
-        val result = getMailSettings(userId).take(2).toList()
+        getMailSettings(userId).test {
 
-        // then
-        assertEquals(GetMailSettings.Result.Success(mailSettings()), result[1])
+            // then
+            assertEquals(GetMailSettings.Result.Success(mailSettings()), awaitItem())
+            awaitComplete()
+        }
     }
 
     private fun mailSettings() = MailSettings(

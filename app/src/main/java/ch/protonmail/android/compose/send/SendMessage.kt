@@ -62,12 +62,13 @@ class SendMessage @Inject constructor(
         setMessageAsPendingForSend(message)
 
         sendMessageScheduler.enqueue(
-            parameters.message,
-            parameters.newAttachmentIds,
-            parameters.parentId,
-            parameters.actionType,
-            parameters.previousSenderAddressId,
-            parameters.securityOptions
+            userId = parameters.userId,
+            message = parameters.message,
+            attachmentIds = parameters.newAttachmentIds,
+            parentId = parameters.parentId,
+            actionType = parameters.actionType,
+            previousSenderAddressId = parameters.previousSenderAddressId,
+            securityOptions = parameters.securityOptions
         )
 
         message.messageId?.let { messageId ->

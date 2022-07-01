@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.worker
 
-import android.content.Context
 import androidx.work.Data
 import androidx.work.ListenableWorker.Result
 import androidx.work.NetworkType
@@ -39,55 +38,39 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.testdata.UserIdTestData.userId
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class CreateContactWorkerTest {
 
-    @RelaxedMockK
-    private lateinit var context: Context
-
-    @RelaxedMockK
-    private lateinit var parameters: WorkerParameters
-
-    @RelaxedMockK
-    private lateinit var apiManager: ProtonMailApiManager
-
-    @RelaxedMockK
-    private lateinit var crypto: UserCrypto
-
-    @RelaxedMockK
-    private lateinit var apiResponse: ContactResponse
-
-    @RelaxedMockK
-    private lateinit var workManager: WorkManager
-
-    @MockK
-    private lateinit var fileHelper: FileHelper
-
-    @InjectMockKs
-    private lateinit var worker: CreateContactWorker
-
-    private var dispatcherProvider = TestDispatcherProvider
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        coEvery { fileHelper.readStringFromFilePath(any()) } returns "vCardString"
+    private val apiManager: ProtonMailApiManager = mockk(relaxed = true)
+    private val apiResponse: ContactResponse = mockk(relaxed = true)
+    private val crypto: UserCrypto = mockk(relaxed = true)
+    private val cryptoFactory: UserCrypto.AssistedFactory = mockk {
+        every { create(any()) } returns crypto
     }
+    private val fileHelper: FileHelper = mockk {
+        coEvery { readStringFromFilePath(any()) } returns "vCardString"
+    }
+    private val parameters: WorkerParameters = mockk(relaxed = true)
+    private val workManager: WorkManager = mockk(relaxed = true)
+
+    private val worker = CreateContactWorker(
+        apiManager = apiManager,
+        context = mockk(),
+        cryptoFactory = cryptoFactory,
+        dispatcherProvider = TestDispatcherProvider,
+        fileHelper = fileHelper,
+        params = parameters
+    )
 
     @Test
     fun enqueuerSchedulesCreateContactWorkSettingTheInputParamsCorrectly() {

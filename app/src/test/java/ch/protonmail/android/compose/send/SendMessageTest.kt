@@ -29,6 +29,7 @@ import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
 import ch.protonmail.android.testdata.MessageTestData
+import ch.protonmail.android.testdata.UserIdTestData
 import ch.protonmail.android.testdata.UserIdTestData.userId
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.UuidProvider
@@ -42,7 +43,6 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.user.domain.entity.AddressId
@@ -51,11 +51,9 @@ import kotlin.test.assertEquals
 
 class SendMessageTest : CoroutinesTest {
 
-    private val testUserId = UserId("id")
-
     private val addressCryptoFactory = mockk<AddressCrypto.Factory>(relaxed = true)
     private val sendMessageScheduler = mockk<SendMessageWorker.Enqueuer> {
-        every { enqueue(any(), any(), any(), any(), any(), any()) } returns flowOf(mockk())
+        every { enqueue(any(), any(), any(), any(), any(), any(), any()) } returns flowOf(mockk())
     }
     private val pendingActionDao = mockk<PendingActionDao>(relaxUnitFun = true)
     private val messageDetailsRepository = mockk<MessageDetailsRepository> {
@@ -86,7 +84,7 @@ class SendMessageTest : CoroutinesTest {
         val addressCrypto = mockk<AddressCrypto> {
             every { encrypt(decryptedBody, true).armored } returns "encrypted armored content"
         }
-        every { addressCryptoFactory.create(testUserId, AddressId(senderAddressId)) } returns addressCrypto
+        every { addressCryptoFactory.create(userId, AddressId(senderAddressId)) } returns addressCrypto
 
         // When
         val parameters = SendMessage.SendMessageParameters(
@@ -198,6 +196,7 @@ class SendMessageTest : CoroutinesTest {
         // Then
         verify {
             sendMessageScheduler.enqueue(
+                userId,
                 message,
                 attachmentIds,
                 "parentId82346",

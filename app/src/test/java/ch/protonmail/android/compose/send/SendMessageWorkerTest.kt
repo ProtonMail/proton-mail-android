@@ -165,6 +165,7 @@ class SendMessageWorkerTest : CoroutinesTest {
 
             // When
             SendMessageWorker.Enqueuer(workManager, userManager, provideUniqueName).enqueue(
+                userId,
                 message,
                 attachmentIds,
                 messageParentId,
