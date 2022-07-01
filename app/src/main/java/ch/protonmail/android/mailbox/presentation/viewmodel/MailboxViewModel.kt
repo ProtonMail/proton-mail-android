@@ -286,12 +286,7 @@ internal class MailboxViewModel @Inject constructor(
                 )
             }
             .onEach { mailboxListState ->
-                val newState = if (mailboxListState is MailboxListState.DataRefresh) {
-                    mailboxState.value.copy(list = mailboxListState)
-                } else {
-                    mailboxState.value.copy(list = mailboxListState)
-                }
-                mutableMailboxState.value = newState
+                mutableMailboxState.value =  mailboxState.value.copy(list = mailboxListState)
             }
             .launchIn(viewModelScope)
 
