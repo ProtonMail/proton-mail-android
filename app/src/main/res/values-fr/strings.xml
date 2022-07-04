@@ -157,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nouvelles fonctionnalités</string>
     <string name="existing_user_onboarding_new_features_description">Profitez de nouvelles fonctionnalités telles que le mode sombre, des notifications améliorées, un filtre de messages non lus et des sous-dossiers.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Nouvelle version, protection unifiée</string>
-    <string name="existing_user_onboarding_updated_proton_description">Voici le nouveau Proton : plusieurs services, une seule mission. Bienvenue sur un internet où la vie privée est la règle absolue. <a href="https://proton.me/news/updated-proton">En savoir plus</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">En savoir plus</a></string>
     <string name="onboarding_next">Suivant</string>
     <string name="onboarding_get_started">Commencer</string>
     <string name="onboarding_got_it">J\'ai compris</string>
@@ -175,8 +175,8 @@
     <string name="processing_request">Votre demande est en cours de traitement</string>
     <!-- should check for html tag -->
     <!-- Toast messages -->
-    <string name="error_chrome_disabled">Impossible de charger le contenu. Veuillez activer Chrome</string>
-    <string name="error_chrome_not_found">Impossible de charger le contenu. Veuillez installer Chrome</string>
+    <string name="error_chrome_disabled">Impossible de charger le contenu, veuillez activer Chrome.</string>
+    <string name="error_chrome_not_found">Impossible de charger le contenu, veuillez installer Chrome.</string>
     <string name="messages_load_failure">Impossible de récupérer les messages</string>
     <string name="message_details_load_failure">Impossible de récupérer les détails du message</string>
     <string name="no_more_messages">Plus de messages</string>
@@ -325,7 +325,6 @@
     <string name="attachment_failed">Échec de l\'ajout de la pièce jointe au message </string>
     <string name="attaching_photo_failed">L\'ajout de la photo a échoué</string>
     <string name="empty_message">Message vide</string>
-    <string name="new_message_arrived">Nouveau message !</string>
     <string name="display_images">Afficher le contenu distant</string>
     <string name="retry">Réessayer</string>
     <string name="saving_failed_no_conn">Échec de la sauvegarde, aucune connexion</string>
@@ -484,9 +483,9 @@
     <string name="spam_score_101">Cet e-mail a échoué aux tests d\'authentification de son domaine. Il a peut-être été falsifié ou transféré incorrectement.</string>
     <string name="spam_score_102">Ce message peut être une tentative d’hameçonnage. Veuillez vérifier l’expéditeur et le contenu afin de vous assurer qu’ils sont légitimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">EN SAVOIR PLUS</a></string>
     <string name="print_from_template">De : %s</string>
-    <string name="print_to_template">À : %s; </string>
-    <string name="print_cc_template">Cc : %s; </string>
-    <string name="print_bcc_template">Cci : %s; </string>
+    <string name="print_to_template">À : %s;  </string>
+    <string name="print_cc_template">Cc : %s;  </string>
+    <string name="print_bcc_template">Cci : %s;  </string>
     <string name="address">Adresse : </string>
     <string name="address_street">Rue</string>
     <string name="address_extended_street">Complément d\'adresse</string>
@@ -502,7 +501,7 @@
     <string name="contacts_unknown">Inconnu</string>
     <string name="learn_more"><u>En savoir plus</u></string>
     <string name="info">Information</string>
-    <string name="error_can_not_send_from_this_address">Passez à une offre payante pour envoyer depuis votre adresse %s.</string>
+    <string name="error_can_not_send_from_this_address">Passez à un abonnement payant pour envoyer depuis votre adresse %s.</string>
     <string name="email_empty">L’adresse électronique est manquante</string>
     <string name="encrypted_contact_details">Détails chiffrés du contact</string>
     <string name="convert_question">Télécharger les contacts locaux</string>
@@ -512,7 +511,7 @@
     <string name="protonmail_contacts">Contacts Proton Mail</string>
     <string name="device_contacts">Contacts de l’appareil</string>
     <string name="print_date_template">Date : %s</string>
-    <string name="print_attachment_template">Pièce jointe : %s; </string>
+    <string name="print_attachment_template">Pièce jointe : %s;  </string>
     <string name="pm_me_changed">Envoyer des messages depuis une adresse @pm.me est une fonctionnalité payante. Votre message sera envoyé à partir de votre adresse par défaut %s</string>
     <string name="pm_me_can_not_be_default">Passez à une offre payante afin de pouvoir définir %s comme adresse par défaut</string>
     <string name="dont_remind_again">Ne plus me le rappeler</string>
@@ -591,7 +590,7 @@
     <string name="contact_group_display_name">Nom d\'affichage</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="title_activity_address_chooser">Gérer les membres</string>
-    <string name="default_error_message">Une erreur s\'est produite</string>
+    <string name="default_error_message">Une erreur s\'est produite.</string>
     <string name="no_contact_groups">Aucun groupe de contacts</string>
     <string name="search_contacts_inside_group">Rechercher des contacts</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
@@ -628,7 +627,7 @@
     <string name="contacts_add_photo_title">Ajouter une photo</string>
     <string name="contacts_add_photo_select_gallery">Sélectionner depuis la galerie</string>
     <string name="contacts_add_photo_select_camera">Utiliser l\'appareil photo</string>
-    <string name="save_group_validation_error">Veuillez fournir un nom de groupe</string>
+    <string name="save_group_validation_error">Veuillez fournir un nom de groupe.</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Limite de stockage atteinte. Impossible d\'envoyer ou de recevoir des e-mails.
         Appuyez pour en savoir plus.</string>
@@ -811,7 +810,7 @@
     <!-- region errors -->
     <string name="error_image_not_found">Image non trouvée</string>
     <string name="error_image_bad_url">URL d\'image non valide</string>
-    <string name="error_saving_try_again">Erreur lors de l\'enregistrement du message. Veuillez réessayer.</string>
+    <string name="error_saving_try_again">Erreur lors de l\'enregistrement du message, veuillez réessayer.</string>
     <!-- endregion -->
     <string name="allowed">Autorisé</string>
     <string name="denied">Refusé</string>

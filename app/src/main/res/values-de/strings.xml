@@ -157,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">Neue Funktionen</string>
     <string name="existing_user_onboarding_new_features_description">Genieße neue Funktionen wie den dunklen Modus, verbesserte Benachrichtigungen, einen Filter für ungelesene Nachrichten und Unterordner.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Aktualisiertes Proton, einheitlicher Schutz</string>
-    <string name="existing_user_onboarding_updated_proton_description">Proton präsentiert sich in neuem Gewand. Viele Dienste, eine Aufgabe. Willkommen in einem Internet, in dem der Datenschutz Standard ist. <a href="https://proton.me/news/updated-proton">Mehr erfahren</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Mehr erfahren</a></string>
     <string name="onboarding_next">Weiter</string>
     <string name="onboarding_get_started">Los geht\'s</string>
     <string name="onboarding_got_it">Verstanden</string>
@@ -190,7 +190,7 @@
     <string name="contact_exist">E-Mail-Adresse des Kontakts existiert bereits</string>
     <string name="invalid_email">E-Mail-Adresse ist ungültig</string>
     <string name="duplicate_email">Die E-Mail-Adresse ist ein Duplikat</string>
-    <string name="message_drafted">Das Senden der Nachricht ist fehlgeschlagen. Ihre Nachrichten werden im Ordner „Entwürfe” gespeichert.</string>
+    <string name="message_drafted">Das Senden der Nachricht ist fehlgeschlagen. Deine Nachrichten werden im Ordner „Entwürfe” gespeichert</string>
     <string name="attachment_failed_message_drafted">Bitte entferne „%s”, füge es erneut ein und sende die Nachricht erneut. Deine Nachricht wurde im Ordner „Entwürfe” abgelegt.</string>
     <string name="open_drawer">Öffnen</string>
     <string name="close_drawer">Schließen</string>
@@ -318,14 +318,13 @@
     <string name="label_deleted_error">Fehler beim Löschen der Kategorie</string>
     <string name="message_deleted_error">Fehler beim Löschen einiger Nachrichten. Werden einige der ausgewählte gerade gesendet?</string>
     <string name="respond_inline">Eingebettet antworten</string>
-    <string name="server_not_reachable_troubleshoot">Server nicht erreichbar… (<u>Problemlösung</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server nicht erreichbar… (<u>Problembehandlung</u>)</string>
     <string name="connectivity_checking">Verbindung wird geprüft …</string>
     <string name="draft_label_attachments_uploading">Anhänge werden hochgeladen …</string>
     <string name="draft_label_message_uploading">Nachricht wird gesendet …</string>
     <string name="attachment_failed">Hochladen des Anhangs der Nachricht fehlgeschlagen </string>
     <string name="attaching_photo_failed">Anhängen der Fotos fehlgeschlagen</string>
     <string name="empty_message">Nachricht ohne Inhalt</string>
-    <string name="new_message_arrived">Neue Nachricht!</string>
     <string name="display_images">Inhalte aus externen Quellen anzeigen</string>
     <string name="retry">Wiederholen</string>
     <string name="saving_failed_no_conn">Speichern fehlgeschlagen, keine Internetverbindung</string>
@@ -425,7 +424,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="contacts_import_contact">Kontakt importieren</string>
     <string name="contacts_import">Importieren</string>
     <string name="upload_contacts">Kontakte hochladen</string>
-    <string name="uploading_contacts">Kontakte werden hochgeladen…</string>
+    <string name="uploading_contacts">Kontakte werden hochgeladen …</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
         <item>Mobilgerät</item>
@@ -485,9 +484,9 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="spam_score_101">Diese Nachricht hat die Domain-Authentifizierungsanforderungen nicht bestanden. Sie könnte gefälscht oder unsachgemäß weitergeleitet worden sein!</string>
     <string name="spam_score_102">Diese Nachricht enthält Merkmale eines Phishing-Versuchs. Bitte überprüfen Sie den Absender und den Inhalt, um sicherzustellen, dass diese echt sind. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">Mehr erfahren</a></string>
     <string name="print_from_template">Von: %s</string>
-    <string name="print_to_template">An: %s;</string>
-    <string name="print_cc_template">CC: %s;</string>
-    <string name="print_bcc_template">BCC: %s;</string>
+    <string name="print_to_template">An: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Adresse: </string>
     <string name="address_street">Straße</string>
     <string name="address_extended_street">Adresszusatz</string>
@@ -503,17 +502,17 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="contacts_unknown">Unbekannt</string>
     <string name="learn_more"><u>Mehr erfahren</u></string>
     <string name="info">Information</string>
-    <string name="error_can_not_send_from_this_address">Auf ein kostenpflichtiges Abonnement aktualisieren, um von Ihrer %s-Adresse Nachrichten senden zu können.</string>
+    <string name="error_can_not_send_from_this_address">Führe ein Upgrade auf ein kostenpflichtiges Abonnement durch, um von deiner %s-Adresse Nachrichten senden zu können.</string>
     <string name="email_empty">E-Mail-Adresse eingeben</string>
     <string name="encrypted_contact_details">Verschlüsselte Kontaktinformationen</string>
     <string name="convert_question">Lokale Kontakte hochladen</string>
     <string name="convert_question_subtitle">Dadurch werden die lokalen Kontakte deines Geräts in dein Proton Mail Kontaktverzeichnis hochgeladen. Du kannst dann auf diese Kontakte auf deinen anderen Geräten über Proton Mail zugreifen.</string>
     <string name="refresh_contacts">Aktualisieren</string>
-    <string name="invalid_email_some_contacts">Diese E-Mail-Adresse ist für einige Ihrer Kontakte unzulässig</string>
+    <string name="invalid_email_some_contacts">Diese E-Mail-Adresse ist für einige deiner Kontakte unzulässig</string>
     <string name="protonmail_contacts">Proton Mail Kontakte</string>
     <string name="device_contacts">Gerätekontakte</string>
     <string name="print_date_template">Datum: %s</string>
-    <string name="print_attachment_template">Anhang: %s;</string>
+    <string name="print_attachment_template">Anhang: %s;  </string>
     <string name="pm_me_changed">Das Senden von Nachrichten von einer @pm.me-Adresse ist eine kostenpflichtige Funktion. Ihre Nachricht wird von Ihrer Standardadresse „%s” gesendet.</string>
     <string name="pm_me_can_not_be_default">Auf ein kostenpflichtiges Paket umsteigen, damit Sie Ihre %s-Adresse als Standard festlegen können</string>
     <string name="dont_remind_again">Nicht erneut erinnern</string>
@@ -523,7 +522,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="attachment_storage_value_current">Aktuell ausgewählt: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Aktuell ausgewählt: Unbeschränkt</string>
     <string name="attachment_offline_max_storage">Legt den maximalen Speicherplatz fest, den Proton Mail auf Ihrem mobilen Gerät nutzen darf.</string>
-    <string name="load_embedded_images_failed_no_network">Das Laden von eingebetteten Grafiken ist fehlgeschlagen. Bitte überprüfen Sie Ihre Netzwerkverbindung.</string>
+    <string name="load_embedded_images_failed_no_network">Das Laden von eingebetteten Grafiken ist fehlgeschlagen. Bitte überprüfe deine Netzwerkverbindung.</string>
     <string name="load_embedded_images_failed">Das Laden von eingebetteten Grafiken ist fehlgeschlagen.</string>
     <string name="unlimited">Unbegrenzt</string>
     <string name="local_storage_cleared">Lokalen Speicher bereinigt</string>
@@ -533,7 +532,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="send_with_untrusted_key_title">Möchten Sie mit einem nicht vertrauenswürdigen Schlüssel versenden?</string>
     <string name="send_with_untrusted_key_message">Sie haben die Adressüberprüfung mit vertrauenswürdigen Schlüsseln für %s aktiviert, aber es wurden keinen aktiven Verschlüsselungsschlüsseln vertraut.</string>
     <string name="resign_contact_title">Möchten Sie den Kontakt erneut signieren?</string>
-    <string name="resign_contact_message">Die Überprüfung von %s ist fehlgeschlagen: Der Kontakt ist fehlerhaft signiert. Sie müssen den Kontakt erneut signieren, um eine Nachricht an diese Adresse senden zu können oder den Kontakt bearbeiten. Dies kann auch vorkommen, wenn Sie Ihr Passwort wiederhergestellt und Ihre Schlüssel zurückgesetzt haben.</string>
+    <string name="resign_contact_message">Die Überprüfung von %s ist fehlgeschlagen: Der Kontakt ist fehlerhaft signiert. Du musst den Kontakt erneut signieren, um eine Nachricht an diese Adresse senden zu können oder den Kontakt bearbeiten. Dies kann auch vorkommen, wenn du dein Passwort wiederhergestellt und deine Schlüssel zurückgesetzt hast.</string>
     <!-- Sender locks -->
     <string name="sender_lock_zero_access">Gespeichert mit Zero-Access-Verschlüsselung</string>
     <!-- External message that was encrypted by the BE -->
@@ -630,7 +629,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Speichergrenze erreicht. Es ist nicht möglich, E-Mails zu senden oder zu empfangen. Drücken Sie diese Taste, um mehr zu erfahren.</string>
     <string name="storage_limit_warning_title">Warnhinweis</string>
-    <string name="storage_limit_reached_text">Sie haben 100% Ihrer Speicherplatzgröße erreicht. Sie können keine E-Mails senden oder empfangen, es sei denn, Sie löschen dauerhaft einige E-Mails oder kaufen mehr Speicherplatz.</string>
+    <string name="storage_limit_reached_text">Du hast 100 % von deinem Speicherplatz erreicht. Du kannst keine E-Mails senden oder empfangen, es sei denn, du löschst dauerhaft einige E-Mails oder kaufst mehr Speicherplatz.</string>
     <string name="storage_limit_approaching_text">Sie haben 90% Ihrer Speicherplatzgröße erreicht. Erwägen Sie, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, bevor Ihnen der Speicherplatz ausgeht.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Berechtigungen</string>

@@ -157,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">Timahilin timaynutin</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Lqem amaynut n Proton, ammesten yezdin</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Γer zdat</string>
     <string name="onboarding_get_started">Bdu</string>
     <string name="onboarding_got_it">Gziɣ-t</string>
@@ -318,14 +318,13 @@
     <string name="label_deleted_error">Tuccḍa di tukksa n tabzimt</string>
     <string name="message_deleted_error">Tuccḍa di tukksa n kra n yiznan. Kra n yiznan yettwakksen tetteddu tuzna-nnsen amira?!</string>
     <string name="respond_inline">Err degi imayl</string>
-    <string name="server_not_reachable_troubleshoot">Aqeddac ur yettwaweḍ ara… (<u> Aqeɛɛed</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Asenqed n tuqqna...</string>
     <string name="draft_label_attachments_uploading">asali n yifuyla yeddan…</string>
     <string name="draft_label_message_uploading">tuzna n yizen…</string>
     <string name="attachment_failed">Timerna n ufaylu yeddan ar yizen ur teddi ara </string>
     <string name="attaching_photo_failed">Timerna n tewlaft ur teddi ara</string>
     <string name="empty_message">Izen ilem</string>
-    <string name="new_message_arrived">Izen amaynut!</string>
     <string name="display_images">Sken tugniwin</string>
     <string name="retry">Ɛref̣ tikelt-nniḍen</string>
     <string name="saving_failed_no_conn">Asekles yecceḍ, ulac tuqqna</string>
@@ -424,7 +423,7 @@
     <string name="contacts_import_contact">Kter anermis</string>
     <string name="contacts_import">Kter</string>
     <string name="upload_contacts">Sali inermisen</string>
-    <string name="uploading_contacts">Akter n inermisen…</string>
+    <string name="uploading_contacts">Uploading contacts…</string>
     <string-array name="vcard_option_phone">
         <item>Tiliɣri</item>
         <item>Aziraz</item>
@@ -484,9 +483,9 @@
     <string name="spam_score_101">Imayl-agi yecceḍ deg usekyed n usesteb n taɣult-is. Ahat beddlen-t neɣ wwin-t s tuccḍa aniɣer nniḍen!</string>
     <string name="spam_score_102">Izen-agi yezmer ad yili d aneɛruḍ n ukellex. Ttxil-k senqed amazan akked ugbur iwakken ad tḥeqqqeḍ belli d izerfanen. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ISSIN UGAR</a></string>
     <string name="print_from_template">Si: %s</string>
-    <string name="print_to_template">I: %s;  </string>
-    <string name="print_cc_template">Anɣ. I.: %s;  </string>
-    <string name="print_bcc_template">Anɣ. Uffi. I.: %s;  </string>
+    <string name="print_to_template">To: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Tansa: </string>
     <string name="address_street">Abrid</string>
     <string name="address_extended_street">Extended street</string>
@@ -512,7 +511,7 @@
     <string name="protonmail_contacts">Inermisen n Proton Mail</string>
     <string name="device_contacts">Inermisen n ibenk</string>
     <string name="print_date_template">Azemz:%s</string>
-    <string name="print_attachment_template">Imedday: %s;  </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Tuzna n iznan seg @pm.me d tamahilt s uxeles. Izen-inek ad itwazen seg tansa-inek tamezwart %s</string>
     <string name="pm_me_can_not_be_default">Leqem γer lqem s uxeles akken ad tesbaduḍ tansa-inek tamezwart %s</string>
     <string name="dont_remind_again">Ur d-smektay ara tikkelt-nniḍen</string>

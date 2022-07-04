@@ -157,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nuove funzioni</string>
     <string name="existing_user_onboarding_new_features_description">Goditi le nuove funzionalità come la modalità oscura, le notifiche migliorate, un filtro per i messaggi non letti e le sottocartelle.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton Aggiornato, protezione unificata</string>
-    <string name="existing_user_onboarding_updated_proton_description">Presentazione del nuovo look di Proton. Benvenuti in un Internet in cui la privacy è l\'impostazione predefinita. <a href="https://proton.me/news/updated-proton">Per saperne di più</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Per saperne di più</a></string>
     <string name="onboarding_next">Successiva</string>
     <string name="onboarding_get_started">Per iniziare</string>
     <string name="onboarding_got_it">Ho capito</string>
@@ -318,14 +318,13 @@
     <string name="label_deleted_error">Errore durante l\'eliminazione dell\'etichetta</string>
     <string name="message_deleted_error">Errore durante l\'eliminazione di alcuni messaggi. Alcuni dei messaggi selezionati sono in fase di invio?!</string>
     <string name="respond_inline">Rispondi in linea</string>
-    <string name="server_not_reachable_troubleshoot">Server irraggiungibile… (<u>Risoluzione dei problemi</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server non raggiungibile… (<u>Risoluzione dei problemi</u>)</string>
     <string name="connectivity_checking">Verificando la connessione...</string>
     <string name="draft_label_attachments_uploading">caricamento degli allegati…</string>
     <string name="draft_label_message_uploading">invio del messaggio…</string>
     <string name="attachment_failed">Errore nel caricamento dell\'allegato del messaggio </string>
     <string name="attaching_photo_failed">Aggiunta della foto fallita</string>
     <string name="empty_message">Messaggio vuoto</string>
-    <string name="new_message_arrived">Nuovo messaggio!</string>
     <string name="display_images">Mostra immagini</string>
     <string name="retry">Riprova</string>
     <string name="saving_failed_no_conn">Salvataggio fallito, nessuna connessione</string>
@@ -424,7 +423,7 @@
     <string name="contacts_import_contact">Importa Contatto</string>
     <string name="contacts_import">Importa</string>
     <string name="upload_contacts">Carica contatti</string>
-    <string name="uploading_contacts">Caricando i contatti…</string>
+    <string name="uploading_contacts">Caricamento dei contatti…</string>
     <string-array name="vcard_option_phone">
         <item>Telefono</item>
         <item>Mobile</item>

@@ -156,7 +156,7 @@
     <string name="existing_user_onboarding_new_features_headline">新功能</string>
     <string name="existing_user_onboarding_new_features_description">畅享深色模式、改良的推送通知、未读邮件筛选、子文件夹等新功能。</string>
     <string name="existing_user_onboarding_updated_proton_headline">新版 Proton，全方位的隐私保护</string>
-    <string name="existing_user_onboarding_updated_proton_description">Proton 界面现已焕然一新。服务繁多，使命不变。欢迎进入隐私优先的互联网。<a href="https://proton.me/news/updated-proton">了解详情</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">了解详情</a></string>
     <string name="onboarding_next">继续</string>
     <string name="onboarding_get_started">立即体验</string>
     <string name="onboarding_got_it">知道了</string>
@@ -314,14 +314,13 @@
     <string name="label_deleted_error">标签删除失败</string>
     <string name="message_deleted_error">部分邮件删除失败，可能正在发送当中</string>
     <string name="respond_inline">纯文本引用</string>
-    <string name="server_not_reachable_troubleshoot">无法连接服务器（<u>排查故障</u>）</string>
+    <string name="server_not_reachable_troubleshoot">无法连接服务器…（<u>排查故障</u>）</string>
     <string name="connectivity_checking">正在连接...</string>
     <string name="draft_label_attachments_uploading">正在上传附件…</string>
     <string name="draft_label_message_uploading">正在发送邮件…</string>
     <string name="attachment_failed">附件上传失败 </string>
     <string name="attaching_photo_failed">图片添加失败</string>
     <string name="empty_message">邮件无内容</string>
-    <string name="new_message_arrived">收到新邮件！</string>
     <string name="display_images">显示外链内容</string>
     <string name="retry">重试</string>
     <string name="saving_failed_no_conn">保存失败，网络已断开</string>
@@ -478,9 +477,9 @@
     <string name="spam_score_101">不能确定此邮件是否来自该域名，这可能是欺诈邮件，也可能是投递过程出现了问题。</string>
     <string name="spam_score_102">此邮件可能具有欺诈性质，请检查发件人身份和邮件内容，确认信息真实性。<a href="https://protonmail.com/blog/prevent-phishing-attacks/">了解详情</a></string>
     <string name="print_from_template">发件人：%s</string>
-    <string name="print_to_template">收件人：%s; </string>
-    <string name="print_cc_template">抄送：%s; </string>
-    <string name="print_bcc_template">密送：%s; </string>
+    <string name="print_to_template">收件人：%s;  </string>
+    <string name="print_cc_template">抄送：%s;  </string>
+    <string name="print_bcc_template">密送：%s;  </string>
     <string name="address">地址：</string>
     <string name="address_street">街道</string>
     <string name="address_extended_street">详细地址</string>

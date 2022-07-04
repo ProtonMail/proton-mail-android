@@ -157,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">Új funkciók</string>
     <string name="existing_user_onboarding_new_features_description">Élvezze az új funkciókat, mint például a sötét mód, javított értesítések, egy olvasatlan üzenet szűrő és almappák.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Frissített Proton, egységesített védelem</string>
-    <string name="existing_user_onboarding_updated_proton_description">A Proton új megjelenésének bemutatása. Sok szolgáltatás, egy küldetés. Üdvözli az az internet, amelyen az adatvédelem alapértelmezett. <a href="https://proton.me/news/updated-proton">További információk</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">További információk</a></string>
     <string name="onboarding_next">Következő</string>
     <string name="onboarding_get_started">Kezdés</string>
     <string name="onboarding_got_it">Értem</string>
@@ -318,14 +318,13 @@
     <string name="label_deleted_error">Hiba a címke törlése közben</string>
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Válaszolás az eredeti levélben</string>
-    <string name="server_not_reachable_troubleshoot">A szerver elérhetetlen...(<u>Hibaelhárítás</u>)</string>
+    <string name="server_not_reachable_troubleshoot">A szerver nem elérhető… (<u>Hibajavítás</u>)</string>
     <string name="connectivity_checking">Várakozás a kapcsolatra...</string>
     <string name="draft_label_attachments_uploading">mellékletek feltöltése…</string>
     <string name="draft_label_message_uploading">üzenet küldése…</string>
     <string name="attachment_failed">Az üzenet mellékleteinek feltöltése sikertelen </string>
     <string name="attaching_photo_failed">Fénykép csatolása sikertelen</string>
     <string name="empty_message">Üres üzenet</string>
-    <string name="new_message_arrived">Új üzenet érkezett!</string>
     <string name="display_images">Távoli tartalom megjelenítése</string>
     <string name="retry">Újra</string>
     <string name="saving_failed_no_conn">Mentés sikertelen, nincs kapcsolat</string>
@@ -484,9 +483,9 @@
     <string name="spam_score_101">Az e-mail nem felelt meg a domain név ellenőrzési követelményeinek. Lehet becsapós üzenet vagy hibásan továbbított!</string>
     <string name="spam_score_102">Ez az üzenet lehetséges, hogy egy adathalászati kísérlet! Kérjük, alaposan ellenőrizze, hogy a feladó és az üzenet szövege megbízható-e. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">TOVÁBBI INFORMÁCIÓK</a></string>
     <string name="print_from_template">Feladó: %s</string>
-    <string name="print_to_template">Címzett: %s</string>
-    <string name="print_cc_template">Másolat: %s</string>
-    <string name="print_bcc_template">Titkos másolat: %s</string>
+    <string name="print_to_template">Címzett: %s;  </string>
+    <string name="print_cc_template">Másolat: %s;  </string>
+    <string name="print_bcc_template">Titkos másolat: %s;  </string>
     <string name="address">Cím: </string>
     <string name="address_street">Utca, házszám</string>
     <string name="address_extended_street">Bővített utca</string>
@@ -512,7 +511,7 @@
     <string name="protonmail_contacts">Proton Mail Névjegyek</string>
     <string name="device_contacts">Eszköz névjegyek</string>
     <string name="print_date_template">Dátum: %s</string>
-    <string name="print_attachment_template">Melléklet: %s;  </string>
+    <string name="print_attachment_template">Melléklet: %s;   </string>
     <string name="pm_me_changed">Üzenetek küldése a @pm.me címről előfizetéshez kötött. Az Ön üzenete az %s, alapértelmezett címről lesz elküldve</string>
     <string name="pm_me_can_not_be_default">Váltson fizetős csomagra, hogy ezt a címet is beállíthassa alapértelmezettként: %s</string>
     <string name="dont_remind_again">Ne emlékeztessen újra</string>

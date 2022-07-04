@@ -157,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">Noves funcionalitats</string>
     <string name="existing_user_onboarding_new_features_description">Gaudiu de noves característiques com mode fosc, notificacions millorades, un filtre de missatges no llegits, i subcarpetes.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualitzat, protecció unificada</string>
-    <string name="existing_user_onboarding_updated_proton_description">Presentem el nou aspecte de Proton. Molts serveis, una missió. Benvingut/da a l\'Internet on tenim la privacitat per defecte. <a href="https://proton.me/news/updated-proton">Més informació</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Més informació</a></string>
     <string name="onboarding_next">Següent</string>
     <string name="onboarding_get_started">Comença</string>
     <string name="onboarding_got_it">Entesos</string>
@@ -318,14 +318,13 @@
     <string name="label_deleted_error">S\'ha produït un error en eliminar l\'etiqueta</string>
     <string name="message_deleted_error">S\'ha produït un error en suprimir alguns missatges. Alguns dels missatges seleccionats estan en procés d’enviament?!</string>
     <string name="respond_inline">Respondre en línia</string>
-    <string name="server_not_reachable_troubleshoot">Servidor inaccessible… (<u>Resolució de problemes</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Servidor no accessible… (<u>Resolució de problemes</u>)</string>
     <string name="connectivity_checking">S\'està cercant la connexió...</string>
     <string name="draft_label_attachments_uploading">carregant fitxers adjunts…</string>
     <string name="draft_label_message_uploading">enviant missatge…</string>
     <string name="attachment_failed">Error al carregar l\'arxiu adjunt al missatge </string>
     <string name="attaching_photo_failed">No ha sigut possible adjuntar la foto</string>
     <string name="empty_message">Missatge buit</string>
-    <string name="new_message_arrived">Missatge nou!</string>
     <string name="display_images">Mostra el contingut remot</string>
     <string name="retry">Reintentar</string>
     <string name="saving_failed_no_conn">Error al desar, sense connexió</string>
@@ -424,7 +423,7 @@
     <string name="contacts_import_contact">Importar contacte</string>
     <string name="contacts_import">Importar</string>
     <string name="upload_contacts">Pujar contactes</string>
-    <string name="uploading_contacts">S\'estan pujant els contactes…</string>
+    <string name="uploading_contacts">Carregant contactes…</string>
     <string-array name="vcard_option_phone">
         <item>Telèfon</item>
         <item>Mòbil</item>
@@ -484,7 +483,7 @@
     <string name="spam_score_101">Aquest correu no ha superat els requisits d\'autentificació del domini. Pot ser que estigui falsejat o reenviat indegudament!</string>
     <string name="spam_score_102">Aquest missatge pot ser un intent de pesca de credencials. Comproveu el remitent i el contingut per assegurar-vos que són legítims. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MÉS INFORMACIÓ</a></string>
     <string name="print_from_template">Des de: %s</string>
-    <string name="print_to_template">Per a: %s; </string>
+    <string name="print_to_template">Per a: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">CCO: %s;  </string>
     <string name="address">Adreça: </string>

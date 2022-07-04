@@ -157,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">Yeni özellikler</string>
     <string name="existing_user_onboarding_new_features_description">Karanlık kip, geliştirilmiş bildirimler, okunmamış iletiler süzgeci ve alt klasörler gibi yeni özelliklerin tadını çıkarın.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Güncellenmiş Proton, birleşik koruma</string>
-    <string name="existing_user_onboarding_updated_proton_description">Yenilenmiş Proton böyle görünüyor. Birçok hizmet, tek amaç. Kişisel gizliliğin doğal sayıldığı internet fikrine hoş geldiniz. <a href="https://proton.me/news/updated-proton">Ayrıntılı bilgi alın</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Ayrıntılı bilgi alın</a></string>
     <string name="onboarding_next">Sonraki</string>
     <string name="onboarding_get_started">Başlayalım</string>
     <string name="onboarding_got_it">Anladım</string>
@@ -318,14 +318,13 @@
     <string name="label_deleted_error">Etiket silinirken sorun çıktı</string>
     <string name="message_deleted_error">Bazı iletiler silinirken sorun çıktı. Seçilmiş iletilerin bazıları gönderilme aşamasında mı?!</string>
     <string name="respond_inline">Satır arasında yanıtla</string>
-    <string name="server_not_reachable_troubleshoot">Sunucuya erişilemiyor (<u>Sorun giderme</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Sunucuya erişilemiyor… (<u>Sorun giderme</u>)</string>
     <string name="connectivity_checking">Bağlantı denetleniyor…</string>
     <string name="draft_label_attachments_uploading">ek dosyalar yükleniyor…</string>
     <string name="draft_label_message_uploading">ileti gönderiliyor…</string>
     <string name="attachment_failed">Şu iletiye ek dosyası yüklenemedi </string>
     <string name="attaching_photo_failed">Görsel eklenemedi</string>
     <string name="empty_message">İletiyi temizle</string>
-    <string name="new_message_arrived">Yeni ileti!</string>
     <string name="display_images">Uzak içeriği göster</string>
     <string name="retry">Yeniden dene</string>
     <string name="saving_failed_no_conn">Kaydedilemedi, bağlantı yok</string>
@@ -484,9 +483,9 @@
     <string name="spam_score_101">Bu e-posta, etki alanının doğrulama gereksinimlerini karşılayamadı. E-posta, sahte ya da hatalı iletilmiş olabilir!</string>
     <string name="spam_score_102">Bu ileti bir kimlik avı girişimi olabilir. Lütfen göründüğü gibi olduklarından emin olmak için gönderici adresini ve ileti içeriğini kontrol edin. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">AYRINTILI BİLGİ ALIN</a></string>
     <string name="print_from_template">Kimden: %s</string>
-    <string name="print_to_template">Kime: %s;  </string>
-    <string name="print_cc_template">Kopya: %s; </string>
-    <string name="print_bcc_template">Gizli kopya: %s; </string>
+    <string name="print_to_template">Bitiş: %s;  </string>
+    <string name="print_cc_template">Kopya: %s;  </string>
+    <string name="print_bcc_template">Gizli kopya: %s;  </string>
     <string name="address">Adres: </string>
     <string name="address_street">Sokak</string>
     <string name="address_extended_street">Ayrıntılı sokak adresi</string>
@@ -512,7 +511,7 @@
     <string name="protonmail_contacts">Proton Mail kişileri</string>
     <string name="device_contacts">Aygıt kişileri</string>
     <string name="print_date_template">Tarih: %s</string>
-    <string name="print_attachment_template">Ek dosya: %s; </string>
+    <string name="print_attachment_template">Ek dosya: %s;  </string>
     <string name="pm_me_changed">\@pm.me adresinden ileti göndermek ücretli bir özelliktir. İletiniz varsayılan %s adresinizden gönderilecek</string>
     <string name="pm_me_can_not_be_default">Varsayılan adresinizi %s yapmak için ücretli bir tarifeye geçin</string>
     <string name="dont_remind_again">Bir daha hatırlatma</string>

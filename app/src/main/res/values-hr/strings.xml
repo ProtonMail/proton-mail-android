@@ -158,7 +158,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nove značajke</string>
     <string name="existing_user_onboarding_new_features_description">Uživajte u novim značajkama kao što su tamni način rada, poboljšane obavijesti, filter nepročitanih poruka i podmape.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Ažurirani Proton, jedinstvena zaštita</string>
-    <string name="existing_user_onboarding_updated_proton_description">Predstavljamo Protonov osvježeni izgled. Mnogo usluga, jedna misija. Dobrodošli na internet gdje je privatnost zadana vrijednost. <a href="https://proton.me/news/updated-proton">Saznajte više</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Saznajte više</a></string>
     <string name="onboarding_next">Sljedeće</string>
     <string name="onboarding_get_started">Započnite</string>
     <string name="onboarding_got_it">Shvaćam</string>
@@ -322,14 +322,13 @@
     <string name="label_deleted_error">Pogreška tijekom brisanja oznake</string>
     <string name="message_deleted_error">Pogreška tijekom brisanja nekih poruka. Neke od odabranih poruka su u procesu slanja?!</string>
     <string name="respond_inline">Odgovori u ravnini s ostalim tekstom</string>
-    <string name="server_not_reachable_troubleshoot">Poslužitelj nije dostupan…(<u>Rješavanje problema</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Provjera veze...</string>
     <string name="draft_label_attachments_uploading">učitavanje privitaka…</string>
     <string name="draft_label_message_uploading">slanje poruke…</string>
     <string name="attachment_failed">Prijenos privitka nije uspio za poruku </string>
     <string name="attaching_photo_failed">Prilaganje fotografije nije uspjelo</string>
     <string name="empty_message">Prazna poruka</string>
-    <string name="new_message_arrived">Nova poruka!</string>
     <string name="display_images">Prikaži udaljeni sadržaj</string>
     <string name="retry">Pokušaj ponovno</string>
     <string name="saving_failed_no_conn">Neuspješno spremanje, nema internetske veze</string>
@@ -430,7 +429,7 @@
     <string name="contacts_import_contact">Uvezi kontakte</string>
     <string name="contacts_import">Uvoz</string>
     <string name="upload_contacts">Učitavanje kontakata</string>
-    <string name="uploading_contacts">Prijenos kontakata…</string>
+    <string name="uploading_contacts">Uploading contacts…</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
         <item>Mobitel</item>
@@ -490,7 +489,7 @@
     <string name="spam_score_101">Ova poruka e-pošte nije ispunila zahtjeve za provjeru autentičnosti svoje domene. Može biti lažna ili nepropisno proslijeđena!</string>
     <string name="spam_score_102">Ova poruka može biti pokušaj krađe identiteta. Provjerite pošiljatelja i sadržaj kako biste bili sigurni da su legitimni. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SAZNAJTE VIŠE</a></string>
     <string name="print_from_template">Od: %s</string>
-    <string name="print_to_template">Do: %s;  </string>
+    <string name="print_to_template">To: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Adresa: </string>
@@ -518,7 +517,7 @@
     <string name="protonmail_contacts">Proton Mail Kontakti</string>
     <string name="device_contacts">Kontakti uređaja</string>
     <string name="print_date_template">Datum: %s</string>
-    <string name="print_attachment_template">Privitak: %s; </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Slanje poruka s @pm.me adrese je plaćena značajka. Vaša će poruka biti poslana s Vaše zadane adrese %s</string>
     <string name="pm_me_can_not_be_default">Nadogradite na plaćeni plan kako biste mogli postaviti vašu %s adresu e-pošte kao zadanu</string>
     <string name="dont_remind_again">Ne podsjećaj me više</string>

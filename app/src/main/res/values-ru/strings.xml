@@ -159,7 +159,7 @@
     <string name="existing_user_onboarding_new_features_headline">Новые функции</string>
     <string name="existing_user_onboarding_new_features_description">Воспользуйтесь такими новыми функциями, как темный режим, улучшенные уведомления, фильтр непрочитанных сообщений и вложенные папки.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Обновленный Proton, единая защита</string>
-    <string name="existing_user_onboarding_updated_proton_description">Представляем обновленный вид Proton. Много служб, одна миссия. Добро пожаловать в Интернет, где конфиденциальность установлена по умолчанию. <a href="https://proton.me/news/updated-proton">Подробнее</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Подробнее</a></string>
     <string name="onboarding_next">Далее</string>
     <string name="onboarding_get_started">Приступить к работе</string>
     <string name="onboarding_got_it">Понятно</string>
@@ -326,14 +326,13 @@
     <string name="label_deleted_error">Ошибка при удалении ярлыка</string>
     <string name="message_deleted_error">Ошибка при удалении некоторых сообщений. Находятся ли некоторые из них в процессе отправки?!</string>
     <string name="respond_inline">Ответить с цитированием</string>
-    <string name="server_not_reachable_troubleshoot">Сервер недоступен... (<u>Устранение неполадок</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Сервер недоступен… (<u>Устранение неполадок</u>)</string>
     <string name="connectivity_checking">Проверка подключения...</string>
     <string name="draft_label_attachments_uploading">добавление вложений…</string>
     <string name="draft_label_message_uploading">отправка сообщения…</string>
     <string name="attachment_failed">Не удалось загрузить вложение для сообщения </string>
     <string name="attaching_photo_failed">Не удалось прикрепить фото</string>
     <string name="empty_message">Пустое сообщение</string>
-    <string name="new_message_arrived">Новое сообщение!</string>
     <string name="display_images">Показывать внешнее содержимое</string>
     <string name="retry">Повторить</string>
     <string name="saving_failed_no_conn">Сбой сохранения. Нет подключения</string>
@@ -496,9 +495,9 @@
     <string name="spam_score_101">Это письмо не соответствует требованиям подтверждения подлинности своего домена. Оно может быть поддельным, либо было переслано ненадлежащим образом!</string>
     <string name="spam_score_102">Это сообщение может быть попыткой фишинга. Пожалуйста, проверьте отправителя и содержимое, чтобы оценить их подлинность. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ПОДРОБНЕЕ</a></string>
     <string name="print_from_template">От: %s</string>
-    <string name="print_to_template">Кому: %s; </string>
-    <string name="print_cc_template">Копия: %s; </string>
-    <string name="print_bcc_template">Скрытая копия: %s;</string>
+    <string name="print_to_template">Кому: %s;  </string>
+    <string name="print_cc_template">Копия: %s;  </string>
+    <string name="print_bcc_template">Cкр: %s;  </string>
     <string name="address">Адрес: </string>
     <string name="address_street">Улица</string>
     <string name="address_extended_street">Расширенная улица</string>
@@ -524,7 +523,7 @@
     <string name="protonmail_contacts">Контакты Proton Mail</string>
     <string name="device_contacts">Контакты устройства</string>
     <string name="print_date_template">Дата: %s</string>
-    <string name="print_attachment_template">Вложение: %s; </string>
+    <string name="print_attachment_template">Вложение: %s;  </string>
     <string name="pm_me_changed">Отправка сообщений с @pm.me – платная функция. Ваше сообщение будет отправлено с вашего обычного адреса %s</string>
     <string name="pm_me_can_not_be_default">Перейдите на платный тариф, чтобы получить возможность назначить свой адрес %s основным</string>
     <string name="dont_remind_again">Больше не напоминать</string>

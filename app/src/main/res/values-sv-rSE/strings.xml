@@ -157,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nya funktioner</string>
     <string name="existing_user_onboarding_new_features_description">Njut av nya funktioner som mörkt läge, förbättrade aviseringar, ett filter för olästa meddelanden och undermappar.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Uppdaterat Proton, enhetligt skydd</string>
-    <string name="existing_user_onboarding_updated_proton_description">Vi introducerar Protons uppdaterade utseende. Många tjänster, ett uppdrag. Välkommen till ett Internet där integritet är standard. <a href="https://proton.me/news/updated-proton">Lär dig mer</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Lär dig mer</a></string>
     <string name="onboarding_next">Nästa</string>
     <string name="onboarding_get_started">Kom igång</string>
     <string name="onboarding_got_it">Jag förstår</string>
@@ -325,7 +325,6 @@
     <string name="attachment_failed">Misslyckades ladda upp bilaga för meddelande </string>
     <string name="attaching_photo_failed">Misslyckades bifoga foto</string>
     <string name="empty_message">Tomt meddelande</string>
-    <string name="new_message_arrived">Nytt meddelande!</string>
     <string name="display_images">Visa fjärrinnehåll</string>
     <string name="retry">Försök igen</string>
     <string name="saving_failed_no_conn">Misslyckades att spara, ingen anslutning</string>
@@ -485,8 +484,8 @@
     <string name="spam_score_102">Detta meddelande kan vara ett nätfiskeförsök. Kontrollera avsändaren och innehållet för att säkerställa att de är legitima. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LÄR DIG MER</a></string>
     <string name="print_from_template">Från: %s</string>
     <string name="print_to_template">Till: %s;  </string>
-    <string name="print_cc_template">CC: %s</string>
-    <string name="print_bcc_template">BCC: %s</string>
+    <string name="print_cc_template">Kopia: %s;  </string>
+    <string name="print_bcc_template">Hemlig kopia: %s;  </string>
     <string name="address">Adress: </string>
     <string name="address_street">Gata</string>
     <string name="address_extended_street">Utökad gata</string>

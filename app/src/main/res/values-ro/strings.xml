@@ -158,7 +158,7 @@
     <string name="existing_user_onboarding_new_features_headline">Caracteristici noi</string>
     <string name="existing_user_onboarding_new_features_description">Bucurați-vă de caracteristici noi, cum ar fi modul întunecat, notificări îmbunătățite, un filtru pentru mesajele necitite și subfoldere.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualizat, protecție unificată</string>
-    <string name="existing_user_onboarding_updated_proton_description">Vă prezentăm noua față împrospătată a lui Proton. Multe servicii, o singură misiune. Bun venit la un internet unde intimitatea este implicită. <a href="https://proton.me/news/updated-proton">Detalii</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Detalii</a></string>
     <string name="onboarding_next">Înainte</string>
     <string name="onboarding_get_started">Începeți</string>
     <string name="onboarding_got_it">Am înțeles</string>
@@ -329,7 +329,6 @@
     <string name="attachment_failed">Încărcare eșuată fișier atașat la mesaj </string>
     <string name="attaching_photo_failed">Atașare eșuată fotografie</string>
     <string name="empty_message">Mesaj gol</string>
-    <string name="new_message_arrived">Mesaj nou!</string>
     <string name="display_images">Afișare conținut extern</string>
     <string name="retry">Reîncercare</string>
     <string name="saving_failed_no_conn">Salvare eșuată, nu există conexiune</string>
