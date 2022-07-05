@@ -25,6 +25,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_ID
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
@@ -68,19 +69,11 @@ abstract class MessageDao : BaseDao<Message>() {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
+    @Transaction
     abstract fun searchMessages(subject: String, senderName: String, senderEmail: String): Flow<List<Message>>
 
     @Query("SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location ")
     abstract fun getMessagesCountByLocation(location: Int): Int
-
-    @Query(
-        """
-        SELECT * FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_LOCATION = :location
-        ORDER BY $COLUMN_MESSAGE_TIME DESC
-        """
-    )
-    abstract fun observeMessagesByLocation(location: Int): Flow<List<Message>>
 
     @Query(
         """
@@ -113,6 +106,7 @@ abstract class MessageDao : BaseDao<Message>() {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
+    @Transaction
     abstract fun observeNonTrashedMessages(label: String): Flow<List<Message>>
 
     @Query(
@@ -134,6 +128,7 @@ abstract class MessageDao : BaseDao<Message>() {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
+    @Transaction
     abstract fun observeNonTrashedMessagesWithUnreadStatus(label: String, unread: Boolean): Flow<List<Message>>
 
     fun observeMessages(label: String, unread: Boolean? = null): Flow<List<Message>> =
@@ -159,6 +154,7 @@ abstract class MessageDao : BaseDao<Message>() {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
+    @Transaction
     protected abstract fun observeMessages(label: String): Flow<List<Message>>
 
     /**
@@ -182,6 +178,7 @@ abstract class MessageDao : BaseDao<Message>() {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
+    @Transaction
     protected abstract fun observeMessagesWithUnreadStatus(label: String, unread: Boolean): Flow<List<Message>>
 
     fun findMessageById(messageId: String): Flow<Message?> = findMessageInfoById(messageId)
@@ -245,6 +242,7 @@ abstract class MessageDao : BaseDao<Message>() {
         ORDER BY $COLUMN_MESSAGE_ACCESS_TIME
     """
     )
+    @Transaction
     abstract fun observeAllMessagesInfoByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>>
 
     @Query(
