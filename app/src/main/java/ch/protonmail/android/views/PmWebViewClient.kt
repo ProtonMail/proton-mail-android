@@ -85,12 +85,8 @@ open class PmWebViewClient(
             if (fixedUrl.isNotBlank()) {
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(fixedUrl)
-                if (intent.resolveActivity(activity.packageManager) != null) {
-                    if (showHyperlinkConfirmation(fixedUrl).not()) {
-                        activity.startActivity(intent)
-                    }
-                } else {
-                    activity.showToast(R.string.no_application_found_or_link_invalid)
+                if (showHyperlinkConfirmation(fixedUrl).not()) {
+                    activity.startActivity(intent)
                 }
             }
         }
