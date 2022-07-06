@@ -138,6 +138,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
 import kotlinx.android.synthetic.main.layout_mailbox_status_view.*
 import kotlinx.android.synthetic.main.navigation_drawer.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -683,7 +684,9 @@ internal class MailboxActivity :
 
     override fun onDohFailed() {
         super.onDohFailed()
-        setAsOffline(Constants.ConnectionState.CANT_REACH_SERVER)
+        lifecycleScope.launch(Dispatchers.Main) {
+            setAsOffline(Constants.ConnectionState.CANT_REACH_SERVER)
+        }
     }
 
     private fun checkRegistration() {
