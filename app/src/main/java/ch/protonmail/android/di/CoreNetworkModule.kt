@@ -144,8 +144,8 @@ object NetworkModule {
     }
 
     @Provides
-    fun provideNetworkRequestOverrider(context: Context): NetworkRequestOverrider =
-        NetworkRequestOverriderImpl(context = context, okHttpClient = OkHttpClient())
+    fun provideNetworkRequestOverrider(): NetworkRequestOverrider =
+        NetworkRequestOverriderImpl(okHttpClient = OkHttpClient())
 }
 
 @Module
