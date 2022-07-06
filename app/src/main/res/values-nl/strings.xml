@@ -157,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nieuwe functionaliteiten</string>
     <string name="existing_user_onboarding_new_features_description">Geniet van nieuwe functionaliteiten zoals donkere modus, verbeterde meldingen, een filter voor ongelezen berichten, en submappen.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Geüpdatete Proton, verenigde bescherming</string>
-    <string name="existing_user_onboarding_updated_proton_description">Maak kennis met Proton\'s vernieuwde look. Veel diensten, één missie. Welkom op een internet waar privacy de standaard is. <a href="https://proton.me/news/updated-proton">Meer leren</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Meer leren</a></string>
     <string name="onboarding_next">Volgende</string>
     <string name="onboarding_get_started">Aan de slag</string>
     <string name="onboarding_got_it">Begrepen</string>
@@ -318,14 +318,13 @@
     <string name="label_deleted_error">Fout bij het verwijderen van label</string>
     <string name="message_deleted_error">Fout bij het verwijderen van sommige berichten. Sommige van de geselecteerde berichten zijn aan het verzenden?!</string>
     <string name="respond_inline">Inline reageren</string>
-    <string name="server_not_reachable_troubleshoot">Server niet bereikbaar… (<u>Probleemoplossing</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Controleren op verbinding...</string>
     <string name="draft_label_attachments_uploading">bijlagen uploaden…</string>
     <string name="draft_label_message_uploading">bericht verzenden…</string>
     <string name="attachment_failed">Bijlage uploaden mislukt voor bericht </string>
     <string name="attaching_photo_failed">Bijvoegen van foto is mislukt</string>
     <string name="empty_message">Leeg bericht</string>
-    <string name="new_message_arrived">Nieuw bericht!</string>
     <string name="display_images">Afbeelding weergeven</string>
     <string name="retry">Opnieuw proberen</string>
     <string name="saving_failed_no_conn">Opslaan mislukt, geen verbinding</string>
@@ -424,7 +423,7 @@
     <string name="contacts_import_contact">Contactpersoon importeren</string>
     <string name="contacts_import">Importeren</string>
     <string name="upload_contacts">Contacten uploaden</string>
-    <string name="uploading_contacts">Contacten uploaden…</string>
+    <string name="uploading_contacts">Uploading contacts…</string>
     <string-array name="vcard_option_phone">
         <item>Telefoon</item>
         <item>Mobiel</item>
@@ -484,7 +483,7 @@
     <string name="spam_score_101">Deze e-mail voldoet niet aan de authenticatievereisten van de domainnaam. Mogelijk is de e-mail vals of onjuist doorgestuurd!</string>
     <string name="spam_score_102">Dit bericht kan phishing zijn. Controleer de afzender en de inhoud om te controleren dat ze legitiem zijn. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MEER INFORMATIE</a></string>
     <string name="print_from_template">Van: %s</string>
-    <string name="print_to_template">Aan: %s;  </string>
+    <string name="print_to_template">To: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Adres:</string>
@@ -512,7 +511,7 @@
     <string name="protonmail_contacts">Proton Mail Contacten</string>
     <string name="device_contacts">Contactpersonen van apparaat</string>
     <string name="print_date_template">Datum: %s</string>
-    <string name="print_attachment_template">Bijlage: %s;  </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Het verzenden van berichten vanaf een @pm.me adres is een betaalde functionaliteit. Uw bericht zal vanaf uw standaard adres %s worden verzonden</string>
     <string name="pm_me_can_not_be_default">Upgrade naar een betaald plan om uw %s -adres als standaard te kunnen instellen</string>
     <string name="dont_remind_again">Niet opnieuw herinneren</string>

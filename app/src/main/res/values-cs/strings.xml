@@ -159,7 +159,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nové funkce</string>
     <string name="existing_user_onboarding_new_features_description">Využijte nové funkce, jako je tmavý režim, vylepšená oznámení, filtr nepřečtených zpráv a podsložky.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Aktualizovaný Proton, jednotná ochrana</string>
-    <string name="existing_user_onboarding_updated_proton_description">Představujeme osvěžený vzhled Protonu. Mnoho služeb, jedno poslání. Vítejte na internetu, kde je soukromí standardem. <a href="https://proton.me/news/updated-proton">Další informace</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Další informace</a></string>
     <string name="onboarding_next">Další</string>
     <string name="onboarding_get_started">Začínáme</string>
     <string name="onboarding_got_it">Rozumím</string>
@@ -333,7 +333,6 @@
     <string name="attachment_failed">Nahrání přílohy pro zprávu se nezdařilo </string>
     <string name="attaching_photo_failed">Připojení fotografie se nezdařilo</string>
     <string name="empty_message">Prázdná zpráva</string>
-    <string name="new_message_arrived">Nová zpráva!</string>
     <string name="display_images">Zobrazit grafiku</string>
     <string name="retry">Obnovit</string>
     <string name="saving_failed_no_conn">Ukládání se nezdařilo, nejste připojeni k internetu</string>
@@ -436,7 +435,7 @@
     <string name="contacts_import_contact">Importovat kontakty</string>
     <string name="contacts_import">Import</string>
     <string name="upload_contacts">Nahrát kontakty</string>
-    <string name="uploading_contacts">Nahrávání kontaktů…</string>
+    <string name="uploading_contacts">Nahrávání kontaktů……</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
         <item>Mobil</item>

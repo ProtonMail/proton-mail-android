@@ -157,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">New features</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton atualizado, proteção unificada</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_get_started">Get started</string>
     <string name="onboarding_got_it">Got it</string>
@@ -325,7 +325,6 @@
     <string name="attachment_failed">Falha ao enviar anexo na mensagem </string>
     <string name="attaching_photo_failed">Falha ao anexar fotografia</string>
     <string name="empty_message">Mensagem vazia</string>
-    <string name="new_message_arrived">Nova mensagem!</string>
     <string name="display_images">Mostrar conteúdo remoto</string>
     <string name="retry">Repetir</string>
     <string name="saving_failed_no_conn">Falha ao gravar, sem ligação</string>
@@ -484,7 +483,7 @@
     <string name="spam_score_101">Este e-mail falhou os requisitos de autenticação do domínio. Pode ser falsificado ou ter sido reencaminhado incorretamente!</string>
     <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a></string>
     <string name="print_from_template">De: %s</string>
-    <string name="print_to_template">Para: %s; </string>
+    <string name="print_to_template">To: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Endereço: </string>
@@ -512,7 +511,7 @@
     <string name="protonmail_contacts">Contatos do Proton Mail</string>
     <string name="device_contacts">Contactos do dispositivo</string>
     <string name="print_date_template">Data: %s</string>
-    <string name="print_attachment_template">Anexo: %s; </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Enviar mensagens de um endereço @pm.me é uma funcionalidade paga. A sua mensagem será enviada do seu endereço predefinido %s</string>
     <string name="pm_me_can_not_be_default">Actualize para um plano pago para poder definir o seu endereço %s como predefinição</string>
     <string name="dont_remind_again">Não lembrar novamente</string>

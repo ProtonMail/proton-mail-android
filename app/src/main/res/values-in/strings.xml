@@ -156,7 +156,7 @@
     <string name="existing_user_onboarding_new_features_headline">Fitur baru</string>
     <string name="existing_user_onboarding_new_features_description">Nikmati berbagai fitur baru seperti mode gelap, sistem notifikasi yang telah disempurnakan, filter untuk pesan-pesan yang belum dibaca, dan subfolder.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton yang baru, dengan perlindungan yang tersatukan</string>
-    <string name="existing_user_onboarding_updated_proton_description">Memperkenalkan tampilan baru Proton. Beragam layanan, satu misi. Selamat datang di Internet yang menjunjung privasi sebagai hal yang baku. <a href="https://proton.me/news/updated-proton">Pelajari lebih lanjut</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Pelajari lebih lanjut</a></string>
     <string name="onboarding_next">Berikutnya</string>
     <string name="onboarding_get_started">Mulai</string>
     <string name="onboarding_got_it">Dimengerti</string>
@@ -314,14 +314,13 @@
     <string name="label_deleted_error">Kesalahan saat menghapus label</string>
     <string name="message_deleted_error">Kesalahan saat menghapus beberapa pesan. Beberapa pesan yang di pilih sedang dalam proses pengiriman?!</string>
     <string name="respond_inline">Tanggapi dalam-baris</string>
-    <string name="server_not_reachable_troubleshoot">Server tidak dapat dijangkau… (<u>Cari Solusi</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server tidak dapat dijangkau… (<u>Penyelesaian masalah</u>)</string>
     <string name="connectivity_checking">Memeriksa koneksi...</string>
     <string name="draft_label_attachments_uploading">mengunggah lampiran…</string>
     <string name="draft_label_message_uploading">mengirim pesan…</string>
     <string name="attachment_failed">Gagal mengunggah lampiran untuk pesan </string>
     <string name="attaching_photo_failed">Gagal Melampirkan Foto</string>
     <string name="empty_message">Pesan kosong</string>
-    <string name="new_message_arrived">Pesan baru!</string>
     <string name="display_images">Tampilkan remote content</string>
     <string name="retry">Coba lagi</string>
     <string name="saving_failed_no_conn">Gagal menyimpan, tidak ada koneksi</string>
@@ -479,9 +478,9 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="spam_score_101">Email ini tidak memenuhi syarat otentikasi domainnya. Email ini mungkin telah dipalsukan atau tidak diteruskan dengan benar!</string>
     <string name="spam_score_102">Pesan ini mungkin merupakan sebuah upaya phishing. Mohon periksa nama pengirim dan konten yang tertera secara seksama untuk memastikan keabsahan email ini. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">PELAJARI LEBIH LANJUT</a></string>
     <string name="print_from_template">Dari: %s</string>
-    <string name="print_to_template">Kepada: %s;  </string>
-    <string name="print_cc_template">CC: %s;  </string>
-    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="print_to_template">Kepada: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Alamat: </string>
     <string name="address_street">Jalan</string>
     <string name="address_extended_street">Ekstensi</string>
@@ -507,7 +506,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="protonmail_contacts">Kontak Proton Mail</string>
     <string name="device_contacts">Kontak Perangkat</string>
     <string name="print_date_template">Tanggal: %s</string>
-    <string name="print_attachment_template">Lampiran: %s;  </string>
+    <string name="print_attachment_template">Lampiran: %s;  </string>
     <string name="pm_me_changed">Pengiriman pesan dari alamat @pm.me merupakan fitur berbayar. Pesan Anda akan dikirim dari alamat bawaan Anda %s</string>
     <string name="pm_me_can_not_be_default">Tingkatkan ke paket berbayar untuk dapat mengatur alamat %s Anda sebagai yang utama</string>
     <string name="dont_remind_again">Jangan ingatkan saya lagi</string>

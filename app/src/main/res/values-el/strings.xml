@@ -157,7 +157,7 @@
     <string name="existing_user_onboarding_new_features_headline">New features</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Ενημερωμένο Proton, ενοποιημένη προστασία</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Επόμενο</string>
     <string name="onboarding_get_started">Ξεκινήστε</string>
     <string name="onboarding_got_it">Το κατάλαβα</string>
@@ -318,14 +318,13 @@
     <string name="label_deleted_error">Σφάλμα κατά την διαγραφή της ετικέτας</string>
     <string name="message_deleted_error">Σφάλμα κατά τη διαγραφή ορισμένων μηνυμάτων. Μερικά από τα επιλεγμένα μηνύματα βρίσκονται σε διαδικασία αποστολής;!</string>
     <string name="respond_inline">Απάντηση μέσα στην γραμμή</string>
-    <string name="server_not_reachable_troubleshoot">Απρόσιτος διακομιστής… (<u>Αντιμετώπιση προβλήματος</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Έλεγχος σύνδεσης...</string>
-    <string name="draft_label_attachments_uploading">μεταφόρτωση συνημμένων…</string>
+    <string name="draft_label_attachments_uploading">γίνεται ανέβασμα συνημμένων…</string>
     <string name="draft_label_message_uploading">αποστολή μηνύματος…</string>
-    <string name="attachment_failed">Η μεταφόρτωση συνημμένου για αυτό το μήνυμα απέτυχε </string>
+    <string name="attachment_failed">Αποτυχία ανεβάσματος συνημμένου για το μήνυμα </string>
     <string name="attaching_photo_failed">Η επισύναψη της φωτογραφίας απέτυχε</string>
     <string name="empty_message">Άδειο μήνυμα</string>
-    <string name="new_message_arrived">Νέο μήνυμα!</string>
     <string name="display_images">Εμφάνιση απομακρυσμένου περιεχομένου</string>
     <string name="retry">Δοκιμάστε ξανά</string>
     <string name="saving_failed_no_conn">Η αποθήκευση απέτυχε, δεν υπάρχει σύνδεση</string>
@@ -423,8 +422,8 @@
     <string name="vcard_other_option_url">URL</string>
     <string name="contacts_import_contact">Εισαγωγή Επαφής</string>
     <string name="contacts_import">Εισαγωγή</string>
-    <string name="upload_contacts">Μεταφόρτωση Επαφών</string>
-    <string name="uploading_contacts">Γίνεται ανέβασμα επαφών…</string>
+    <string name="upload_contacts">Ανέβασμα Επαφών</string>
+    <string name="uploading_contacts">Uploading contacts…</string>
     <string-array name="vcard_option_phone">
         <item>Τηλέφωνο</item>
         <item>Κινητό</item>
@@ -484,9 +483,9 @@
     <string name="spam_score_101">Αυτό το μήνυμα ηλεκτρονικού ταχυδρομείου απέτυχε στις απαιτήσεις του ελέγχου ταυτότητας domain. Μπορεί να έχει πλαστογραφηθεί ή να έχει προωθηθεί λάθος!</string>
     <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a></string>
     <string name="print_from_template">Από: %s</string>
-    <string name="print_to_template">Πρός: %s  </string>
-    <string name="print_cc_template">Κοιν: %s  </string>
-    <string name="print_bcc_template">Κρυφή Κοιν: %s  </string>
+    <string name="print_to_template">To: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Διεύθυνση: </string>
     <string name="address_street">Οδός</string>
     <string name="address_extended_street">Επέκταση οδού</string>
@@ -505,14 +504,14 @@
     <string name="error_can_not_send_from_this_address">Για αποστολή από τη διεύθυνσή σας %s, αναβαθμίστε σε πρόγραμμα επί πληρωμή.</string>
     <string name="email_empty">Η διεύθυνση E-mail λείπει</string>
     <string name="encrypted_contact_details">Κρυπτογραφημένα στοιχεία επαφής</string>
-    <string name="convert_question">Μεταφόρτωση τοπικών επαφών</string>
+    <string name="convert_question">Ανέβασμα τοπικών επαφών</string>
     <string name="convert_question_subtitle">This will upload the local contacts on your device to your Proton Mail contacts directory. You will then be able to access these contacts on your other devices through Proton Mail.</string>
     <string name="refresh_contacts">Ανανέωση</string>
     <string name="invalid_email_some_contacts">Η διεύθυνση E-mail δεν είναι έγκυρη για ορισμένες από τις επαφές σας</string>
     <string name="protonmail_contacts">Επαφές Proton Mail</string>
     <string name="device_contacts">Επαφές Συσκευής</string>
     <string name="print_date_template">Ημερομηνία: %s</string>
-    <string name="print_attachment_template">Συνημμένο: %s;  </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Η αποστολή μηνυμάτων από διεύθυνση @pm.me είναι μια λειτουργία επί πληρωμή. Το μήνυμά σας θα σταλεί από την προεπιλεγμένη σας διεύθυνση %s</string>
     <string name="pm_me_can_not_be_default">Για να μπορείτε να ορίσετε τη διεύθυνσή σας %s ως προεπιλεγμένη, αναβαθμίστε σε πρόγραμμα επί πληρωμή</string>
     <string name="dont_remind_again">Μην μου υπενθυμίσεις ξανά</string>

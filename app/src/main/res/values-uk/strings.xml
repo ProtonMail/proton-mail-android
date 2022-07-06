@@ -159,7 +159,7 @@
     <string name="existing_user_onboarding_new_features_headline">Нові можливості</string>
     <string name="existing_user_onboarding_new_features_description">Насолоджуйтесь такими новими функціями, як темний режим, удосконалені сповіщення, фільтр непрочитаних повідомлень та підтеки.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Оновлений Proton, єдиний захист</string>
-    <string name="existing_user_onboarding_updated_proton_description">Представляємо оновлений вигляд Proton. Багато служб, одна місія. Ласкаво просимо до Інтернету, де приватність — це стандарт. <a href="https://proton.me/news/updated-proton">Докладніше</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Докладніше</a></string>
     <string name="onboarding_next">Далі</string>
     <string name="onboarding_get_started">Розпочати</string>
     <string name="onboarding_got_it">Зрозуміло</string>
@@ -333,7 +333,6 @@
     <string name="attachment_failed">Не вдалося вивантажити вкладення для цього повідомлення </string>
     <string name="attaching_photo_failed">Не вдалося прикріпити фото</string>
     <string name="empty_message">Порожнє повідомлення</string>
-    <string name="new_message_arrived">Нове повідомлення!</string>
     <string name="display_images">Показати зовнішній вміст</string>
     <string name="retry">Повторити</string>
     <string name="saving_failed_no_conn">Не вдалося зберегти. Немає з\'єднання</string>
@@ -496,9 +495,9 @@
     <string name="spam_score_101">Цей лист не пройшов вимоги перевірки свого домену. Він міг бути підроблений або неправильно пересланий!</string>
     <string name="spam_score_102">Це повідомлення може бути спробою шахрайства. Будь ласка, перевірте відправника і вміст, щоб упевнитися в його справжності. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ДОКЛАДНІШЕ</a></string>
     <string name="print_from_template">Від: %s</string>
-    <string name="print_to_template">Кому: %s;  </string>
-    <string name="print_cc_template">Копія: %s;  </string>
-    <string name="print_bcc_template">Прихована копія: %s;  </string>
+    <string name="print_to_template">Кому: %s;  </string>
+    <string name="print_cc_template">Копія: %s;  </string>
+    <string name="print_bcc_template">Прихована копія: %s;  </string>
     <string name="address">Адреса: </string>
     <string name="address_street">Вулиця</string>
     <string name="address_extended_street">Вулиця (розширено)</string>
@@ -524,7 +523,7 @@
     <string name="protonmail_contacts">Контакти Proton Mail</string>
     <string name="device_contacts">Контакти пристрою</string>
     <string name="print_date_template">Дата: %s</string>
-    <string name="print_attachment_template">Вкладення: %s;  </string>
+    <string name="print_attachment_template">Вкладення: %s;  </string>
     <string name="pm_me_changed">Надсилання повідомлень з адреси @pm.me є платною функцією. Ваше повідомлення буде надіслано зі стандартної адреси %s</string>
     <string name="pm_me_can_not_be_default">Передплатіть тарифний план, щоб встановити адресу %s типовою</string>
     <string name="dont_remind_again">Більше не нагадувати</string>

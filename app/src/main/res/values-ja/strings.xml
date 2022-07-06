@@ -156,7 +156,7 @@
     <string name="existing_user_onboarding_new_features_headline">新しい機能</string>
     <string name="existing_user_onboarding_new_features_description">ダークモード、アップデートされた通知、未読メッセージフィルター、サブフォルダーなどの新たな機能をお楽しみください。</string>
     <string name="existing_user_onboarding_updated_proton_headline">統合された保護を新しくなった Proton で</string>
-    <string name="existing_user_onboarding_updated_proton_description">新しい外観になった Proton をご紹介します。たくさんのサービス、1 つのミッション。どこでもプライベートなインターネットへようこそ。<a href="https://proton.me/news/updated-proton">詳細</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">詳細</a></string>
     <string name="onboarding_next">次へ</string>
     <string name="onboarding_get_started">利用開始</string>
     <string name="onboarding_got_it">はい</string>
@@ -314,14 +314,13 @@
     <string name="label_deleted_error">ラベル削除中にエラーが発生しました。</string>
     <string name="message_deleted_error">メッセージ削除中にエラーが起きました。選択したメッセージのうち何通かは送信作業中ですか。</string>
     <string name="respond_inline">インラインで返信</string>
-    <string name="server_not_reachable_troubleshoot">サーバーに接続できません… (<u>トラブルシューティング</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">接続を確認しています...</string>
     <string name="draft_label_attachments_uploading">添付ファイルをアップロードしています…</string>
     <string name="draft_label_message_uploading">メッセージを送信しています…</string>
     <string name="attachment_failed">添付ファイルのアップロードに失敗しました。</string>
     <string name="attaching_photo_failed">写真の添付に失敗しました。</string>
     <string name="empty_message">空のメッセージ</string>
-    <string name="new_message_arrived">新着メッセージあり</string>
     <string name="display_images">外部コンテンツを表示</string>
     <string name="retry">再試行</string>
     <string name="saving_failed_no_conn">保存に失敗しました。接続が切れています。</string>
@@ -418,7 +417,7 @@
     <string name="contacts_import_contact">連絡先をインポート</string>
     <string name="contacts_import">インポート</string>
     <string name="upload_contacts">連絡先をアップロード</string>
-    <string name="uploading_contacts">連絡先をアップロード中…</string>
+    <string name="uploading_contacts">Uploading contacts…</string>
     <string-array name="vcard_option_phone">
         <item>電話</item>
         <item>携帯電話</item>
@@ -478,7 +477,7 @@
     <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。差出人と内容を疑い、正当なものかどうかを確認してください。 <a href="https://protonmail.com/blog/prevent-phishing-attacks/">詳細</a></string>
     <string name="print_from_template">差出人: %s</string>
-    <string name="print_to_template">宛先: %s;  </string>
+    <string name="print_to_template">To: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">アドレス: </string>
@@ -506,7 +505,7 @@
     <string name="protonmail_contacts">Proton Mail 連絡先</string>
     <string name="device_contacts">デバイスの連絡先</string>
     <string name="print_date_template">日付: %s</string>
-    <string name="print_attachment_template">添付ファイル: %s; </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">\@pm.meアドレスからのメッセージ送信は有料の機能です。メッセージは既定アドレスの%sから送信されます。</string>
     <string name="pm_me_can_not_be_default">%s のアドレスを既定にするためには有料プランにアップグレードしてください。</string>
     <string name="dont_remind_again">今後このメッセージを表示しない</string>
