@@ -197,10 +197,10 @@ internal class MailboxViewModel @Inject constructor(
 
     val drawerLabels: Flow<DrawerFoldersAndLabelsSectionUiModel> = combine(
         mutableUserId.filterNotNull(),
-        mutableRefreshFlow.onStart { emit(false) }
+        mutableRefreshFlow.onStart { emit(true) }
     ) { userId, isRefresh -> userId to isRefresh }
         .flatMapLatest { userIdPair ->
-            observeLabelsAndFoldersWithChildren(userIdPair.first, userIdPair.second)
+            observeLabelsAndFoldersWithChildren(userId = userIdPair.first, shallRefresh = userIdPair.second)
         }
         .map { labelsAndFolders ->
             drawerFoldersAndLabelsSectionUiModelMapper.toUiModels(labelsAndFolders)
