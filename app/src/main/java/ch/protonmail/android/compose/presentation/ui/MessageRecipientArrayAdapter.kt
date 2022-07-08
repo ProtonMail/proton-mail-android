@@ -140,7 +140,6 @@ class MessageRecipientArrayAdapter(context: Context) :
             val extractInitials = ExtractInitials()
             extractInitials(Name(name), EmailAddress(emailAddress))
         } catch (e: IllegalArgumentException) {
-            Timber.w(e, "Can't extract recipient initials. Name: $name - Email: $emailAddress")
             EMPTY_STRING
         }
     }
