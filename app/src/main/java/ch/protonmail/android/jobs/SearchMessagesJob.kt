@@ -64,7 +64,7 @@ class SearchMessagesJob(private val queryString: String, private val page: Int) 
             }
             response.messages
         } catch (error: Exception) {
-            Timber.e("Error searching messages: $error")
+            Timber.e(error, "Error searching messages")
             emptyList()
         }
     }
