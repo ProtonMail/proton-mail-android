@@ -141,26 +141,24 @@ class NetworkConfigurator @Inject constructor(
         scope.launch {
             val user = userManager.requireCurrentLegacyUser()
             // double-check if normal API call works before resorting to use alternative routing url
-            if (user.usingDefaultApi) {
-                val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
-                    val result = try {
-                        networkSwitcher.tryRequest()
-                    } catch (e: Exception) {
-                        Timber.w(e, "Exception while pinging API before using alternative routing.")
-                        null
-                    }
-                    result != null
+            val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
+                val result = try {
+                    networkSwitcher.tryRequest()
+                } catch (e: Exception) {
+                    Timber.w(e, "Exception while pinging API before using alternative routing.")
+                    null
                 }
-                if (success == null) {
-                    Timber.w("Timeout while pinging API before using alternative routing.")
-                }
-                if (success == true) {
-                    callback?.stopAutoRetry()
-                    networkSwitcher.reconfigureProxy(null)
-                    isRunning = false
-                    callback?.stopDohSignal()
-                    return@launch
-                }
+                result != null
+            }
+            if (success == null) {
+                Timber.w("Timeout while pinging API before using alternative routing.")
+            }
+            if (success == true) {
+                callback?.stopAutoRetry()
+                networkSwitcher.reconfigureProxy(null)
+                isRunning = false
+                callback?.stopDohSignal()
+                return@launch
             }
 
             proxyListReference.forEach {
