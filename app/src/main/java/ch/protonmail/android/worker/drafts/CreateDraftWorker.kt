@@ -58,6 +58,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.util.orThrow
+import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.notifier.UserNotifier
@@ -65,7 +66,6 @@ import com.google.gson.Gson
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
@@ -95,6 +95,7 @@ class CreateDraftWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val messageDetailsRepository: MessageDetailsRepository,
+    private val messageRepository: MessageRepository,
     private val messageFactory: MessageFactory,
     private val userManager: UserManager,
     private val addressCryptoFactory: AddressCrypto.Factory,
@@ -105,8 +106,9 @@ class CreateDraftWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         val userId = getInputUserId()
+        val messageDatabaseId = getInputMessageDbId()
 
-        val message = messageDetailsRepository.findMessageByDatabaseId(getInputMessageDbId()).first()
+        val message = messageRepository.getMessage(userId, messageDatabaseId)
             ?: return failureWithError(CreateDraftWorkerErrors.MessageNotFound)
 
         val senderAddressId = requireNotNull(message.addressID)

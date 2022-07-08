@@ -29,11 +29,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.databinding.SettingsSwipeFragmentBinding
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.utils.AppUtil
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.dropWhile
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -51,6 +52,7 @@ class SwipeSettingFragment : Fragment() {
     private val binding get() = requireNotNull(_binding)
 
     @Inject lateinit var getMailSettings: GetMailSettings
+    @Inject lateinit var userManager: UserManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,18 +73,15 @@ class SwipeSettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            getMailSettings()
-                .dropWhile { it !is GetMailSettings.MailSettingsState.Success }
+            val userId = userManager.currentUserId
+                ?: return@launch
+            getMailSettings(userId)
+                .filterIsInstance<GetMailSettings.Result.Success>()
                 .onEach { result ->
-                    when (result) {
-                        is GetMailSettings.MailSettingsState.Success -> {
-                            result.mailSettings?.let {
-                                mailSettings = it
-                                renderLeftToRightPreview()
-                                renderRightToLeftPreview()
-                            }
-                        }
-                    }
+                    mailSettings = result.mailSettings
+                    renderLeftToRightPreview()
+                    renderRightToLeftPreview()
+
                 }.launchIn(lifecycleScope)
         }
     }

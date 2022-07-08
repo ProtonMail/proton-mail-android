@@ -32,6 +32,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.enumerations.MIMEType
@@ -47,11 +48,12 @@ import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.core.apiError
 import ch.protonmail.android.core.messageId
-import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.worker.CleanUpPendingSendWorker
-import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
+import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserIdTestData.userId
 import ch.protonmail.android.testdata.WorkerTestData
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
@@ -81,9 +83,6 @@ import java.net.SocketTimeoutException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
 
-/**
- * Test suite for [SendMessageWorker]
- */
 class SendMessageWorkerTest : CoroutinesTest {
 
     private val context: Context = mockk(relaxed = true)
@@ -115,6 +114,10 @@ class SendMessageWorkerTest : CoroutinesTest {
 
     private val pendingActionDao: PendingActionDao = mockk(relaxed = true)
 
+    private val databaseProvider: DatabaseProvider = mockk {
+        every { providePendingActionDao(any()) } returns pendingActionDao
+    }
+
     private val provideUniqueName: SendMessageWorker.ProvideUniqueName = mockk {
         every { this@mockk.invoke(any()) } returns WorkerTestData.UNIQUE_WORK_NAME
     }
@@ -128,18 +131,18 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     private val worker = SendMessageWorker(
-        context,
-        parameters,
-        messageDetailsRepository,
-        saveDraft,
-        sendPreferencesFactoryAssistedFactory,
-        apiManager,
-        packageFactory,
-        userManager,
-        userNotifier,
-        pendingActionDao,
-        workerRepository,
-        provideUniqueCleanUpName
+        context = context,
+        params = parameters,
+        messageDetailsRepository = messageDetailsRepository,
+        saveDraft = saveDraft,
+        sendPreferencesFactory = sendPreferencesFactoryAssistedFactory,
+        apiManager = apiManager,
+        packagesFactory = packageFactory,
+        userManager = userManager,
+        userNotifier = userNotifier,
+        databaseProvider = databaseProvider,
+        workerRepository = workerRepository,
+        getCleanUpPendingSendWorkName = provideUniqueCleanUpName
     )
 
     @Test
@@ -162,6 +165,7 @@ class SendMessageWorkerTest : CoroutinesTest {
 
             // When
             SendMessageWorker.Enqueuer(workManager, userManager, provideUniqueName).enqueue(
+                userId,
                 message,
                 attachmentIds,
                 messageParentId,
@@ -231,12 +235,13 @@ class SendMessageWorkerTest : CoroutinesTest {
         worker.doWork()
 
         val expectedParameters = SaveDraft.SaveDraftParameters(
-            message,
-            listOf("attId8327"),
-            "parentId82384",
-            Constants.MessageActionType.NONE,
-            "prevSenderAddress",
-            SaveDraft.SaveDraftTrigger.SendingMessage
+            userId = userId,
+            message = message,
+            newAttachmentIds = listOf("attId8327"),
+            parentId = "parentId82384",
+            actionType = Constants.MessageActionType.NONE,
+            previousSenderAddressId = "prevSenderAddress",
+            trigger = SaveDraft.SaveDraftTrigger.SendingMessage
         )
         coVerify { saveDraft(expectedParameters) }
     }
@@ -1054,7 +1059,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         messageActionType: Constants.MessageActionType = Constants.MessageActionType.REPLY,
         previousSenderAddress: String = "prevSenderAddress923",
         securityOptions: MessageSecurityOptions? = MessageSecurityOptions(null, null, -1),
-        userId: UserId = UserId("randomUser132948231")
+        userId: UserId = UserIdTestData.userId
     ) {
         every { parameters.inputData.getLong(KEY_INPUT_SEND_MESSAGE_MSG_DB_ID, -1) } answers { messageDbId }
         every { parameters.inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS) } answers { attachments }

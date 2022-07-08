@@ -504,14 +504,18 @@ class ComposeMessageViewModel @Inject constructor(
         oldSenderAddress: String,
         saveDraftTrigger: SaveDraft.SaveDraftTrigger
     ) {
+        val userId = userManager.currentUserId
+            ?: return
+
         val saveDraftResult = saveDraft(
             SaveDraft.SaveDraftParameters(
-                message,
-                newAttachments,
-                parentId,
-                messageActionType,
-                oldSenderAddress,
-                saveDraftTrigger
+                userId = userId,
+                message = message,
+                newAttachmentIds = newAttachments,
+                parentId = parentId,
+                actionType = messageActionType,
+                previousSenderAddressId = oldSenderAddress,
+                trigger = saveDraftTrigger
             )
         )
 
@@ -532,7 +536,6 @@ class ComposeMessageViewModel @Inject constructor(
 
     private suspend fun onDraftSaved(savedDraftId: String) {
         val draft = requireNotNull(messageDetailsRepository.findMessageById(savedDraftId).first())
-
         viewModelScope.launch(dispatchers.Main) {
             _draftId.set(draft.messageId)
             watchForMessageSent()
@@ -742,12 +745,13 @@ class ComposeMessageViewModel @Inject constructor(
 
                 sendMessage(
                     SendMessage.SendMessageParameters(
-                        messageWithExpirationTime,
-                        newAttachments,
-                        parentId,
-                        _actionId,
-                        _oldSenderAddressId,
-                        MessageSecurityOptions(
+                        userId = userId,
+                        message = messageWithExpirationTime,
+                        newAttachmentIds = newAttachments,
+                        parentId = parentId,
+                        actionType = _actionId,
+                        previousSenderAddressId = _oldSenderAddressId,
+                        securityOptions = MessageSecurityOptions(
                             messageDataResult.messagePassword,
                             messageDataResult.passwordHint,
                             messageDataResult.expiresAfterInSeconds

@@ -34,14 +34,13 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.models.MailSettings
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.segments.TEN_SECONDS
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.di.CurrentUserId
-import ch.protonmail.android.di.CurrentUserMailSettings
 import ch.protonmail.android.pendingaction.data.model.PendingUpload
+import ch.protonmail.android.settings.domain.GetMailSettings
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
@@ -70,11 +69,11 @@ class UploadAttachmentsWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val dispatchers: DispatcherProvider,
     private val attachmentsRepository: AttachmentsRepository,
-    private val pendingActionDao: PendingActionDao,
+    private val databaseProvider: DatabaseProvider,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val addressCryptoFactory: AddressCrypto.Factory,
-    @CurrentUserId private val userId: UserId,
-    @CurrentUserMailSettings private val mailSettings: MailSettings
+    private val userManager: UserManager,
+    private val getMailSettings: GetMailSettings
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): ListenableWorker.Result = withContext(dispatchers.Io) {
@@ -85,16 +84,30 @@ class UploadAttachmentsWorker @AssistedInject constructor(
 
         messageDetailsRepository.findMessageById(messageId).first()?.let { message ->
             val addressId = requireNotNull(message.addressID)
+            val userId = userManager.currentUserId ?: return@withContext failureWithError(
+                "User logged out", messageId = messageId
+            )
             val addressCrypto = addressCryptoFactory.create(userId, AddressId(addressId))
 
-            return@withContext when (val result = upload(newAttachments, message, addressCrypto, isMessageSending)) {
+            val result = upload(
+                userId = userId,
+                attachmentIds = newAttachments,
+                message = message,
+                crypto = addressCrypto,
+                isMessageSending = isMessageSending
+            )
+            return@withContext when (result) {
                 is Result.Success -> ListenableWorker.Result.success()
+                is Result.Failure.CantGetMailSettings -> retryOrFail(
+                    error = result.error,
+                    messageId = message.messageId
+                )
                 is Result.Failure.UploadAttachment -> retryOrFail(
-                    result.error,
+                    error = result.error,
                     messageId = message.messageId
                 )
                 is Result.Failure.InvalidAttachment -> failureWithError(
-                    result.error,
+                    error = result.error,
                     messageId = message.messageId
                 )
             }
@@ -104,6 +117,7 @@ class UploadAttachmentsWorker @AssistedInject constructor(
     }
 
     private suspend fun upload(
+        userId: UserId,
         attachmentIds: List<String>,
         message: Message,
         crypto: AddressCrypto,
@@ -113,13 +127,19 @@ class UploadAttachmentsWorker @AssistedInject constructor(
             val messageId = requireNotNull(message.messageId)
             Timber.i("UploadAttachments started for messageId $messageId - attachmentIds $attachmentIds")
 
+            val pendingActionDao = databaseProvider.providePendingActionDao(userId)
             pendingActionDao.insertPendingForUpload(PendingUpload(messageId))
 
             performAttachmentsUpload(attachmentIds, message, crypto, messageId)?.let { failure ->
                 return@withContext failure
             }
 
-            val isAttachPublicKey = mailSettings.getAttachPublicKey()
+            val mailSettings = when (val result = getMailSettings(userId).first()) {
+                is GetMailSettings.Result.Error ->
+                    return@withContext Result.Failure.CantGetMailSettings(result.message ?: "No error message")
+                is GetMailSettings.Result.Success -> result.mailSettings
+            }
+            val isAttachPublicKey = mailSettings.attachPublicKey ?: false
             if (isAttachPublicKey && isMessageSending) {
                 Timber.i("UploadAttachments attaching publicKey for messageId $messageId")
                 val result = attachmentsRepository.uploadPublicKey(message, crypto)
@@ -165,15 +185,15 @@ class UploadAttachmentsWorker @AssistedInject constructor(
             }
             attachment.setMessage(message)
 
-            val result = attachmentsRepository.upload(attachment, crypto)
-
-            when (result) {
+            when (val result = attachmentsRepository.upload(attachment, crypto)) {
                 is AttachmentsRepository.Result.Success -> {
                     Timber.d("UploadAttachment $attachmentId to API for messageId $messageId Succeeded.")
                     updateMessageWithUploadedAttachment(message, result.uploadedAttachmentId)
                 }
                 is AttachmentsRepository.Result.Failure -> {
                     Timber.e("UploadAttachment $attachmentId to API for messageId $messageId FAILED.")
+                    val userId = userManager.currentUserId ?: return Result.Failure.UploadAttachment("User logged out")
+                    val pendingActionDao = databaseProvider.providePendingActionDao(userId)
                     pendingActionDao.deletePendingUploadByMessageId(messageId)
                     return Result.Failure.UploadAttachment(result.error)
                 }
@@ -223,18 +243,22 @@ class UploadAttachmentsWorker @AssistedInject constructor(
         val errorData = workDataOf(
             KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to error,
         )
+        val userId = userManager.currentUserId ?: return ListenableWorker.Result.failure(errorData)
+        val pendingActionDao = databaseProvider.providePendingActionDao(userId)
+
         messageId?.let { pendingActionDao.deletePendingUploadByMessageId(it) }
         return ListenableWorker.Result.failure(errorData)
     }
 
-    sealed class Result {
-        object Success : Result()
-        sealed class Failure : Result() {
+    sealed interface Result {
+        object Success : Result
+        sealed interface Failure : Result {
 
-            abstract val error: String
+            val error: String
 
-            class UploadAttachment(override val error: String) : Failure()
-            class InvalidAttachment(override val error: String) : Failure()
+            data class CantGetMailSettings(override val error: String) : Failure
+            data class UploadAttachment(override val error: String) : Failure
+            data class InvalidAttachment(override val error: String) : Failure
         }
     }
 

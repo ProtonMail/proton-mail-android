@@ -36,6 +36,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.factories.PackageFactory
@@ -61,7 +62,6 @@ import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.core.apiError
 import ch.protonmail.android.core.messageId
-import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.pendingaction.data.worker.CleanUpPendingSendWorker
 import ch.protonmail.android.usecase.compose.SaveDraft
@@ -111,21 +111,26 @@ class SendMessageWorker @AssistedInject constructor(
     private val packagesFactory: PackageFactory,
     private val userManager: UserManager,
     private val userNotifier: UserNotifier,
-    private val pendingActionDao: PendingActionDao,
+    private val databaseProvider: DatabaseProvider,
     private val workerRepository: WorkerRepository,
     private val getCleanUpPendingSendWorkName: CleanUpPendingSendWorker.ProvideUniqueName
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
+        val userId = requireInputCurrentUserId()
         val messageDatabaseId = getInputMessageDatabaseId()
         val inputMessageId = getInputMessageId()
         Timber.i(
             "Send Message Worker executing with messageDatabaseId $messageDatabaseId - messageID $inputMessageId"
         )
+
+        val pendingActionDao = databaseProvider.providePendingActionDao(userId)
+
         val message = messageDetailsRepository.findMessageByDatabaseId(messageDatabaseId).first()
             ?: messageDetailsRepository.findMessageById(inputMessageId).first()
         if (message == null) {
             showSendMessageError(NO_SUBJECT)
+
             pendingActionDao.deletePendingSendByDbId(messageDatabaseId)
             return failureWithError(MessageNotFound)
         }
@@ -133,20 +138,17 @@ class SendMessageWorker @AssistedInject constructor(
         Timber.d("Send Message Worker read local message with messageId ${message.messageId}")
 
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
-        val userId = requireNotNull(getInputCurrentUserId())
 
-        return when (val result = saveDraft(message, previousSenderAddressId)) {
+        return when (val result = saveDraft(userId, message, previousSenderAddressId)) {
             is SaveDraftResult.Success -> {
                 val messageId = result.draftId
                 Timber.i("Send Message Worker saved draft successfully for messageId $messageId")
                 val savedDraftMessage = messageDetailsRepository.findMessageById(messageId).first()
-                    ?: return retryOrFail(SavedDraftMessageNotFound, message)
+                    ?: return retryOrFail(userId, SavedDraftMessageNotFound, message)
 
                 Timber.d("Send Message Worker fetching send preferences for messageId $messageId")
-                val sendPreferences = requestSendPreferences(savedDraftMessage, userId) ?: return retryOrFail(
-                    FetchSendPreferencesFailed,
-                    savedDraftMessage
-                )
+                val sendPreferences = requestSendPreferences(savedDraftMessage, userId)
+                    ?: return retryOrFail(userId, FetchSendPreferencesFailed, savedDraftMessage)
 
                 Timber.d("Send Message Worker building request for messageId $messageId")
                 savedDraftMessage.decrypt(userManager, userId)
@@ -154,16 +156,16 @@ class SendMessageWorker @AssistedInject constructor(
                     buildSendMessageRequest(savedDraftMessage, sendPreferences, userId)
                 } catch (t: Throwable) {
                     if (t is CancellationException) throw t
-                    return retryOrFail(FailureBuildingApiRequest, savedDraftMessage, t)
+                    return retryOrFail(userId, FailureBuildingApiRequest, savedDraftMessage, t)
                 }
 
                 return try {
                     withContext(NonCancellable) {
                         val response = apiManager.sendMessage(messageId, requestBody, UserIdTag(userId))
-                        handleSendMessageResponse(messageId, response, savedDraftMessage)
+                        handleSendMessageResponse(userId, messageId, response, savedDraftMessage)
                     }
                 } catch (exception: IOException) {
-                    retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
+                    retryOrFail(userId, ErrorPerformingApiRequest, savedDraftMessage, exception)
                 } catch (exception: Exception) {
                     pendingActionDao.deletePendingSendByMessageId(messageId)
                     showSendMessageError(message.subject)
@@ -189,10 +191,14 @@ class SendMessageWorker @AssistedInject constructor(
     }
 
     private suspend fun handleSendMessageResponse(
+        userId: UserId,
         messageId: String,
         response: MessageSendResponse,
         savedDraftMessage: Message
     ): Result {
+
+        val pendingActionDao = databaseProvider.providePendingActionDao(userId)
+
         pendingActionDao.deletePendingSendByMessageId(messageId)
 
         return if (response.code == RESPONSE_CODE_OK) {
@@ -272,20 +278,24 @@ class SendMessageWorker @AssistedInject constructor(
         }.getOrNull()
     }
 
-    private suspend fun saveDraft(message: Message, previousSenderAddressId: String): SaveDraftResult {
-        return this.saveDraft(
-            SaveDraft.SaveDraftParameters(
-                message,
-                getInputAttachmentIds(),
-                getInputParentId(),
-                getInputActionType(),
-                previousSenderAddressId,
-                SaveDraft.SaveDraftTrigger.SendingMessage
-            )
+    private suspend fun saveDraft(
+        userId: UserId,
+        message: Message,
+        previousSenderAddressId: String
+    ): SaveDraftResult = saveDraft(
+        SaveDraft.SaveDraftParameters(
+            userId = userId,
+            message = message,
+            newAttachmentIds = getInputAttachmentIds(),
+            parentId = getInputParentId(),
+            actionType = getInputActionType(),
+            previousSenderAddressId = previousSenderAddressId,
+            trigger = SaveDraft.SaveDraftTrigger.SendingMessage
         )
-    }
+    )
 
     private fun retryOrFail(
+        userId: UserId,
         error: SendMessageWorkerError,
         message: Message,
         exception: Throwable? = null
@@ -294,6 +304,8 @@ class SendMessageWorker @AssistedInject constructor(
             Timber.d(exception, "Send Message Worker failed with error = ${error.name}. Retrying...")
             return Result.retry()
         }
+
+        val pendingActionDao = databaseProvider.providePendingActionDao(userId)
         pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
         showSendMessageError(message.subject)
         return failureWithError(error, exception)
@@ -312,10 +324,11 @@ class SendMessageWorker @AssistedInject constructor(
         return Result.failure(errorData)
     }
 
-    private fun getInputCurrentUserId(): UserId? =
-        inputData
-            .getString(KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID)
+    private fun requireInputCurrentUserId(): UserId =
+        requireNotNull(
+        inputData.getString(KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID)
             ?.let(::UserId)
+        ) { "User Id not found as input parameter" }
 
     private fun requireInputMessageSecurityOptions(): MessageSecurityOptions =
         requireNotNull(
@@ -350,6 +363,7 @@ class SendMessageWorker @AssistedInject constructor(
     ) {
 
         fun enqueue(
+            userId: UserId,
             message: Message,
             attachmentIds: List<String>,
             parentId: String?,
@@ -364,6 +378,7 @@ class SendMessageWorker @AssistedInject constructor(
                 .setConstraints(constraints)
                 .setInputData(
                     workDataOf(
+                        KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID to userId.id,
                         KEY_INPUT_SEND_MESSAGE_MSG_DB_ID to message.dbId,
                         KEY_INPUT_SEND_MESSAGE_MESSAGE_ID to message.messageId,
                         KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS to attachmentIds.toTypedArray(),

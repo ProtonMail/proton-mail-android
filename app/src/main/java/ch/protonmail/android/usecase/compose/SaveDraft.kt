@@ -21,6 +21,7 @@ package ch.protonmail.android.usecase.compose
 
 import androidx.work.WorkInfo
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.attachments.KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR
 import ch.protonmail.android.attachments.UploadAttachmentsWorker
 import ch.protonmail.android.core.Constants
@@ -28,9 +29,7 @@ import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
@@ -52,9 +51,8 @@ class SaveDraft @Inject constructor(
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val dispatchers: DispatcherProvider,
-    private val pendingActionDao: PendingActionDao,
+    private val databaseProvider: DatabaseProvider,
     private val createDraftWorker: CreateDraftWorker.Enqueuer,
-    @CurrentUserId private val userId: UserId,
     private val uploadAttachmentsWorker: UploadAttachmentsWorker.Enqueuer,
     private val userNotifier: UserNotifier
 ) {
@@ -69,7 +67,7 @@ class SaveDraft @Inject constructor(
         val addressId = requireNotNull(message.addressID)
 
         if (params.trigger != SaveDraftTrigger.SendingMessage) {
-            val addressCrypto = addressCryptoFactory.create(userId, AddressId(addressId))
+            val addressCrypto = addressCryptoFactory.create(params.userId, AddressId(addressId))
             val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
             if (message.decryptedBody == null) {
                 Timber.d("Save Draft for messageId $messageId - Decrypted Body was null, proceeding...")
@@ -89,11 +87,11 @@ class SaveDraft @Inject constructor(
         localDraftId: String
     ): SaveDraftResult {
         return createDraftWorker.enqueue(
-            userId,
-            localDraft,
-            params.parentId,
-            params.actionType,
-            params.previousSenderAddressId
+            userId = params.userId,
+            message = localDraft,
+            parentId = params.parentId,
+            actionType = params.actionType,
+            previousSenderAddressId = params.previousSenderAddressId
         )
             .filter { it?.state?.isFinished == true && it.state != WorkInfo.State.CANCELLED }
             .map { workInfo ->
@@ -105,7 +103,7 @@ class SaveDraft @Inject constructor(
                         "Save Draft to API for messageId $localDraftId succeeded. Created draftId = $createdDraftId"
                     )
 
-                    updatePendingForSendMessage(createdDraftId, localDraftId)
+                    updatePendingForSendMessage(params.userId, createdDraftId, localDraftId)
 
                     if (params.trigger == SaveDraftTrigger.AutoSave) {
                         return@map SaveDraftResult.Success(createdDraftId)
@@ -153,7 +151,8 @@ class SaveDraft @Inject constructor(
             }.first()
     }
 
-    private fun updatePendingForSendMessage(createdDraftId: String, messageId: String) {
+    private fun updatePendingForSendMessage(userId: UserId, createdDraftId: String, messageId: String) {
+        val pendingActionDao = databaseProvider.providePendingActionDao(userId)
         val pendingForSending = pendingActionDao.findPendingSendByMessageIdBlocking(messageId)
         pendingForSending?.let {
             pendingForSending.messageId = createdDraftId
@@ -174,6 +173,7 @@ class SaveDraft @Inject constructor(
     }
 
     data class SaveDraftParameters(
+        val userId: UserId,
         val message: Message,
         val newAttachmentIds: List<String>,
         val parentId: String?,

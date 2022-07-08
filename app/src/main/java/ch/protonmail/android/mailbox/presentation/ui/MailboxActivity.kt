@@ -395,22 +395,21 @@ internal class MailboxActivity :
 
         lifecycleScope.launch {
             mailboxViewModel.getMailSettingsState().onEach {
-                when (it) {
-                    is GetMailSettings.MailSettingsState.Error.Message -> {
-                        showToast(it.message.toString(), Toast.LENGTH_LONG)
+                it.fold(
+                    ifLeft = {},
+                    ifRight = { result ->
+                        when (result) {
+                            is GetMailSettings.Result.Error -> {
+                                showToast(result.message.toString(), Toast.LENGTH_LONG)
+                            }
+                            is GetMailSettings.Result.Success -> {
+                                swipeController.setCurrentMailSetting(result.mailSettings)
+                                ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
+                                mailboxViewModel.refreshMessages()
+                            }
+                        }.exhaustive
                     }
-                    is GetMailSettings.MailSettingsState.Error.NoPrimaryAccount -> {
-                        Timber.d("No Primary Account")
-                    }
-                    is GetMailSettings.MailSettingsState.Success -> {
-                        it.mailSettings?.let { mailSettings ->
-                            swipeController.setCurrentMailSetting(mailSettings)
-                            ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
-                        }
-                        mailboxViewModel.refreshMessages()
-                    }
-                    else -> Unit
-                }.exhaustive
+                )
             }.launchIn(lifecycleScope)
         }
     }

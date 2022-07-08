@@ -64,6 +64,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -138,6 +139,17 @@ class MessageRepository @Inject constructor(
     suspend fun findMessage(userId: UserId, messageId: String): Message? {
         val messageDao = databaseProvider.provideMessageDao(userId)
         return messageDao.findMessageByIdOnce(messageId)?.apply {
+            messageBody?.let {
+                if (it.startsWith(FILE_PREFIX)) {
+                    messageBody = messageBodyFileManager.readMessageBodyFromFile(this)
+                }
+            }
+        }
+    }
+
+    suspend fun getMessage(userId: UserId, messageDatabaseId: Long): Message? {
+        val messageDao = databaseProvider.provideMessageDao(userId)
+        return messageDao.findMessageByDatabaseId(messageDatabaseId).first()?.apply {
             messageBody?.let {
                 if (it.startsWith(FILE_PREFIX)) {
                     messageBody = messageBodyFileManager.readMessageBodyFromFile(this)

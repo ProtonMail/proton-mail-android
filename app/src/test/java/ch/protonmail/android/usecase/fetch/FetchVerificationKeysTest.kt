@@ -28,13 +28,14 @@ import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.user.User
+import ch.protonmail.android.testdata.UserIdTestData.userId
 import ch.protonmail.android.utils.crypto.KeyInformation
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -57,10 +58,13 @@ class FetchVerificationKeysTest : CoroutinesTest {
     }
 
     private val userCrypto: UserCrypto = mockk(relaxed = true)
+    private val userCryptoFactory: UserCrypto.AssistedFactory = mockk {
+        every { create(any()) } returns userCrypto
+    }
 
     private val contactDao: ContactDao = mockk()
 
-    private val useCase = FetchVerificationKeys(api, userManager, userCrypto, contactDao, dispatchers)
+    private val useCase = FetchVerificationKeys(api, userManager, userCryptoFactory, contactDao, dispatchers)
 
     @Test
     fun verifyThatContactsAreFetchedCorrectlyFromRemoteApi() = runBlockingTest {
@@ -107,7 +111,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
             )
 
         // when
-        val result = useCase.invoke(testEmail)
+        val result = useCase(userId, testEmail)
 
         // then
         assertNotNull(result)
@@ -158,7 +162,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
         every { userCrypto.deriveKeyInfo(any()) } returns keyInformation
 
         // when
-        val result = useCase.invoke(testEmail)
+        val result = useCase(userId, testEmail)
 
         // then
         assertNotNull(result)

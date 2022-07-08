@@ -51,20 +51,14 @@ annotation class AttachmentsDirectory
 @Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
 annotation class BackupSharedPreferences
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
-annotation class CurrentUserCrypto
-
+@Deprecated(
+    "We should not inject parameters related to the current user, as we cannot ensure an user " +
+        "will always be available, e.g. logged out. Inject related provider, like 'DatabaseProvider' or 'UserManager'"
+)
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 @Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
 annotation class CurrentUserId
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
-annotation class CurrentUserMailSettings
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

@@ -25,9 +25,9 @@ import ch.protonmail.android.api.models.enumerations.KeyFlag
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.di.CurrentUserCrypto
 import ch.protonmail.android.utils.crypto.KeyInformation
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
@@ -35,13 +35,15 @@ import javax.inject.Inject
 class FetchVerificationKeys @Inject constructor(
     private val api: ProtonMailApiManager,
     private val userManager: UserManager,
-    @CurrentUserCrypto private val userCrypto: UserCrypto,
+    private val userCryptoFactory: UserCrypto.AssistedFactory,
     private val contactDao: ContactDao,
     private val dispatchers: DispatcherProvider
 ) {
 
-    suspend operator fun invoke(email: String): List<KeyInformation> = withContext(dispatchers.Io) {
+    suspend operator fun invoke(userId: UserId, email: String): List<KeyInformation> = withContext(dispatchers.Io) {
         Timber.v("FetchVerificationKeys email: $email")
+        val userCrypto = userCryptoFactory.create(userId)
+
         val publicKeys = userManager.requireCurrentUser().addresses.addresses.values
             .find { it.email.s == email }?.keys?.keys
             ?.map { key ->

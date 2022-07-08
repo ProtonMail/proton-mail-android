@@ -21,6 +21,7 @@ package ch.protonmail.android.settings.presentation
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import arrow.core.Either
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
@@ -30,9 +31,10 @@ import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.dropWhile
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.mailsettings.domain.entity.ViewMode
@@ -133,20 +135,17 @@ class AccountSettingsActivity : BaseSettingsActivity() {
     private fun setupViewMode() {
         lifecycleScope.launch {
             accountSettingsActivityViewModel.getMailSettings()
-                .dropWhile { it !is GetMailSettings.MailSettingsState.Success }
+                .filterIsInstance<Either.Right<GetMailSettings.Result>>()
+                .map { it.b }
+                .filterIsInstance<GetMailSettings.Result.Success>()
                 .onEach { result ->
-                    when (result) {
-                        is GetMailSettings.MailSettingsState.Success -> {
-                            result.mailSettings?.let { mailSettings ->
-                                Timber.d("MailSettings ViewMode = ${mailSettings.viewMode}")
+                    val mailSettings = result.mailSettings
+                    Timber.d("MailSettings ViewMode = ${mailSettings.viewMode}")
 
-                                setEnabled(
-                                    SettingsEnum.CONVERSATION_MODE,
-                                    mailSettings.viewMode?.enum == ViewMode.ConversationGrouping
-                                )
-                            }
-                        }
-                    }
+                    setEnabled(
+                        SettingsEnum.CONVERSATION_MODE,
+                        mailSettings.viewMode?.enum == ViewMode.ConversationGrouping
+                    )
                 }.launchIn(lifecycleScope)
         }
         setupViewModeChangedListener()

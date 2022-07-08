@@ -17,16 +17,6 @@
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.compose.send
+package ch.protonmail.android.feature
 
-enum class SendMessageWorkerError {
-    ApiRequestReturnedBadBodyCode,
-    DraftCreationFailed,
-    ErrorPerformingApiRequest,
-    FailureBuildingApiRequest,
-    FetchSendPreferencesFailed,
-    MessageAlreadySent,
-    MessageNotFound,
-    SavedDraftMessageNotFound,
-    UploadAttachmentsFailed
-}
+object NotLoggedIn

@@ -19,44 +19,30 @@
 
 package ch.protonmail.android.settings.domain
 
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.withContext
-import me.proton.core.accountmanager.domain.AccountManager
-import me.proton.core.accountmanager.domain.getPrimaryAccount
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
-import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.exhaustive
 import javax.inject.Inject
 
 class GetMailSettings @Inject constructor(
-    private val accountManager: AccountManager,
-    private val mailSettingsRepository: MailSettingsRepository,
-    private val dispatchers: DispatcherProvider
+    private val mailSettingsRepository: MailSettingsRepository
 ) {
 
-    suspend operator fun invoke() = withContext(dispatchers.Io) {
-        accountManager.getPrimaryAccount()
-            .filterNotNull()
-            .flatMapLatest { account -> mailSettingsRepository.getMailSettingsFlow(account.userId) }
-            .mapLatest { result ->
-                when (result) {
-                    is DataResult.Success -> {
-                        MailSettingsState.Success(result.value)
-                    }
-                    is DataResult.Error -> MailSettingsState.Error.Message(result.message)
-                    else -> Unit
-                }
-            }
-    }
-
-    sealed class MailSettingsState {
-        data class Success(val mailSettings: MailSettings?) : MailSettingsState()
-        sealed class Error : MailSettingsState() {
-            data class Message(val message: String?) : Error()
-            object NoPrimaryAccount : Error()
+    operator fun invoke(userId: UserId): Flow<Result> =
+        mailSettingsRepository.getMailSettingsFlow(userId).transformLatest { result ->
+            when (result) {
+                is DataResult.Success -> emit(Result.Success(result.value))
+                is DataResult.Error -> emit(Result.Error(result.message))
+                is DataResult.Processing -> Unit
+            }.exhaustive
         }
+
+    sealed class Result {
+        data class Success(val mailSettings: MailSettings) : Result()
+        data class Error(val message: String?) : Result()
     }
 }

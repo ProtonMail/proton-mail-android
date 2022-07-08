@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.worker
 
-import android.content.Context
 import androidx.work.Data
 import androidx.work.ListenableWorker.Result
 import androidx.work.NetworkType
@@ -36,57 +35,42 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.testdata.UserIdTestData.userId
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class CreateContactWorkerTest {
 
-    @RelaxedMockK
-    private lateinit var context: Context
-
-    @RelaxedMockK
-    private lateinit var parameters: WorkerParameters
-
-    @RelaxedMockK
-    private lateinit var apiManager: ProtonMailApiManager
-
-    @RelaxedMockK
-    private lateinit var crypto: UserCrypto
-
-    @RelaxedMockK
-    private lateinit var apiResponse: ContactResponse
-
-    @RelaxedMockK
-    private lateinit var workManager: WorkManager
-
-    @MockK
-    private lateinit var fileHelper: FileHelper
-
-    @InjectMockKs
-    private lateinit var worker: CreateContactWorker
-
-    private var dispatcherProvider = TestDispatcherProvider
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        coEvery { fileHelper.readStringFromFilePath(any()) } returns "vCardString"
+    private val apiManager: ProtonMailApiManager = mockk(relaxed = true)
+    private val apiResponse: ContactResponse = mockk(relaxed = true)
+    private val crypto: UserCrypto = mockk(relaxed = true)
+    private val cryptoFactory: UserCrypto.AssistedFactory = mockk {
+        every { create(any()) } returns crypto
     }
+    private val fileHelper: FileHelper = mockk {
+        coEvery { readStringFromFilePath(any()) } returns "vCardString"
+    }
+    private val parameters: WorkerParameters = mockk(relaxed = true)
+    private val workManager: WorkManager = mockk(relaxed = true)
+
+    private val worker = CreateContactWorker(
+        apiManager = apiManager,
+        context = mockk(),
+        cryptoFactory = cryptoFactory,
+        dispatcherProvider = TestDispatcherProvider,
+        fileHelper = fileHelper,
+        params = parameters
+    )
 
     @Test
     fun enqueuerSchedulesCreateContactWorkSettingTheInputParamsCorrectly() {
@@ -95,12 +79,12 @@ class CreateContactWorkerTest {
         val requestSlot = slot<OneTimeWorkRequest>()
         every { workManager.enqueue(capture(requestSlot)) } answers { mockk() }
 
-        CreateContactWorker.Enqueuer(workManager).enqueue(encryptedData, signedData)
+        CreateContactWorker.Enqueuer(workManager).enqueue(userId, encryptedData, signedData)
 
         val constraints = requestSlot.captured.workSpec.constraints
         val inputData = requestSlot.captured.workSpec.input
-        val actualEncryptedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH)
-        val actualSignedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA)
+        val actualEncryptedData = inputData.getString(KEY_IN_CREATE_CONTACT_ENC_DATA_PATH)
+        val actualSignedData = inputData.getString(KEY_IN_CREATE_CONTACT_SIGNED_DATA)
         assertEquals(encryptedData, actualEncryptedData)
         assertEquals(signedData, actualSignedData)
         assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
@@ -140,7 +124,7 @@ class CreateContactWorkerTest {
 
             val error = CreateContactWorkerErrors.ServerError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
+                Data.Builder().putString(KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -174,8 +158,8 @@ class CreateContactWorkerTest {
             val contactEmailsOutputJson = readTextFileContent("contact-emails-output.json")
             val expectedResult = Result.success(
                 Data.Builder()
-                    .putString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID, contactId)
-                    .putString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON, contactEmailsOutputJson)
+                    .putString(KEY_OUT_CREATE_CONTACT_SERVER_ID, contactId)
+                    .putString(KEY_OUT_CREATE_CONTACT_EMAILS_JSON, contactEmailsOutputJson)
                     .build()
             )
 
@@ -195,7 +179,7 @@ class CreateContactWorkerTest {
 
             val error = CreateContactWorkerErrors.ContactAlreadyExistsError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
+                Data.Builder().putString(KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -213,7 +197,7 @@ class CreateContactWorkerTest {
 
             val error = CreateContactWorkerErrors.InvalidEmailError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
+                Data.Builder().putString(KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -231,7 +215,7 @@ class CreateContactWorkerTest {
 
             val error = CreateContactWorkerErrors.DuplicatedEmailError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
+                Data.Builder().putString(KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -244,11 +228,11 @@ class CreateContactWorkerTest {
     }
 
     private fun givenEncryptedContactDataParamsIsValid(encryptedContactData: String? = "encrypted-data") {
-        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH) } answers { encryptedContactData!! }
+        every { parameters.inputData.getString(KEY_IN_CREATE_CONTACT_ENC_DATA_PATH) } answers { encryptedContactData!! }
     }
 
     private fun givenSignedContactDataParamsIsValid(signedContactData: String? = "signed-data") {
-        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA) } answers { signedContactData!! }
+        every { parameters.inputData.getString(KEY_IN_CREATE_CONTACT_SIGNED_DATA) } answers { signedContactData!! }
     }
 
     private fun readTextFileContent(fileName: String): String {

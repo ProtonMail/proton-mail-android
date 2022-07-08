@@ -18,6 +18,18 @@
  */
 package ch.protonmail.tokenautocomplete.example;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static ch.protonmail.tokenautocomplete.example.TokenMatchers.emailForPerson;
+
 import android.view.View;
 import android.view.inputmethod.InputConnection;
 
@@ -27,19 +39,7 @@ import androidx.test.rule.ActivityTestRule;
 
 import org.hamcrest.Matcher;
 import org.junit.Rule;
-import kotlin.test.Test;
-
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static ch.protonmail.tokenautocomplete.example.TokenMatchers.emailForPerson;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import org.junit.Test;
 
 /**
  * Created by mgod on 11/29/17.

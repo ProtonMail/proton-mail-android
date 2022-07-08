@@ -34,12 +34,13 @@ import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
 import ch.protonmail.android.worker.CreateContactWorker.Enqueuer
-import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
-import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM
-import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
+import ch.protonmail.android.worker.KEY_OUT_CREATE_CONTACT_EMAILS_JSON
+import ch.protonmail.android.worker.KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM
+import ch.protonmail.android.worker.KEY_OUT_CREATE_CONTACT_SERVER_ID
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import java.io.File
 import javax.inject.Inject
@@ -57,6 +58,7 @@ class CreateContact @Inject constructor(
 ) {
 
     suspend operator fun invoke(
+        userId: UserId,
         contactName: String,
         contactEmails: List<ContactEmail>,
         encryptedContactData: String,
@@ -79,7 +81,7 @@ class CreateContact @Inject constructor(
             val vCardFilePath = context.cacheDir.toString() + File.separator + VCARD_TEMP_FILE_NAME
             fileHelper.saveStringToFile(vCardFilePath, encryptedContactData)
 
-            createContactScheduler.enqueue(vCardFilePath, signedContactData)
+            createContactScheduler.enqueue(userId, vCardFilePath, signedContactData)
                 .filter { it?.state?.isFinished == true || it?.state == WorkInfo.State.ENQUEUED }
                 .switchMap { workInfo: WorkInfo? ->
                     liveData(dispatcherProvider.Io) {
@@ -120,7 +122,7 @@ class CreateContact @Inject constructor(
         }
 
     private fun workerErrorEnum(workInfo: WorkInfo): CreateContactWorkerErrors {
-        val errorString = workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM)
+        val errorString = workInfo.outputData.getString(KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM)
         errorString?.let {
             return CreateContactWorkerErrors.valueOf(errorString)
         }
@@ -128,12 +130,12 @@ class CreateContact @Inject constructor(
     }
 
     private suspend fun updateLocalContactData(outputData: Data, contactData: ContactData) {
-        val contactServerId = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID)
+        val contactServerId = outputData.getString(KEY_OUT_CREATE_CONTACT_SERVER_ID)
         contactServerId?.let {
             contactsRepository.updateContactDataWithServerId(contactData, it)
         }
 
-        val emailsJson = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON)
+        val emailsJson = outputData.getString(KEY_OUT_CREATE_CONTACT_EMAILS_JSON)
         emailsJson?.let {
             val serverEmails = Json.decodeFromString(
                 ListSerializer(ContactEmail.serializer()),

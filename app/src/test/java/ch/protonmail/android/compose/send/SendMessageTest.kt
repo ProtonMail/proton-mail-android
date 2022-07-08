@@ -24,11 +24,13 @@ import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
 import ch.protonmail.android.testdata.MessageTestData
+import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserIdTestData.userId
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.UuidProvider
 import io.mockk.coEvery
@@ -41,7 +43,6 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.user.domain.entity.AddressId
@@ -50,11 +51,9 @@ import kotlin.test.assertEquals
 
 class SendMessageTest : CoroutinesTest {
 
-    private val testUserId = UserId("id")
-
     private val addressCryptoFactory = mockk<AddressCrypto.Factory>(relaxed = true)
     private val sendMessageScheduler = mockk<SendMessageWorker.Enqueuer> {
-        every { enqueue(any(), any(), any(), any(), any(), any()) } returns flowOf(mockk())
+        every { enqueue(any(), any(), any(), any(), any(), any(), any()) } returns flowOf(mockk())
     }
     private val pendingActionDao = mockk<PendingActionDao>(relaxUnitFun = true)
     private val messageDetailsRepository = mockk<MessageDetailsRepository> {
@@ -71,7 +70,6 @@ class SendMessageTest : CoroutinesTest {
         sendMessageScheduler,
         pendingSendRepository,
         addressCryptoFactory,
-        testUserId,
         uuidProvider
     )
 
@@ -86,10 +84,18 @@ class SendMessageTest : CoroutinesTest {
         val addressCrypto = mockk<AddressCrypto> {
             every { encrypt(decryptedBody, true).armored } returns "encrypted armored content"
         }
-        every { addressCryptoFactory.create(testUserId, AddressId(senderAddressId)) } returns addressCrypto
+        every { addressCryptoFactory.create(userId, AddressId(senderAddressId)) } returns addressCrypto
 
         // When
-        val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "", securityOptions)
+        val parameters = SendMessage.SendMessageParameters(
+            userId = userId,
+            message = message,
+            newAttachmentIds = listOf(),
+            parentId = "",
+            actionType = NONE,
+            previousSenderAddressId = "",
+            securityOptions = securityOptions
+        )
         sendMessage(parameters)
 
         // Then
@@ -110,7 +116,15 @@ class SendMessageTest : CoroutinesTest {
         every { ServerTime.currentTimeMillis() } returns currentTimeMs
 
         // When
-        val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "", securityOptions)
+        val parameters = SendMessage.SendMessageParameters(
+            userId = userId,
+            message = message,
+            newAttachmentIds = listOf(),
+            parentId = "",
+            actionType = NONE,
+            previousSenderAddressId = "",
+            securityOptions = securityOptions
+        )
         sendMessage(parameters)
 
         // Then
@@ -137,7 +151,15 @@ class SendMessageTest : CoroutinesTest {
         val securityOptions = MessageSecurityOptions("", "", -1L)
 
         // When
-        val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "", securityOptions)
+        val parameters = SendMessage.SendMessageParameters(
+            userId = userId,
+            message = message,
+            newAttachmentIds = listOf(),
+            parentId = "",
+            actionType = NONE,
+            previousSenderAddressId = "",
+            securityOptions = securityOptions
+        )
         sendMessage(parameters)
 
         // Then
@@ -161,18 +183,20 @@ class SendMessageTest : CoroutinesTest {
         // When
         val attachmentIds = listOf("23364382")
         val parameters = SendMessage.SendMessageParameters(
-            message,
-            attachmentIds,
-            "parentId82346",
-            NONE,
-            "previousSenderId8372",
-            securityOptions
+            userId = userId,
+            message = message,
+            newAttachmentIds = attachmentIds,
+            parentId = "parentId82346",
+            actionType = NONE,
+            previousSenderAddressId = "previousSenderId8372",
+            securityOptions = securityOptions
         )
         sendMessage(parameters)
 
         // Then
         verify {
             sendMessageScheduler.enqueue(
+                userId,
                 message,
                 attachmentIds,
                 "parentId82346",

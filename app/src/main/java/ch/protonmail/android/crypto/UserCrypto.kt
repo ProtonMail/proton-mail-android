@@ -26,14 +26,16 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.crypto.TextDecryptionResult
 import com.proton.gopenpgp.armor.Armor
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import java.util.Arrays
 
-class UserCrypto(
+class UserCrypto @AssistedInject constructor(
     userManager: UserManager,
     openPgp: OpenPGP,
-    userId: UserId
+    @Assisted userId: UserId
 ) : Crypto<UserKey>(userManager, openPgp, userId) {
 
     override val currentKeys: Collection<UserKey>
@@ -92,4 +94,9 @@ class UserCrypto(
 
     fun isAllowedForSending(key: AddressKey): Boolean =
         openPgp.checkPassphrase(key.privateKey.string, mailboxPassword)
+
+    @AssistedInject.Factory
+    interface AssistedFactory {
+        fun create(userId: UserId): UserCrypto
+    }
 }
