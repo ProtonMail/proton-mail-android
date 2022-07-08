@@ -20,12 +20,12 @@
 package ch.protonmail.android.uitests.robots.mailbox.composer
 
 import ch.protonmail.android.R
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * Class represents Message Expiration dialog.
  */
-class MessageExpirationRobot : Robot {
+class MessageExpirationRobot : Fusion {
 
     fun setExpirationInDays(days: Int): ComposerRobot =
         expirationDays(days)

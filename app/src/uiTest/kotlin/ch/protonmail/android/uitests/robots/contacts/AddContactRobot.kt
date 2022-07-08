@@ -20,17 +20,23 @@
 package ch.protonmail.android.uitests.robots.contacts
 
 import android.widget.EditText
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import ch.protonmail.android.R
-import me.proton.core.test.android.instrumented.Robot
-import me.proton.core.test.android.instrumented.utils.ActivityProvider
+import me.proton.fusion.Fusion
+import me.proton.fusion.utils.ActivityProvider
+import me.proton.fusion.utils.StringUtils.stringFromResource
+import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.not
 
 /**
  * [AddContactRobot] class contains actions and verifications for Add/Edit Contacts.
  */
-class AddContactRobot : Robot {
+class AddContactRobot : Fusion {
 
     fun setNameEmailAndSave(name: String, email: String): ContactsRobot {
         return displayName(name)
@@ -46,26 +52,28 @@ class AddContactRobot : Robot {
     }
 
     private fun displayName(name: String): AddContactRobot {
-        view.withId(R.id.contact_display_name).instanceOf(EditText::class.java).replaceText(name)
+        view
+            .withId(R.id.input)
+            .isDescendantOf(
+                view.withId(R.id.contact_display_name)
+            )
+            .replaceText(name)
         return this
     }
 
     private fun email(email: String): AddContactRobot {
         view
-            .withId(R.id.option)
-            .instanceOf(EditText::class.java)
-            .withVisibility(ViewMatchers.Visibility.VISIBLE)
-            .isDescendantOf(view.withId(R.id.emailAddressesContainer))
+            .withId(R.id.input)
+            .isDescendantOf(
+                view.withId(R.id.emailAddressesContainer)
+            )
+            .isCompletelyDisplayed()
             .replaceText(email)
         return this
     }
 
     private fun saveNewContact(): ContactsRobot {
         view.withId(R.id.action_save).click()
-        view
-            .withText(R.string.contact_saved)
-            .withRootMatcher(withDecorView(not(ActivityProvider.currentActivity!!.window.decorView)))
-            .checkDisabled()
         return ContactsRobot()
     }
 

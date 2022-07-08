@@ -21,12 +21,12 @@ package ch.protonmail.android.uitests.robots.settings.account.labelsandfolders
 import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withLabelName
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [FoldersManagerRobot] class contains actions and verifications for Folders functionality.
  */
-class FoldersManagerRobot : Robot {
+class FoldersManagerRobot : Fusion {
 
     fun addFolder(name: String): FoldersManagerRobot {
         folderName(name)
@@ -49,7 +49,7 @@ class FoldersManagerRobot : Robot {
     }
 
     fun navigateUpToLabelsAndFolders(): LabelsAndFoldersRobot {
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return LabelsAndFoldersRobot()
     }
 
@@ -64,12 +64,12 @@ class FoldersManagerRobot : Robot {
     }
 
     private fun folderName(name: String): FoldersManagerRobot {
-        view.withId(R.id.label).withParent(view.withId(R.id.add_label_container)).typeText(name)
+        view.withId(R.id.label).hasParent(view.withId(R.id.add_label_container)).typeText(name)
         return this
     }
 
     private fun updateFolderName(name: String): FoldersManagerRobot {
-        view.withId(R.id.label).withParent(view.withId(R.id.add_label_container)).clearText().typeText(name)
+        view.withId(R.id.label).hasParent(view.withId(R.id.add_label_container)).clearText().typeText(name)
         return this
     }
 
@@ -97,7 +97,7 @@ class FoldersManagerRobot : Robot {
         return this
     }
 
-    class DeleteSelectedFoldersDialogRobot : Robot {
+    class DeleteSelectedFoldersDialogRobot : Fusion {
 
         fun confirmDeletion(): FoldersManagerRobot {
             view.withId(android.R.id.button1).click()
@@ -108,7 +108,7 @@ class FoldersManagerRobot : Robot {
     /**
      * Contains all the validations that can be performed by [FoldersManagerRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun folderWithNameShown(name: String) {
             recyclerView

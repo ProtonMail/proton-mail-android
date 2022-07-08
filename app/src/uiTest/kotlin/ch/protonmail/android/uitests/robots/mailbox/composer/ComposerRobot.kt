@@ -28,13 +28,13 @@ import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [ComposerRobot] class contains actions and verifications for email composer functionality.
  * Inner classes: [MessagePasswordRobot], [MessageExpirationRobot].
  */
-class ComposerRobot : Robot {
+class ComposerRobot : Fusion {
 
     fun sendAndLaunchApp(to: String, subject: String, body: String): InboxRobot =
         recipients(to)
@@ -224,7 +224,7 @@ class ComposerRobot : Robot {
         body(newBody).reply()
 
     fun clickUpButton(): ComposerRobot {
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.composer_toolbar)).click()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.composer_toolbar)).click()
         return this
     }
 
@@ -249,7 +249,7 @@ class ComposerRobot : Robot {
             .body(body)
 
     fun recipients(email: String): ComposerRobot {
-        view.withId(toRecipientsId).typeText(email).pressImeActionBtn()
+        view.withId(toRecipientsId).typeText(email).performImeAction()
         return this
     }
 
@@ -270,12 +270,12 @@ class ComposerRobot : Robot {
     }
 
     private fun ccRecipients(email: String): ComposerRobot {
-        view.withId(R.id.composer_cc_recipient_view).typeText(email).pressImeActionBtn()
+        view.withId(R.id.composer_cc_recipient_view).typeText(email).performImeAction()
         return this
     }
 
     private fun bccRecipients(email: String): ComposerRobot {
-        view.withId(R.id.composer_bcc_recipient_view).typeText(email).pressImeActionBtn()
+        view.withId(R.id.composer_bcc_recipient_view).typeText(email).performImeAction()
         return this
     }
 
@@ -349,13 +349,13 @@ class ComposerRobot : Robot {
     }
 
     private fun waitForConditionAndSend() {
-        view.withId(sendMessageId).checkEnabled().click()
+        view.withId(sendMessageId).waitForEnabled().checkEnabled().click()
     }
 
     /**
      * Class represents Message Expiration dialog.
      */
-    class NotSupportedExpirationRobot : Robot {
+    class NotSupportedExpirationRobot : Fusion {
 
         fun sendAnyway(): InboxRobot {
             view.withId(ok).click()
@@ -367,18 +367,18 @@ class ComposerRobot : Robot {
     /**
      * Contains all the validations that can be performed by [ComposerRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun messageWithSubjectOpened(subject: String) {
-            view.withId(subjectId).withText(subject).checkDisplayed()
+            view.withId(subjectId).withText(subject).checkIsDisplayed()
         }
 
         fun bodyWithText(text: String) {
-            view.withId(messageBodyId).withText(text).checkDisplayed()
+            view.withId(messageBodyId).withText(text).checkIsDisplayed()
         }
 
         fun fromEmailIs(email: String): DraftsRobot {
-            view.withText(email).withParent(view.withId(addressSpinnerId)).checkDisplayed()
+            view.withText(email).hasParent(view.withId(addressSpinnerId)).waitForDisplayed().checkIsDisplayed()
             return DraftsRobot()
         }
     }

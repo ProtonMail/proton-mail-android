@@ -26,17 +26,17 @@ import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettin
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsValue
 import ch.protonmail.android.uitests.robots.settings.account.AccountSettingsRobot
 import ch.protonmail.android.uitests.robots.settings.autolock.AutoLockRobot
-import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.User
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
+import me.proton.fusion.utils.StringUtils.stringFromResource
 
 /**
  * [SettingsRobot] class contains actions and verifications for Settings view.
  */
-class SettingsRobot : Robot {
+class SettingsRobot : Fusion {
 
     fun navigateUpToInbox(): InboxRobot {
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return InboxRobot()
     }
 
@@ -75,10 +75,10 @@ class SettingsRobot : Robot {
     /**
      * Contains all the validations that can be performed by [SettingsRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun settingsOpened() {
-            view.withId(R.id.settingsRecyclerView).checkDisplayed()
+            view.withId(R.id.settingsRecyclerView).checkIsDisplayed()
         }
     }
 
@@ -86,6 +86,6 @@ class SettingsRobot : Robot {
 
     companion object {
 
-        val autoLockText = StringUtils.stringFromResource(R.string.auto_lock)
+        val autoLockText = stringFromResource(R.string.auto_lock)
     }
 }

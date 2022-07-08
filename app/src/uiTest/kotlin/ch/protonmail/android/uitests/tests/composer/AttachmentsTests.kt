@@ -72,7 +72,7 @@ class AttachmentsTests : BaseTest() {
         val messageSubject = "One inline image and one attachment"
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
+
             .searchBar()
             .searchMessageText(messageSubject)
             .clickSearchedMessageBySubject(messageSubject)
@@ -86,7 +86,7 @@ class AttachmentsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
+
             .mailboxLayoutShown()
 
         deviceRobot
@@ -111,7 +111,6 @@ class AttachmentsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .mailboxLayoutShown()
 
         deviceRobot
@@ -136,7 +135,6 @@ class AttachmentsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .mailboxLayoutShown()
 
         deviceRobot
@@ -161,7 +159,6 @@ class AttachmentsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .mailboxLayoutShown()
 
         deviceRobot
@@ -186,7 +183,6 @@ class AttachmentsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .mailboxLayoutShown()
 
         deviceRobot
@@ -212,7 +208,6 @@ class AttachmentsTests : BaseTest() {
         val pin = "1234"
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .menuDrawer()
             .settings()
             .selectAutoLock()
@@ -244,7 +239,6 @@ class AttachmentsTests : BaseTest() {
         val pin = "1234"
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .menuDrawer()
             .settings()
             .selectAutoLock()
@@ -279,7 +273,6 @@ class AttachmentsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageCameraCaptureAttachment(to, subject, body)
             .menuDrawer()
@@ -293,7 +286,6 @@ class AttachmentsTests : BaseTest() {
         val to = internalEmailNotTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageWithFileAttachment(to, subject, body)
             .menuDrawer()
@@ -309,7 +301,6 @@ class AttachmentsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageTwoImageCaptureAttachments(to, subject, body)
             .menuDrawer()
@@ -326,7 +317,6 @@ class AttachmentsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .changeSenderTo(onePassUserPmMeAddress)
             .sendMessageWithFileAttachment(to, subject, body)
@@ -345,7 +335,6 @@ class AttachmentsTests : BaseTest() {
         val hint = editedPasswordHint
         loginRobot
             .loginTwoPassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageEOAndExpiryTimeWithAttachment(to, subject, body, 1, password, hint)
             .menuDrawer()
@@ -361,7 +350,6 @@ class AttachmentsTests : BaseTest() {
         val to = externalOutlookPGPSigned.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageCameraCaptureAttachment(to, subject, body)
             .menuDrawer()
@@ -377,7 +365,6 @@ class AttachmentsTests : BaseTest() {
         val to = externalOutlookPGPSigned.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageTwoImageCaptureAttachments(to, subject, body)
             .menuDrawer()
@@ -394,7 +381,6 @@ class AttachmentsTests : BaseTest() {
         val publicKey = "publickey - EmailAddress(s=${autoAttachPublicKeyUser.email}) - 0xA9FF792E.asc"
         loginRobot
             .loginAutoAttachPublicKeyUser()
-            .skipOnboarding()
             .compose()
             .sendMessage(to, subject, body)
             .menuDrawer()
@@ -410,7 +396,6 @@ class AttachmentsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .addAndRemoveAttachmentAndSend(to, subject, body)
             .menuDrawer()

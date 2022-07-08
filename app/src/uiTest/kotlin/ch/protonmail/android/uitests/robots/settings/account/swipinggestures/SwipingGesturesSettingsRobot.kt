@@ -23,9 +23,9 @@ import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
 import ch.protonmail.android.uitests.robots.settings.account.AccountSettingsRobot
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
-class SwipingGesturesSettingsRobot : Robot {
+class SwipingGesturesSettingsRobot : Fusion {
 
     fun selectSwipeRight(): ChooseSwipeActionRobot {
         recyclerView
@@ -44,7 +44,7 @@ class SwipingGesturesSettingsRobot : Robot {
     }
 
     fun navigateUpToAccountSettings(): AccountSettingsRobot {
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return AccountSettingsRobot()
     }
 }

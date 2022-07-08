@@ -30,12 +30,12 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.login.LoginMailRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.manageaccounts.ManageAccountsMatchers.withViewAtPosition
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [AccountPanelRobot] class contains actions and verifications for Account Manager functionality.
  */
-open class AccountPanelRobot : Robot {
+open class AccountPanelRobot : Fusion {
 
     fun addAccount(): LoginMailRobot {
         view.withId(R.id.account_action_textview).click()
@@ -127,16 +127,16 @@ open class AccountPanelRobot : Robot {
     inner class Verify : AccountPanelRobot() {
 
         fun accountsListOpened(): AccountPanelRobot {
-            view.withId(accountsRecyclerViewId).checkDisplayed()
+            view.withId(accountsRecyclerViewId).checkIsDisplayed()
             return AccountPanelRobot()
         }
 
         fun accountAdded(email: String) {
-            view.withId(R.id.account_email_textview).withText(email).isEnabled().checkDisplayed()
+            view.withId(R.id.account_email_textview).withText(email).isEnabled().checkIsDisplayed()
         }
 
         fun accountLoggedOut(email: String) {
-            view.withId(R.id.account_name_textview).withText(email).isDisabled().checkDisplayed()
+            view.withId(R.id.account_name_textview).withText(email).isDisabled().checkIsDisplayed()
         }
 
         fun accountRemoved(username: String) {

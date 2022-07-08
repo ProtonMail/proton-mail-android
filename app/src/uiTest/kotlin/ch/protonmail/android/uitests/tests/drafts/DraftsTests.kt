@@ -19,20 +19,19 @@
 
 package ch.protonmail.android.uitests.tests.drafts
 
+import androidx.compose.ui.res.stringResource
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.device.DeviceRobot
 import ch.protonmail.android.uitests.robots.login.LoginMailRobot
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.tests.BaseTest
-import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.fwSubject
 import ch.protonmail.android.uitests.testsHelper.TestData.updatedSubject
 import ch.protonmail.android.uitests.testsHelper.TestUser.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestUser.onePassUser
-import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
-import org.junit.experimental.categories.Category
+import me.proton.fusion.utils.StringUtils.stringFromResource
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -58,7 +57,6 @@ class DraftsTests : BaseTest() {
     fun saveDraft() {
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .draftToSubjectBody(to, subject, body)
             .clickUpButton()
@@ -74,7 +72,6 @@ class DraftsTests : BaseTest() {
     fun saveDraftWithAttachment() {
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .draftSubjectBodyAttachment(to, subject, body)
             .clickUpButton()
@@ -90,7 +87,6 @@ class DraftsTests : BaseTest() {
     fun sendDraftWithAttachment() {
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .draftSubjectBodyAttachment(to, subject, body)
             .clickUpButton()
@@ -115,7 +111,6 @@ class DraftsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .draftToSubjectBody(to, subject, body)
             .clickUpButton()
@@ -137,7 +132,6 @@ class DraftsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .draftSubjectBody(subject, body)
             .clickUpButton()
@@ -156,7 +150,6 @@ class DraftsTests : BaseTest() {
     fun openDraftFromSearch() {
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .draftToSubjectBody(to, subject, body)
             .clickUpButton()
@@ -173,7 +166,6 @@ class DraftsTests : BaseTest() {
     fun addAttachmentToDraft() {
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .draftToSubjectBody(to, subject, body)
             .clickUpButton()
@@ -196,7 +188,6 @@ class DraftsTests : BaseTest() {
     fun minimiseTheAppWhileReplyingToMessage() {
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .refreshMessageList()
             .clickMessageByPosition(0)
             .openActionSheet()
@@ -221,7 +212,6 @@ class DraftsTests : BaseTest() {
         val noSubject = stringFromResource(R.string.empty_subject)
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .draftToBody(to, body)
             .clickUpButton()
@@ -243,7 +233,6 @@ class DraftsTests : BaseTest() {
         val subjectWithHyphens = "This-is-subject-with-hyphens-$subject"
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .draftSubjectBody(subjectWithHyphens, bodyWithHyphens)
             .clickUpButton()
@@ -267,11 +256,11 @@ class DraftsTests : BaseTest() {
         val bodyEditTwo = "Edit two $body"
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .draftToSubjectBody(to, subject, body)
             .clickUpButton()
             .confirmDraftSaving()
+
             .menuDrawer()
             .drafts()
             .refreshMessageList()
@@ -300,7 +289,6 @@ class DraftsTests : BaseTest() {
     fun replaceAttachmentsSavingDraftsAndSend() {
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .refreshMessageList()
             .compose()
             .sendMessageWithFileAttachment(to, subject, body)

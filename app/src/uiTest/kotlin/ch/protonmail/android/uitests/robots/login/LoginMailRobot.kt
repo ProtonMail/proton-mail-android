@@ -24,26 +24,26 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.onboarding.OnboardingRobot
 import ch.protonmail.android.uitests.tests.BaseTest.Companion.users
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 import me.proton.core.test.android.robots.auth.login.LoginRobot
 import me.proton.core.test.android.robots.auth.login.MailboxPasswordRobot
 import me.proton.core.test.android.robots.auth.login.TwoFaRobot
 
-class LoginMailRobot : Robot {
+class LoginMailRobot : Fusion {
 
     val loginRobot = LoginRobot()
 
-    fun loginOnePassUser(): OnboardingRobot {
+    fun loginOnePassUser(): InboxRobot {
         val onePassUser = users.getUser { it.name == "onePassUser" }
         view.withId(R.id.sign_in).click()
         loginRobot
             .username(onePassUser.name)
             .password(onePassUser.password)
             .signIn<InboxRobot>()
-        return OnboardingRobot()
+        return InboxRobot()
     }
 
-    fun loginTwoPassUser(): OnboardingRobot {
+    fun loginTwoPassUser(): InboxRobot {
         val twoPassUser = users.getUser { it.name == "twoPassUser" }
         view.withId(R.id.sign_in).click()
         loginRobot
@@ -51,7 +51,7 @@ class LoginMailRobot : Robot {
             .password(twoPassUser.password)
             .signIn<MailboxPasswordRobot>()
             .unlockMailbox<InboxRobot>(twoPassUser)
-        return OnboardingRobot()
+        return InboxRobot()
     }
 
     fun loginTwoPassUserAsSecondUser(): InboxRobot {
@@ -90,14 +90,14 @@ class LoginMailRobot : Robot {
         return InboxRobot()
     }
 
-    fun loginAutoAttachPublicKeyUser(): OnboardingRobot {
+    fun loginAutoAttachPublicKeyUser(): InboxRobot {
         val autoAttachPublicKey = users.getUser { it.name == "autoAttachPublicKey" }
         view.withId(R.id.sign_in).click()
         loginRobot
             .username(autoAttachPublicKey.name)
             .password(autoAttachPublicKey.password)
             .signIn<InboxRobot>()
-        return OnboardingRobot()
+        return InboxRobot()
     }
 
     fun addFreeAccount(): LoginMailRobot {
@@ -168,15 +168,15 @@ class LoginMailRobot : Robot {
         return InboxRobot()
     }
 
-    class Verify : Robot {
+    class Verify : Fusion {
 
         //    TODO move verification methods to LoginRobot class
         fun loginScreenDisplayed() {
-            view.withId(R.id.usernameInput).instanceOf(EditText::class.java).checkDisplayed()
+            view.withId(R.id.usernameInput).instanceOf(EditText::class.java).checkIsDisplayed()
         }
 
         fun limitReachedToastDisplayed() {
-            view.withId(R.id.snackbar_text).withText("Only one free Proton account is allowed.").checkDisplayed()
+            view.withId(R.id.snackbar_text).withText("Only one free Proton account is allowed.").checkIsDisplayed()
         }
     }
 

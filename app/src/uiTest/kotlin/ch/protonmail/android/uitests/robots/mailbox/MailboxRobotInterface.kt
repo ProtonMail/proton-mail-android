@@ -42,9 +42,10 @@ import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_60S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
 import ch.protonmail.android.uitests.testsHelper.waitForCondition
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
+import okhttp3.internal.wait
 
-interface MailboxRobotInterface : Robot {
+interface MailboxRobotInterface : Fusion {
 
     fun swipeLeftMessageAtPosition(position: Int): Any {
         saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetSwipeLeftMessage)())
@@ -79,11 +80,7 @@ interface MailboxRobotInterface : Robot {
     }
 
     fun compose(): ComposerRobot {
-        waitForCondition(
-            { onView(withId(R.id.compose)).check(matches(isDisplayed())) },
-            watchTimeout = TIMEOUT_60S
-        )
-        view.withId(R.id.compose).click()
+        view.withId(R.id.compose).withTimeout(TIMEOUT_60S).click()
         return ComposerRobot()
     }
 
@@ -112,7 +109,7 @@ interface MailboxRobotInterface : Robot {
     }
 
     fun clickFirstMatchedMessageBySubject(subject: String): MessageRobot {
-        view.instanceOf(ImageView::class.java).withParent(view.withId(R.id.mailboxRecyclerView)).checkDoesNotExist()
+        view.instanceOf(ImageView::class.java).hasParent(view.withId(R.id.mailboxRecyclerView)).checkDoesNotExist()
         recyclerView
             .withId(messagesRecyclerViewId)
 //            .waitUntilPopulated()
@@ -125,7 +122,7 @@ interface MailboxRobotInterface : Robot {
 //        recyclerView.withId(messagesRecyclerViewId).waitUntilPopulated()
         view.withId(messagesRecyclerViewId).swipeDown()
         // Waits for loading icon to disappear
-        view.instanceOf(ImageView::class.java).withParent(view.withId(messagesRecyclerViewId)).checkDoesNotExist()
+        view.instanceOf(ImageView::class.java).hasParent(view.withId(messagesRecyclerViewId)).checkDoesNotExist()
 //        recyclerView.withId(messagesRecyclerViewId).waitUntilPopulated()
         return Any()
     }
@@ -138,19 +135,19 @@ interface MailboxRobotInterface : Robot {
      * Contains all the validations that can be performed by [InboxRobot].
      */
     @Suppress("ClassName")
-    open class verify : Robot {
+    open class verify : Fusion {
 
         fun messageExists(messageSubject: String) {
-            view.withId(messageTitleTextViewId).withText(messageSubject).checkDisplayed()
+            view.withId(messageTitleTextViewId).withText(messageSubject).checkIsDisplayed()
         }
 
         fun draftWithAttachmentSaved(draftSubject: String) {
-            view.withId(messageTitleTextViewId).withText(draftSubject).checkDisplayed()
+            view.withId(messageTitleTextViewId).withText(draftSubject).checkIsDisplayed()
         }
 
         fun messageMovedToTrash(subject: String, date: String) {
             val messageMovedToTrash = StringUtils.quantityStringFromResource(R.plurals.action_move_to_trash, 1)
-            view.withText(messageMovedToTrash).checkDisplayed()
+            view.withText(messageMovedToTrash).checkIsDisplayed()
             view.withId(R.id.subject_text_view).withText(subject).checkDoesNotExist()
         }
 
@@ -160,7 +157,7 @@ interface MailboxRobotInterface : Robot {
 
         fun multipleMessagesMovedToTrash(subjectMessageOne: String, subjectMessageTwo: String) {
             val messagesMovedToTrash = StringUtils.quantityStringFromResource(R.plurals.action_move_to_trash, 2)
-            view.withText(messagesMovedToTrash).checkDisplayed()
+            view.withText(messagesMovedToTrash).checkIsDisplayed()
             view.withId(R.id.subject_text_view).withText(subjectMessageOne).checkDoesNotExist()
             view.withId(R.id.subject_text_view).withText(subjectMessageTwo).checkDoesNotExist()
         }
@@ -171,7 +168,7 @@ interface MailboxRobotInterface : Robot {
         }
 
         fun messageWithSubjectExists(subject: String) {
-            view.withText(subject).checkDisplayed()
+            view.withText(subject).waitForDisplayed()
             recyclerView
                 .withId(messagesRecyclerViewId)
                 .scrollToHolder(withFirstInstanceMessageSubject(subject))

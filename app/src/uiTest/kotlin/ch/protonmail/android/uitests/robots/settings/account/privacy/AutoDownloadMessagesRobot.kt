@@ -22,28 +22,28 @@ package ch.protonmail.android.uitests.robots.settings.account.privacy
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.SwitchCompat
 import ch.protonmail.android.R
-import me.proton.core.test.android.instrumented.Robot
-import me.proton.core.test.android.instrumented.utils.ActivityProvider
+import me.proton.fusion.Fusion
+import me.proton.fusion.utils.ActivityProvider
 
-class AutoDownloadMessagesRobot : Robot {
+class AutoDownloadMessagesRobot : Fusion {
 
     fun navigateUpToPrivacySettings(): PrivacySettingsRobot {
         view
             .instanceOf(AppCompatImageButton::class.java)
-            .withParent(view.withId(R.id.toolbar))
+            .hasParent(view.withId(R.id.toolbar))
             .click()
         return PrivacySettingsRobot()
     }
 
     fun enableAutoDownloadMessages(): AutoDownloadMessagesRobot {
-        view.withId(switchId).checkDisplayed()
+        view.withId(switchId).checkIsDisplayed()
         val switch = ActivityProvider.currentActivity!!.findViewById<SwitchCompat>(switchId)
         toggleSwitch(true, switch)
         return this
     }
 
     fun disableAutoDownloadMessages(): AutoDownloadMessagesRobot {
-        view.withId(switchId).checkDisplayed()
+        view.withId(switchId).checkIsDisplayed()
         val switch = ActivityProvider.currentActivity!!.findViewById<SwitchCompat>(switchId)
         toggleSwitch(false, switch)
         return this

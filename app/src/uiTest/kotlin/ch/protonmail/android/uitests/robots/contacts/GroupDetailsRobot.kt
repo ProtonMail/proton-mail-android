@@ -22,17 +22,17 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.test.espresso.matcher.RootMatchers
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.StringUtils.quantityStringFromResource
-import me.proton.core.test.android.instrumented.Robot
-import me.proton.core.test.android.instrumented.utils.ActivityProvider
+import me.proton.fusion.Fusion
+import me.proton.fusion.utils.ActivityProvider
 import org.hamcrest.CoreMatchers
 
 /**
  * [GroupDetailsRobot] class contains actions and verifications for Contacts functionality.
  */
-open class GroupDetailsRobot : Robot {
+open class GroupDetailsRobot : Fusion {
 
     fun edit(): AddContactGroupRobot {
-        view.withId(R.id.action_contact_details_edit).click()
+        view.withId(R.id.contact_group_details_edit).click()
         return AddContactGroupRobot()
     }
 
@@ -47,17 +47,12 @@ open class GroupDetailsRobot : Robot {
     }
 
     private fun delete(): GroupDetailsRobot {
-        view.withId(R.id.action_delete).click()
+        view.withId(R.id.contact_group_details_delete).click()
         return this
     }
 
     private fun confirmDeletion(): ContactsRobot.ContactsGroupView {
         view.withId(android.R.id.button1).isEnabled().isCompletelyDisplayed().click()
-        view.withText(quantityStringFromResource(R.plurals.group_deleted, 1))
-            .withRootMatcher(
-                RootMatchers.withDecorView(CoreMatchers.not(ActivityProvider.currentActivity!!.window.decorView))
-            )
-            .checkDisplayed()
         return ContactsRobot.ContactsGroupView()
     }
 

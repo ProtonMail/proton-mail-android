@@ -36,7 +36,6 @@ class MenuTests : BaseTest() {
         super.setUp()
         menuRobot = loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .menuDrawer()
     }
 

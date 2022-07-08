@@ -30,48 +30,48 @@ import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContac
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import me.proton.core.test.android.instrumented.Robot
-import me.proton.core.test.android.instrumented.utils.StringUtils.stringFromResource
+import me.proton.fusion.Fusion
+import me.proton.fusion.utils.StringUtils.stringFromResource
 import org.hamcrest.CoreMatchers.containsString
 
 /**
  * [ContactsRobot] class contains actions and verifications for Contacts functionality.
  */
-class ContactsRobot : Robot {
+class ContactsRobot : Fusion {
+
+    private fun openAddContactsMenu() {
+        view.withId(R.id.fab_contacts_add_menu).click()
+    }
 
     fun addContact(): AddContactRobot {
-        view.instanceOf(FloatingActionButton::class.java)
-            .withVisibility(ViewMatchers.Visibility.VISIBLE)
-            .click()
+        openAddContactsMenu()
         view.withId(R.id.fab_contacts_add_contact).click()
         return AddContactRobot()
     }
 
     fun addGroup(): AddContactGroupRobot {
-        view.instanceOf(FloatingActionButton::class.java)
-            .withVisibility(ViewMatchers.Visibility.VISIBLE)
-            .click()
+        openAddContactsMenu()
         view.withId(R.id.fab_contacts_add_contact_group).click()
         return AddContactGroupRobot()
     }
 
     fun openOptionsMenu(): ContactsMoreOptions {
-        view.instanceOf(AppCompatImageView::class.java).withParent(view.instanceOf(ActionMenuView::class.java)).click()
+        view.instanceOf(AppCompatImageView::class.java).hasParent(view.instanceOf(ActionMenuView::class.java)).click()
         return ContactsMoreOptions()
     }
 
     fun groupsView(): ContactsGroupView {
-        view.withContentDesc(containsString(stringFromResource(R.string.groups))).click()
+        view.withContentDescContains(stringFromResource(R.string.groups)).click()
         return ContactsGroupView()
     }
 
     fun contactsView(): ContactsView {
-        view.withContentDesc(containsString(stringFromResource(R.string.contacts))).click()
+        view.withContentDescContains(stringFromResource(R.string.contacts)).click()
         return ContactsView()
     }
 
     fun navigateUpToInbox(): InboxRobot {
-        view.withId(contactsRecyclerView).checkDisplayed()
+        view.withId(contactsRecyclerView).waitForDisplayed().checkIsDisplayed()
         view
             .instanceOf(AppCompatImageButton::class.java)
             .isDescendantOf(view.withId(R.id.toolbar_contacts))
@@ -80,6 +80,7 @@ class ContactsRobot : Robot {
     }
 
     fun clickContactByEmail(email: String): ContactDetailsRobot {
+        view.withText(email).waitForDisplayed()
         recyclerView
             .withId(contactsRecyclerView)
             .onHolderItem(withContactEmail(email))
@@ -99,10 +100,9 @@ class ContactsRobot : Robot {
         }
     }
 
-    class ContactsGroupView : Robot {
+    class ContactsGroupView : Fusion {
 
         fun navigateUpToInbox(): InboxRobot {
-            view.withId(contactGroupsRecyclerView).checkDisplayed()
             view
                 .instanceOf(AppCompatImageButton::class.java)
                 .isDescendantOf(view.withId(R.id.toolbar_contacts))
@@ -111,9 +111,9 @@ class ContactsRobot : Robot {
         }
 
         fun clickGroup(withName: String): GroupDetailsRobot {
+            view.withText(withName).waitForDisplayed()
             recyclerView
                 .withId(contactGroupsRecyclerView)
-
                 .onHolderItem(withContactGroupName(withName))
                 .click()
             return GroupDetailsRobot()
@@ -137,7 +137,7 @@ class ContactsRobot : Robot {
         }
 
         fun openOptionsMenu(): ContactsGroupView {
-            view.instanceOf(AppCompatImageView::class.java).withParent(view.instanceOf(ActionMenuView::class.java))
+            view.instanceOf(AppCompatImageView::class.java).hasParent(view.instanceOf(ActionMenuView::class.java))
                 .click()
             return ContactsGroupView()
         }
@@ -147,7 +147,7 @@ class ContactsRobot : Robot {
             return ContactsGroupView()
         }
 
-        class Verify : Robot {
+        class Verify : Fusion {
 
             fun groupWithMembersCountExists(name: String, membersCount: String) {
                 recyclerView
@@ -157,14 +157,14 @@ class ContactsRobot : Robot {
             }
 
             fun groupDoesNotExists(groupName: String, groupMembersCount: String) {
-                view.withId(R.id.text_view_contact_name).withText(groupName).checkDoesNotExist()
+                view.withId(R.id.text_view_contact_name).withText(groupName).waitUntilGone().checkDoesNotExist()
             }
         }
 
         inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
     }
 
-    class ContactsMoreOptions : Robot {
+    class ContactsMoreOptions : Fusion {
 
         fun refreshContacts(): ContactsRobot {
             view.withId(R.id.title).withText(R.string.refresh_contacts).click()
@@ -175,10 +175,10 @@ class ContactsRobot : Robot {
     /**
      * Contains all the validations that can be performed by [ContactsRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun contactsOpened() {
-            view.withId(contactsRecyclerView).checkDisplayed()
+            view.withId(contactsRecyclerView).checkIsDisplayed()
         }
 
         fun contactExists(name: String, email: String) {
@@ -189,7 +189,7 @@ class ContactsRobot : Robot {
         }
 
         fun contactDoesNotExists(name: String, email: String) {
-            view.withId(R.id.text_view_contact_name).withText(name).checkDoesNotExist()
+            view.withId(R.id.text_view_contact_name).withText(name).waitUntilGone().checkDoesNotExist()
             view.withId(R.id.text_view_contact_subtitle).withText(email).checkDoesNotExist()
         }
     }

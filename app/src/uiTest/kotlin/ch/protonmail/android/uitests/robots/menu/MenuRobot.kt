@@ -32,13 +32,13 @@ import ch.protonmail.android.uitests.robots.menu.MenuMatchers.withLabelOrFolderN
 import ch.protonmail.android.uitests.robots.menu.MenuMatchers.withMenuItemTag
 import ch.protonmail.android.uitests.robots.reportbugs.ReportBugsRobot
 import ch.protonmail.android.uitests.robots.settings.SettingsRobot
-import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
+import me.proton.fusion.utils.StringUtils.stringFromResource
 
 /**
  * [MenuRobot] class contains actions and verifications for menu functionality.
  */
-class MenuRobot : Robot {
+class MenuRobot : Fusion {
 
     fun archive(): ArchiveRobot {
         selectMenuItem(archiveText)
@@ -119,11 +119,11 @@ class MenuRobot : Robot {
     /**
      * Contains all the validations that can be performed by [MenuRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
-        fun menuOpened() = view.withId(menuRecyclerView).checkDisplayed()
+        fun menuOpened() = view.withId(menuRecyclerView).checkIsDisplayed()
 
-        fun menuClosed() = view.withId(menuRecyclerView).checkNotDisplayed()
+        fun menuClosed() = view.withId(menuRecyclerView).checkIsNotDisplayed()
     }
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)

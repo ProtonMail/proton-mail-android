@@ -19,9 +19,9 @@
 package ch.protonmail.android.uitests.robots.mailbox
 
 import ch.protonmail.android.R
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
-interface ApplyLabelRobotInterface : Robot {
+interface ApplyLabelRobotInterface : Fusion {
 
     fun addLabel(name: String): Any {
         labelName(name)
@@ -30,7 +30,7 @@ interface ApplyLabelRobotInterface : Robot {
     }
 
     fun labelName(name: String): ApplyLabelRobotInterface {
-        view.withId(R.id.label_name_text_view).withParent(view.withId(R.id.add_label_container)).typeText(name)
+        view.withId(R.id.label_name_text_view).hasParent(view.withId(R.id.add_label_container)).typeText(name)
         return this
     }
 

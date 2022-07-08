@@ -23,9 +23,9 @@ import androidx.annotation.IdRes
 import androidx.appcompat.widget.SwitchCompat
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
 import ch.protonmail.android.uitests.robots.settings.account.privacy.PrivacySettingsRobot
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
-object SettingsActions : Robot {
+object SettingsActions : Fusion {
 
     fun changeToggleState(state: Boolean, tag: String, @IdRes switch: SwitchCompat) {
         val currentSwitchState = switch.isChecked

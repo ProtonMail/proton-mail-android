@@ -20,7 +20,7 @@
 package ch.protonmail.android.uitests.robots.mailbox.labelfolder
 
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
+import me.proton.fusion.utils.StringUtils.stringFromResource
 
 object MessageLocation {
     val archive = stringFromResource(R.string.archive_option)

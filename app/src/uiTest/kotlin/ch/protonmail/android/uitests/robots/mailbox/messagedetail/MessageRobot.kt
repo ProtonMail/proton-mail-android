@@ -39,13 +39,13 @@ import ch.protonmail.android.uitests.robots.mailbox.trash.TrashRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.TestData.pgpEncryptedTextDecrypted
 import ch.protonmail.android.uitests.testsHelper.TestData.pgpSignedTextDecrypted
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 import org.hamcrest.CoreMatchers.`is`
 
 /**
  * [MessageRobot] class contains actions and verifications for Message detail view functionality.
  */
-class MessageRobot : Robot {
+class MessageRobot : Fusion {
 
     fun selectFolder(folderName: String): MessageRobot = this
 
@@ -60,7 +60,7 @@ class MessageRobot : Robot {
     }
 
     fun clickLink(linkText: String): LinkNavigationDialogRobot {
-        view.withId(R.id.messageWebViewContainer).checkDisplayed()
+        view.withId(R.id.messageWebViewContainer).checkIsDisplayed()
         onWebView(withTagValue(`is`(messageWebViewTag)))
             .forceJavascriptEnabled()
             .withElement(DriverAtoms.findElement(Locator.LINK_TEXT, linkText))
@@ -74,36 +74,36 @@ class MessageRobot : Robot {
     }
 
     fun moveToTrash(): InboxRobot {
-        view.withId(R.id.messageWebViewContainer).checkDisplayed()
+        view.withId(R.id.messageWebViewContainer).checkIsDisplayed()
         view.withId(R.id.thirdActionImageButton).click()
         return InboxRobot()
     }
 
     fun openActionSheet(): MessageActionSheet {
-        view.withId(R.id.messageWebViewContainer).checkDisplayed()
+        view.withId(R.id.messageWebViewContainer).checkIsDisplayed()
         view.withId(R.id.moreActionImageButton).click()
         return MessageActionSheet()
     }
 
     fun navigateUpToSearch(): SearchRobot {
-        view.withId(R.id.messageWebViewContainer).checkDisplayed()
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
+        view.withId(R.id.messageWebViewContainer).checkIsDisplayed()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return SearchRobot()
     }
 
     fun navigateUpToSent(): SentRobot {
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return SentRobot()
     }
 
     fun navigateUpToInbox(): InboxRobot {
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return InboxRobot()
     }
 
     fun clickSendButtonFromDrafts(): DraftsRobot {
         view.withId(sendMessageId).click()
-        view.withText(R.string.message_sent).checkDisplayed()
+        view.withText(R.string.message_sent).checkIsDisplayed()
         return DraftsRobot()
     }
 
@@ -148,7 +148,7 @@ class MessageRobot : Robot {
         }
     }
 
-    class FoldersDialogRobot : Robot {
+    class FoldersDialogRobot : Fusion {
 
         fun clickCreateFolder(): AddFolderRobot {
             view.withId(R.id.labels_sheet_new_folder_text_view).click()
@@ -185,21 +185,21 @@ class MessageRobot : Robot {
             view.withId(R.id.textview_checkbox_manage_labels_title).withText(folderName).swipeRight().click()
         }
 
-        class Verify : Robot {
+        class Verify : Fusion {
 
             fun folderExistsInFoldersList(folderName: String) {
-                view.withId(R.id.labels_sheet_recyclerview).checkDisplayed()
+                view.withId(R.id.labels_sheet_recyclerview).checkIsDisplayed()
                 listView
                     .onListItem(withText(folderName))
                     .inAdapterView(view.withId(R.id.labels_sheet_recyclerview))
-                    .checkDisplayed()
+                    .checkIsDisplayed()
             }
         }
 
         inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
     }
 
-    class AddFolderRobot : Robot {
+    class AddFolderRobot : Fusion {
 
         fun addFolderWithName(name: String): FoldersDialogRobot = typeName(name).saveNewFolder()
 
@@ -208,7 +208,7 @@ class MessageRobot : Robot {
         private fun typeName(folderName: String): AddFolderRobot = this
     }
 
-    class MessageActionSheet : Robot {
+    class MessageActionSheet : Fusion {
 
         fun reply(): ComposerRobot {
             view.withId(R.id.text_view_details_actions_reply).click()
@@ -249,7 +249,7 @@ class MessageRobot : Robot {
 
     class LinkNavigationDialogRobot {
 
-        class Verify : Robot {
+        class Verify : Fusion {
 
             fun linkIsPresentInDialogMessage(link: String) {
 //                view.withId(android.R.id.message).inRoot(rootView.isDialog()).checkContains(link)
@@ -259,64 +259,64 @@ class MessageRobot : Robot {
         inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
     }
 
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun labelAdded(labelName: String) = Unit
 
         fun publicKeyIsAttached(publicKey: String) {
-            view.withText(publicKey).checkDisplayed()
+            view.withText(publicKey).checkIsDisplayed()
         }
 
         fun messageContainsAttachment() {
-            view.withId(R.id.attachmentsView).checkDisplayed()
+            view.withId(R.id.attachmentsView).checkIsDisplayed()
         }
 
         fun messageContainsOneAttachment() {
             val oneAttachmentString = StringUtils.quantityStringFromResource(R.plurals.attachments_number, 1)
-            view.withId(R.id.attachments_text_view).withSubstring(oneAttachmentString).checkDisplayed()
-            view.withId(R.id.attachment_name_text_view).checkDisplayed()
+            view.withId(R.id.attachments_text_view).containsText(oneAttachmentString).checkIsDisplayed()
+            view.withId(R.id.attachment_name_text_view).checkIsDisplayed()
         }
 
         fun messageContainsTwoAttachments() {
             val twoAttachmentString = StringUtils.quantityStringFromResource(R.plurals.attachments_number, 2)
                 .replace("%d", "2")
-            view.withId(R.id.attachments_text_view).withSubstring(twoAttachmentString).checkDisplayed()
+            view.withId(R.id.attachments_text_view).containsText(twoAttachmentString).checkIsDisplayed()
         }
 
         fun quotedHeaderShown() {
-            view.withId(R.id.headerView).checkDisplayed()
+            view.withId(R.id.headerView).checkIsDisplayed()
         }
 
         fun attachmentsNotAdded() {
-            view.withId(R.id.composer_attachments_count_text_view).checkNotDisplayed()
+            view.withId(R.id.composer_attachments_count_text_view).checkIsNotDisplayed()
         }
 
         fun attachmentsAdded() {
-            view.withId(R.id.composer_attachments_count_text_view).checkDisplayed()
+            view.withId(R.id.composer_attachments_count_text_view).checkIsDisplayed()
         }
 
         fun pgpIconShown() = Unit
 
         fun pgpEncryptedMessageDecrypted() {
-            device.waitForObjectByText(pgpEncryptedTextDecrypted)
+            byObject.withText(pgpEncryptedTextDecrypted).waitForExists()
         }
 
         fun pgpSignedMessageDecrypted() {
-            device.waitForObjectByText(pgpSignedTextDecrypted)
+            byObject.withText(pgpSignedTextDecrypted).waitForExists()
         }
 
         fun messageWebViewContainerShown() {
-            view.withId(R.id.messageWebViewContainer).checkDisplayed()
+            view.withId(R.id.messageWebViewContainer).checkIsDisplayed()
         }
 
         fun loadEmbeddedImagesButtonIsGone() {
-            view.withId(R.id.messageWebViewContainer).checkDisplayed()
-            view.withId(R.id.embedded_image_attachment).checkNotDisplayed()
+            view.withId(R.id.messageWebViewContainer).checkIsDisplayed()
+            view.withId(R.id.embedded_image_attachment).checkIsNotDisplayed()
         }
 
         fun showRemoteContentButtonIsGone() {
-            view.withId(R.id.messageWebViewContainer).checkDisplayed()
-            view.withId(R.id.embedded_image_attachment).checkNotDisplayed()
+            view.withId(R.id.messageWebViewContainer).checkIsDisplayed()
+            view.withId(R.id.embedded_image_attachment).checkIsNotDisplayed()
         }
 
         fun intentWithActionFileNameAndMimeTypeSent(mimeType: String) {

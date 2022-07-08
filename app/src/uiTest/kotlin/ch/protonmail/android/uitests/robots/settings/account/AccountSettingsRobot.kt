@@ -29,8 +29,8 @@ import ch.protonmail.android.uitests.robots.settings.SettingsRobot
 import ch.protonmail.android.uitests.robots.settings.account.labelsandfolders.LabelsAndFoldersRobot
 import ch.protonmail.android.uitests.robots.settings.account.privacy.PrivacySettingsRobot
 import ch.protonmail.android.uitests.robots.settings.account.swipinggestures.SwipingGesturesSettingsRobot
-import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
+import me.proton.fusion.utils.StringUtils.stringFromResource
 
 /**
  * [AccountSettingsRobot] class contains actions and verifications for
@@ -54,7 +54,7 @@ class AccountSettingsRobot {
     }
 
     fun foldersAndLabels(): LabelsAndFoldersRobot {
-        clickOnSettingsItemWithHeader(R.string.labels_and_folders)
+        clickOnSettingsItemWithHeader(R.string.folders)
         return LabelsAndFoldersRobot()
     }
 
@@ -77,10 +77,10 @@ class AccountSettingsRobot {
     /**
      * Contains all the validations that can be performed by [AccountSettingsRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun accountSettingsOpened() {
-            view.withText(R.string.account_settings).isDescendantOf(view.withId(R.id.toolbar)).checkDisplayed()
+            view.withText(R.string.account_settings).isDescendantOf(view.withId(R.id.toolbar)).checkIsDisplayed()
         }
     }
 

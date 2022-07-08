@@ -46,7 +46,6 @@ class PrivacyAccountSettingsTests : BaseTest() {
 
         loginRobot
             .loginTwoPassUser()
-            .skipOnboarding()
             .menuDrawer()
             .settings()
             .openUserAccountSettings(twoPassUser)

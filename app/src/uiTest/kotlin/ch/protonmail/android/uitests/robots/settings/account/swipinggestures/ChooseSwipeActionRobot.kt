@@ -21,9 +21,9 @@ package ch.protonmail.android.uitests.robots.settings.account.swipinggestures
 
 import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
-class ChooseSwipeActionRobot : Robot {
+class ChooseSwipeActionRobot : Fusion {
 
     fun chooseMessageArchivedAction(): ChooseSwipeActionRobot {
         view.withText(R.string.swipe_action_mark_read).click()
@@ -32,17 +32,17 @@ class ChooseSwipeActionRobot : Robot {
     }
 
     fun navigateUpToSwipingGestures(): SwipingGesturesSettingsRobot {
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return SwipingGesturesSettingsRobot()
     }
 
     /**
      * Contains all the validations that can be performed by [ChooseSwipeActionRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun messageStarUpdatedIsSelected() {
-            view.withText(R.string.swipe_action_star).isChecked().checkDisplayed()
+            view.withText(R.string.swipe_action_star).isChecked().checkIsDisplayed()
         }
     }
 

@@ -25,13 +25,13 @@ import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.MoveToFolderRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.SelectionStateRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [SentRobot] class implements [MailboxRobotInterface],
  * contains actions and verifications for Sent mailbox functionality.
  */
-class SentRobot : MailboxRobotInterface, Robot {
+class SentRobot : MailboxRobotInterface, Fusion {
 
     override fun swipeLeftMessageAtPosition(position: Int): SentRobot {
         super.swipeLeftMessageAtPosition(position)
@@ -54,14 +54,14 @@ class SentRobot : MailboxRobotInterface, Robot {
     }
 
     fun navigateUpToSent(): SentRobot {
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return SentRobot()
     }
 
     /**
      * Handles Mailbox selection state actions and verifications after user long click one of the messages.
      */
-    class SelectionStateRobot : SelectionStateRobotInterface, Robot {
+    class SelectionStateRobot : SelectionStateRobotInterface, Fusion {
 
         override fun exitMessageSelectionState(): InboxRobot {
             super.exitMessageSelectionState()
@@ -89,7 +89,7 @@ class SentRobot : MailboxRobotInterface, Robot {
         }
     }
 
-    class ConfirmDeletionDialogRobot: Robot {
+    class ConfirmDeletionDialogRobot: Fusion {
 
         fun confirmDeletion(): SentRobot {
             view.withId(android.R.id.button1).click()
@@ -130,9 +130,9 @@ class SentRobot : MailboxRobotInterface, Robot {
     class Verify : MailboxRobotInterface.verify() {
 
         fun messageStarred(subject: String) {
-            view.withId(R.id.snackbar_text).withText(R.string.swipe_action_star).checkDisplayed()
+            view.withId(R.id.snackbar_text).withText(R.string.swipe_action_star).checkIsDisplayed()
             view.withId(R.id.subject_text_view).withText(subject)
-                .hasSibling(view.withId(R.id.star_image_view)).checkDisplayed()
+                .hasSibling(view.withId(R.id.star_image_view)).checkIsDisplayed()
         }
     }
 

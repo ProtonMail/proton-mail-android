@@ -20,9 +20,9 @@ package ch.protonmail.android.uitests.robots.mailbox
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.saveMessageSubjectAtPosition
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
-interface SelectionStateRobotInterface : Robot {
+interface SelectionStateRobotInterface : Fusion {
 
     fun exitMessageSelectionState(): Any {
         view.withId(R.id.mailboxRecyclerView).pressBack()

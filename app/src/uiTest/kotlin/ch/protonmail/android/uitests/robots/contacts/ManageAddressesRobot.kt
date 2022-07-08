@@ -20,19 +20,18 @@
 package ch.protonmail.android.uitests.robots.contacts
 
 import ch.protonmail.android.R
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [ManageAddressesRobot] class contains actions and verifications for Adding a Contact to Group.
  */
-class ManageAddressesRobot : Robot {
+class ManageAddressesRobot : Fusion {
 
     fun addContactToGroup(withEmail: String): AddContactGroupRobot = selectAddress(withEmail).done()
 
     private fun selectAddress(email: String): ManageAddressesRobot {
         recyclerView
             .withId(contactsRecyclerView)
-//            .waitUntilPopulated()
             .onHolderItem(ContactsMatchers.withContactEmailInManageAddressesView(email))
             .click()
         return this

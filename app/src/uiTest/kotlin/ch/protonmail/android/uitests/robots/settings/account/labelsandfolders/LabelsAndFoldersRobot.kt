@@ -18,14 +18,18 @@
  */
 package ch.protonmail.android.uitests.robots.settings.account.labelsandfolders
 
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [LabelsAndFoldersRobot] class contains actions and verifications for
  * Labels & Folders functionality.
  */
-class LabelsAndFoldersRobot : Robot {
+class LabelsAndFoldersRobot : Fusion {
 
     fun labelsManager(): LabelsManagerRobot {
         view.withTag(R.string.label_add).click()
@@ -34,6 +38,11 @@ class LabelsAndFoldersRobot : Robot {
 
     fun foldersManager(): FoldersManagerRobot {
         view.withTag(R.string.label_add).click()
+        return FoldersManagerRobot()
+    }
+
+    fun scrollToClickDelete(): FoldersManagerRobot {
+        view.withId(R.id.delete_contacts).scrollTo().click()
         return FoldersManagerRobot()
     }
 }

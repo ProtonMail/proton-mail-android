@@ -19,7 +19,7 @@
 package ch.protonmail.android.uitests.robots.reportbugs
 
 import ch.protonmail.android.R
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [ReportBugsRobot] class contains actions and verifications for Bug report functionality.
@@ -29,10 +29,10 @@ class ReportBugsRobot {
     /**
      * Contains all the validations that can be performed by [ReportBugsRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun reportBugOpened() {
-            view.withId(R.id.bug_report_subject).checkDisplayed()
+            view.withId(R.id.bug_report_subject).checkIsDisplayed()
         }
     }
 
