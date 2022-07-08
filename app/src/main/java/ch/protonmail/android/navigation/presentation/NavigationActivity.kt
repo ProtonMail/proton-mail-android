@@ -211,7 +211,10 @@ internal abstract class NavigationActivity : BaseActivity() {
 
             getPrimaryUserId().filterNotNull()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
-                .onEach { userId -> onPrimaryUserId(userId) }
+                .onEach { userId ->
+                    onPrimaryUserId(userId)
+                    navigationViewModel.shouldShowMovedMessages(userManager.currentUserId)
+                }
                 .launchIn(lifecycleScope)
         }
 
@@ -282,7 +285,6 @@ internal abstract class NavigationActivity : BaseActivity() {
             onCreateFolder = ::launchCreateFolder
         )
 
-        navigationViewModel.shouldShowMovedMessages(userManager.currentUserId)
         setUpBugReporting()
         setUpSubscriptions()
         observeViewState()
