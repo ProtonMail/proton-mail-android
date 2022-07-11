@@ -32,9 +32,9 @@ import dagger.hilt.components.SingletonComponent
 import io.sentry.Sentry
 import io.sentry.SentryOptions
 
-class SentryInitializer : Initializer<SentryUserObserver> {
+class SentryInitializer : Initializer<Unit> {
 
-    override fun create(context: Context): SentryUserObserver {
+    override fun create(context: Context) {
         Sentry.init { options: SentryOptions ->
             with(options) {
                 dsn = BuildConfig.SENTRY_DSN
@@ -46,14 +46,13 @@ class SentryInitializer : Initializer<SentryUserObserver> {
             }
         }
 
-        val observer = EntryPointAccessors.fromApplication(
+        EntryPointAccessors.fromApplication(
             context.applicationContext,
             SentryInitializerEntryPoint::class.java
-        ).observer()
-
-        observer.start()
-
-        return observer
+        ).run {
+            userObserver().start()
+            proxyObserver().start()
+        }
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> = emptyList()
@@ -62,7 +61,8 @@ class SentryInitializer : Initializer<SentryUserObserver> {
     @InstallIn(SingletonComponent::class)
     interface SentryInitializerEntryPoint {
 
-        fun observer(): SentryUserObserver
+        fun userObserver(): SentryUserObserver
+        fun proxyObserver(): SentryProxyObserver
     }
 
     private companion object Tag {
