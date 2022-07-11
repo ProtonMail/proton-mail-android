@@ -326,12 +326,11 @@ public class ComposeMessageActivity
 
         Intent intent = getIntent();
         mAction = intent.getAction();
-        final String type = intent.getType();
         Bundle extras = intent.getExtras();
         if (savedInstanceState == null) {
-            initialiseActivityOnFirstStart(intent, extras, type);
+            initialiseActivityOnFirstStart(intent, extras);
         } else {
-            initialiseActivityOnFirstStart(intent, savedInstanceState, type);
+            initialiseActivityOnFirstStart(intent, savedInstanceState);
             setRespondInlineVisibility(!TextUtils.isEmpty(messageBodyEditText.getText()));
         }
         try {
@@ -452,8 +451,8 @@ public class ComposeMessageActivity
         composeMessageViewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
     }
 
-    private void initialiseActivityOnFirstStart(Intent intent, Bundle extras, String type) {
-        composeMessageViewModel.getLoadingDraftResult().observe(ComposeMessageActivity.this, new LoadDraftObserver(extras, intent, type));
+    private void initialiseActivityOnFirstStart(Intent intent, Bundle extras) {
+        composeMessageViewModel.getLoadingDraftResult().observe(ComposeMessageActivity.this, new LoadDraftObserver(extras, intent));
         if (extras != null) {
             composeMessageViewModel.prepareMessageData(extras.getBoolean(EXTRA_PGP_MIME, false), extras.getString(EXTRA_MESSAGE_ADDRESS_ID, ""), extras.getString(EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS));
             composeMessageViewModel.setShowImages(extras.getBoolean(EXTRA_LOAD_IMAGES, false));
@@ -533,15 +532,15 @@ public class ComposeMessageActivity
                     content = "";
                 }
 
-                initialiseMessageBody(intent, extras, type, content, composerContent);
+                initialiseMessageBody(intent, extras, content, composerContent);
             }
         } else {
             composeMessageViewModel.prepareMessageData(false, "", "");
-            initialiseMessageBody(intent, null, type, null, null);
+            initialiseMessageBody(intent, null, null, null);
         }
     }
 
-    private void initialiseMessageBody(Intent intent, Bundle extras, String type, String content, String composerContent) {
+    private void initialiseMessageBody(Intent intent, Bundle extras, String content, String composerContent) {
         if (extras != null && (!TextUtils.isEmpty(content) || (!TextUtils.isEmpty(composerContent) && extras.getBoolean(EXTRA_MAIL_TO)))) {
             // forward, reply, reply all here
             try {
@@ -575,7 +574,7 @@ public class ComposeMessageActivity
             composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
             setMessageBody();
         }
-        if (Intent.ACTION_SEND.equals(mAction) && type != null) {
+        if (Intent.ACTION_SEND.equals(mAction)) {
             handleSendSingleFile(intent);
         } else if (Intent.ACTION_SEND_MULTIPLE.equals(mAction)) {
             handleSendMultipleFiles(intent);
@@ -1932,12 +1931,10 @@ public class ComposeMessageActivity
     private class LoadDraftObserver implements Observer<Message> {
         private final Bundle extras;
         private final Intent intent;
-        private final String type;
 
-        LoadDraftObserver(Bundle extras, Intent intent, String type) {
+        LoadDraftObserver(Bundle extras, Intent intent) {
             this.extras = extras;
             this.intent = intent;
-            this.type = type;
         }
 
         @Override
@@ -1954,7 +1951,7 @@ public class ComposeMessageActivity
             if (extras.containsKey(STATE_ADDED_CONTENT)) {
                 composerContent = extras.getString(STATE_ADDED_CONTENT);
             }
-            initialiseMessageBody(intent, extras, type, content, composerContent);
+            initialiseMessageBody(intent, extras, content, composerContent);
         }
     }
 
