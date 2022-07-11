@@ -32,9 +32,14 @@ import dagger.hilt.components.SingletonComponent
 import io.sentry.Sentry
 import io.sentry.SentryOptions
 
-class SentryInitializer : Initializer<SentryUserObserver> {
+class SentryInitializer : Initializer<Unit> {
 
-    override fun create(context: Context): SentryUserObserver {
+    override fun create(context: Context) {
+        val entryPoint = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            SentryInitializerEntryPoint::class.java
+        )
+
         Sentry.init { options: SentryOptions ->
             with(options) {
                 dsn = BuildConfig.SENTRY_DSN
@@ -43,17 +48,12 @@ class SentryInitializer : Initializer<SentryUserObserver> {
                 setTag(APP_VERSION, AppUtil.getAppVersion())
                 setTag(SDK_VERSION, "${Build.VERSION.SDK_INT}")
                 setTag(DEVICE_MODEL, Build.MODEL)
+                beforeSend = entryPoint.vpnBeforeSendHook()
             }
         }
 
-        val observer = EntryPointAccessors.fromApplication(
-            context.applicationContext,
-            SentryInitializerEntryPoint::class.java
-        ).observer()
-
-        observer.start()
-
-        return observer
+        entryPoint.userObserver().start()
+        entryPoint.proxyObserver().start()
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> = emptyList()
@@ -62,7 +62,9 @@ class SentryInitializer : Initializer<SentryUserObserver> {
     @InstallIn(SingletonComponent::class)
     interface SentryInitializerEntryPoint {
 
-        fun observer(): SentryUserObserver
+        fun vpnBeforeSendHook(): SentryVpnBeforeSendHook
+        fun userObserver(): SentryUserObserver
+        fun proxyObserver(): SentryProxyObserver
     }
 
     private companion object Tag {
