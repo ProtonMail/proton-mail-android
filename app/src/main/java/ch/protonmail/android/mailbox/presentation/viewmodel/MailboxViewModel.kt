@@ -742,11 +742,14 @@ internal class MailboxViewModel @Inject constructor(
         }
     }
 
-    suspend fun getMailSettingsState(): Flow<Either<NotLoggedIn, GetMailSettings.Result>> {
-        val userId = userManager.currentUserId
-            ?: return flowOf(NotLoggedIn.left())
-        return getMailSettings(userId).map(::Right)
-    }
+    fun getMailSettingsState(): Flow<Either<NotLoggedIn, GetMailSettings.Result>> =
+        userManager.primaryUserId.flatMapLatest { userId ->
+            if (userId == null) {
+                return@flatMapLatest flowOf(NotLoggedIn.left())
+            }
+
+            getMailSettings(userId).map(::Right)
+        }
 
     data class GetMailboxItemsParameters(
         val userId: UserId,
