@@ -226,7 +226,7 @@
     <string name="move_to_spam">In Spam verschieben</string>
     <string name="move_to_inbox">In Posteingang verschieben</string>
     <string name="move_to">Verschieben nach…</string>
-    <string name="are_you_sure_empty">Möchten Sie wirklich alle Nachrichten aus diesem Ordner löschen?</string>
+    <string name="are_you_sure_empty">Möchtest du wirklich alle Nachrichten aus diesem Ordner löschen?</string>
     <string name="send">Senden</string>
     <string name="selected">Ausgewählt</string>
     <string name="no_labels">Keine Kategorien</string>
@@ -316,14 +316,14 @@
     <string name="no_application_found_or_link_invalid">Es ist keine App installiert, die diese Aktion oder eine ungültige URL verarbeitet</string>
     <string name="label_deleted">Kategorie gelöscht</string>
     <string name="label_deleted_error">Fehler beim Löschen der Kategorie</string>
-    <string name="message_deleted_error">Fehler beim Löschen einiger Nachrichten. Werden einige der ausgewählte gerade gesendet?</string>
+    <string name="message_deleted_error">Fehler beim Löschen einiger Nachrichten. Werden einige der ausgewählten gerade gesendet?</string>
     <string name="respond_inline">Eingebettet antworten</string>
     <string name="server_not_reachable_troubleshoot">Server nicht erreichbar… (<u>Problembehandlung</u>)</string>
     <string name="connectivity_checking">Verbindung wird geprüft …</string>
     <string name="draft_label_attachments_uploading">Anhänge werden hochgeladen …</string>
     <string name="draft_label_message_uploading">Nachricht wird gesendet …</string>
     <string name="attachment_failed">Hochladen des Anhangs der Nachricht fehlgeschlagen </string>
-    <string name="attaching_photo_failed">Anhängen der Fotos fehlgeschlagen</string>
+    <string name="attaching_photo_failed">Anhängen des Fotos fehlgeschlagen</string>
     <string name="empty_message">Nachricht ohne Inhalt</string>
     <string name="display_images">Inhalte aus externen Quellen anzeigen</string>
     <string name="retry">Wiederholen</string>
@@ -358,8 +358,8 @@
     <string name="share_link">Link teilen</string>
     <string name="sync_attachments">Anhänge synchronisieren</string>
     <string name="processing_attachment">Anhänge werden verarbeitet</string>
-    <string name="hyperlink_confirmation_dialog_text_html">Nun wird Ihr Browser geöffnet und leitet Sie weiter
-zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten Sie fortfahren?</string>
+    <string name="hyperlink_confirmation_dialog_text_html">Nun wird dein Browser geöffnet und leitet dich weiter
+zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchtest du fortfahren?</string>
     <string name="dont_ask_again">Nicht erneut nachfragen</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Ungültiger PIN-Code, %d verbleibender Versuch</item>
@@ -455,13 +455,13 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
         <item>@string/vcard_other_option_url</item>
     </string-array>
     <string name="logged_out">Abgemeldet</string>
-    <string name="logged_out_description">Sie wurden abgemeldet. Bitte erneut anmelden.</string>
+    <string name="logged_out_description">Du wurdest abgemeldet. Bitte erneut anmelden.</string>
     <string name="print_error">Druckfehler</string>
     <string name="download_complete">Herunterladen abgeschlossen</string>
     <string name="message_expires_in">Diese Nachricht verfällt in %s</string>
     <string name="unsaved_changes_title">Noch nicht gesicherte Änderungen</string>
-    <string name="unsaved_changes_subtitle">Ungesicherte Elemente im Formular vorhanden. Möchten Sie sie wirklich verwerfen?</string>
-    <string name="request_timeout">Zeitüberschreitung bei der Anfrage. Bitte versuchen Sie es erneut</string>
+    <string name="unsaved_changes_subtitle">Ungesicherte Elemente im Formular vorhanden. Möchtest du sie wirklich verwerfen?</string>
+    <string name="request_timeout">Zeitüberschreitung bei der Anfrage. Bitte versuche es erneut</string>
     <string name="no_folders">Keine Ordner</string>
     <string name="folder_add_new">Neuen Ordner hinzufügen</string>
     <string name="folder_name">Ordnername</string>
@@ -477,7 +477,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="update_label">Kategorie aktualisieren</string>
     <string name="delete">Löschen</string>
     <string name="subject_copied">Betreff in die Zwischenablage kopiert</string>
-    <string name="details_copied">Details wurden in Zwischenablage kopiert</string>
+    <string name="details_copied">Details wurden in die Zwischenablage kopiert</string>
     <string name="saving">Wird gespeichert …</string>
     <string name="update_folder">Ordner aktualisieren</string>
     <string name="spam_score_100">Diese Nachricht scheint von einer Proton Mail-Adresse zu stammen, kam aber von außerhalb unseres Systems und hat unsere Authentifizierungsanforderungen nicht erfüllt. Die E-Mail könnte gefälscht oder falsch weitergeleitet worden sein!</string>
@@ -529,14 +529,14 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="recipient_popup_compose_to">Nachricht an</string>
     <string name="recipient_popup_copy_address">Adresse kopieren</string>
     <string name="recipient_popup_see_details">Kontaktinformationen anzeigen</string>
-    <string name="send_with_untrusted_key_title">Möchten Sie mit einem nicht vertrauenswürdigen Schlüssel versenden?</string>
-    <string name="send_with_untrusted_key_message">Sie haben die Adressüberprüfung mit vertrauenswürdigen Schlüsseln für %s aktiviert, aber es wurden keinen aktiven Verschlüsselungsschlüsseln vertraut.</string>
-    <string name="resign_contact_title">Möchten Sie den Kontakt erneut signieren?</string>
+    <string name="send_with_untrusted_key_title">Möchtest du mit einem nicht vertrauenswürdigen Schlüssel versenden?</string>
+    <string name="send_with_untrusted_key_message">Du hast die Adressüberprüfung mit vertrauenswürdigen Schlüsseln für %s aktiviert, aber es wurden keinen aktiven Verschlüsselungsschlüsseln vertraut.</string>
+    <string name="resign_contact_title">Möchtest du den Kontakt erneut signieren?</string>
     <string name="resign_contact_message">Die Überprüfung von %s ist fehlgeschlagen: Der Kontakt ist fehlerhaft signiert. Du musst den Kontakt erneut signieren, um eine Nachricht an diese Adresse senden zu können oder den Kontakt bearbeiten. Dies kann auch vorkommen, wenn du dein Passwort wiederhergestellt und deine Schlüssel zurückgesetzt hast.</string>
     <!-- Sender locks -->
     <string name="sender_lock_zero_access">Gespeichert mit Zero-Access-Verschlüsselung</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_end_to_end">Von Ihnen mit Ende-zu-Ende-Verschlüsselung gesendet</string>
+    <string name="sender_lock_sent_end_to_end">Von dir mit Ende-zu-Ende-Verschlüsselung gesendet</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_autoresponder">Versendet von Proton Mail mit Null-Zugriffs-Verschlüsselung</string>
     <string name="sender_lock_verification_failed">Überprüfung des Absenders fehlgeschlagen</string>
@@ -555,24 +555,24 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="recipient_error_and_removed">Fehler beim Abrufen von Empfängerinformationen. Der Empfänger „%s” wurde entfernt.</string>
     <string name="send_anyway">Dennoch senden</string>
     <string name="expiration_error_title">Sie haben eine Gültigkeitsdauer der Nachricht angegeben, aber nicht alle Empfänger unterstützen dies.</string>
-    <string name="expiration_error_add_msg_password">Bitte fügen Sie ein Nachrichtenpasswort für folgende Empfänger hinzu:</string>
-    <string name="expiration_error_disable_pgp_sending">Bitte deaktivieren Sie den PGP-Versand, um die Verfallszeit für die folgenden Empfänger zu aktivieren:</string>
-    <string name="expiration_error_proceed">Tippen Sie auf „Trotzdem senden”, um Nachrichten auch ohne Verfallszeitpunkt an diese Empfänger zu senden.</string>
+    <string name="expiration_error_add_msg_password">Bitte füge ein Nachrichtenpasswort für folgende Empfänger hinzu:</string>
+    <string name="expiration_error_disable_pgp_sending">Bitte deaktiviere den PGP-Versand, um die Verfallszeit für die folgenden Empfänger zu aktivieren:</string>
+    <string name="expiration_error_proceed">Tippe auf „Trotzdem senden”, um Nachrichten auch ohne Verfallszeitpunkt an diese Empfänger zu senden.</string>
     <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Weitere Informationen (engl.)</a></string>
     <string name="channel_name_attachments">Anhänge</string>
     <string name="channel_description_attachments">Informiert über den Status der herunterzuladenden Anhänge</string>
     <string name="channel_name_emails">Nachrichten</string>
     <string name="channel_description_emails">Benachrichtigungen über eingehende Nachrichten</string>
     <string name="channel_name_account">Konto</string>
-    <string name="channel_description_account">Kontenstatus</string>
+    <string name="channel_description_account">Kontostatus</string>
     <string name="channel_name_ongoing_operations">Laufende Aktionen</string>
     <string name="channel_description_ongoing_operations">Zeigt alle laufenden Aktionen, wie das Herunterladen neuer Nachrichten im Hintergrund, an.</string>
     <string name="retrieving_notifications">Benachrichtigungen werden abgerufen</string>
     <string name="report_phishing">Phishing melden</string>
     <string name="print">Drucken</string>
     <string name="phishing_dialog_title">Phishing-Bericht bestätigen</string>
-    <string name="phishing_dialog_message">Wenn Sie eine Nachricht als Phishing-Versuch melden, wird die Nachricht an uns gesendet, damit wir diese analysieren und unsere Filter verbessern können. Dies bedeutet, dass wir den Inhalt der Nachricht vollständig einsehen können.</string>
-    <string name="phishing_report_send_message_moved_to_spam">Bericht gesendet. Die Nachricht wurde nach Spam verschoben.</string>
+    <string name="phishing_dialog_message">Wenn du eine Nachricht als Phishing-Versuch meldest, wird die Nachricht an uns gesendet, damit wir diese analysieren und unsere Filter verbessern können. Dies bedeutet, dass wir den Inhalt der Nachricht vollständig einsehen können.</string>
+    <string name="phishing_report_send_message_moved_to_spam">Bericht gesendet. Die Nachricht wurde in den Spam verschoben.</string>
     <string name="cannot_send_report_send">Bericht konnte nicht gesendet werden</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
@@ -760,7 +760,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="notification_settings">Benachrichtigungseinstellungen</string>
     <string name="auto_lock">Automatisch sperren</string>
     <string name="auto_lock_app">App automatisch sperren</string>
-    <string name="auto_lock_description">Schalten Sie diese Funktion ein, um Ihre\nApp automatisch zu sperren und mit einem\nPIN-Code oder Fingerabdruck zu entsperren.</string>
+    <string name="auto_lock_description">Schalte diese Funktion ein, um deine App automatisch zu sperren und mit einem PIN-Code oder Fingerabdruck zu entsperren.</string>
     <string name="change_pin_code">PIN-Code ändern</string>
     <string name="auto_lock_timer">Zeit bis zur automatischen Sperrung</string>
     <string name="connections_via_third_parties">Alternatives Routing</string>

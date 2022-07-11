@@ -318,7 +318,7 @@
     <string name="label_deleted_error">Σφάλμα κατά την διαγραφή της ετικέτας</string>
     <string name="message_deleted_error">Σφάλμα κατά τη διαγραφή ορισμένων μηνυμάτων. Μερικά από τα επιλεγμένα μηνύματα βρίσκονται σε διαδικασία αποστολής;!</string>
     <string name="respond_inline">Απάντηση μέσα στην γραμμή</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Απρόσιτος διακομιστής… (<u>Αντιμετώπιση προβλήματος</u>)</string>
     <string name="connectivity_checking">Έλεγχος σύνδεσης...</string>
     <string name="draft_label_attachments_uploading">γίνεται ανέβασμα συνημμένων…</string>
     <string name="draft_label_message_uploading">αποστολή μηνύματος…</string>
@@ -423,7 +423,7 @@
     <string name="contacts_import_contact">Εισαγωγή Επαφής</string>
     <string name="contacts_import">Εισαγωγή</string>
     <string name="upload_contacts">Ανέβασμα Επαφών</string>
-    <string name="uploading_contacts">Uploading contacts…</string>
+    <string name="uploading_contacts">Γίνεται ανέβασμα επαφών…</string>
     <string-array name="vcard_option_phone">
         <item>Τηλέφωνο</item>
         <item>Κινητό</item>
@@ -480,12 +480,12 @@
     <string name="saving">Αποθήκευση...</string>
     <string name="update_folder">Ενημέρωση φακέλου</string>
     <string name="spam_score_100">This email seems to be from a Proton Mail address but came from outside our system and failed our authentication requirements. It may be spoofed or improperly forwarded!</string>
-    <string name="spam_score_101">Αυτό το μήνυμα ηλεκτρονικού ταχυδρομείου απέτυχε στις απαιτήσεις του ελέγχου ταυτότητας domain. Μπορεί να έχει πλαστογραφηθεί ή να έχει προωθηθεί λάθος!</string>
+    <string name="spam_score_101">Αυτό το μήνυμα απέτυχε στις απαιτήσεις ταυτοποίησης του τομέα του. Ίσως έχει πλαστογραφηθεί ή προωθηθεί ακατάλληλα!</string>
     <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a></string>
     <string name="print_from_template">Από: %s</string>
-    <string name="print_to_template">To: %s;  </string>
-    <string name="print_cc_template">CC: %s;  </string>
-    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="print_to_template">Πρός: %s  </string>
+    <string name="print_cc_template">Κοιν: %s  </string>
+    <string name="print_bcc_template">Κρυφή Κοιν: %s  </string>
     <string name="address">Διεύθυνση: </string>
     <string name="address_street">Οδός</string>
     <string name="address_extended_street">Επέκταση οδού</string>
@@ -511,7 +511,7 @@
     <string name="protonmail_contacts">Επαφές Proton Mail</string>
     <string name="device_contacts">Επαφές Συσκευής</string>
     <string name="print_date_template">Ημερομηνία: %s</string>
-    <string name="print_attachment_template">Attachment: %s;  </string>
+    <string name="print_attachment_template">Συνημμένο: %s;  </string>
     <string name="pm_me_changed">Η αποστολή μηνυμάτων από διεύθυνση @pm.me είναι μια λειτουργία επί πληρωμή. Το μήνυμά σας θα σταλεί από την προεπιλεγμένη σας διεύθυνση %s</string>
     <string name="pm_me_can_not_be_default">Για να μπορείτε να ορίσετε τη διεύθυνσή σας %s ως προεπιλεγμένη, αναβαθμίστε σε πρόγραμμα επί πληρωμή</string>
     <string name="dont_remind_again">Μην μου υπενθυμίσεις ξανά</string>
