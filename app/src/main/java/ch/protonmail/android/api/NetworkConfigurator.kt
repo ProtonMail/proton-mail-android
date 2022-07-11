@@ -161,6 +161,7 @@ class NetworkConfigurator @Inject constructor(
                 return@launch
             }
 
+            val alternativeServerPingErrors = mutableListOf<Pair<String, Exception>>()
             proxyListReference.forEach {
                 proxies.updateActive(it.baseUrl, timestamp)
                 networkSwitcher.reconfigureProxy(proxies)
@@ -169,6 +170,7 @@ class NetworkConfigurator @Inject constructor(
                         networkSwitcher.tryRequest()
                     } catch (e: Exception) {
                         Timber.i(e, "Exception while pinging alternative routing URL")
+                        alternativeServerPingErrors.add(Pair(it.baseUrl, e))
                         null
                     }
                     result != null // && result.code == 1000
@@ -185,6 +187,10 @@ class NetworkConfigurator @Inject constructor(
                 } else {
                     proxies.updateFailed(it.baseUrl, timestamp)
                 }
+
+                if (success == null) {
+                    alternativeServerPingErrors.add(Pair(it.baseUrl, Exception("Timeout while pinging the server.")))
+                }
             }
             callback?.stopAutoRetry()
             networkSwitcher.reconfigureProxy(null)
@@ -192,6 +198,14 @@ class NetworkConfigurator @Inject constructor(
             isRunning = false
             callback?.stopDohSignal()
             callback?.onDohFailed()
+            Timber.w(
+                """
+                DoH failed- could not find a working alternative server after 
+                trying ${proxyListReference.size} alternatives. 
+                The errors:
+                ${alternativeServerPingErrors.map { "${it.first} : ${it.second.message}" }}
+                """.trimIndent()
+            )
         }
     }
 
