@@ -22,6 +22,9 @@ package ch.protonmail.android.mailbox.presentation.viewmodel
 import android.graphics.Color
 import androidx.lifecycle.liveData
 import app.cash.turbine.test
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.NetworkConfigurator
@@ -37,6 +40,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
+import ch.protonmail.android.feature.NotLoggedIn
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -62,6 +66,7 @@ import ch.protonmail.android.notifications.presentation.usecase.ClearNotificatio
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.pendingaction.data.model.PendingUpload
 import ch.protonmail.android.settings.domain.GetMailSettings
+import ch.protonmail.android.testdata.UserIdTestData
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.delete.EmptyFolder
@@ -82,7 +87,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
+import me.proton.core.domain.type.IntEnum
+import me.proton.core.domain.type.StringEnum
+import me.proton.core.mailsettings.domain.entity.ComposerMode
+import me.proton.core.mailsettings.domain.entity.MailSettings
+import me.proton.core.mailsettings.domain.entity.MessageButtons
+import me.proton.core.mailsettings.domain.entity.MimeType
+import me.proton.core.mailsettings.domain.entity.PMSignature
+import me.proton.core.mailsettings.domain.entity.PackageType
+import me.proton.core.mailsettings.domain.entity.ShowImage
+import me.proton.core.mailsettings.domain.entity.ShowMoved
+import me.proton.core.mailsettings.domain.entity.ViewLayout
+import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -146,7 +165,10 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private val mailboxItemUiModelMapper: MailboxItemUiModelMapper = mockk {
         coEvery { toUiModels(messages = any<Collection<Message>>(), any(), allLabels = any()) } returns emptyList()
         coEvery {
-            toUiModels(userId = any(), conversations = any<Collection<Conversation>>(), currentLabelId = any(), allLabels = any())
+            toUiModels(
+                userId = any(), conversations = any<Collection<Conversation>>(), currentLabelId = any(),
+                allLabels = any()
+            )
         } returns emptyList()
     }
 
@@ -171,13 +193,25 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(INBOX) } returns false // INBOX type to use with messages
         every { conversationModeEnabled(any(), INBOX.asLabelId()) } returns false // INBOX type to use with messages
         every { conversationModeEnabled(ARCHIVE) } returns true // ARCHIVE type to use with conversations
-        every { conversationModeEnabled(any(), ARCHIVE.asLabelId()) } returns true // ARCHIVE type to use with conversations
+        every {
+            conversationModeEnabled(
+                any(), ARCHIVE.asLabelId()
+            )
+        } returns true // ARCHIVE type to use with conversations
         every { conversationModeEnabled(LABEL) } returns true // LABEL type to use with conversations
         every { conversationModeEnabled(any(), LABEL.asLabelId()) } returns true // LABEL type to use with conversations
         every { conversationModeEnabled(LABEL_FOLDER) } returns true // LABEL_FOLDER type to use with conversations
-        every { conversationModeEnabled(any(), LABEL_FOLDER.asLabelId()) } returns true // LABEL_FOLDER type to use with conversations
+        every {
+            conversationModeEnabled(
+                any(), LABEL_FOLDER.asLabelId()
+            )
+        } returns true // LABEL_FOLDER type to use with conversations
         every { conversationModeEnabled(ALL_MAIL) } returns true // ALL_MAIL type to use with conversations
-        every { conversationModeEnabled(any(), ALL_MAIL.asLabelId()) } returns true // ALL_MAIL type to use with conversations
+        every {
+            conversationModeEnabled(
+                any(), ALL_MAIL.asLabelId()
+            )
+        } returns true // ALL_MAIL type to use with conversations
         every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
         coEvery { observeMessagesByLocation(any()) } returns messagesResponseChannel.receiveAsFlow()
             .withLoadMore(loadMoreFlowOf<GetMessagesResult>()) {}
@@ -405,70 +439,72 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun `verify the star action is called when doing an update star swipe action on unstarred mailbox item`() = runBlockingTest {
-        // given
-        val mailboxUiItem = buildMailboxUiItem(
-            itemId = mailboxItemId1,
-            isStarred = false
-        )
-        coEvery {
-            viewModel.star(
-                listOf(mailboxItemId1),
-                testUserId,
-                inboxLocation
+    fun `verify the star action is called when doing an update star swipe action on unstarred mailbox item`() =
+        runBlockingTest {
+            // given
+            val mailboxUiItem = buildMailboxUiItem(
+                itemId = mailboxItemId1,
+                isStarred = false
             )
-        } just runs
+            coEvery {
+                viewModel.star(
+                    listOf(mailboxItemId1),
+                    testUserId,
+                    inboxLocation
+                )
+            } just runs
 
-        // when
-        viewModel.handleConversationSwipe(
-            SwipeAction.UPDATE_STAR,
-            mailboxUiItem,
-            inboxLocation,
-            inboxLocation.messageLocationTypeValue.toString()
-        )
-
-        // then
-        coVerify {
-            viewModel.star(
-                listOf(mailboxItemId1),
-                testUserId,
-                inboxLocation
+            // when
+            viewModel.handleConversationSwipe(
+                SwipeAction.UPDATE_STAR,
+                mailboxUiItem,
+                inboxLocation,
+                inboxLocation.messageLocationTypeValue.toString()
             )
+
+            // then
+            coVerify {
+                viewModel.star(
+                    listOf(mailboxItemId1),
+                    testUserId,
+                    inboxLocation
+                )
+            }
         }
-    }
 
     @Test
-    fun `verify the unstar action is called when doing an update star swipe action on starred mailbox item`() = runBlockingTest {
-        // given
-        val mailboxUiItem = buildMailboxUiItem(
-            itemId = mailboxItemId1,
-            isStarred = true
-        )
-        coEvery {
-            viewModel.unstar(
-                listOf(mailboxItemId1),
-                testUserId,
-                inboxLocation
+    fun `verify the unstar action is called when doing an update star swipe action on starred mailbox item`() =
+        runBlockingTest {
+            // given
+            val mailboxUiItem = buildMailboxUiItem(
+                itemId = mailboxItemId1,
+                isStarred = true
             )
-        } just runs
+            coEvery {
+                viewModel.unstar(
+                    listOf(mailboxItemId1),
+                    testUserId,
+                    inboxLocation
+                )
+            } just runs
 
-        // when
-        viewModel.handleConversationSwipe(
-            SwipeAction.UPDATE_STAR,
-            mailboxUiItem,
-            inboxLocation,
-            inboxLocation.messageLocationTypeValue.toString()
-        )
-
-        // then
-        coVerify {
-            viewModel.unstar(
-                listOf(mailboxItemId1),
-                testUserId,
-                inboxLocation
+            // when
+            viewModel.handleConversationSwipe(
+                SwipeAction.UPDATE_STAR,
+                mailboxUiItem,
+                inboxLocation,
+                inboxLocation.messageLocationTypeValue.toString()
             )
+
+            // then
+            coVerify {
+                viewModel.unstar(
+                    listOf(mailboxItemId1),
+                    testUserId,
+                    inboxLocation
+                )
+            }
         }
-    }
 
     @Test
     fun `when refreshed and the data has arrived, should fetch events and reschedule the event loop`() =
@@ -547,8 +583,35 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             }
         }
 
+
+    @Test
+    fun `verify getmailsettings emits again after login`() =
+        runBlockingTest {
+            // Given
+            val userIdFlow = MutableStateFlow<UserId?>(null)
+            coEvery { userManager.primaryUserId } returns userIdFlow
+            coEvery { getMailSettings.invoke(UserIdTestData.userId) } returns MutableStateFlow(
+                GetMailSettings.Result.Success(mailSettings = mailSettings())
+            )
+
+            // When
+            viewModel.getMailSettingsState().test {
+                // Then
+                val result: Either<NotLoggedIn, GetMailSettings.Result> = NotLoggedIn.left()
+                val resultSuccess: Either<NotLoggedIn, GetMailSettings.Result> =
+                    GetMailSettings.Result.Success(mailSettings = mailSettings()).right()
+
+                assertEquals(result, awaitItem())
+                userIdFlow.emit(UserIdTestData.userId)
+                assertEquals(resultSuccess, awaitItem())
+            }
+        }
+
     private fun List<MailboxItemUiModel>.toMailboxState(): MailboxListState.Data =
         MailboxListState.Data(this, isFreshData = false, shouldResetPosition = true)
+
+    private fun MailSettings.toFlowOfDataResult() =
+        flowOf(DataResult.Success(ResponseSource.Local, this))
 
     companion object TestData {
 
@@ -582,6 +645,37 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             messageLabels = emptyList(),
             allLabelsIds = emptyList(),
             isDraft = false
+        )
+
+
+        private fun mailSettings() = MailSettings(
+            userId = UserIdTestData.userId,
+            displayName = null,
+            signature = null,
+            autoSaveContacts = true,
+            composerMode = IntEnum(1, ComposerMode.Maximized),
+            messageButtons = IntEnum(1, MessageButtons.UnreadFirst),
+            showImages = IntEnum(1, ShowImage.Remote),
+            showMoved = IntEnum(0, ShowMoved.None),
+            viewMode = IntEnum(1, ViewMode.NoConversationGrouping),
+            viewLayout = IntEnum(1, ViewLayout.Row),
+            swipeLeft = IntEnum(1, me.proton.core.mailsettings.domain.entity.SwipeAction.Spam),
+            swipeRight = IntEnum(1, me.proton.core.mailsettings.domain.entity.SwipeAction.Spam),
+            shortcuts = true,
+            pmSignature = IntEnum(1, PMSignature.Disabled),
+            numMessagePerPage = 1,
+            draftMimeType = StringEnum("text/plain", MimeType.PlainText),
+            receiveMimeType = StringEnum("text/plain", MimeType.PlainText),
+            showMimeType = StringEnum("text/plain", MimeType.PlainText),
+            enableFolderColor = true,
+            inheritParentFolderColor = true,
+            rightToLeft = true,
+            attachPublicKey = true,
+            sign = true,
+            pgpScheme = IntEnum(1, PackageType.ProtonMail),
+            promptPin = true,
+            stickyLabels = true,
+            confirmLink = true
         )
 
     }
