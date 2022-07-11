@@ -87,4 +87,9 @@ class NetworkConnectivityManager @Inject constructor(
         connectivityManager.registerNetworkCallback(networkRequestBuilder, callback)
         awaitClose { connectivityManager.unregisterNetworkCallback(callback) }
     }
+
+    fun isConnectedToVpn(): Boolean {
+        return connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            ?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) ?: false
+    }
 }

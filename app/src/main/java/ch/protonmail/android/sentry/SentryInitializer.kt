@@ -35,6 +35,11 @@ import io.sentry.SentryOptions
 class SentryInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
+        val entryPoint = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            SentryInitializerEntryPoint::class.java
+        )
+
         Sentry.init { options: SentryOptions ->
             with(options) {
                 dsn = BuildConfig.SENTRY_DSN
@@ -43,16 +48,12 @@ class SentryInitializer : Initializer<Unit> {
                 setTag(APP_VERSION, AppUtil.getAppVersion())
                 setTag(SDK_VERSION, "${Build.VERSION.SDK_INT}")
                 setTag(DEVICE_MODEL, Build.MODEL)
+                beforeSend = entryPoint.vpnBeforeSendHook()
             }
         }
 
-        EntryPointAccessors.fromApplication(
-            context.applicationContext,
-            SentryInitializerEntryPoint::class.java
-        ).run {
-            userObserver().start()
-            proxyObserver().start()
-        }
+        entryPoint.userObserver().start()
+        entryPoint.proxyObserver().start()
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> = emptyList()
@@ -61,6 +62,7 @@ class SentryInitializer : Initializer<Unit> {
     @InstallIn(SingletonComponent::class)
     interface SentryInitializerEntryPoint {
 
+        fun vpnBeforeSendHook(): SentryVpnBeforeSendHook
         fun userObserver(): SentryUserObserver
         fun proxyObserver(): SentryProxyObserver
     }
