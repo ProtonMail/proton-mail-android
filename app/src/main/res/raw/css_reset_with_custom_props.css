@@ -29,16 +29,6 @@ output {
   display: inline;
 }
 
-html {
-  box-sizing: border-box;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: inherit;
-}
-
 html,
 body,
 blockquote,
@@ -86,7 +76,7 @@ iframe {
 ul,
 ol,
 menu {
-  padding-left: 2em;
+  padding-inline-start:2em;
 }
 
 dd {
