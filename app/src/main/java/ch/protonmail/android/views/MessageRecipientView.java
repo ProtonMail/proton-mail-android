@@ -20,6 +20,7 @@ package ch.protonmail.android.views;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -72,6 +73,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         mTypefacePgp = Typeface.createFromAsset(context.getAssets(), "pgp-icons-android.ttf");
         mTypefaceGroups = Typeface.createFromAsset(context.getAssets(), "fonts/contacts_icons.ttf");
         mMapView = new HashMap<>();
+        setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
     }
 
     public void setLocation(Constants.RecipientLocationType location) {
