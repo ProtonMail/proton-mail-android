@@ -264,6 +264,7 @@ i18n-sync-crowdin:
   extends: .i18n-sync-crowdin-shared
   except:
     refs:
+      - pipelines
       - schedules
     variables:
       - $TEST_TYPE == "feature" || $TEST_TYPE == "regression"
