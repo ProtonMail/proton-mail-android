@@ -86,7 +86,7 @@ class AttachmentsHelper @Inject constructor(
 
         val embeddedMimeTypes = listOf("image/gif", "image/jpeg", "image/jpg", "image/png", "image/bmp")
         return if (!embeddedMimeTypes.contains(attachment.mimeTypeFirstValue?.toLowerCase(Locale.ENGLISH))) {
-            Timber.w("Unsupported embedded image format ${attachment.mimeTypeFirstValue}")
+            Timber.d("Unsupported embedded image format ${attachment.mimeTypeFirstValue}")
             null
         } else
             EmbeddedImage(
