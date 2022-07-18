@@ -314,7 +314,7 @@
     <string name="label_deleted_error">ラベル削除中にエラーが発生しました。</string>
     <string name="message_deleted_error">メッセージ削除中にエラーが起きました。選択したメッセージのうち何通かは送信作業中ですか。</string>
     <string name="respond_inline">インラインで返信</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">サーバーに接続できません… (<u>トラブルシューティング</u>)</string>
     <string name="connectivity_checking">接続を確認しています...</string>
     <string name="draft_label_attachments_uploading">添付ファイルをアップロードしています…</string>
     <string name="draft_label_message_uploading">メッセージを送信しています…</string>
@@ -417,7 +417,7 @@
     <string name="contacts_import_contact">連絡先をインポート</string>
     <string name="contacts_import">インポート</string>
     <string name="upload_contacts">連絡先をアップロード</string>
-    <string name="uploading_contacts">Uploading contacts…</string>
+    <string name="uploading_contacts">連絡先をアップロード中…</string>
     <string-array name="vcard_option_phone">
         <item>電話</item>
         <item>携帯電話</item>
@@ -477,7 +477,7 @@
     <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。差出人と内容を疑い、正当なものかどうかを確認してください。 <a href="https://protonmail.com/blog/prevent-phishing-attacks/">詳細</a></string>
     <string name="print_from_template">差出人: %s</string>
-    <string name="print_to_template">To: %s;  </string>
+    <string name="print_to_template">宛先: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">アドレス: </string>
@@ -505,7 +505,7 @@
     <string name="protonmail_contacts">Proton Mail 連絡先</string>
     <string name="device_contacts">デバイスの連絡先</string>
     <string name="print_date_template">日付: %s</string>
-    <string name="print_attachment_template">Attachment: %s;  </string>
+    <string name="print_attachment_template">添付ファイル: %s;  </string>
     <string name="pm_me_changed">\@pm.meアドレスからのメッセージ送信は有料の機能です。メッセージは既定アドレスの%sから送信されます。</string>
     <string name="pm_me_can_not_be_default">%s のアドレスを既定にするためには有料プランにアップグレードしてください。</string>
     <string name="dont_remind_again">今後このメッセージを表示しない</string>

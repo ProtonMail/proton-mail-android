@@ -318,7 +318,7 @@
     <string name="label_deleted_error">Fout bij het verwijderen van label</string>
     <string name="message_deleted_error">Fout bij het verwijderen van sommige berichten. Sommige van de geselecteerde berichten zijn aan het verzenden?!</string>
     <string name="respond_inline">Inline reageren</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server niet bereikbaar… (<u>Probleemoplossing</u>)</string>
     <string name="connectivity_checking">Controleren op verbinding...</string>
     <string name="draft_label_attachments_uploading">bijlagen uploaden…</string>
     <string name="draft_label_message_uploading">bericht verzenden…</string>
@@ -423,7 +423,7 @@
     <string name="contacts_import_contact">Contactpersoon importeren</string>
     <string name="contacts_import">Importeren</string>
     <string name="upload_contacts">Contacten uploaden</string>
-    <string name="uploading_contacts">Uploading contacts…</string>
+    <string name="uploading_contacts">Contacten uploaden…</string>
     <string-array name="vcard_option_phone">
         <item>Telefoon</item>
         <item>Mobiel</item>
@@ -483,9 +483,9 @@
     <string name="spam_score_101">Deze e-mail voldoet niet aan de authenticatievereisten van de domainnaam. Mogelijk is de e-mail vals of onjuist doorgestuurd!</string>
     <string name="spam_score_102">Dit bericht kan phishing zijn. Controleer de afzender en de inhoud om te controleren dat ze legitiem zijn. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MEER INFORMATIE</a></string>
     <string name="print_from_template">Van: %s</string>
-    <string name="print_to_template">To: %s;  </string>
-    <string name="print_cc_template">CC: %s;  </string>
-    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="print_to_template">Aan: %s;   </string>
+    <string name="print_cc_template">CC: %s;   </string>
+    <string name="print_bcc_template">BCC: %s;   </string>
     <string name="address">Adres:</string>
     <string name="address_street">Straat</string>
     <string name="address_extended_street">Straat (uitgebreid)</string>
@@ -511,7 +511,7 @@
     <string name="protonmail_contacts">Proton Mail Contacten</string>
     <string name="device_contacts">Contactpersonen van apparaat</string>
     <string name="print_date_template">Datum: %s</string>
-    <string name="print_attachment_template">Attachment: %s;  </string>
+    <string name="print_attachment_template">Bijlage: %s;   </string>
     <string name="pm_me_changed">Het verzenden van berichten vanaf een @pm.me adres is een betaalde functionaliteit. Uw bericht zal vanaf uw standaard adres %s worden verzonden</string>
     <string name="pm_me_can_not_be_default">Upgrade naar een betaald plan om uw %s -adres als standaard te kunnen instellen</string>
     <string name="dont_remind_again">Niet opnieuw herinneren</string>
