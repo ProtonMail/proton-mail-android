@@ -123,7 +123,7 @@
     <string name="settings_swipe_generic_error">Nelze uložit akci gesta</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">Použit motiv</string>
+    <string name="app_theme_title">Motiv aplikace</string>
     <string name="app_theme_light">Světlý</string>
     <string name="app_theme_dark">Tmavý</string>
     <string name="app_theme_system">Výchozí</string>
