@@ -31,6 +31,7 @@ import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.mapNotNullAsync
+import retrofit2.HttpException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -61,7 +62,10 @@ class FetchPublicKeys @Inject constructor(
                         Success(email, key, location)
                     },
                     onFailure = { throwable ->
-                        Timber.w(throwable, "Unable to fetch public keys")
+                        // 422 here is expected to happen at times and should not be considered an error;
+                        // filtering the logs out here directly to not lose other 422s throughout the app
+                        val shouldLog = throwable !is HttpException || throwable.code() != 422
+                        if (shouldLog) Timber.w(throwable, "Unable to fetch public keys")
                         throwable.toPmResponseBodyOrNull()
                             ?.let { Failure(email, location, Error.WithMessage(it.error)) }
                             ?: Failure(email, location, Error.Generic)
