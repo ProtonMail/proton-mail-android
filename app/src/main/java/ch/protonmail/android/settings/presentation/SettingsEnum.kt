@@ -247,13 +247,7 @@ enum class SettingsEnum {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String =
             context.resources.getString(R.string.settings_background_sync)
-    },
-    SHOW_MOVED {
-
-        override fun getHint(context: Context): String = ""
-        override fun getHeader(context: Context): String =
-            context.resources.getString(R.string.settings_show_moved_setting_title)
-    }, ;
+    };
 
     abstract fun getHint(context: Context): String
     abstract fun getHeader(context: Context): String

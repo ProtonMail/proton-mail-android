@@ -61,7 +61,6 @@ import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.settings.presentation.SettingsEnum.*
-import ch.protonmail.android.settings.presentation.showmoved.ShowMovedActivity
 import ch.protonmail.android.settings.presentation.ui.ThemeChooserActivity
 import ch.protonmail.android.settings.swipe.SwipeSettingFragment
 import ch.protonmail.android.uiModel.SettingsItemUiModel
@@ -124,7 +123,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     var settingsUiList: List<SettingsItemUiModel> = ArrayList()
 
     private val themeChooserLauncher = registerForActivityResult(ThemeChooserActivity.Launcher()) {}
-    private val showMovedLauncher = registerForActivityResult(ShowMovedActivity.Launcher()) {}
 
     var contactDao: ContactDao? = null
     var messageDao: MessageDao? = null
@@ -443,7 +441,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                     )
                 }
             }
-            SHOW_MOVED -> showMovedLauncher.launch(Unit)
         }
     }
 

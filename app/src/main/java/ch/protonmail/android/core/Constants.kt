@@ -49,6 +49,8 @@ object Constants {
 
     const val CONTACTS_PAGE_SIZE = 1000
 
+    // This is the app version in which the switch of the swipe gestures happens
+    const val SWIPE_GESTURES_CHANGED_VERSION = 729
     // This is the version in which the FCM migration happens
     const val FCM_MIGRATION_VERSION = 739
 
@@ -151,6 +153,7 @@ object Constants {
         const val PREF_REGISTRATION_ID = "registration_id"
         const val PREF_SENT_TOKEN_TO_SERVER = "token_sent_to_server"
 
+        const val PREF_SWIPE_GESTURES_DIALOG_SHOWN = "swipe_gestures_dialog_shown"
     }
 
     object PrefsType {

@@ -130,9 +130,6 @@
     <string name="settings_swipe_right_to_left">Right to left</string>
     <string name="settings_swipe_saving">Saving Swipe action…</string>
     <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
-
-    <string name="settings_show_moved_setting_title">Keep messages in Sent/Drafts</string>
-    <string name="settings_show_moved_setting_info">Messages in the Sent or Drafts folder will continue to appear in that folder, even if you move them to another folder.</string>
     <!-- endregion -->
 
     <!-- region App Theme -->

@@ -331,12 +331,6 @@
             android:label="@string/swipe_action_chooser_title"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".settings.presentation.showmoved.ShowMovedActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:label="@string/settings_show_moved_setting_title"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity
             android:name=".settings.pin.PinSettingsActivity"
             android:exported="false"
             android:label="@string/auto_lock"
