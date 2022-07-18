@@ -73,7 +73,8 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         mTypefacePgp = Typeface.createFromAsset(context.getAssets(), "pgp-icons-android.ttf");
         mTypefaceGroups = Typeface.createFromAsset(context.getAssets(), "fonts/contacts_icons.ttf");
         mMapView = new HashMap<>();
-        setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        setSingleLine(false);
     }
 
     public void setLocation(Constants.RecipientLocationType location) {
