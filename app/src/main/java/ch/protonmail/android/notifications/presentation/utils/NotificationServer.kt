@@ -287,7 +287,7 @@ class NotificationServer @Inject constructor(
         isNotificationVisibleInLockScreen: Boolean,
         message: Message?,
         messageId: String,
-        notificationBody: String?,
+        notificationBody: String,
         userId: UserId,
         sender: String,
         primaryUser: Boolean
@@ -297,7 +297,7 @@ class NotificationServer @Inject constructor(
             userId = user.id,
             messageId = messageId,
             locationType = message?.location?.let(MessageLocationType::fromInt) ?: MessageLocationType.INVALID,
-            messageSubject = message?.subject
+            messageSubject = notificationBody
         ).toIntent(context)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP and Intent.FLAG_ACTIVITY_NO_ANIMATION)
 
@@ -333,7 +333,7 @@ class NotificationServer @Inject constructor(
                 isNotificationVisibleInLockScreen
             ).apply {
                 setContentTitle(sender)
-                notificationBody?.let { setContentText(it) }
+                setContentText(notificationBody)
                 setContentIntent(contentPendingIntent)
                 setDeleteIntent(dismissIntent)
                 setGroup(userId.id)

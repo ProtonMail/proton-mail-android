@@ -179,20 +179,24 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
         when (notification.type) {
             NotificationType.EMAIL -> {
                 val message = messageRepository.getMessage(userId, notification.id.value)
+                val messageId = if (conversationModeEnabled(null, userId)) {
+                    message?.conversationId ?: ""
+                } else {
+                    notification.id.value
+                }
 
                 notificationServer.notifySingleNewEmail(
-                    userManager,
-                    user.toNewUser(),
-                    user.notificationSetting,
-                    user.ringtone,
-                    user.isNotificationVisibilityLockScreen,
-                    message,
-                    if (conversationModeEnabled(null, userId)) message?.conversationId ?: ""
-                    else notification.id.value,
-                    notification.notificationBody,
+                    userManager = userManager,
+                    user = user.toNewUser(),
+                    notificationSettings = user.notificationSetting,
+                    ringtoneUri = user.ringtone,
+                    isNotificationVisibleInLockScreen = user.isNotificationVisibilityLockScreen,
+                    message = message,
+                    messageId = messageId,
+                    notificationBody = notification.notificationBody,
                     userId = userId,
-                    notification.notificationTitle,
-                    isPrimaryUser
+                    sender = notification.notificationTitle,
+                    primaryUser = isPrimaryUser
                 )
             }
             NotificationType.OPEN_URL -> {
