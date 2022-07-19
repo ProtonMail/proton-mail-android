@@ -32,9 +32,13 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
+import retrofit2.HttpException
+import timber.log.Timber
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -54,7 +58,7 @@ class FetchPublicKeysTest {
         coEvery { api.getPublicKeys(EMAIL_2) } returns publicKeyResponse2
 
         val expected = listOf(
-            buildKeySuccessResult(EMAIL_1, PUBLIC_KEY_1,),
+            buildKeySuccessResult(EMAIL_1, PUBLIC_KEY_1),
             buildKeySuccessResult(EMAIL_2, PUBLIC_KEY_2)
         )
 
@@ -75,7 +79,7 @@ class FetchPublicKeysTest {
         coEvery { api.getPublicKeys(EMAIL_2) } returns publicKeyResponse2
 
         val expected = listOf(
-            buildKeySuccessResult(EMAIL_1, PUBLIC_KEY_1,),
+            buildKeySuccessResult(EMAIL_1, PUBLIC_KEY_1),
             buildKeySuccessResult(EMAIL_2, EMPTY_STRING)
         )
 
@@ -113,6 +117,74 @@ class FetchPublicKeysTest {
             // then
             assertEquals(expected, result)
         }
+    }
+
+    @Test
+    fun `should log when the call fails and the error is not an http exception`() = runBlockingTest {
+        mockkStatic(Timber::class)
+        mockkStatic(Throwable::toPmResponseBodyOrNull)
+        // given
+        val publicKeyResponse = buildErrorResponse(message = "error")
+        val keyException: IllegalStateException = mockk(relaxed = true) {
+            every { toPmResponseBodyOrNull() } returns publicKeyResponse
+        }
+
+        coEvery { api.getPublicKeys(EMAIL_1) } throws keyException
+
+        // when
+        fetchPublicKeys(buildKeyRequests(listOf(EMAIL_1)))
+
+        // then
+        verify { Timber.w(keyException, any()) }
+
+        unmockkStatic(Timber::class)
+        unmockkStatic(Throwable::toPmResponseBodyOrNull)
+    }
+
+    @Test
+    fun `should log when the call fails and the error is a non-422 http exception`() = runBlockingTest {
+        mockkStatic(Timber::class)
+        mockkStatic(Throwable::toPmResponseBodyOrNull)
+        // given
+        val publicKeyResponse = buildErrorResponse(message = "error")
+        val keyException: HttpException = mockk(relaxed = true) {
+            every { toPmResponseBodyOrNull() } returns publicKeyResponse
+            every { code() } returns 401
+        }
+
+        coEvery { api.getPublicKeys(EMAIL_1) } throws keyException
+
+        // when
+        fetchPublicKeys(buildKeyRequests(listOf(EMAIL_1)))
+
+        // then
+        verify { Timber.w(keyException, any()) }
+
+        unmockkStatic(Timber::class)
+        unmockkStatic(Throwable::toPmResponseBodyOrNull)
+    }
+
+    @Test
+    fun `should not log when the call fails and the error is a 422 http exception`() = runBlockingTest {
+        mockkStatic(Timber::class)
+        mockkStatic(Throwable::toPmResponseBodyOrNull)
+        // given
+        val publicKeyResponse = buildErrorResponse(message = "error")
+        val keyException: HttpException = mockk(relaxed = true) {
+            every { toPmResponseBodyOrNull() } returns publicKeyResponse
+            every { code() } returns 422
+        }
+
+        coEvery { api.getPublicKeys(EMAIL_1) } throws keyException
+
+        // when
+        fetchPublicKeys(buildKeyRequests(listOf(EMAIL_1)))
+
+        // then
+        verify(exactly = 0) { Timber.w(keyException, any()) }
+
+        unmockkStatic(Timber::class)
+        unmockkStatic(Throwable::toPmResponseBodyOrNull)
     }
 
     private companion object TestData {

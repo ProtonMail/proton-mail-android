@@ -22,10 +22,12 @@ import android.util.Log
 import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.data.remote.OfflineException
 import ch.protonmail.android.domain.entity.EmailAddress
+import ch.protonmail.android.utils.extensions.isServerError
 import ch.protonmail.android.utils.extensions.obfuscateEmail
 import io.sentry.Sentry
 import io.sentry.SentryEvent
 import io.sentry.protocol.Message
+import retrofit2.HttpException
 import timber.log.Timber
 import java.net.ConnectException
 import java.net.SocketException
@@ -75,6 +77,7 @@ internal class SentryTree : Timber.Tree() {
         is ConnectException,
         is SocketException,
         is OfflineException -> true
+        is HttpException -> isServerError()
         else -> false
     }
 
