@@ -36,6 +36,14 @@ class DefaultTransformer : AbstractTransformer() {
                 blockedElements.remove()
             }
         }
+
+        val tableElements = doc.select("table")
+        tableElements.forEach { element ->
+            val styleWithTableLayoutReset = element.attr("style").replace("table-layout: fixed", "table-layout: auto")
+            element.removeAttr("style")
+            element.attr("style", styleWithTableLayoutReset)
+        }
+
         val aHrefElements = doc.select("a[ping]")
         aHrefElements.removeAttr("ping")
         val linkElements = doc.select("link")
