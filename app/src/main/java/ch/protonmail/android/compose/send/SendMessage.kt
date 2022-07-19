@@ -20,11 +20,11 @@
 package ch.protonmail.android.compose.send
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
 import ch.protonmail.android.utils.ServerTime
@@ -42,7 +42,7 @@ private const val MISSING_DB_ID = 0L
 class SendMessage @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val dispatchers: DispatcherProvider,
-    private val pendingActionDao: PendingActionDao,
+    private val databaseProvider: DatabaseProvider,
     private val sendMessageScheduler: SendMessageWorker.Enqueuer,
     private val pendingSendRepository: PendingSendRepository,
     private val addressCryptoFactory: AddressCrypto.Factory,
@@ -59,7 +59,7 @@ class SendMessage @Inject constructor(
         message.messageBody = encryptedBody
 
         saveMessageLocally(message)
-        setMessageAsPendingForSend(message)
+        setMessageAsPendingForSend(parameters.userId, message)
 
         sendMessageScheduler.enqueue(
             userId = parameters.userId,
@@ -75,17 +75,20 @@ class SendMessage @Inject constructor(
             pendingSendRepository.schedulePendingSendCleanupByMessageId(
                 messageId,
                 message.subject ?: EMPTY_STRING,
-                message.dbId ?: MISSING_DB_ID
+                message.dbId ?: MISSING_DB_ID,
+                parameters.userId
             )
         }
     }
 
-    private fun setMessageAsPendingForSend(message: Message) {
+    private fun setMessageAsPendingForSend(userId: UserId, message: Message) {
         val pendingSend = PendingSend(
             id = uuidProvider.randomUuid(),
             localDatabaseId = message.dbId ?: MISSING_DB_ID,
             messageId = message.messageId
         )
+
+        val pendingActionDao = databaseProvider.providePendingActionDao(userId)
         pendingActionDao.insertPendingForSend(pendingSend)
     }
 

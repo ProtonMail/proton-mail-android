@@ -20,7 +20,6 @@
 package ch.protonmail.android.di
 
 import android.content.Context
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.AppDatabase
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
@@ -30,8 +29,6 @@ import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
-import ch.protonmail.android.pendingaction.data.PendingActionDao
-import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
@@ -107,16 +104,6 @@ internal object DatabaseModule {
     @Provides
     fun provideConversationDao(messageDatabase: MessageDatabase): ConversationDao =
         messageDatabase.getConversationDao()
-
-
-    @Provides
-    fun providePendingActionDatabase(context: Context, userManager: UserManager) =
-        PendingActionDatabase.getInstance(context, userManager.requireCurrentUserId())
-
-    @Provides
-    fun providePendingActionDao(
-        pendingActionDatabase: PendingActionDatabase
-    ): PendingActionDao = pendingActionDatabase.getDao()
 
     @Provides
     fun provideUnreadCounterDao(messageDatabase: MessageDatabase): UnreadCounterDao =
