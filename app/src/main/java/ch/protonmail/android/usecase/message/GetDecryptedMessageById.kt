@@ -36,9 +36,11 @@ class GetDecryptedMessageById @Inject constructor(
         return accountManager.getPrimaryUserId()
             .firstOrNull()
             ?.let { userId ->
-                messageRepository.getMessage(userId, messageId)?.apply {
-                    decrypt(userManager, userId)
-                }
+                runCatching {
+                    messageRepository.getMessage(userId, messageId)?.apply {
+                        decrypt(userManager, userId)
+                    }
+                }.getOrNull()
             }
     }
 }

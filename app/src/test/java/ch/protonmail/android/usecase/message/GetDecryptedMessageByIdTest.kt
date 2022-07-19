@@ -24,6 +24,7 @@ import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testdata.MessageTestData
 import ch.protonmail.android.testdata.UserIdTestData
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
@@ -64,6 +65,22 @@ internal class GetDecryptedMessageByIdTest {
         coEvery {
             messageRepositoryMock.getMessage(UserIdTestData.userId, MessageTestData.MESSAGE_ID_RAW)
         } returns null
+
+        // when
+        val decryptedMessage = getDecryptedMessageById.orNull(MessageTestData.MESSAGE_ID_RAW)
+
+        // then
+        assertNull(decryptedMessage)
+    }
+
+    @Test
+    fun `should return null when decrypting the message throws`() = runBlockingTest {
+        // given
+        val messageSpy = MessageTestData.messageSpy()
+        every { messageSpy.decrypt(userManagerMock, UserIdTestData.userId) } throws IllegalStateException("Nope")
+        coEvery {
+            messageRepositoryMock.getMessage(UserIdTestData.userId, MessageTestData.MESSAGE_ID_RAW)
+        } returns messageSpy
 
         // when
         val decryptedMessage = getDecryptedMessageById.orNull(MessageTestData.MESSAGE_ID_RAW)
