@@ -20,20 +20,13 @@
 package ch.protonmail.android.navigation.presentation
 
 import android.content.Context
-import android.content.SharedPreferences
 import app.cash.turbine.test
-import ch.protonmail.android.R
-import ch.protonmail.android.feature.account.AccountStateManager
+import ch.protonmail.android.mailbox.domain.usecase.ObserveShowMovedEnabled
 import ch.protonmail.android.navigation.presentation.model.NavigationViewState
 import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
-import ch.protonmail.android.prefs.SecureSharedPreferences
-import ch.protonmail.android.testdata.UserIdTestData
 import ch.protonmail.android.usecase.IsAppInDarkMode
-import ch.protonmail.android.utils.notifier.UserNotifier
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.report.presentation.entity.BugReportOutput
 import me.proton.core.test.android.ArchTest
@@ -45,19 +38,11 @@ import kotlin.test.assertTrue
 class NavigationViewModelTest : ArchTest, CoroutinesTest {
 
     private val isAppInDarkMode: IsAppInDarkMode = mockk()
+    private val observeShowMovedEnabled: ObserveShowMovedEnabled = mockk()
 
-    private val sharedPrefsMock = mockk<SharedPreferences>()
-    private val sharedPreferencesFactoryMock = mockk<SecureSharedPreferences.Factory> {
-        every { userPreferences(UserIdTestData.userId) } returns sharedPrefsMock
-    }
-    private val accountStateManagerMock = mockk<AccountStateManager> {
-        every { signOut(UserIdTestData.userId) } returns mockk()
-    }
-    private val userNotifierMock = mockk<UserNotifier> {
-        every { showError(R.string.logged_out_description) } just runs
-    }
     private val navigationViewModel = NavigationViewModel(
-        isAppInDarkMode
+        isAppInDarkMode,
+        observeShowMovedEnabled
     )
 
     @Test
@@ -101,7 +86,6 @@ class NavigationViewModelTest : ArchTest, CoroutinesTest {
 
     private companion object TestData {
 
-        const val USERNAME = "username"
         const val SUCCESS_MESSAGE = "Thank you for the report."
 
         object ViewState {

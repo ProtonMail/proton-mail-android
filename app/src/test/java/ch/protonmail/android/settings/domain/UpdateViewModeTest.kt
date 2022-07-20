@@ -20,6 +20,7 @@
 package ch.protonmail.android.settings.domain
 
 import ch.protonmail.android.featureflags.FeatureFlagsManager
+import ch.protonmail.android.settings.domain.usecase.UpdateViewMode
 import io.mockk.MockKAnnotations
 import io.mockk.coJustRun
 import io.mockk.coVerify

@@ -20,7 +20,10 @@
 package ch.protonmail.android.settings.presentation
 
 import androidx.lifecycle.SavedStateHandle
-import ch.protonmail.android.settings.domain.UpdateSwipeActions
+import ch.protonmail.android.settings.domain.usecase.UpdateSwipeActions
+import ch.protonmail.android.settings.swipe.EXTRA_SWIPE_ID
+import ch.protonmail.android.settings.swipe.SwipeType
+import ch.protonmail.android.settings.swipe.viewmodel.SwipeChooserViewModel
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk

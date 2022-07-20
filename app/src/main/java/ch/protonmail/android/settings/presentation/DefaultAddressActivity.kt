@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities
+package ch.protonmail.android.settings.presentation
 
 import android.app.Activity
 import android.os.Bundle
@@ -31,6 +31,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import butterknife.OnClick
 import ch.protonmail.android.R
+import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.User

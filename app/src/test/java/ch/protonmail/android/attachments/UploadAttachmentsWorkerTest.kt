@@ -37,7 +37,7 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.model.PendingUpload
-import ch.protonmail.android.settings.domain.GetMailSettings
+import ch.protonmail.android.settings.domain.usecase.GetMailSettings
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder

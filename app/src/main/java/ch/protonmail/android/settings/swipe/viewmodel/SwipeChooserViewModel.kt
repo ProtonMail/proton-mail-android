@@ -17,12 +17,14 @@
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.settings.presentation
+package ch.protonmail.android.settings.swipe.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ch.protonmail.android.settings.domain.UpdateSwipeActions
+import ch.protonmail.android.settings.domain.usecase.UpdateSwipeActions
+import ch.protonmail.android.settings.swipe.EXTRA_SWIPE_ID
+import ch.protonmail.android.settings.swipe.SwipeType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

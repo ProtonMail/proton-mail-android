@@ -26,9 +26,9 @@ import arrow.core.Right
 import arrow.core.left
 import ch.protonmail.android.R
 import ch.protonmail.android.feature.NotLoggedIn
-import ch.protonmail.android.settings.domain.GetMailSettings
-import ch.protonmail.android.settings.domain.UpdateViewMode
+import ch.protonmail.android.settings.domain.usecase.GetMailSettings
 import ch.protonmail.android.settings.domain.usecase.ObserveUserSettings
+import ch.protonmail.android.settings.domain.usecase.UpdateViewMode
 import ch.protonmail.android.usecase.delete.ClearUserMessagesData
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import dagger.hilt.android.lifecycle.HiltViewModel

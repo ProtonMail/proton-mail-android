@@ -73,7 +73,7 @@ import ch.protonmail.android.mailbox.presentation.model.UnreadChipState
 import ch.protonmail.android.mailbox.presentation.model.UnreadChipUiModel
 import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
-import ch.protonmail.android.settings.domain.GetMailSettings
+import ch.protonmail.android.settings.domain.usecase.GetMailSettings
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.delete.EmptyFolder

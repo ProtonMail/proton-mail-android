@@ -48,7 +48,7 @@ import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMappe
 import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.viewmodel.MailboxViewModel
 import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
-import ch.protonmail.android.settings.domain.GetMailSettings
+import ch.protonmail.android.settings.domain.usecase.GetMailSettings
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage

@@ -40,7 +40,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.pendingaction.data.model.PendingUpload
-import ch.protonmail.android.settings.domain.GetMailSettings
+import ch.protonmail.android.settings.domain.usecase.GetMailSettings
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow

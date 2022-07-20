@@ -23,12 +23,10 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import arrow.core.Either
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.settings.BaseSettingsActivity
-import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.UNLIMITED_ATTACHMENT_STORAGE
 import ch.protonmail.android.featureflags.FeatureFlagsManager
-import ch.protonmail.android.settings.domain.GetMailSettings
+import ch.protonmail.android.settings.domain.usecase.GetMailSettings
 import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterIsInstance

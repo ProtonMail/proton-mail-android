@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities
+package ch.protonmail.android.settings.presentation
 
 import android.app.Activity
 import android.content.Intent
@@ -27,8 +27,6 @@ import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.settings.BaseSettingsActivity
-import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -51,7 +49,6 @@ const val EXTRA_SETTINGS_ITEM_VALUE = "EXTRA_SETTINGS_ITEM_VALUE"
 
 enum class SettingsItem {
     PRIVACY,
-    SWIPE,
     PUSH_NOTIFICATIONS,
     CONNECTIONS_VIA_THIRD_PARTIES,
     COMBINED_CONTACTS,
@@ -152,7 +149,9 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 }
                 setToggleListener(SettingsEnum.LINK_CONFIRMATION) { view: View, isChecked: Boolean ->
                     lifecycleScope.launch {
-                        if (view.isPressed && isChecked != accountSettingsRepository.getShouldShowLinkConfirmationSetting(user.id)) {
+                        if (view.isPressed && isChecked != accountSettingsRepository.getShouldShowLinkConfirmationSetting(
+                                user.id
+                            )) {
                             accountSettingsRepository.saveShouldShowLinkConfirmationSetting(isChecked, user.id)
                         }
                     }

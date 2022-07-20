@@ -54,13 +54,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
-import ch.protonmail.android.activities.EditSettingsItemActivity
-import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.StartCompose
 import ch.protonmail.android.activities.StartSearch
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.adapters.messages.MailboxItemViewHolder.MessageViewHolder
 import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter
 import ch.protonmail.android.adapters.swipe.ArchiveSwipeHandler
@@ -77,9 +73,7 @@ import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES
 import ch.protonmail.android.core.Constants.Prefs.PREF_NEW_USER_ONBOARDING_SHOWN
-import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHOWN
 import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
-import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import ch.protonmail.android.di.DefaultSharedPreferences
@@ -114,10 +108,9 @@ import ch.protonmail.android.onboarding.newuser.presentation.NewUserOnboardingAc
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.prefs.SecureSharedPreferences
-import ch.protonmail.android.settings.domain.GetMailSettings
+import ch.protonmail.android.settings.domain.usecase.GetMailSettings
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
-import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.NetworkSnackBarUtil
@@ -546,7 +539,6 @@ internal class MailboxActivity :
         mJobManager.start()
         pendingActionDao = PendingActionDatabase.getInstance(this, userId).getDao()
 
-        setUpDrawer()
         checkRegistration()
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 
@@ -740,34 +732,6 @@ internal class MailboxActivity :
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
     }
 
-    private fun shouldShowSwipeGesturesChangedDialog(): Boolean {
-        val prefs: SharedPreferences = defaultSharedPreferences
-        val previousVersion: Int = prefs.getInt(Constants.Prefs.PREF_PREVIOUS_APP_VERSION, Int.MIN_VALUE)
-        // The dialog should be shown once on the update when swiping gestures are switched
-        return previousVersion in 1 until SWIPE_GESTURES_CHANGED_VERSION &&
-            !prefs.getBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, false)
-    }
-
-    private fun showSwipeGesturesChangedDialog() {
-        showTwoButtonInfoDialog(
-            titleStringId = R.string.swipe_gestures_changed,
-            messageStringId = R.string.swipe_gestures_changed_message,
-            negativeStringId = R.string.go_to_settings,
-            onNegativeButtonClicked = {
-                val swipeGestureIntent = Intent(
-                    this,
-                    EditSettingsItemActivity::class.java
-                )
-                swipeGestureIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.SWIPE)
-                startActivityForResult(
-                    AppUtil.decorInAppIntent(swipeGestureIntent),
-                    SettingsEnum.SWIPING_GESTURE.ordinal
-                )
-            }
-        )
-        defaultSharedPreferences.edit().putBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, true).apply()
-    }
-
     override fun onResume() {
         super.onResume()
         if (userManager.currentUserId != null &&
@@ -782,11 +746,6 @@ internal class MailboxActivity :
         if (mailboxLocation == MessageLocationType.INBOX) {
             userManager.currentUserId?.let { mailboxViewModel.clearNotifications(it) }
         }
-
-        if (shouldShowSwipeGesturesChangedDialog()) {
-            showSwipeGesturesChangedDialog()
-        }
-
     }
 
     override fun onPause() {

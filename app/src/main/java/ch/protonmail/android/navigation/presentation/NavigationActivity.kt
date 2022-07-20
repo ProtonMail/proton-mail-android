@@ -211,7 +211,10 @@ internal abstract class NavigationActivity : BaseActivity() {
 
             getPrimaryUserId().filterNotNull()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
-                .onEach { userId -> onPrimaryUserId(userId) }
+                .onEach { userId ->
+                    onPrimaryUserId(userId)
+                    navigationViewModel.shouldShowMovedMessages(userManager.currentUserId)
+                }
                 .launchIn(lifecycleScope)
         }
 
@@ -282,7 +285,6 @@ internal abstract class NavigationActivity : BaseActivity() {
             onCreateFolder = ::launchCreateFolder
         )
 
-        setUpDrawer()
         setUpBugReporting()
         setUpSubscriptions()
         observeViewState()
@@ -350,7 +352,7 @@ internal abstract class NavigationActivity : BaseActivity() {
         return false
     }
 
-    protected fun setUpDrawer() {
+    private fun setUpDrawer(showMovedDrafts: Type, showMovedSent: Type) {
         drawerToggle = ActionBarDrawerToggle(
             this,
             drawerLayout,
@@ -360,7 +362,7 @@ internal abstract class NavigationActivity : BaseActivity() {
         )
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
-        setUpInitialDrawerItems(userManager.currentLegacyUser?.isUsePin ?: false)
+        setUpInitialDrawerItems(userManager.currentLegacyUser?.isUsePin ?: false, showMovedDrafts, showMovedSent)
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
 
@@ -384,14 +386,14 @@ internal abstract class NavigationActivity : BaseActivity() {
         })
     }
 
-    private fun setUpInitialDrawerItems(isPinEnabled: Boolean) {
+    private fun setUpInitialDrawerItems(isPinEnabled: Boolean, showMovedDrafts: Type, showMovedSent: Type) {
         val hasPin = isPinEnabled && userManager.getMailboxPin() != null
 
         sideDrawer.setLocationItems(
             listOf(
                 Primary.Static(Type.INBOX, R.string.inbox, R.drawable.ic_proton_inbox),
-                Primary.Static(Type.DRAFTS, R.string.drafts, R.drawable.ic_proton_file),
-                Primary.Static(Type.SENT, R.string.sent, R.drawable.ic_proton_paper_plane),
+                Primary.Static(showMovedDrafts, R.string.drafts, R.drawable.ic_proton_file),
+                Primary.Static(showMovedSent, R.string.sent, R.drawable.ic_proton_paper_plane),
                 Primary.Static(Type.STARRED, R.string.starred, R.drawable.ic_proton_star),
                 Primary.Static(Type.ARCHIVE, R.string.archive, R.drawable.ic_proton_archive_box),
                 Primary.Static(Type.SPAM, R.string.spam, R.drawable.ic_proton_fire),
@@ -462,7 +464,7 @@ internal abstract class NavigationActivity : BaseActivity() {
             )
             Type.SUBSCRIPTION -> plansOrchestrator.showCurrentPlanWorkflow(userManager.requireCurrentUserId())
             Type.INBOX -> onInbox(type.drawerOptionType)
-            Type.ARCHIVE, Type.STARRED, Type.DRAFTS, Type.SENT, Type.TRASH, Type.SPAM, Type.ALLMAIL ->
+            Type.ARCHIVE, Type.STARRED, Type.DRAFTS, Type.ALL_DRAFTS, Type.SENT, Type.ALL_SENT, Type.TRASH, Type.SPAM, Type.ALLMAIL ->
                 onOtherMailBox(type.drawerOptionType)
             Type.LOCK -> {
                 val user = userManager.currentLegacyUser
@@ -491,6 +493,18 @@ internal abstract class NavigationActivity : BaseActivity() {
     private fun observeViewState() {
         navigationViewModel.viewStateFlow
             .onEach(::renderViewState)
+            .launchIn(lifecycleScope)
+        navigationViewModel.showMovedRefreshFlow
+            .onEach { showMoved ->
+                when (showMoved) {
+                    true -> {
+                        setUpDrawer(Type.ALL_DRAFTS, Type.ALL_SENT)
+                    }
+                    false -> {
+                        setUpDrawer(Type.DRAFTS, Type.SENT)
+                    }
+                }
+            }
             .launchIn(lifecycleScope)
     }
 

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.settings.presentation
+package ch.protonmail.android.settings.swipe
 
 import android.app.Activity
 import android.os.Bundle
@@ -30,6 +30,7 @@ import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.settings.data.toMailSwipeAction
+import ch.protonmail.android.settings.swipe.viewmodel.SwipeChooserViewModel
 import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect

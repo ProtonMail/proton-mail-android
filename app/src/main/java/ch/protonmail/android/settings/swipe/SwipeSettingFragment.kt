@@ -17,7 +17,7 @@
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.settings.presentation
+package ch.protonmail.android.settings.swipe
 
 import android.content.Intent
 import android.os.Bundle
@@ -31,7 +31,7 @@ import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.databinding.SettingsSwipeFragmentBinding
-import ch.protonmail.android.settings.domain.GetMailSettings
+import ch.protonmail.android.settings.domain.usecase.GetMailSettings
 import ch.protonmail.android.utils.AppUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterIsInstance
@@ -94,7 +94,9 @@ class SwipeSettingFragment : Fragment() {
 
         binding.leftToRightSwipeActionTextView.onClick {
             val rightLeftChooserIntent = Intent(context, SwipeChooserActivity::class.java)
-            rightLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mailSettings.swipeRight?.enum)
+            rightLeftChooserIntent.putExtra(
+                EXTRA_CURRENT_ACTION, mailSettings.swipeRight?.enum
+            )
             rightLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.RIGHT)
             startActivity(AppUtil.decorInAppIntent(rightLeftChooserIntent))
         }
@@ -115,7 +117,9 @@ class SwipeSettingFragment : Fragment() {
 
         binding.rightToLeftSwipeActionTextView.onClick {
             val swipeLeftChooserIntent = Intent(context, SwipeChooserActivity::class.java)
-            swipeLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mailSettings.swipeLeft?.enum)
+            swipeLeftChooserIntent.putExtra(
+                EXTRA_CURRENT_ACTION, mailSettings.swipeLeft?.enum
+            )
             swipeLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.LEFT)
             startActivity(AppUtil.decorInAppIntent(swipeLeftChooserIntent))
         }
