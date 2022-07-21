@@ -19,9 +19,13 @@
 
 package ch.protonmail.android.pendingaction.data.repository
 
+import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.worker.SchedulePendingSendCleanUpWhenOnline
 import ch.protonmail.android.testdata.MessageTestData
+import ch.protonmail.android.testdata.UserIdTestData
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
 
@@ -29,8 +33,18 @@ internal class PendingSendRepositoryImplTest {
 
     private val pendingActionDaoMock = mockk<PendingActionDao>(relaxUnitFun = true)
     private val schedulePendingSendCleanUpMock = mockk<SchedulePendingSendCleanUpWhenOnline>(relaxUnitFun = true)
+
+    private val databaseProvider: DatabaseProvider = mockk {
+        every { providePendingActionDao(any()) } returns pendingActionDaoMock
+    }
+
+    private val userManager = mockk<UserManager> {
+        every { requireCurrentUserId() } returns UserIdTestData.userId
+    }
+
     private val repository = PendingSendRepositoryImpl(
-        pendingActionDaoMock,
+        databaseProvider,
+        userManager,
         schedulePendingSendCleanUpMock
     )
 
@@ -49,14 +63,16 @@ internal class PendingSendRepositoryImplTest {
         repository.schedulePendingSendCleanupByMessageId(
             MessageTestData.MESSAGE_ID_RAW,
             MessageTestData.MESSAGE_SUBJECT,
-            MessageTestData.MESSAGE_DATABASE_ID
+            MessageTestData.MESSAGE_DATABASE_ID,
+            UserIdTestData.userId
         )
 
         // then
         schedulePendingSendCleanUpMock(
             MessageTestData.MESSAGE_ID_RAW,
             MessageTestData.MESSAGE_SUBJECT,
-            MessageTestData.MESSAGE_DATABASE_ID
+            MessageTestData.MESSAGE_DATABASE_ID,
+            UserIdTestData.userId
         )
     }
 }

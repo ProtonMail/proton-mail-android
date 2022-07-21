@@ -26,7 +26,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -38,6 +37,11 @@ import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.repository.WorkerRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.firstOrNull
+import me.proton.core.account.domain.entity.isReady
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
+import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -45,6 +49,7 @@ import javax.inject.Inject
 const val KEY_INPUT_MESSAGE_ID = "keyInputMessageId"
 const val KEY_INPUT_MESSAGE_SUBJECT = "keyInputMessageSubject"
 const val KEY_INPUT_MESSAGE_DATABASE_ID = "keyInputMessageDatabaseId"
+const val KEY_INPUT_USER_ID = "keyInputUserId"
 private const val UNIQUE_WORK_NAME_PREFIX = "cleanUpPendingSendsWorker"
 
 @HiltWorker
@@ -54,21 +59,33 @@ class CleanUpPendingSendWorker @AssistedInject constructor(
     private val getSendMessageWorkerUniqueNameFor: SendMessageWorker.ProvideUniqueName,
     private val userNotifier: UserNotifier,
     @Assisted private val context: Context,
+    private val accountManager: AccountManager,
     @Assisted params: WorkerParameters
 ) : CoroutineWorker(context, params) {
 
     private val messageId by lazy { requireNotNull(inputData.getString(KEY_INPUT_MESSAGE_ID)) }
     private val subject by lazy { requireNotNull(inputData.getString(KEY_INPUT_MESSAGE_SUBJECT)) }
     private val databaseId by lazy { inputData.getLong(KEY_INPUT_MESSAGE_DATABASE_ID, -1) }
+    private val userId by lazy {
+        UserId(
+            requireNotNull(
+                inputData.getString(KEY_INPUT_USER_ID)?.takeIfNotBlank()
+            ) { "User id is required" }
+        )
+    }
 
     override suspend fun doWork(): Result {
         val sendWorkerToCancel = getSendMessageWorkerUniqueNameFor(messageId)
+
         workerRepository.findWorkInfoForUniqueWork(sendWorkerToCancel)
-            .filter { it.state != WorkInfo.State.RUNNING }
+            .filter { it.state.isFinished }
             .takeIf { it.isNotEmpty() }
             ?.let {
+                accountManager.getAccount(userId).firstOrNull()?.let { account ->
+                    if (account.isReady())
+                        pendingSendRepository.deletePendingSendByDatabaseId(databaseId)
+                }
                 Timber.w("Found a stuck send. Cleaning up.")
-                pendingSendRepository.deletePendingSendByDatabaseId(databaseId)
                 workerRepository.cancelUniqueWork(sendWorkerToCancel)
                 userNotifier.showSendMessageError(
                     context.getString(R.string.message_drafted),
@@ -94,12 +111,14 @@ class SchedulePendingSendsCleanUpWorker @AssistedInject constructor(
     private val messageId by lazy { requireNotNull(inputData.getString(KEY_INPUT_MESSAGE_ID)) }
     private val subject by lazy { requireNotNull(inputData.getString(KEY_INPUT_MESSAGE_SUBJECT)) }
     private val databaseId by lazy { inputData.getLong(KEY_INPUT_MESSAGE_DATABASE_ID, -1) }
+    private val userId by lazy { inputData.getString(KEY_INPUT_USER_ID) }
 
     override fun doWork(): Result = Result.success(
         workDataOf(
             KEY_INPUT_MESSAGE_ID to messageId,
             KEY_INPUT_MESSAGE_SUBJECT to subject,
-            KEY_INPUT_MESSAGE_DATABASE_ID to databaseId
+            KEY_INPUT_MESSAGE_DATABASE_ID to databaseId,
+            KEY_INPUT_USER_ID to userId
         )
     )
 }
@@ -116,24 +135,30 @@ class SchedulePendingSendCleanUpWhenOnline @Inject constructor(
         .setInitialDelay(2, TimeUnit.HOURS)
         .build()
 
-    operator fun invoke(messageId: String, messageSubject: String, messageDatabaseId: Long) {
+    operator fun invoke(messageId: String, messageSubject: String, messageDatabaseId: Long, userId: UserId) {
         workManager.beginUniqueWork(
             provideUniqueNameFor(messageDatabaseId),
             ExistingWorkPolicy.KEEP,
-            scheduleCleanupWhenOnlineWork(messageId, messageSubject, messageDatabaseId)
+            scheduleCleanupWhenOnlineWork(messageId, messageSubject, messageDatabaseId, userId)
         )
             .then(performCleanUpWork)
             .enqueue()
     }
 
-    private fun scheduleCleanupWhenOnlineWork(messageId: String, messageSubject: String, messageDatabaseId: Long) =
+    private fun scheduleCleanupWhenOnlineWork(
+        messageId: String,
+        messageSubject: String,
+        messageDatabaseId: Long,
+        userId: UserId
+    ) =
         OneTimeWorkRequestBuilder<SchedulePendingSendsCleanUpWorker>()
             .setConstraints(onlineConstraint)
             .setInputData(
                 workDataOf(
                     KEY_INPUT_MESSAGE_ID to messageId,
                     KEY_INPUT_MESSAGE_SUBJECT to messageSubject,
-                    KEY_INPUT_MESSAGE_DATABASE_ID to messageDatabaseId
+                    KEY_INPUT_MESSAGE_DATABASE_ID to messageDatabaseId,
+                    KEY_INPUT_USER_ID to userId.id
                 )
             )
             .build()

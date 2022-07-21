@@ -19,9 +19,13 @@
 
 package ch.protonmail.android.pendingaction.domain.repository
 
+import me.proton.core.domain.entity.UserId
+
 interface PendingSendRepository {
 
     fun deletePendingSendByDatabaseId(databaseId: Long)
 
-    fun schedulePendingSendCleanupByMessageId(messageId: String, messageSubject: String, messageDatabaseId: Long)
+    fun schedulePendingSendCleanupByMessageId(
+        messageId: String, messageSubject: String, messageDatabaseId: Long, userId: UserId
+    )
 }

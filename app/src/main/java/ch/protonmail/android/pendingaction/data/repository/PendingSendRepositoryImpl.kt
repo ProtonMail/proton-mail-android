@@ -19,15 +19,25 @@
 
 package ch.protonmail.android.pendingaction.data.repository
 
+import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.worker.SchedulePendingSendCleanUpWhenOnline
 import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 class PendingSendRepositoryImpl @Inject constructor(
-    private val pendingActionDao: PendingActionDao,
+    private val databaseProvider: DatabaseProvider,
+    private val userManager: UserManager,
     private val schedulePendingSendCleanUpWhenOnline: SchedulePendingSendCleanUpWhenOnline
 ) : PendingSendRepository {
+
+    private val userId: UserId
+        get() = userManager.requireCurrentUserId()
+
+    private val pendingActionDao: PendingActionDao
+        get() = databaseProvider.providePendingActionDao(userId)
 
     override fun deletePendingSendByDatabaseId(databaseId: Long) = pendingActionDao
         .deletePendingSendByDbId(databaseId)
@@ -35,8 +45,9 @@ class PendingSendRepositoryImpl @Inject constructor(
     override fun schedulePendingSendCleanupByMessageId(
         messageId: String,
         messageSubject: String,
-        messageDatabaseId: Long
+        messageDatabaseId: Long,
+        userId: UserId
     ) {
-        schedulePendingSendCleanUpWhenOnline(messageId, messageSubject, messageDatabaseId)
+        schedulePendingSendCleanUpWhenOnline(messageId, messageSubject, messageDatabaseId, userId)
     }
 }

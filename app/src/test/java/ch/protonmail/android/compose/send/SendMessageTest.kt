@@ -20,6 +20,7 @@
 package ch.protonmail.android.compose.send
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
 import ch.protonmail.android.core.Constants.MessageLocationType
@@ -29,7 +30,6 @@ import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
 import ch.protonmail.android.testdata.MessageTestData
-import ch.protonmail.android.testdata.UserIdTestData
 import ch.protonmail.android.testdata.UserIdTestData.userId
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.UuidProvider
@@ -62,11 +62,16 @@ class SendMessageTest : CoroutinesTest {
     private val uuidProvider = mockk<UuidProvider> {
         every { randomUuid() } returns RANDOM_UUID
     }
+
+    private val databaseProvider: DatabaseProvider = mockk {
+        every { providePendingActionDao(any()) } returns pendingActionDao
+    }
+
     private val pendingSendRepository = mockk<PendingSendRepository>(relaxUnitFun = true)
     private val sendMessage = SendMessage(
         messageDetailsRepository,
         TestDispatcherProvider,
-        pendingActionDao,
+        databaseProvider,
         sendMessageScheduler,
         pendingSendRepository,
         addressCryptoFactory,
@@ -209,7 +214,8 @@ class SendMessageTest : CoroutinesTest {
             pendingSendRepository.schedulePendingSendCleanupByMessageId(
                 MessageTestData.MESSAGE_ID_RAW,
                 MessageTestData.MESSAGE_SUBJECT,
-                MessageTestData.MESSAGE_DATABASE_ID
+                MessageTestData.MESSAGE_DATABASE_ID,
+                userId
             )
         }
     }
