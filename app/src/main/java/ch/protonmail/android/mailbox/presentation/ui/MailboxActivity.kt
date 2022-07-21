@@ -150,7 +150,6 @@ import java.lang.ref.WeakReference
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
-import kotlin.math.abs
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -1377,9 +1376,6 @@ internal class MailboxActivity :
     private inner class SwipeController : ItemTouchHelper.Callback() {
 
         private var mailSettings: MailSettings? = null
-        // There can be one vibration per direction
-        private var vibratedOnceOnSwipe = false
-        private var lastVibrationDeltaX = 0f
 
         @Deprecated("Subscribe for changes instead of reloading on current User/MailSettings changed.")
         fun setCurrentMailSetting(mailSettings: MailSettings) {
@@ -1479,27 +1475,6 @@ internal class MailboxActivity :
             mailboxAdapter.notifyDataSetChanged()
         }
 
-        private fun handleThresholdVibration(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            deltaX: Float
-        ) {
-            if (deltaX == 0f) {
-                // The swipe is beginning or is finished
-                vibratedOnceOnSwipe = false
-                lastVibrationDeltaX = 0f
-            } else if (abs(deltaX) > recyclerView.width * getSwipeThreshold(viewHolder) && !vibratedOnceOnSwipe) {
-                // The swipe has reached the threshold, where if the view is let go, the action will be executed
-                mailboxViewModel.vibrateOnSwipe()
-                lastVibrationDeltaX = abs(deltaX)
-                vibratedOnceOnSwipe = true
-            } else if (abs(deltaX) < lastVibrationDeltaX && vibratedOnceOnSwipe) {
-                // After passing the threshold, the swipe goes back before the threshold, so the action is not executed
-                mailboxViewModel.vibrateOnSwipe()
-                vibratedOnceOnSwipe = false
-            }
-        }
-
         override fun onChildDraw(
             canvas: Canvas,
             recyclerView: RecyclerView,
@@ -1537,7 +1512,6 @@ internal class MailboxActivity :
                 canvas.translate(itemView.left.toFloat(), itemView.top.toFloat())
                 view.draw(canvas)
                 canvas.restore()
-                handleThresholdVibration(recyclerView, viewHolder, deltaX)
             }
             super.onChildDraw(canvas, recyclerView, viewHolder, deltaX, deltaY, actionState, isCurrentlyActive)
         }

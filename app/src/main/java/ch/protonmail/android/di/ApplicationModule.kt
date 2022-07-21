@@ -24,8 +24,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Build
-import android.os.Vibrator
-import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
 import androidx.work.WorkManager
 import ch.protonmail.android.BuildConfig
@@ -243,9 +241,6 @@ object ApplicationModule {
     @Provides
     @Singleton
     fun applicationCoroutineScope() = CoroutineScope(Dispatchers.IO + SupervisorJob())
-
-    @Provides
-    fun vibrator(context: Context): Vibrator = (context.getSystemService() as? Vibrator)!!
 }
 
 @Module
