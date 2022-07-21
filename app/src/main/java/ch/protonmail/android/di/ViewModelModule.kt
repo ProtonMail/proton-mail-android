@@ -20,7 +20,6 @@
 
 package ch.protonmail.android.di
 
-import android.os.Vibrator
 import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
@@ -116,8 +115,7 @@ internal class ViewModelModule {
         getMailSettings: GetMailSettings,
         mailboxItemUiModelMapper: MailboxItemUiModelMapper,
         fetchEventsAndReschedule: FetchEventsAndReschedule,
-        clearNotificationsForUser: ClearNotificationsForUser,
-        vibrator: Vibrator
+        clearNotificationsForUser: ClearNotificationsForUser
     ) = MailboxViewModel(
         messageDetailsRepositoryFactory = messageDetailsRepositoryFactory,
         userManager = userManager,
@@ -144,7 +142,6 @@ internal class ViewModelModule {
         getMailSettings = getMailSettings,
         mailboxItemUiModelMapper = mailboxItemUiModelMapper,
         fetchEventsAndReschedule = fetchEventsAndReschedule,
-        clearNotificationsForUser = clearNotificationsForUser,
-        vibrator = vibrator
+        clearNotificationsForUser = clearNotificationsForUser
     )
 }

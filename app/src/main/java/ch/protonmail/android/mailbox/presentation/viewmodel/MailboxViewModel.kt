@@ -18,9 +18,6 @@
  */
 package ch.protonmail.android.mailbox.presentation.viewmodel
 
-import android.os.Build
-import android.os.VibrationEffect
-import android.os.Vibrator
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -111,7 +108,6 @@ import javax.inject.Inject
 const val FLOW_START_ACTIVITY = 1
 const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
-private const val SWIPE_VIBRATION_DURATION = 10L
 
 @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 @HiltViewModel
@@ -141,8 +137,7 @@ internal class MailboxViewModel @Inject constructor(
     private val getMailSettings: GetMailSettings,
     private val mailboxItemUiModelMapper: MailboxItemUiModelMapper,
     private val fetchEventsAndReschedule: FetchEventsAndReschedule,
-    private val clearNotificationsForUser: ClearNotificationsForUser,
-    private val vibrator: Vibrator
+    private val clearNotificationsForUser: ClearNotificationsForUser
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     private val _manageLimitReachedWarning = MutableLiveData<Event<Boolean>>()
@@ -720,20 +715,6 @@ internal class MailboxViewModel @Inject constructor(
                     mailboxLocationId
                 )
         }
-    }
-
-    fun vibrateOnSwipe() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val vibrationEffect = VibrationEffect.createOneShot(
-                SWIPE_VIBRATION_DURATION,
-                VibrationEffect.DEFAULT_AMPLITUDE
-            )
-            vibrator.vibrate(vibrationEffect)
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(SWIPE_VIBRATION_DURATION)
-        }
-
     }
 
     fun clearNotifications(userId: UserId) {

@@ -87,8 +87,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.domain.arch.DataResult
-import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.domain.type.IntEnum
 import me.proton.core.domain.type.StringEnum
@@ -272,8 +270,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             getMailSettings = getMailSettings,
             mailboxItemUiModelMapper = mailboxItemUiModelMapper,
             fetchEventsAndReschedule = fetchEventsAndReschedule,
-            clearNotificationsForUser = clearNotificationsForUser,
-            vibrator = mockk()
+            clearNotificationsForUser = clearNotificationsForUser
         )
     }
 
