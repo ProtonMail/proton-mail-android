@@ -487,7 +487,7 @@ internal class MessageDetailsAdapter(
                 itemView.displayRemoteContentButton.isVisible = true
             }
 
-            this.blockRemoteResources(!isAutoShowRemoteImages)
+            this.showRemoteResources(isAutoShowRemoteImages)
 
             super.onPageFinished(view, url)
         }
@@ -731,7 +731,7 @@ internal class MessageDetailsAdapter(
 
                 if (webView != null && webView.contentHeight > 0) {
                     itemView.displayRemoteContentButton.isVisible = false
-                    webView.getWebViewClientOrNull()?.allowLoadingRemoteResources()
+                    webView.getWebViewClientOrNull()?.showRemoteResources(true)
                     webView.reload()
                     webView.invalidate()
                     onDisplayRemoteContentClicked(item.message)

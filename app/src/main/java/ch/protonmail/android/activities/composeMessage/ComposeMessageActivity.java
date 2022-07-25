@@ -384,7 +384,7 @@ public class ComposeMessageActivity
 
     private void setUpQuotedMessageWebView() {
         quotedMessageWebView = new WebView(this);
-        pmWebViewClient = new PmWebViewClient(mUserManager, accountSettingsRepository, this, true);
+        pmWebViewClient = new PmWebViewClient(mUserManager, accountSettingsRepository, this, false);
         quotedMessageWebView.setWebViewClient(pmWebViewClient);
         quotedMessageWebView.requestDisallowInterceptTouchEvent(true);
 
@@ -1620,7 +1620,7 @@ public class ComposeMessageActivity
             doc.outputSettings().indentAmount(0).prettyPrint(false);
             doc = contentTransformer.transform(doc);
             content = doc.toString();
-            pmWebViewClient.blockRemoteResources(!composeMessageViewModel.getMessageDataResult().getShowRemoteContent());
+            pmWebViewClient.showRemoteResources(composeMessageViewModel.getMessageDataResult().getShowRemoteContent());
             quotedMessageWebView.loadDataWithBaseURL("", content, "text/html", HTTP.UTF_8, "");
         } else {
             final CharSequence bodyText;
@@ -1656,7 +1656,7 @@ public class ComposeMessageActivity
             doc.outputSettings().indentAmount(0).prettyPrint(false);
             doc = contentTransformer.transform(doc);
             content = doc.toString();
-            pmWebViewClient.blockRemoteResources(!composeMessageViewModel.getMessageDataResult().getShowRemoteContent());
+            pmWebViewClient.showRemoteResources(composeMessageViewModel.getMessageDataResult().getShowRemoteContent());
             EmbeddedImagesThread mEmbeddedImagesTask = new EmbeddedImagesThread(new WeakReference<>(ComposeMessageActivity.this.quotedMessageWebView), event, content);
             mEmbeddedImagesTask.execute();
         }
