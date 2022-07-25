@@ -811,7 +811,7 @@
     <string name="failed_saving_draft_online">無法儲存郵件的線上草稿：「%s」</string>
     <string name="failed_uploading_attachment_online">郵件的附件錯誤：「%s」</string>
     <string name="cannot_open_message_while_being_sent">傳送時無法開啟此郵件</string>
-    <string name="enable_conversation_mode">啟用會話模式</string>
+    <string name="enable_conversation_mode">啟用交談模式</string>
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
@@ -832,7 +832,7 @@
         <item quantity="other">%d 封郵件</item>
     </plurals>
     <plurals name="x_conversations_count">
-        <item quantity="other">%d 個會話</item>
+        <item quantity="other">%d 個交談</item>
     </plurals>
     <string name="contacts_call">通話</string>
     <string name="contacts_send_group_message">發送群組訊息</string>
