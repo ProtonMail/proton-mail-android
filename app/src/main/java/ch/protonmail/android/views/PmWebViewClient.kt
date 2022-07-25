@@ -63,7 +63,8 @@ open class PmWebViewClient(
         "pm.me",
         "mail.protonmail.com",
         "account.protonvpn.com",
-        "protonirockerxow.onion"
+        "protonirockerxow.onion",
+        "proton.me"
     )
 
     @Deprecated("Deprecated in Java")
@@ -219,13 +220,9 @@ open class PmWebViewClient(
     protected fun amountOfRemoteResourcesBlocked(): Int =
         blockedImages
 
-    fun blockRemoteResources(block: Boolean) {
-        blockedImages = 0
-        shouldLoadRemoteContent = !block
-    }
-
-    fun allowLoadingRemoteResources() {
-        blockRemoteResources(false)
+    fun showRemoteResources(show: Boolean) {
+        if (show) blockedImages = 0
+        shouldLoadRemoteContent = show
     }
 
     @Deprecated("Deprecated in Java")
