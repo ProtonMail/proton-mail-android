@@ -524,7 +524,7 @@
     <string name="device_contacts">Kontakty zařízení</string>
     <string name="print_date_template">Datum: %s</string>
     <string name="print_attachment_template">Příloha: %s;  </string>
-    <string name="pm_me_changed">Odesílání zpráv z adresy @pm.me je placená funkce. Vaše zpráva bude odeslána z Vaší výchozí adresy %s</string>
+    <string name="pm_me_changed">Odesílání zpráv z adresy @pm.me je placená funkce. Vaše zpráva bude odeslána z vaší výchozí adresy %s</string>
     <string name="pm_me_can_not_be_default">Pro nastavení Vaší adressy %s jako výchozí, prosím přejděte na placenou verzi</string>
     <string name="dont_remind_again">Znovu nepřípomínat</string>
     <string name="load_embedded_images">Načíst vložené obrázky</string>

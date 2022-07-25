@@ -318,7 +318,7 @@
     <string name="label_deleted_error">Fejl under sletning af etiket</string>
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Besvar in-line</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server ikke tilgængelig… (<u>Fejlfind</u>)</string>
     <string name="connectivity_checking">Tjekker for tilslutning...</string>
     <string name="draft_label_attachments_uploading">uploader vedhæftninger…</string>
     <string name="draft_label_message_uploading">sender beskeder…</string>
@@ -423,7 +423,7 @@
     <string name="contacts_import_contact">Importér kontakt</string>
     <string name="contacts_import">Importér</string>
     <string name="upload_contacts">Upload kontakter</string>
-    <string name="uploading_contacts">Uploading contacts…</string>
+    <string name="uploading_contacts">Uploader kontakter…</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
         <item>Mobil</item>
@@ -483,8 +483,8 @@
     <string name="spam_score_101">Denne e-mail bestod ikke sit domænes godkendelseskrav. Den kan være falsk eller ukorrekt videresendt!</string>
     <string name="spam_score_102">Denne besked kan være et phishing-forsøg. Tjek afsenderen og indholdet for at sikre, at de er legitime. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">FÅ MERE AT VIDE</a></string>
     <string name="print_from_template">Fra: %s</string>
-    <string name="print_to_template">To: %s;  </string>
-    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_to_template">Til: %s;   </string>
+    <string name="print_cc_template">CC: %s;   </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Adresse: </string>
     <string name="address_street">Gade</string>
@@ -511,7 +511,7 @@
     <string name="protonmail_contacts">Proton Mail-kontakter</string>
     <string name="device_contacts">Enhedskontakter</string>
     <string name="print_date_template">Dato: %s</string>
-    <string name="print_attachment_template">Attachment: %s;  </string>
+    <string name="print_attachment_template">Vedhæftning: %s;  </string>
     <string name="pm_me_changed">Afsendelse af beskeder fra en @pm.me-mail er en betalingsfunktion. Din besked afsendes via din standard-e-mail %s</string>
     <string name="pm_me_can_not_be_default">Opgradér til et abonnement for at kunne indstille din %s-e-mail som standardadresse</string>
     <string name="dont_remind_again">Påmind mig ikke igen</string>

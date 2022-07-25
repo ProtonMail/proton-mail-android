@@ -798,7 +798,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Gambar tidak ditemukan</string>
-    <string name="error_image_bad_url">URL gambar tidak valid</string>
+    <string name="error_image_bad_url">URL gambar tidak diformat dengan benar</string>
     <string name="error_saving_try_again">Gagal menyimpan pesan. Coba lagi.</string>
     <!-- endregion -->
     <string name="allowed">Diizinkan</string>

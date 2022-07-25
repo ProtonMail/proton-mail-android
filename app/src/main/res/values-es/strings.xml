@@ -483,9 +483,9 @@
     <string name="spam_score_101">Este correo ha fallado sus requisitos de autenticación de dominio. ¡Pudo haber sido falsificado o reenviado incorrectamente!</string>
     <string name="spam_score_102">Este mensaje puede ser un intento de estafa. Compruebe que el remitente y el contenido sean legítimos. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MÁS INFORMACIÓN</a></string>
     <string name="print_from_template">De: %s</string>
-    <string name="print_to_template">To: %s;  </string>
+    <string name="print_to_template">Para: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
-    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="print_bcc_template">CCO: %s;  </string>
     <string name="address">Dirección: </string>
     <string name="address_street">Calle</string>
     <string name="address_extended_street">Nombre de calle extendido</string>
@@ -511,7 +511,7 @@
     <string name="protonmail_contacts">Contactos de Proton Mail</string>
     <string name="device_contacts">Contactos del dispositivo</string>
     <string name="print_date_template">Fecha: %s</string>
-    <string name="print_attachment_template">Attachment: %s;  </string>
+    <string name="print_attachment_template">Archivos adjuntos: %s;  </string>
     <string name="pm_me_changed">El envío de mensajes desde la dirección @pm.me es una característica de pago. Su mensaje será enviado desde su dirección predeterminada %s</string>
     <string name="pm_me_can_not_be_default">Actualice a un plan de pago para poder establecer %s como dirección principal</string>
     <string name="dont_remind_again">No volver a recordarme</string>
@@ -640,12 +640,12 @@ compre más
         Considere liberar algo de espacio o compre más antes de quedarse sin espacio.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permisos</string>
-    <string name="need_storage_permissions_add_attachment_text">Para añadir archivos adjuntos necesita permitir
+    <string name="need_storage_permissions_add_attachment_text">Para adjuntar archivos necesita permitir
         el acceso al almacenamiento.</string>
-    <string name="need_storage_permissions_download_attachment_text">Para añadir archivos adjuntos necesita permitir         el acceso al almacenamiento.</string>
+    <string name="need_storage_permissions_download_attachment_text">Para descargar archivos adjuntos necesita permitir         el acceso al almacenamiento.</string>
     <string name="need_contacts_permissions_text">Para importar los contactos es necesario permitir el acceso a los mismos.</string>
     <string name="push_notifications_alert_title">Alerta de notificaciones push</string>
-    <string name="push_notifications_alert_subtitle">Las notificaciones push para Proton Mail no funcionan sin los servicios de Google Play actualizados.</string>
+    <string name="push_notifications_alert_subtitle">Las notificaciones push para Proton Mail no funcionan si los servicios de Google Play no están actualizados.</string>
     <string name="app_locked">Aplicación bloqueada</string>
     <string name="use_pin_instead">Utilice el PIN en su lugar</string>
     <!-- strings used for biometric enrollment -->
