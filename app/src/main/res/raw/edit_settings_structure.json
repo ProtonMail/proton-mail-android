@@ -45,22 +45,6 @@
   ],
   [
     {
-      "setting_id": "swipe_right",
-      "is_section": false,
-      "setting_value": "",
-      "setting_hasValue": true,
-      "setting_type": "drill"
-    },
-    {
-      "setting_id": "swipe_left",
-      "is_section": false,
-      "setting_value": "",
-      "setting_hasValue": true,
-      "setting_type": "drill"
-    }
-  ],
-  [
-    {
       "setting_id": "extended_notification",
       "is_section": false,
       "setting_value": "",
