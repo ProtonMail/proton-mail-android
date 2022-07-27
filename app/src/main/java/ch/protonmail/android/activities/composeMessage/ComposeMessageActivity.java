@@ -351,7 +351,7 @@ public class ComposeMessageActivity
         fromAddressSpinner.setAdapter(adapter);
 
         if (!TextUtils.isEmpty(composeMessageViewModel.getMessageDataResult().getAddressId())) {
-            mSelectedAddressPosition = composeMessageViewModel.getPositionByAddressId();
+            mSelectedAddressPosition = composeMessageViewModel.getSenderAddressIndex();
         }
 
         // message was sent to our alias address, which we put as first
@@ -468,7 +468,7 @@ public class ComposeMessageActivity
                 composeMessageViewModel.setDraftId(messageId);
                 binding.composerProgressLayout.setVisibility(View.VISIBLE);
                 if (!TextUtils.isEmpty(composeMessageViewModel.getMessageDataResult().getAddressId())) {
-                    mSelectedAddressPosition = composeMessageViewModel.getPositionByAddressId();
+                    mSelectedAddressPosition = composeMessageViewModel.getSenderAddressIndex();
                 }
                 fromAddressSpinner.setSelection(mSelectedAddressPosition);
 

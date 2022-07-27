@@ -22,6 +22,7 @@ package ch.protonmail.android.compose
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.compose.domain.GetAddressIndexByAddressId
 import ch.protonmail.android.compose.presentation.model.AddExpirationTimeToMessage
 import ch.protonmail.android.compose.presentation.util.HtmlToSpanned
 import ch.protonmail.android.compose.send.SendMessage
@@ -103,6 +104,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val getDecryptedMessageById: GetDecryptedMessageById = mockk()
 
+    private val getAddressIndexByAddressId: GetAddressIndexByAddressId = mockk()
+
     private val viewModel = ComposeMessageViewModel(
         isAppInDarkMode = isAppInDarkMode,
         composeMessageRepository = composeMessageRepository,
@@ -120,7 +123,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         htmlToSpanned = htmlToSpanned,
         addExpirationTimeToMessage = addExpirationTimeToMessage,
         setUpWebViewDarkModeHandlingIfSupported = setUpWebViewDarkModeHandlingIfSupported,
-        getDecryptedMessageById = getDecryptedMessageById
+        getDecryptedMessageById = getDecryptedMessageById,
+        getAddressIndexByAddressId = getAddressIndexByAddressId
     )
 
     @BeforeTest

@@ -43,6 +43,7 @@ import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.bl.HtmlProcessor
+import ch.protonmail.android.compose.domain.GetAddressIndexByAddressId
 import ch.protonmail.android.compose.presentation.model.AddExpirationTimeToMessage
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel
 import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
@@ -131,7 +132,8 @@ class ComposeMessageViewModel @Inject constructor(
     private val htmlToSpanned: HtmlToSpanned,
     private val addExpirationTimeToMessage: AddExpirationTimeToMessage,
     private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported,
-    private val getDecryptedMessageById: GetDecryptedMessageById
+    private val getDecryptedMessageById: GetDecryptedMessageById,
+    private val getAddressIndexByAddressId: GetAddressIndexByAddressId
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     // region events data
@@ -578,8 +580,7 @@ class ComposeMessageViewModel @Inject constructor(
         _senderAddresses = senderAddresses
     }
 
-    fun getPositionByAddressId(): Int =
-        user.addresses.addresses.filter { it.value.id.id == _messageDataResult.addressId }.keys.first() - 1
+    fun getSenderAddressIndex() = getAddressIndexByAddressId(_senderAddresses, _messageDataResult.addressId)
 
     fun isPaidUser(): Boolean = legacyUser.isPaidUser
 
