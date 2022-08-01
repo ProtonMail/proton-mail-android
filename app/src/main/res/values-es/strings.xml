@@ -184,7 +184,7 @@
     <string name="update_app_title">Actualización requerida</string>
     <string name="update_app">Su app de Proton Mail no se puede usar hasta que se actualice</string>
     <string name="you_are_offline">No estás conectado</string>
-    <string name="api_offline">Proton Mail está actualmente fuera de línea, verifica en https://protonstatus.com o en nuestro Twitter para el estado actual: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Contacto guardado</string>
     <string name="contact_saved_offline">Contacto guardado. Se sincronizará cuando la conexión esté disponible.</string>
     <string name="contact_exist">El correo del contacto ya existe</string>
@@ -318,7 +318,7 @@
     <string name="label_deleted_error">Error al eliminar la etiqueta</string>
     <string name="message_deleted_error">Error al eliminar algunos mensajes. ¡¿Algunos de los mensajes seleccionados están en proceso de envío?!</string>
     <string name="respond_inline">Responder en línea</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Servidor no accesible… (<u>Resolución de problemas</u>)</string>
     <string name="connectivity_checking">Comprobando la conexión...</string>
     <string name="draft_label_attachments_uploading">cargando adjuntos…</string>
     <string name="draft_label_message_uploading">enviando mensaje…</string>
@@ -423,7 +423,7 @@
     <string name="contacts_import_contact">Importar contacto</string>
     <string name="contacts_import">Importar</string>
     <string name="upload_contacts">Cargar contactos</string>
-    <string name="uploading_contacts">Uploading contacts…</string>
+    <string name="uploading_contacts">Cargando contactos...…</string>
     <string-array name="vcard_option_phone">
         <item>Teléfono</item>
         <item>Móvil</item>
@@ -798,13 +798,14 @@ compre más
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemas y soluciones habituales de conexión</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Sin conexión a internet&lt;/i&gt; - Por favor, asegúrate de que tu conexión está funcionando.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema del proveedor de servicios de internet (ISP)&lt;/i&gt; - Prueba a conectarte a Proton desde una red diferente (o usa &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueo gubernamental&lt;/i&gt; - Tu país puede estar bloqueando el acceso a Proton. Prueba &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o cualquier otra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para acceder a Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de antivirus&lt;/i&gt; - Deshabilita temporalmente o elimina tu software antivirus.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de Proxy/Firewall&lt;/i&gt; - Deshabilita cualquier proxy o cortafuegos, o contacta con tu administrador de red.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está caído&lt;/i&gt; - Accede a &lt;a href=\"http://protonstatus.com/\"&gt;Estatus Proton&lt;/a&gt; para comprobar el estado de nuestro sistema.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aún no se pudo encontrar una solución&lt;/i&gt; - Contáctanos directamente a través de nuestro &lt;a href=\"https://protonmail.com/support-form\"&gt;formulario de apoyo&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correo electrónico&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagen no encontrada</string>
