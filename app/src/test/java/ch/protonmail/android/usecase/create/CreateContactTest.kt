@@ -30,7 +30,7 @@ import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.testdata.UserIdTestData.userId
+import ch.protonmail.android.testdata.UserTestData.userId
 import ch.protonmail.android.usecase.create.CreateContact.Result
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.worker.CreateContactWorker

@@ -66,7 +66,7 @@ import ch.protonmail.android.notifications.presentation.usecase.ClearNotificatio
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.pendingaction.data.model.PendingUpload
 import ch.protonmail.android.settings.domain.usecase.GetMailSettings
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.delete.EmptyFolder
@@ -587,7 +587,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // Given
             val userIdFlow = MutableStateFlow<UserId?>(null)
             coEvery { userManager.primaryUserId } returns userIdFlow
-            coEvery { getMailSettings.invoke(UserIdTestData.userId) } returns MutableStateFlow(
+            coEvery { getMailSettings.invoke(UserTestData.userId) } returns MutableStateFlow(
                 GetMailSettings.Result.Success(mailSettings = mailSettings())
             )
 
@@ -599,7 +599,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     GetMailSettings.Result.Success(mailSettings = mailSettings()).right()
 
                 assertEquals(result, awaitItem())
-                userIdFlow.emit(UserIdTestData.userId)
+                userIdFlow.emit(UserTestData.userId)
                 assertEquals(resultSuccess, awaitItem())
             }
         }
@@ -643,7 +643,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
 
         private fun mailSettings() = MailSettings(
-            userId = UserIdTestData.userId,
+            userId = UserTestData.userId,
             displayName = null,
             signature = null,
             autoSaveContacts = true,

@@ -20,7 +20,7 @@
 package ch.protonmail.android.api.segments.event
 
 import android.content.Context
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -38,7 +38,7 @@ import org.junit.Test
 internal class FetchEventsAndRescheduleTest {
 
     private val eventManagerMock = mockk<EventManager> {
-        coEvery { consumeEventsFor(listOf(UserIdTestData.userId)) } just runs
+        coEvery { consumeEventsFor(listOf(UserTestData.userId)) } just runs
     }
     private val accountManagerMock = mockk<AccountManager>()
     private val contextMock = mockk<Context>()
@@ -69,13 +69,13 @@ internal class FetchEventsAndRescheduleTest {
     @Test
     fun `when primary id present should fetch the events and reschedule the event loop`() = runBlockingTest {
         // given
-        every { accountManagerMock.getPrimaryUserId() } returns flowOf(UserIdTestData.userId)
+        every { accountManagerMock.getPrimaryUserId() } returns flowOf(UserTestData.userId)
 
         // when
         fetchEventsAndReschedule()
 
         // then
-        coVerify { eventManagerMock.consumeEventsFor(listOf(UserIdTestData.userId)) }
+        coVerify { eventManagerMock.consumeEventsFor(listOf(UserTestData.userId)) }
         verify { alarmReceiverMock.setAlarm(contextMock) }
     }
 }

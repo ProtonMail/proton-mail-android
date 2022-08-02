@@ -24,7 +24,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.worker.SchedulePendingSendCleanUpWhenOnline
 import ch.protonmail.android.testdata.MessageTestData
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
@@ -39,7 +39,7 @@ internal class PendingSendRepositoryImplTest {
     }
 
     private val userManager = mockk<UserManager> {
-        every { requireCurrentUserId() } returns UserIdTestData.userId
+        every { requireCurrentUserId() } returns UserTestData.userId
     }
 
     private val repository = PendingSendRepositoryImpl(
@@ -64,7 +64,7 @@ internal class PendingSendRepositoryImplTest {
             MessageTestData.MESSAGE_ID_RAW,
             MessageTestData.MESSAGE_SUBJECT,
             MessageTestData.MESSAGE_DATABASE_ID,
-            UserIdTestData.userId
+            UserTestData.userId
         )
 
         // then
@@ -72,7 +72,7 @@ internal class PendingSendRepositoryImplTest {
             MessageTestData.MESSAGE_ID_RAW,
             MessageTestData.MESSAGE_SUBJECT,
             MessageTestData.MESSAGE_DATABASE_ID,
-            UserIdTestData.userId
+            UserTestData.userId
         )
     }
 }

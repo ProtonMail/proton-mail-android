@@ -22,7 +22,7 @@ package ch.protonmail.android.onboarding.base.presentation
 import android.content.SharedPreferences
 import androidx.startup.AppInitializer
 import ch.protonmail.android.core.Constants.Prefs.PREF_EXISTING_USER_ONBOARDING_SHOWN
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
@@ -68,8 +68,8 @@ internal class AddStartOnboardingObserverIfNeededTest(
             return listOf(
                 arrayOf(null,                  OnboardingAlreadyShown(true),   ShouldAddObserver(false)),
                 arrayOf(null,                  OnboardingAlreadyShown(false),  ShouldAddObserver(false)),
-                arrayOf(UserIdTestData.userId, OnboardingAlreadyShown(true),   ShouldAddObserver(false)),
-                arrayOf(UserIdTestData.userId, OnboardingAlreadyShown(false),  ShouldAddObserver(true)),
+                arrayOf(UserTestData.userId, OnboardingAlreadyShown(true),   ShouldAddObserver(false)),
+                arrayOf(UserTestData.userId, OnboardingAlreadyShown(false),  ShouldAddObserver(true)),
             )
         }
     }

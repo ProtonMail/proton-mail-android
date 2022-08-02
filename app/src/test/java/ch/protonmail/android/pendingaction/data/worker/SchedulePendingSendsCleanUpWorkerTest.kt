@@ -24,7 +24,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.testdata.MessageTestData
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import io.mockk.every
 import io.mockk.mockk
 import junit.framework.Assert.assertTrue
@@ -58,7 +58,7 @@ internal class SchedulePendingSendsCleanUpWorkerTest {
             KEY_INPUT_MESSAGE_ID to MessageTestData.MESSAGE_ID_RAW,
             KEY_INPUT_MESSAGE_SUBJECT to MessageTestData.MESSAGE_SUBJECT,
             KEY_INPUT_MESSAGE_DATABASE_ID to MessageTestData.MESSAGE_DATABASE_ID,
-            KEY_INPUT_USER_ID to UserIdTestData.userId.id
+            KEY_INPUT_USER_ID to UserTestData.userId.id
         )
     }
 }
