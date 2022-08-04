@@ -31,10 +31,17 @@ plugins {
     `hilt`
     `kotlin-serialization`
     `browserstack`
+    `sentry-android`
 }
 
 kapt {
     correctErrorTypes = true
+}
+
+sentry {
+    autoInstallation {
+        enabled.set(false)
+    }
 }
 
 val privateProperties = Properties().apply {
