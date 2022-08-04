@@ -232,9 +232,6 @@ internal class MessageDetailsAdapter(
 
     override fun onViewRecycled(holder: ViewHolder) {
         super.onViewRecycled(holder)
-        holder.itemView.messageWebViewContainer?.let {
-            resetWebViewContent(it)
-        }
 
         holder.itemView.lastConversationMessageCollapsedDivider?.let { it.isVisible = false }
         holder.itemView.headerView?.forbidExpandingHeaderView()
@@ -414,11 +411,6 @@ internal class MessageDetailsAdapter(
                 false
             }
         }
-    }
-
-    private fun resetWebViewContent(messageWebViewContainer: LinearLayout) {
-        val webView = messageWebViewContainer.findViewById<WebView>(R.id.item_message_body_web_view_id)
-        webView?.loadUrl("about:blank")
     }
 
     private fun setMessageContentFixedLoadingHeight(messageWebViewContainer: LinearLayout) {
