@@ -184,7 +184,7 @@
     <string name="update_app_title">Opdatering nødvendig</string>
     <string name="update_app">Din Proton Mail-app kan ikke benyttes, før den opdateres</string>
     <string name="you_are_offline">Du er offline</string>
-    <string name="api_offline">Proton Mail er i øjeblikket offline. Tjek https://protonstatus.com eller vores twitter for den aktuelle status: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontakt er gemt</string>
     <string name="contact_saved_offline">Kontakt gemt. Den synkes, når en forbindelse bliver tilgængelig.</string>
     <string name="contact_exist">Kontaktmail findes allerede</string>
@@ -798,13 +798,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Almindelige forbindelsesproblemer og løsninger</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Ingen internetforbindelse&lt;/i&gt; - Tjek at du har forbindelse til internettet.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internetudbyder (ISP) problem&lt;/i&gt; - Prøv at oprette forbindelse til Proton fra et andet netværk (eller brug &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Statslig blokering&lt;/i&gt; - Dit land blokerer muligvis for adgangen til Proton. Prøv &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (eller en anden VPN) eller &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; for at få adgang til Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus-forstyrrelser&lt;/i&gt; - Slå dit antivirusprogram midlertidigt fra eller fjern det.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall-forstyrrelse&lt;/i&gt; - Slå eventuelle proxyer eller firewalls fra, eller kontakt din netværksadministrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton er nede&lt;/i&gt; - Tjek &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for vores systems status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Kan du stadig ikke finde en løsning&lt;/i&gt; - Kontakt os direkte via vores &lt;a href=\"https://protonmail.com/support-form\"&gt;support-formular&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.zendesk.com), eller &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

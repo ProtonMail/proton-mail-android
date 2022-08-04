@@ -183,7 +183,7 @@
     <string name="update_app_title">需要更新</string>
     <string name="update_app">Proton Mail 应用需要更新方可使用</string>
     <string name="you_are_offline">网络未连接</string>
-    <string name="api_offline">暂时无法连接 Proton Mail，可前往 https://protonstatus.com 或 https://twitter.com/protonmail 了解情况</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">联系人已保存</string>
     <string name="contact_saved_offline">联系人已保存，将在联网后同步</string>
     <string name="contact_exist">此联系人已存在</string>
@@ -778,13 +778,14 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">常见网络问题与对策</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;网络未连接&lt;/i&gt;：请确认网络状况。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;运营商问题&lt;/i&gt;：尝试更换网络（或使用 &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; 或 &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;）。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;政府封锁&lt;/i&gt;：您所处的国家可能屏蔽了 Proton。尝试通过 &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt;（或其他任何 VPN）或 &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; 连接 Proton。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;杀毒软件干扰&lt;/i&gt;：暂时关闭或卸载杀毒软件。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;代理服务器或防火墙干扰&lt;/i&gt;：关闭所有代理服务器和防火墙，或联系系统管理员。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton 运行故障&lt;/i&gt;：查看 &lt;a href=\"http://protonstatus.com/\"&gt;Proton 运行状态&lt;/a&gt;。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;问题仍未解决&lt;/i&gt;：通过&lt;a href=\"https://protonmail.com/support-form\"&gt;客服表单&lt;/a&gt;、&lt;&lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;&gt;邮箱&lt;/a&gt;（support@protonmail.zendesk.com）或 &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; 直接联系我们。</string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">图片未找到</string>

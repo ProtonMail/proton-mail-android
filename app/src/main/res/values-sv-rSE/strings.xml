@@ -184,7 +184,7 @@
     <string name="update_app_title">Uppdatering krävs</string>
     <string name="update_app">Din Proton Mail-app kan inte användas förrän den har uppdaterats</string>
     <string name="you_are_offline">Du är offline</string>
-    <string name="api_offline">Proton Mail är för närvarande offline, kontrollera https://protonstatus.com eller vår twitter för nuvarande status: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontakt sparad</string>
     <string name="contact_saved_offline">Kontakt sparad, synkroniseras när anslutning är tillgänglig</string>
     <string name="contact_exist">E-postkontakt finns redan</string>
@@ -796,13 +796,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Vanliga anslutningsproblem och lösningar</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Ingen internetuppkoppling&lt;/i&gt; - Vänligen kontrollera att din internetuppkoppling fungerar.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Försök koppla upp dig till Proton från ett annat nätverk (eller använd &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; eller &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Statlig blockering&lt;/i&gt; - Ditt land kanske blockerar tillgång till Proton. Pröva &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (eller någon annan VPN) eller &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; för att få tillgång till Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus&lt;/i&gt; - Inaktivera eller ta bort ditt antivirusprogram.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/brandvägg&lt;/i&gt; - Inaktivera proxy eller brandvägg eller kontakta din nätverksadministratör.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton är nere&lt;/i&gt; - Se &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; för vårt systems status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Kan du fortfarande inte hitta en lösning&lt;/i&gt; - Kontakta oss direkt via vårt &lt;a href=\"https://protonmail.com/support-form\"&gt;supportformulär&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), eller &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

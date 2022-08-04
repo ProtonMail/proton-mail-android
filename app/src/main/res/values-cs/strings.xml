@@ -186,7 +186,7 @@
     <string name="update_app_title">Je vyžadována aktualizace</string>
     <string name="update_app">Aplikaci Proton Mail nelze použít, dokud nebude aktualizována</string>
     <string name="you_are_offline">Jste v režimu offline</string>
-    <string name="api_offline">Proton Mail je momentálně offline, aktuální stav najdete na https://protonstatus.com nebo na našem Twitteru: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontakt byl uložen</string>
     <string name="contact_saved_offline">Kontakt byl uložen, synchronizace proběhne po připojení k internetu.</string>
     <string name="contact_exist">E-mail kontaktu již existuje</string>
@@ -386,7 +386,7 @@
     <string name="error">Chyba</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d Vložené obrázky</string>
-    <string name="warning">Upozornění</string>
+    <string name="warning">Varování</string>
     <string name="available_addresses">Dostupné adresy</string>
     <string name="inactive_addresses">Neaktivní adresy</string>
     <string name="not_set">Nenastaveno</string>
@@ -651,7 +651,7 @@
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Dosažen limit velikosti schránky. Nelze odesílat nebo přijímat e-maily.
         Klikněte pro více informací.</string>
-    <string name="storage_limit_warning_title">Upozornění</string>
+    <string name="storage_limit_warning_title">Varování</string>
     <string name="storage_limit_reached_text">Dosáhli jste 100 % limitu velikosti své schránky. Nebudete
         moct přijímat, ani odesílat poštu, dokud trvale neodstraníte některé zprávy nebo nepřikoupíte vetší
         kapacitu velikosti své schránky.</string>
@@ -822,13 +822,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problémy a řešení běžného připojení</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Žádné připojení k internetu&lt;/i&gt; - Ujistěte se, že vaše internetové připojení funguje.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problém poskytovatele připojení (ISP)&lt;/i&gt; - Zkuste připojení k Protonu z jiné sítě (nebo použijte &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; nebo &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blokování vládou&lt;/i&gt; - Vaše země může blokovat přístup k Protonu. Zkuste &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (nebo jiné VPN) nebo &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pro přístup k Protonu.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aktivita antiviru&lt;/i&gt; - Dočasně vypněte nebo odstraňte antivirový software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall rušení&lt;/i&gt; - Vypněte všechny proxy servery nebo brány firewall nebo se obraťte na správce sítě.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton je vypnutý&lt;/i&gt; - Zkontrolujte &lt;a href=\"http://protonstatus.com/\"&gt;stav Protonu&lt;/a&gt; pro stav našeho systému.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Pořád nelze najít řešení&lt;/i&gt; - Kontaktujte nás přímo pomocí našeho &lt;a href=\"https://protonmail.com/support-form\"&gt;formuláře podpory&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), nebo &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

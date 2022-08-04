@@ -184,7 +184,7 @@
     <string name="update_app_title">Update vereist</string>
     <string name="update_app">Uw Proton Mail-app kan niet worden gebruikt totdat het is bijgewerkt</string>
     <string name="you_are_offline">U bent offline</string>
-    <string name="api_offline">Proton Mail is momenteel offline. Kijk op https://protonstatus.com of https://twitter.com/protonmail voor de huidige status</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Contact opgeslagen</string>
     <string name="contact_saved_offline">Contactpersoon opgeslagen. Het wordt gesynchroniseerd zodra er een verbinding beschikbaar is.</string>
     <string name="contact_exist">Contact met dit e-mailadres bestaat reeds</string>
@@ -798,13 +798,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Gemeenschappelijke verbindingsproblemen en oplossingen</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Geen internetverbinding&lt;/i&gt; - Zorg ervoor dat uw internetverbinding werkt.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Probleem met de internetaanbieder&lt;/i&gt; - Probeer te verbinden met Proton vanaf een ander netwerk (of gebruik &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; of &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;)
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Overheidsblokkade&lt;/i&gt; - Uw land blokkeert mogelijk toegang tot Proton. Probeer &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (of een andere VPN) of &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; om toegang te krijgen tot Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interferentie&lt;/i&gt; - Schakel uw antivirussoftware tijdelijk uit of verwijder deze.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interferentie&lt;/i&gt; - Schakel alle proxy\'s of firewalls uit, of neem contact op met uw netwerkbeheerder.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton heeft een storing&lt;/i&gt; - Controleer de &lt;a href=\"http://protonstatus.com/\"&gt;Proton&lt;/a&gt; voor onze systeemstatus.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Nog steeds geen oplossing gevonden&lt;/i&gt; - Neem rechtstreeks contact op met ons via &lt;a href=\"https://protonmail.com/support-form\"&gt;ondersteuningsformulier&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.zendesk.com), of &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
