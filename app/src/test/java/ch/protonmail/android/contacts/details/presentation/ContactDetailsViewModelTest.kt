@@ -35,7 +35,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import ch.protonmail.android.utils.FileHelper
 import io.mockk.coEvery
 import io.mockk.every
@@ -61,7 +61,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val workManager: WorkManager = mockk()
     private val fileHelper: FileHelper = mockk()
     private val userManager: UserManager = mockk {
-        every { currentUserId } returns UserIdTestData.userId
+        every { currentUserId } returns UserTestData.userId
     }
 
     private val contactId1 = "contactUid1"

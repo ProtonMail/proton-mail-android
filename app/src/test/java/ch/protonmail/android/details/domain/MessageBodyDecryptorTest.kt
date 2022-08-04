@@ -23,7 +23,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.testdata.KeyInformationTestData
 import ch.protonmail.android.testdata.MessageTestData
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import ch.protonmail.android.utils.crypto.KeyInformation
 import io.mockk.every
 import io.mockk.mockk
@@ -35,7 +35,7 @@ import kotlin.test.assertTrue
 class MessageBodyDecryptorTest {
 
     private val userManagerMock = mockk<UserManager> {
-        every { requireCurrentUserId() } returns UserIdTestData.userId
+        every { requireCurrentUserId() } returns UserTestData.userId
     }
     private val messageBodyDecryptor = MessageBodyDecryptor(userManagerMock)
 
@@ -55,7 +55,7 @@ class MessageBodyDecryptorTest {
         verify {
             decryptedMessageSpy.decrypt(
                 userManagerMock,
-                UserIdTestData.userId,
+                UserTestData.userId,
                 KeyInformationTestData.listWithValidKey
             )
         }
@@ -79,7 +79,7 @@ class MessageBodyDecryptorTest {
         verify {
             decryptedMessageSpy.decrypt(
                 userManagerMock,
-                UserIdTestData.userId
+                UserTestData.userId
             )
         }
     }
@@ -138,7 +138,7 @@ class MessageBodyDecryptorTest {
         publicKeys: List<KeyInformation>? = KeyInformationTestData.listWithValidKey
     ) = apply {
         every {
-            decrypt(userManagerMock, UserIdTestData.userId, publicKeys)
+            decrypt(userManagerMock, UserTestData.userId, publicKeys)
         } throws Exception(SIGNATURE_VERIFICATION_ERROR)
     }
 }

@@ -20,7 +20,7 @@
 package ch.protonmail.android.mailbox.domain.usecase
 
 import app.cash.turbine.test
-import ch.protonmail.android.testdata.UserIdTestData.userId
+import ch.protonmail.android.testdata.UserTestData.userId
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.Assert.assertEquals

@@ -25,7 +25,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkContinuation
 import androidx.work.WorkManager
 import ch.protonmail.android.testdata.MessageTestData
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import ch.protonmail.android.testdata.WorkerTestData.UNIQUE_WORK_NAME
 import io.mockk.every
 import io.mockk.mockk
@@ -61,7 +61,7 @@ internal class SchedulePendingSendCleanUpWhenOnlineTest {
             MessageTestData.MESSAGE_ID_RAW,
             MessageTestData.MESSAGE_SUBJECT,
             MessageTestData.MESSAGE_DATABASE_ID,
-            UserIdTestData.userId
+            UserTestData.userId
         )
 
         // then

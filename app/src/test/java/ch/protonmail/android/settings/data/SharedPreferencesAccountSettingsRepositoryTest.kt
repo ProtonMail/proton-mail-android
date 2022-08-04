@@ -21,7 +21,7 @@ package ch.protonmail.android.settings.data
 
 import android.content.SharedPreferences
 import ch.protonmail.android.prefs.SecureSharedPreferences
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -39,7 +39,7 @@ internal class SharedPreferencesAccountSettingsRepositoryTest {
         every { edit() } returns userSharedPreferencesEditorMock
     }
     private val secureSharedPreferencesFactoryMock = mockk<SecureSharedPreferences.Factory> {
-        every { userPreferences(UserIdTestData.userId) } returns userPreferencesMock
+        every { userPreferences(UserTestData.userId) } returns userPreferencesMock
     }
     private val sharedPreferencesAccountSettingsRepository = SharedPreferencesAccountSettingsRepository(
         secureSharedPreferencesFactoryMock,
@@ -54,7 +54,7 @@ internal class SharedPreferencesAccountSettingsRepositoryTest {
 
         // when
         val actualSettingValue = sharedPreferencesAccountSettingsRepository
-            .getShouldShowLinkConfirmationSetting(UserIdTestData.userId)
+            .getShouldShowLinkConfirmationSetting(UserTestData.userId)
 
         // then
         assertEquals(expectedSettingValue, actualSettingValue)
@@ -67,7 +67,7 @@ internal class SharedPreferencesAccountSettingsRepositoryTest {
 
         // when
         sharedPreferencesAccountSettingsRepository
-            .saveShouldShowLinkConfirmationSetting(expectedSettingValue, UserIdTestData.userId)
+            .saveShouldShowLinkConfirmationSetting(expectedSettingValue, UserTestData.userId)
 
         // then
         verify { userSharedPreferencesEditorMock.putBoolean(PREF_HYPERLINK_CONFIRM, expectedSettingValue) }

@@ -19,9 +19,18 @@
 
 package ch.protonmail.android.testdata
 
+import ch.protonmail.android.domain.entity.user.Addresses
+import ch.protonmail.android.domain.entity.user.User
+import io.mockk.every
+import io.mockk.mockk
 import me.proton.core.domain.entity.UserId
 
-object UserIdTestData {
-    private const val RAW_USER_ID = "user_id"
-    val userId = UserId(RAW_USER_ID)
+object UserTestData {
+
+    private const val RAW_ID = "user_id"
+    val userId = UserId(RAW_ID)
+
+    fun withAddresses(addressesList: Addresses): User = mockk {
+        every { addresses } returns addressesList
+    }
 }

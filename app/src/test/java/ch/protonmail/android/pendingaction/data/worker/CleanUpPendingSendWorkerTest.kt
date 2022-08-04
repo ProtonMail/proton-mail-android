@@ -26,7 +26,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.compose.send.SendMessageWorker
 import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
 import ch.protonmail.android.testdata.MessageTestData
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import ch.protonmail.android.testdata.WorkerTestData
 import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.repository.WorkerRepository
@@ -85,7 +85,7 @@ internal class CleanUpPendingSendWorkerTest {
     @Test
     fun `should do nothing when the send message worker is already running`() = runBlockingTest {
         // when
-        coEvery { accountManager.getAccount(UserIdTestData.userId) } returns accounts
+        coEvery { accountManager.getAccount(UserTestData.userId) } returns accounts
         coEvery { workerRepositoryMock.findWorkInfoForUniqueWork(WorkerTestData.UNIQUE_WORK_NAME) } returns
             listOf(WorkerTestData.RUNNING_WORK_INFO)
 
@@ -102,7 +102,7 @@ internal class CleanUpPendingSendWorkerTest {
     fun `should delete pending send, cancel send worker, and notify user when an enqueued send worker found`() =
         runBlockingTest {
             // given
-            coEvery { accountManager.getAccount(UserIdTestData.userId) } returns accounts
+            coEvery { accountManager.getAccount(UserTestData.userId) } returns accounts
             coEvery { workerRepositoryMock.findWorkInfoForUniqueWork(WorkerTestData.UNIQUE_WORK_NAME) } returns
                 listOf(WorkerTestData.ENQUEUED_WORK_INFO)
 
@@ -140,7 +140,7 @@ internal class CleanUpPendingSendWorkerTest {
             KEY_INPUT_MESSAGE_ID to MessageTestData.MESSAGE_ID_RAW,
             KEY_INPUT_MESSAGE_SUBJECT to MessageTestData.MESSAGE_SUBJECT,
             KEY_INPUT_MESSAGE_DATABASE_ID to MessageTestData.MESSAGE_DATABASE_ID,
-            KEY_INPUT_USER_ID to UserIdTestData.userId.id
+            KEY_INPUT_USER_ID to UserTestData.userId.id
         )
     }
 }

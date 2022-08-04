@@ -52,8 +52,8 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.worker.CleanUpPendingSendWorker
-import ch.protonmail.android.testdata.UserIdTestData
-import ch.protonmail.android.testdata.UserIdTestData.userId
+import ch.protonmail.android.testdata.UserTestData
+import ch.protonmail.android.testdata.UserTestData.userId
 import ch.protonmail.android.testdata.WorkerTestData
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
@@ -1059,7 +1059,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         messageActionType: Constants.MessageActionType = Constants.MessageActionType.REPLY,
         previousSenderAddress: String = "prevSenderAddress923",
         securityOptions: MessageSecurityOptions? = MessageSecurityOptions(null, null, -1),
-        userId: UserId = UserIdTestData.userId
+        userId: UserId = UserTestData.userId
     ) {
         every { parameters.inputData.getLong(KEY_INPUT_SEND_MESSAGE_MSG_DB_ID, -1) } answers { messageDbId }
         every { parameters.inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS) } answers { attachments }

@@ -30,7 +30,7 @@ import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testdata.KeyInformationTestData
 import ch.protonmail.android.testdata.MessageDetailsListItemTestData
 import ch.protonmail.android.testdata.MessageTestData
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import ch.protonmail.android.utils.css.MessageBodyCssProvider
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider
@@ -48,7 +48,7 @@ class MessageBodyLoaderTest {
 
     private val activityMock = mockk<FragmentActivity>()
     private val userManagerMock = mockk<UserManager> {
-        every { requireCurrentUserId() } returns UserIdTestData.userId
+        every { requireCurrentUserId() } returns UserTestData.userId
     }
     private val messageRepositoryMock = mockk<MessageRepository>()
     private val renderDimensionsProviderMock = mockk<RenderDimensionsProvider> {
@@ -190,7 +190,7 @@ class MessageBodyLoaderTest {
     private fun givenFetchingMessageDetailsReturns(message: Message?) {
         coEvery {
             messageRepositoryMock.getMessage(
-                userId = UserIdTestData.userId,
+                userId = UserTestData.userId,
                 messageId = MessageTestData.MESSAGE_ID_RAW,
                 shouldFetchMessageDetails = true
             )

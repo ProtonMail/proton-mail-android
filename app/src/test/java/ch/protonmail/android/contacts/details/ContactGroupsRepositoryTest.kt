@@ -26,7 +26,7 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
-import ch.protonmail.android.testdata.UserIdTestData.userId
+import ch.protonmail.android.testdata.UserTestData.userId
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery

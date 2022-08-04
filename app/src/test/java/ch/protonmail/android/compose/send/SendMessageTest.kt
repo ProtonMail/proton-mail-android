@@ -30,7 +30,7 @@ import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
 import ch.protonmail.android.testdata.MessageTestData
-import ch.protonmail.android.testdata.UserIdTestData.userId
+import ch.protonmail.android.testdata.UserTestData.userId
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.UuidProvider
 import io.mockk.coEvery

@@ -22,6 +22,7 @@ package ch.protonmail.android.compose
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.compose.domain.GetAddressIndexByAddressId
 import ch.protonmail.android.compose.presentation.model.AddExpirationTimeToMessage
 import ch.protonmail.android.compose.presentation.util.HtmlToSpanned
 import ch.protonmail.android.compose.send.SendMessage
@@ -30,7 +31,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
-import ch.protonmail.android.testdata.UserIdTestData.userId
+import ch.protonmail.android.testdata.UserTestData.userId
 import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.compose.SaveDraft
@@ -103,6 +104,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val getDecryptedMessageById: GetDecryptedMessageById = mockk()
 
+    private val getAddressIndexByAddressId: GetAddressIndexByAddressId = mockk()
+
     private val viewModel = ComposeMessageViewModel(
         isAppInDarkMode = isAppInDarkMode,
         composeMessageRepository = composeMessageRepository,
@@ -120,7 +123,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         htmlToSpanned = htmlToSpanned,
         addExpirationTimeToMessage = addExpirationTimeToMessage,
         setUpWebViewDarkModeHandlingIfSupported = setUpWebViewDarkModeHandlingIfSupported,
-        getDecryptedMessageById = getDecryptedMessageById
+        getDecryptedMessageById = getDecryptedMessageById,
+        getAddressIndexByAddressId = getAddressIndexByAddressId
     )
 
     @BeforeTest

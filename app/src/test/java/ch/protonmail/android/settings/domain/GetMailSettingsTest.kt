@@ -21,7 +21,7 @@ package ch.protonmail.android.settings.domain
 
 import app.cash.turbine.test
 import ch.protonmail.android.settings.domain.usecase.GetMailSettings
-import ch.protonmail.android.testdata.UserIdTestData.userId
+import ch.protonmail.android.testdata.UserTestData.userId
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf

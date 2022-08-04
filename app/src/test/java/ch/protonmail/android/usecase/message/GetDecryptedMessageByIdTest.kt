@@ -22,7 +22,7 @@ package ch.protonmail.android.usecase.message
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testdata.MessageTestData
-import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.testdata.UserTestData
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -37,7 +37,7 @@ import kotlin.test.assertNull
 internal class GetDecryptedMessageByIdTest {
 
     private val accountManagerMock = mockk<AccountManager> {
-        coEvery { getPrimaryUserId() } returns flowOf(UserIdTestData.userId)
+        coEvery { getPrimaryUserId() } returns flowOf(UserTestData.userId)
     }
     private val userManagerMock = mockk<UserManager>()
     private val messageRepositoryMock = mockk<MessageRepository>()
@@ -63,7 +63,7 @@ internal class GetDecryptedMessageByIdTest {
     fun `should return null when message not found`() = runBlockingTest {
         // given
         coEvery {
-            messageRepositoryMock.getMessage(UserIdTestData.userId, MessageTestData.MESSAGE_ID_RAW)
+            messageRepositoryMock.getMessage(UserTestData.userId, MessageTestData.MESSAGE_ID_RAW)
         } returns null
 
         // when
@@ -77,9 +77,9 @@ internal class GetDecryptedMessageByIdTest {
     fun `should return null when decrypting the message throws`() = runBlockingTest {
         // given
         val messageSpy = MessageTestData.messageSpy()
-        every { messageSpy.decrypt(userManagerMock, UserIdTestData.userId) } throws IllegalStateException("Nope")
+        every { messageSpy.decrypt(userManagerMock, UserTestData.userId) } throws IllegalStateException("Nope")
         coEvery {
-            messageRepositoryMock.getMessage(UserIdTestData.userId, MessageTestData.MESSAGE_ID_RAW)
+            messageRepositoryMock.getMessage(UserTestData.userId, MessageTestData.MESSAGE_ID_RAW)
         } returns messageSpy
 
         // when
@@ -94,7 +94,7 @@ internal class GetDecryptedMessageByIdTest {
         // given
         val messageSpy = MessageTestData.messageSpy()
         coEvery {
-            messageRepositoryMock.getMessage(UserIdTestData.userId, MessageTestData.MESSAGE_ID_RAW)
+            messageRepositoryMock.getMessage(UserTestData.userId, MessageTestData.MESSAGE_ID_RAW)
         } returns messageSpy
 
         // when
@@ -102,6 +102,6 @@ internal class GetDecryptedMessageByIdTest {
 
         // then
         assertEquals(messageSpy, decryptedMessage)
-        verify { messageSpy.decrypt(userManagerMock, UserIdTestData.userId) }
+        verify { messageSpy.decrypt(userManagerMock, UserTestData.userId) }
     }
 }
