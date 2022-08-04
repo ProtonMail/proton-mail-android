@@ -22,8 +22,7 @@ package ch.protonmail.android.feature.user
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.address.Address
 import kotlinx.coroutines.runBlocking
-import me.proton.core.crypto.common.keystore.KeyStoreCrypto
-import me.proton.core.crypto.common.keystore.decrypt
+import me.proton.core.crypto.common.keystore.EncryptedByteArray
 import me.proton.core.domain.entity.UserId
 import me.proton.core.key.domain.extension.primary
 import me.proton.core.network.domain.ApiException
@@ -98,8 +97,5 @@ fun UserManager.getLegacyAddressesBlocking(userId: UserId): List<Address> =
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core User.useKeys"))
 @Throws(ApiException::class)
-fun User.getMailboxPassword(coreKeyStoreCrypto: KeyStoreCrypto): ByteArray? {
-    val passphrase = keys.primary()?.privateKey?.passphrase
-    val decryptedPassphrase = passphrase?.decrypt(coreKeyStoreCrypto)
-    return decryptedPassphrase?.array
-}
+fun User.getUserPassphrase(): EncryptedByteArray? =
+    keys.primary()?.privateKey?.passphrase

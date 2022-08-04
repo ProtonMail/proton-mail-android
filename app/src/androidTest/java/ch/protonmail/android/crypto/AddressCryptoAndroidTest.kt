@@ -27,6 +27,7 @@ import ch.protonmail.android.domain.entity.user.UserKey
 import ch.protonmail.android.utils.crypto.OpenPGP
 import io.mockk.every
 import io.mockk.mockk
+import me.proton.core.crypto.common.keystore.EncryptedByteArray
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
 import org.junit.Test
@@ -35,7 +36,7 @@ import kotlin.test.assertNull
 
 private const val USER_ID_VALUE = "userId"
 private const val ADDRESS_ID_VALUE = "addressId"
-private const val MAILBOX_PASSWORD = "mailboxPassword"
+private val USER_PASSPHRASE = "mailboxPassword".toByteArray(Charsets.UTF_8)
 
 private const val TOKEN = """
     -----BEGIN PGP MESSAGE-----
@@ -134,7 +135,8 @@ private const val INACTIVE_USER_KEY = """
 class AddressCryptoAndroidTest {
 
     private val userManager = mockk<UserManager> {
-        every { getUserPassphraseBlocking(UserId(USER_ID_VALUE)) } returns MAILBOX_PASSWORD.toByteArray()
+        every { keyStoreCrypto } returns NoEncryptionKeyStoreCrypto
+        every { getUserPassphraseBlocking(UserId(USER_ID_VALUE)) } returns EncryptedByteArray(USER_PASSPHRASE)
         every { currentUser?.keys?.keys } returns listOf(
             UserKey(
                 UserId(USER_ID_VALUE),
@@ -208,7 +210,7 @@ class AddressCryptoAndroidTest {
             active = true
         )
         // when
-        val actual = addressCrypto.passphraseFor(key)
+        val actual = addressCrypto.passphraseFor(key)?.array // Array is not encrypted, see NoEncryptionKeyStoreCrypto.
         // then
         assertEquals("abababababababababababababababababababababababababababababababab", actual?.let { String(it) })
     }

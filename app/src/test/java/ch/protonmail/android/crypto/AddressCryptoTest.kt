@@ -28,15 +28,16 @@ import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.utils.crypto.OpenPGP
 import io.mockk.every
 import io.mockk.mockk
+import me.proton.core.crypto.common.keystore.EncryptedByteArray
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
 import java.util.UUID
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 private const val USER_ID_VALUE = "userId"
 private const val ADDRESS_ID_VALUE = "addressId"
-private const val MAILBOX_PASSWORD = "mailboxPassword"
+private val USER_PASSPHRASE = "mailboxPassword".toByteArray()
 private const val TOKEN = "token"
 private const val SIGNATURE = "signature"
 private const val PRIVATE_KEY_SUCCESSFUL_DECRYPTING = "Valid Private Key able to decrypt token"
@@ -57,7 +58,7 @@ class AddressCryptoTest {
     }
 
     private val userManager = mockk<UserManager> {
-        every { getUserPassphraseBlocking(UserId(USER_ID_VALUE)) } returns MAILBOX_PASSWORD.toByteArray()
+        every { getUserPassphraseBlocking(UserId(USER_ID_VALUE)) } returns EncryptedByteArray(USER_PASSPHRASE)
         every { currentLegacyUser } returns mockUser
     }
 
@@ -76,7 +77,7 @@ class AddressCryptoTest {
 
         val actual = addressCrypto.passphraseFor(key)
 
-        assertEquals(MAILBOX_PASSWORD, actual?.toString(Charsets.UTF_8))
+        assertContentEquals(USER_PASSPHRASE, actual?.array)
     }
 
     private fun buildKeys(privateKey: String) = Keys(

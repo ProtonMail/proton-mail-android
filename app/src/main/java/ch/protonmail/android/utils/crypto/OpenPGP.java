@@ -19,6 +19,7 @@
 package ch.protonmail.android.utils.crypto;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.proton.gopenpgp.armor.Armor;
 import com.proton.gopenpgp.constants.Constants;

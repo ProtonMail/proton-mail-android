@@ -45,6 +45,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.crypto.common.keystore.EncryptedByteArray
+import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.android.sharedpreferences.get
@@ -76,6 +78,7 @@ const val PREF_SHOW_STORAGE_LIMIT_REACHED = "show_storage_limit_reached"
 @Singleton
 class UserManager @Inject constructor(
     context: Context,
+    val keyStoreCrypto: KeyStoreCrypto,
     private val coreAccountManager: AccountManager,
     private val loadUser: LoadUser,
     private val loadLegacyUser: LoadLegacyUser,
@@ -168,14 +171,8 @@ class UserManager @Inject constructor(
         getUser(userId)
     }
 
-    suspend fun getUserPassphrase(userId: UserId): ByteArray =
-        getLegacyUser(userId).passphrase
-
-    fun getUserPassphraseBlocking(userId: UserId): ByteArray =
+    fun getUserPassphraseBlocking(userId: UserId): EncryptedByteArray? =
         getLegacyUserBlocking(userId).passphrase
-
-    fun getCurrentUserPassphrase(): ByteArray? =
-        currentLegacyUser?.passphrase
 
     // endregion
 

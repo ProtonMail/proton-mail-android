@@ -37,6 +37,7 @@ import com.proton.gopenpgp.crypto.PlainMessage
 import com.proton.gopenpgp.crypto.SessionKey
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import me.proton.core.crypto.common.keystore.EncryptedByteArray
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
 import timber.log.Timber
@@ -73,20 +74,20 @@ class AddressCrypto @AssistedInject constructor(
     override val primaryKey: AddressKey?
         get() = addressKeys.primaryKey
 
-    override val passphrase: ByteArray?
+    override val primaryPassphrase: EncryptedByteArray?
         get() = passphraseFor(requirePrimaryKey())
 
     @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
     protected override val AddressKey.privateKey: PgpField.PrivateKey
         get() = privateKey
 
-    override fun passphraseFor(key: AddressKey): ByteArray? {
+    override fun passphraseFor(key: AddressKey): EncryptedByteArray? {
         // This is for smart-cast support
         val token = key.token
         val signature = key.signature
 
         if (token == null || signature == null) {
-            return mailboxPassword
+            return userPassphrase
         }
 
         val pgpMessage = GoOpenPgpCrypto.newPGPMessageFromArmored(token.string)
@@ -94,9 +95,11 @@ class AddressCrypto @AssistedInject constructor(
         userManager.currentUser?.keys?.keys?.forEach { userKey ->
             // We need to catch exceptions because the operation might throw if the user has inactive keys
             runCatching {
-                GoOpenPgpCrypto.newKeyRing(
-                    GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey.string).unlock(mailboxPassword)
-                )
+                userPassphrase.use {
+                    GoOpenPgpCrypto.newKeyRing(
+                        GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey.string).unlock(it)
+                    )
+                }
             }.onSuccess { userKeyRing ->
                 decryptToken(
                     pgpMessage,
@@ -109,7 +112,7 @@ class AddressCrypto @AssistedInject constructor(
                         verifyTokenFormat(decryptedToken) &&
                         verifySignature(userKeyRing, decryptedToken, signature, userKey.id.id, key.id.id)
                     ) {
-                        return decryptedToken
+                        return decryptedToken.encrypt()
                     }
                 }
             }
@@ -196,12 +199,14 @@ class AddressCrypto @AssistedInject constructor(
 
     fun decryptAttachment(message: CipherText): BinaryDecryptionResult {
         return withCurrentKeys("Error decrypting attachment") { key ->
-            val data = openPgp.decryptAttachmentBinKey(
-                message.keyPacket,
-                message.dataPacket,
-                listOf(Armor.unarmor(key.privateKey.string)),
-                passphraseFor(key)
-            )
+            val data = passphraseFor(key).use {
+                openPgp.decryptAttachmentBinKey(
+                    message.keyPacket,
+                    message.dataPacket,
+                    listOf(Armor.unarmor(key.privateKey.string)),
+                    it
+                )
+            }
             BinaryDecryptionResult(data, false, false)
         }
     }
@@ -214,10 +219,10 @@ class AddressCrypto @AssistedInject constructor(
      */
     override fun decrypt(message: CipherText): TextDecryptionResult {
         return withCurrentKeys("Error decrypting message") { key ->
-            val unarmor = Armor.unarmor(key.privateKey.string)
-            val keyPassphrase = passphraseFor(key)
-            val decryptMessageBinKey =
-                openPgp.decryptMessageBinKey(message.armored, unarmor, keyPassphrase)
+            val privateKey = Armor.unarmor(key.privateKey.string)
+            val decryptMessageBinKey = passphraseFor(key).use {
+                openPgp.decryptMessageBinKey(message.armored, privateKey, it)
+            }
             TextDecryptionResult(decryptMessageBinKey, false, false)
         }
     }
@@ -263,12 +268,14 @@ class AddressCrypto @AssistedInject constructor(
     fun getSessionKey(keyPacket: ByteArray): SessionKey {
         return withCurrentKeys("Error getting Session") { key ->
             val unarmored = Armor.unarmor(key.privateKey.string)
-            openPgp.getSessionFromKeyPacketBinkeys(keyPacket, unarmored, passphraseFor(key))
+            passphraseFor(key).use {
+                openPgp.getSessionFromKeyPacketBinkeys(keyPacket, unarmored, it)
+            }
         }
     }
 
     private fun createAndUnlockKeyRing(): KeyRing {
-        checkNotNull(mailboxPassword) { "Error creating KeyRing, invalid passphrase" }
+        checkNotNull(userPassphrase) { "Error creating KeyRing, invalid passphrase" }
 
         val addressKeyRing = GoOpenPgpCrypto.newKeyRing(null)
         var unlockedAtLeastOnce = false
@@ -277,9 +284,10 @@ class AddressCrypto @AssistedInject constructor(
         // try to unlock as many keys as possible, using their respective passphrases
         for (key in currentKeys) {
             try {
-                val addressKeyPassphrase = passphraseFor(key)
                 val lockedAddressKey = GoOpenPgpCrypto.newKeyFromArmored(key.privateKey.string)
-                addressKeyRing.addKey(lockedAddressKey.unlock(addressKeyPassphrase))
+                passphraseFor(key).use {
+                    addressKeyRing.addKey(lockedAddressKey.unlock(it))
+                }
                 unlockedAtLeastOnce = true
             } catch (ignored: Exception) {
                 // This exception says only that one of possibly many keys was incorrect
@@ -304,7 +312,9 @@ class AddressCrypto @AssistedInject constructor(
             passphraseFor(primaryAddressKey)
         ) { "Could not get the address key passphrase" }
         val lockedAddressKey = GoOpenPgpCrypto.newKeyFromArmored(primaryAddressKey.privateKey.string)
-        val unlockedAddressKey = lockedAddressKey.unlock(addressKeyPassphrase)
-        GoOpenPgpCrypto.newKeyRing(unlockedAddressKey)
+        addressKeyPassphrase.use {
+            val unlockedAddressKey = lockedAddressKey.unlock(it)
+            GoOpenPgpCrypto.newKeyRing(unlockedAddressKey)
+        }
     }
 }
