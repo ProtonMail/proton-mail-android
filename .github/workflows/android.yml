@@ -1,0 +1,325 @@
+before_script:
+  - source /load-env.sh
+  - export JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=$( echo ${http_proxy##http://} | cut -d':' -f1 ) -Dhttp.proxyPort=$( echo ${http_proxy##http://} | cut -d':' -f2 ) -Dhttps.proxyHost=$( echo ${https_proxy##http://} | cut -d':' -f1 ) -Dhttps.proxyPort=$( echo ${https_proxy##http://} | cut -d':' -f2 ) -Dhttp.nonProxyHosts=\"$( echo $no_proxy | tr ',' '|' )\""
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
+  - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
+  - !reference [.checkout-core-submodule, before_script] # included from checkout-core.gitlab-ci.yml
+
+variables:
+  ORG_GRADLE_PROJECT_useCoreGitSubmodule: "true" # see included checkout-core.gitlab-ci.yml for usage context
+
+image: ${CI_REGISTRY}/android/shared/docker-android:v1.0.0
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .gradle
+    - '**/build'
+    - '**/**/build'
+    - '**/**/**/build'
+
+stages:
+  - manual-release
+  - analyze
+  - build
+  - startReview
+  - test
+  - bot-i18n
+  - bot-release
+  - fixups
+
+detekt analysis:
+  stage: analyze
+  extends: .checkout_core_submodule_job
+  tags:
+    - large
+  except:
+    - schedules
+  script:
+    - ./gradlew multiModuleDetekt
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - config/detekt/reports/*
+    reports:
+      codequality: config/detekt/reports/mergedReport.json
+
+build debug:
+  stage: build
+  extends: .checkout_core_submodule_job
+  tags:
+    - xlarge-k8s
+  script:
+    - ./gradlew assembleBetaDebug
+    - ./gradlew assembleBetaDebugAndroidTest
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - app/build/outputs/apk
+
+build uiAutomation:
+  stage: build
+  extends: .checkout_core_submodule_job
+  tags:
+    - xlarge-k8s
+  script:
+    - ./gradlew assembleUiAutomationDebug -PtestEnv=live
+    - ./gradlew assembleUiAutomationDebugAndroidTest -PtestEnv=live
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - app/build/outputs/apk
+
+build alpha:
+  stage: build
+  extends: .checkout_core_submodule_job
+  when: 'manual'
+  only:
+    - develop
+  tags:
+    - xlarge-k8s
+  script:
+    - ./gradlew clean
+    - ./gradlew assembleAlphaRelease
+  artifacts:
+    expire_in: 3 week
+    paths:
+      - app/build/outputs
+
+build release:
+  stage: build
+  extends: .checkout_core_submodule_job
+  except:
+    - schedules
+  only:
+    - prerelease
+    - release
+    - tags
+  tags:
+    - xlarge-k8s
+  script:
+    - ./gradlew clean
+    - ./gradlew assembleProductionRelease
+  artifacts:
+    expire_in: 3 week
+    paths:
+      - app/build/outputs
+
+unit tests:
+  stage: test
+  extends: .checkout_core_submodule_job
+  tags:
+    - xlarge-k8s
+  script:
+    - ./gradlew -Pci --console=plain allTest
+
+firebase ui tests:
+  stage: test
+  dependencies:
+    - build uiAutomation
+  except:
+    - schedules
+  tags:
+    - medium
+  script:
+    - curl https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz -o /tmp/google-cloud-sdk.tar.gz
+    - mkdir -p /opt
+    - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
+    - /opt/google-cloud-sdk/install.sh --quiet
+    - source /opt/google-cloud-sdk/path.bash.inc
+    - gcloud components install beta --quiet
+    - gcloud components update --quiet
+    - echo $CLOUD_PROJECT_ID_MAIL
+    - gcloud config set project $CLOUD_PROJECT_ID_MAIL
+    - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
+    - gcloud auth activate-service-account --key-file /tmp/service-account.json
+    - gcloud beta firebase test android run
+      --quiet
+      --app app/build/outputs/apk/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug.apk
+      --test app/build/outputs/apk/androidTest/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug-androidTest.apk
+      --device model=Pixel2,version=29
+      --test-targets "class ch.protonmail.android.uitests.tests.suites.SmokeSuite"
+      --use-orchestrator
+      --environment-variables clearPackageData=true
+      --num-flaky-test-attempts=1
+      --timeout 45m
+
+firebase feature tests:
+  stage: test
+  dependencies:
+    - build uiAutomation
+  rules:
+    - if: '$TEST_TYPE == "feature" || $TEST_TYPE == "regression"'
+  tags:
+    - medium
+  variables:
+    MODEL: ""
+  script:
+    - if [ -z ${DEVICE_MODEL+x} ]; then MODEL="Pixel2"; else MODEL=$DEVICE_MODEL; fi
+    - curl https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz -o /tmp/google-cloud-sdk.tar.gz
+    - mkdir -p /opt
+    - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
+    - /opt/google-cloud-sdk/install.sh --quiet
+    - source /opt/google-cloud-sdk/path.bash.inc
+    - gcloud components install beta --quiet
+    - gcloud components update --quiet
+    - echo $CLOUD_PROJECT_ID_MAIL
+    - gcloud config set project $CLOUD_PROJECT_ID_MAIL --quiet
+    - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
+    - gcloud auth activate-service-account --key-file /tmp/service-account.json --quiet
+    - export CLOUDSDK_CORE_DISABLE_PROMPTS=1
+    - gcloud beta firebase test android run
+      --quiet
+      --app app/build/outputs/apk/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug.apk
+      --test app/build/outputs/apk/androidTest/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug-androidTest.apk
+      --device model=$MODEL,version=$API_LEVEL
+      --test-targets "class ch.protonmail.android.uitests.tests.$TEST_CLASS"
+      --use-orchestrator
+      --environment-variables clearPackageData=true
+      --num-flaky-test-attempts=1
+      --timeout 45m
+      --client-details testType=$TEST_TYPE,testSuite=$TEST_CLASS,commitBranch=$CI_COMMIT_BRANCH,gitlabJobUrl=$CI_JOB_URL
+
+
+firebase instrumentation tests:
+  stage: test
+  dependencies:
+    - build debug
+  except:
+    - schedules
+  tags:
+    - medium
+  script:
+    - curl https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz -o /tmp/google-cloud-sdk.tar.gz
+    - mkdir -p /opt
+    - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
+    - /opt/google-cloud-sdk/install.sh --quiet
+    - source /opt/google-cloud-sdk/path.bash.inc
+    - gcloud components update
+    - echo $CLOUD_PROJECT_ID_MAIL
+    - gcloud config set project $CLOUD_PROJECT_ID_MAIL
+    - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
+    - gcloud auth activate-service-account --key-file /tmp/service-account.json
+    - gcloud firebase test android run
+      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
+      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
+      --type=instrumentation
+      --device model=Pixel2,version=28
+      --test-targets "notPackage ch.protonmail.android.uitests"
+      --use-orchestrator
+      --num-flaky-test-attempts=1
+      --timeout 20m
+
+include:
+  - project: 'translations/generator'
+    ref: master
+    file: '/jobs/sync-crowdin.gitlab-ci.yml'
+
+  - project: 'translations/generator'
+    ref: master
+    file: '/jobs/commit-locales.gitlab-ci.yml'
+
+  - project: 'translations/spellcheck'
+    ref: master
+    file: '/jobs/android.gitlab-ci.yml'
+
+  - project: 'agarroux/publish-github'
+    ref: master
+    file: '/jobs/release.gitlab-ci.yml'
+
+  - project: 'ProtonVPN/android/android-app-new'
+    ref: development
+    file: '/appetize-integration.yml'
+
+  - project: 'proton/mobile/android/proton-libs'
+    ref: main
+    file: '/ci/templates/checkout-core.gitlab-ci.yml'
+
+
+startReview:
+  before_script:
+    - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
+    - export REVIEW_APP_ARTIFACT_PATH="app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk"
+    - echo ${REVIEW_APP_ARTIFACT_PATH}
+  extends: .startReview
+  except:
+    - schedules
+
+stopReview:
+  extends: .stopReview
+  rules:
+    # The cleanup is always manual on a Merge Request
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
+      allow_failure: true
+    # But it's not needed when not on a Merge Request
+    - when: never
+
+i18n-sync-crowdin:
+  stage: bot-i18n
+  needs: [ 'detekt analysis' ]
+  variables:
+    I18N_SYNC_CROWDIN_PROJECT: 'android-mail'
+  extends: .i18n-sync-crowdin-shared
+  except:
+    refs:
+      - pipelines
+      - schedules
+    variables:
+      - $TEST_TYPE == "feature" || $TEST_TYPE == "regression"
+
+i18n-commit-locales:
+  stage: bot-i18n
+  variables:
+    I18N_COMMIT_CROWDIN_PROJECT: 'android-mail'
+  extends: .i18n-commit-locales-shared
+  except:
+    variables:
+      - $TEST_TYPE == "feature" || $TEST_TYPE == "regression"
+
+release-publish-github:
+  stage: manual-release
+  when: 'manual'
+  variables:
+    RELEASE_SYNC_PUBLIC_URL: git@github.com:ProtonMail/proton-mail-android.git
+    RELEASE_SYNC_TO_BRANCH: 'release'
+    RELEASE_SYNC_FROM_BRANCH: 'release'
+  extends: .release-sync-commit-shared
+  tags:
+    - small
+
+release-publish-github-tags:
+  stage: bot-release
+  when: 'manual'
+  dependencies:
+    - build release
+  variables:
+    RELEASE_SYNC_PUBLIC_URL: git@github.com:ProtonMail/proton-mail-android.git
+    RELEASE_SYNC_TO_BRANCH: 'release'
+    RELEASE_SYNC_FROM_BRANCH: 'release'
+  extends: .release-sync-tags-shared
+  tags:
+    - small
+
+publish-github:
+  stage: bot-release
+  when: 'manual'
+  dependencies:
+    - build release
+  variables:
+    RELEASE_APP: android-mail
+    RELEASE_GITHUB_REPOSITORY: ProtonMail/proton-mail-android
+    RELEASE_GITHUB_BRANCH: 'release'
+  extends: .release-make-release
+  tags:
+    - small
+
+check for fixups:
+  stage: fixups
+  script:
+    - git fetch origin $CI_COMMIT_BRANCH
+    - git fetch origin develop
+    - git log --pretty=%s "origin/develop..origin/$CI_COMMIT_BRANCH" | awk '$0 ~ /^fixup/ {find = 1}; END { exit find }'
+  except:
+    - schedules
