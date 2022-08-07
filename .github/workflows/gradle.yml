@@ -9,12 +9,12 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "release" ]
+    branches: [ "squish" ]
   pull_request:
-    branches: [ "release" ]
+    branches: [ "squish" ]
 
 permissions:
-  contents: read
+  contents: read666
 
 jobs:
   build:
