@@ -1,10 +1,3 @@
-before_script:
-  - source /load-env.sh
-  - export JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=$( echo ${http_proxy##http://} | cut -d':' -f1 ) -Dhttp.proxyPort=$( echo ${http_proxy##http://} | cut -d':' -f2 ) -Dhttps.proxyHost=$( echo ${https_proxy##http://} | cut -d':' -f1 ) -Dhttps.proxyPort=$( echo ${https_proxy##http://} | cut -d':' -f2 ) -Dhttp.nonProxyHosts=\"$( echo $no_proxy | tr ',' '|' )\""
-  - export GRADLE_USER_HOME=`pwd`/.gradle
-  - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
-  - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
-  - !reference [.checkout-core-submodule, before_script] # included from checkout-core.gitlab-ci.yml
 
 variables:
   ORG_GRADLE_PROJECT_useCoreGitSubmodule: "true" # see included checkout-core.gitlab-ci.yml for usage context
