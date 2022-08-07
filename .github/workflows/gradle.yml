@@ -14,7 +14,7 @@ on:
     branches: [ "squish" ]
 
 permissions:
-  contents: read666
+  contents: read
 
 jobs:
   build:
