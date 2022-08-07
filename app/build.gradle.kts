@@ -24,7 +24,6 @@ import java.util.Properties
 
 plugins {
     `android-application`
-    `google-services`
     `kotlin-android`
     `kotlin-android-extensions`
     `kotlin-kapt`
