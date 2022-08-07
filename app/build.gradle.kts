@@ -374,7 +374,6 @@ dependencies {
         `fasterxml-jackson-core`,
         `fasterxml-jackson-anno`,
         `fasterxml-jackson-databind`,
-        `firebase-messaging`,
         `gson`,
         `jsoup`,
         `minidns`,
