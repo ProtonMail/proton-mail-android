@@ -180,7 +180,7 @@
     <string name="message_details_load_failure">Tidak dapat mengambil rincian pesan</string>
     <string name="no_more_messages">Tidak ada pesan lagi</string>
     <string name="no_network_queued">Tidak ada jaringan, pesan diantrekan</string>
-    <string name="update_app_title">Butuh pembaruan</string>
+    <string name="update_app_title">Pembaruan dibutuhkan</string>
     <string name="update_app">Aplikasi Proton Mail Anda tidak dapat digunakan sebelum diperbarui</string>
     <string name="you_are_offline">Anda sedang offline</string>
     <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
@@ -376,7 +376,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="no_available_addresses">Anda tidak memiliki alamat yang tersedia</string>
     <string name="no_inactive_addresses">Anda tidak memiliki alamat yang tidak aktif</string>
     <string name="label_add_new">Tambahkan Label Baru</string>
-    <string name="available_labels">Label yang tersedia</string>
+    <string name="available_labels">Label yang Tersedia</string>
     <string name="delete_selected">Hapus Pilihan</string>
     <string name="pin_not_activated">PIN tidak diaktifkan</string>
     <string name="available_options">Pilihan yang tersedia</string>

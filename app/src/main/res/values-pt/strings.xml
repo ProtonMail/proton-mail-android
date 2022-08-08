@@ -55,8 +55,8 @@
     <string name="mailbox_empty_state_try_a_different_term">Tente um termo de pesquisa diferente</string>
     <string name="mailbox_no_messages">Nenhuma mensagem</string>
     <plurals name="mailbox_unread_count">
-        <item quantity="one">%d unread</item>
-        <item quantity="other">%d unread</item>
+        <item quantity="one">%d não lida</item>
+        <item quantity="other">%d não lidas</item>
     </plurals>
     <string name="mailbox_updated_just_now">Atualizado agora mesmo</string>
     <string name="mailbox_updated_recently">Atualizado recentemente</string>
@@ -69,8 +69,8 @@
     <string name="details_play_store_error">Não consigo abrir a Play Store</string>
     <string name="details_hyperlink_phishing_dialog_title">Aviso: suspeita de sítio web falso</string>
     <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
-    <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
-    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Retroceder (recomendado)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorar aviso e continuar</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -79,7 +79,7 @@
     <string name="composer_from">De:</string>
     <string name="composer_subject">Assunto:</string>
     <string name="composer_to">Para:</string>
-    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
+    <string name="composer_removing_address_generic_error">Não foi possível verificar o endereço: %s1. O envio poderá falhar.</string>
     <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
@@ -107,13 +107,13 @@
     <string name="set_msg_expiration_check_description">Este item está verificado</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_create_pin_code_title">Definir código PIN</string>
     <string name="settings_confirm_pin_code_title">Repetir o código PIN</string>
     <string name="settings_pins_dont_match">Os códigos PIN têm de ser iguais!</string>
     <string name="settings_enter_pin_code_title">Inserir o código PIN</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
-    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB usado)</string>
+    <string name="settings_storage_limit_unlimited_value">Ilimitado (%1$.2f MB usado)</string>
     <string name="settings_swipe_settings_info">Configure gestos de deslize para aceder às acções mais usadas.</string>
     <string name="settings_swipe_left_to_right">Da esquerda para a direita</string>
     <string name="settings_swipe_right_to_left">Da direita para a esquerda</string>
@@ -121,10 +121,10 @@
     <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">App theme</string>
-    <string name="app_theme_light">Light</string>
-    <string name="app_theme_dark">Dark</string>
-    <string name="app_theme_system">System default</string>
+    <string name="app_theme_title">Tema</string>
+    <string name="app_theme_light">Claro</string>
+    <string name="app_theme_dark">Escuro</string>
+    <string name="app_theme_system">Predefinição do sistema</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
@@ -135,32 +135,32 @@
     <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
     <!-- endregion -->
     <!-- region Notifications -->
-    <string name="notification_summary_text_new_messages">New messages</string>
+    <string name="notification_summary_text_new_messages">Novas mensagens</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Nenhum contato</string>
     <string name="contacts_empty_state_no_groups">Nenhum grupo</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
-    <string name="contact_details_remote_content_dialog_title">Remote content</string>
-    <string name="contact_details_remote_content_dialog_message">This contact contains remote content.</string>
-    <string name="contact_details_remote_content_dialog_positive_button">Load content</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">Os grupos de contatos não serão importados. Atualize para um plano pago para aproveitar os recursos premium.</string>
+    <string name="contact_details_remote_content_dialog_title">Conteúdo remoto</string>
+    <string name="contact_details_remote_content_dialog_message">Este contacto contém conteúdo remoto.</string>
+    <string name="contact_details_remote_content_dialog_positive_button">Carregar conteúdo</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">Privacy for all</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Privacidade para todos</string>
     <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Neat and tidy</string>
     <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
     <string name="existing_user_onboarding_new_look_headline">New look, same protection</string>
     <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
-    <string name="existing_user_onboarding_new_features_headline">New features</string>
+    <string name="existing_user_onboarding_new_features_headline">Novas funcionalidades</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton atualizado, proteção unificada</string>
     <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
-    <string name="onboarding_next">Next</string>
-    <string name="onboarding_get_started">Get started</string>
-    <string name="onboarding_got_it">Got it</string>
+    <string name="onboarding_next">Seguinte</string>
+    <string name="onboarding_get_started">Começar</string>
+    <string name="onboarding_got_it">Entendi</string>
     <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -505,7 +505,7 @@
     <string name="email_empty">Falta o endereço de email</string>
     <string name="encrypted_contact_details">Detalhes do contacto encriptados</string>
     <string name="convert_question">Enviar contactos locais</string>
-    <string name="convert_question_subtitle">This will upload the local contacts on your device to your Proton Mail contacts directory. You will then be able to access these contacts on your other devices through Proton Mail.</string>
+    <string name="convert_question_subtitle">Isto sincronizará os contactos locais no seu dispositivo com a pasta de contactos no Proton Mail. Terá depois acesso a estes contactos noutros dispositivos através do Proton Mail.</string>
     <string name="refresh_contacts">Actualizar</string>
     <string name="invalid_email_some_contacts">O endereço de email de alguns dos seus contactos não é válido</string>
     <string name="protonmail_contacts">Contatos do Proton Mail</string>
@@ -625,8 +625,8 @@
     <string name="fab_add_contact">Adicionar novo contacto</string>
     <string name="fab_add_contact_group">Adicionar novo grupo de contactos</string>
     <string name="contacts_add_photo_title">Adicionar fotografia</string>
-    <string name="contacts_add_photo_select_gallery">Select from Gallery</string>
-    <string name="contacts_add_photo_select_camera">Capture from Camera</string>
+    <string name="contacts_add_photo_select_gallery">Selecionar da galeria</string>
+    <string name="contacts_add_photo_select_camera">Capturar da câmara</string>
     <string name="save_group_validation_error">Por favor, dê um nome ao grupo</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Limite de armazenamento atingido. Impossível enviar ou receber emails.
@@ -660,9 +660,9 @@
     <string name="account_settings">Definições de conta</string>
     <!-- region Acc Settings -->
     <string name="account">Conta</string>
-    <string name="drawer_subscription">Subscription</string>
+    <string name="drawer_subscription">Subscrição</string>
     <string name="password_manager">Gestão de senhas</string>
-    <string name="password_changed">Password changed.</string>
+    <string name="password_changed">Senha alterada.</string>
     <string name="recovery_email">Email de recuperação</string>
     <string name="recovery_email_changed">Recovery email changed.</string>
     <string name="storage">Tamanho da caixa de correio</string>
@@ -760,7 +760,7 @@
     <!-- endregion -->
     <string name="local_storage">Limite de armazenamento local</string>
     <!-- endregion -->
-    <string name="app_settings">App settings</string>
+    <string name="app_settings">Definições da aplicação</string>
     <!-- region App Settings -->
     <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Notificações estendidas</string>
@@ -774,19 +774,19 @@
     <string name="connections_via_third_parties">Redireccionamento alternativo</string>
     <string name="allow_secure_connections_via_third_parties">Permitir redireccionamento alternativo</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Caso as páginas do Proton estejam bloqueadas, esta definição permite à aplicação tentar redireccionar o tráfego para ligar ao Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos que mantenha esta definição para maior confiança.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
-    <string name="app_language">App language</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Caso as páginas do Proton estejam bloqueadas, esta definição permite à aplicação tentar redireccionar o tráfego para ligar ao Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos que mantenha esta definição para maior confiança. <a href="ps://protonmail.com/blog/anti-censorship-alternative-routing/">Saiba mais</a></string>
+    <string name="app_language">Idioma da aplicação</string>
     <string name="custom_language_dialog_title">Seleccionar idioma da aplicação</string>
     <string name="auto_detect">Auto-detectar</string>
     <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">Active esta funcionalidade para preencher automaticamente endereços de email utilizando contactos de todas as suas contas ligadas.</string>
-    <string name="local_cache_management">Local cache</string>
-    <string name="cache_cleared">Local cache is Refreshed</string>
-    <string name="empty_data">Clear data</string>
+    <string name="local_cache_management">Memória cache local</string>
+    <string name="cache_cleared">A memória cache local foi atualizada</string>
+    <string name="empty_data">Limpar dados</string>
     <!-- endregion -->
     <string name="enabled">Activado</string>
     <string name="disabled">Desactivado</string>
-    <string name="app_info">App information</string>
+    <string name="app_info">Informações da aplicação</string>
     <string name="app_version">Versão da aplicação</string>
     <!-- endregion -->
     <!-- region Multi Account -->
@@ -839,8 +839,8 @@
     <string name="manage">Gerir</string>
     <string name="message_from">Mensagem de %s</string>
     <string name="not_spam_move_to_inbox">Não é spam (mover para caixa de entrada)</string>
-    <string name="action_sheet_view_in_light_mode">View in Light mode</string>
-    <string name="action_sheet_view_in_dark_mode">View in Dark mode</string>
+    <string name="action_sheet_view_in_light_mode">Ver no modo claro</string>
+    <string name="action_sheet_view_in_dark_mode">Ver no modo escuro</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d mensagem</item>
         <item quantity="other">%d mensagens</item>
@@ -856,6 +856,6 @@
     <string name="inbox_pull_down_to_retry">Por favor, puxe para tentar novamente</string>
     <string name="edit_draft">Editar rascunho</string>
     <string name="details_show_history">Mostrar histórico</string>
-    <string name="could_not_complete_action">Could not complete the action</string>
+    <string name="could_not_complete_action">Não foi possível completar a ação</string>
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
 </resources>

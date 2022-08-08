@@ -709,13 +709,13 @@
     <string name="weekends">Helg</string>
     <string name="every_day">Varje dag</string>
     <string-array name="snooze_repeat_values">
-        <item>Mån</item>
-        <item>Tis</item>
-        <item>Ons</item>
-        <item>Tor</item>
-        <item>Fre</item>
-        <item>Lör</item>
-        <item>Sön</item>
+        <item>Må</item>
+        <item>Ti</item>
+        <item>On</item>
+        <item>To</item>
+        <item>Fr</item>
+        <item>Lö</item>
+        <item>Sö</item>
     </string-array>
     <string name="quick_and_scheduled_enabled">Snabbsnooze och schemalagd snooze aktiverat</string>
     <string name="quick_only_enabled">Snabbsnooze aktiverat</string>
