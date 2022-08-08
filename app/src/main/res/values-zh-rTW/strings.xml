@@ -35,12 +35,12 @@
     <!-- region Content descriptions: accessibility description for icons -->
     <string name="x_label_icon_description">標籤圖示</string>
     <string name="x_folder_icon_description">資料夾圖示</string>
-    <string name="x_parent_folder_icon_description">含資料夾之圖示</string>
+    <string name="x_parent_folder_icon_description">Folder with children icon</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">聯絡人</string>
     <string name="drawer_lock_the_app">鎖定應用程式</string>
-    <string name="drawer_report_bug">報告錯誤</string>
+    <string name="drawer_report_bug">提報錯誤</string>
     <string name="drawer_settings">設定</string>
     <string name="drawer_sign_out">登出</string>
     <string name="drawer_create_folder_description">建立新資料夾</string>
@@ -62,24 +62,24 @@
     <string name="mailbox_updating">正在更新……</string>
     <!-- endregion -->
     <!-- region Details -->
-    <string name="details_open_in_proton_calendar_title">於Proton 行事曆中打開</string>
+    <string name="details_open_in_proton_calendar_title">於 Proton 行事曆中打開</string>
     <string name="details_open_in_proton_calendar_subtitle">安全加密行事曆</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton 行事曆圖示</string>
     <string name="details_play_store_error">無法打開 Play 商店</string>
     <string name="details_hyperlink_phishing_dialog_title">警告：疑似假冒網站</string>
     <string name="details_hyperlink_phishing_dialog_content">此連結指向的網站可能試圖竊取您的資訊，如密碼與信用卡詳細資訊等。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;為了您的安全，請不要繼續。</string>
-    <string name="details_hyperlink_phishing_dialog_cancel_action">返回（推薦）</string>
-    <string name="details_hyperlink_phishing_dialog_confirm_action">忽略警告並繼續</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">返回 (建議)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">忽略警語並繼續</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">密件副本：</string>
-    <string name="composer_cc">副本：</string>
+    <string name="composer_bcc">密件副本 :</string>
+    <string name="composer_cc">副本 :</string>
     <string name="composer_compose_email">撰寫電郵</string>
     <string name="composer_from">寄件人：</string>
     <string name="composer_subject">主旨：</string>
     <string name="composer_to">收件人：</string>
     <string name="composer_removing_address_generic_error">無法驗證位址：%s1。傳送可能失敗。</string>
-    <string name="composer_removing_address_server_error">正在移除位置：%s1。%s2</string>
+    <string name="composer_removing_address_server_error">正在移除位址 : %s1 . %s2</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">在 %s，%s &lt; %s&gt; 寫道：</string>
     <string name="set_msg_password_title">設定密碼</string>
@@ -126,7 +126,7 @@
     <string name="app_theme_system">系統預設</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">選取上層資料夾（選擇性）</string>
+    <string name="labels_manager_select_parent_folder">選取上層資料夾 (選擇性)</string>
     <string name="labels_manager_parent_folder_selected"><b>已選取上層資料夾</b>點擊以變更</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
@@ -269,7 +269,7 @@
     <string name="add_contact">加入聯絡人</string>
     <string name="delete_contact">是否把 %s 從聯絡人中刪除？</string>
     <string name="confirm">確認</string>
-    <string name="confirm_destructive_action">您確定要這麼做？此操作執行後即無法復原！</string>
+    <string name="confirm_destructive_action">您確定要這麼做？此操作執行後即無法復原。</string>
     <string name="create">建立</string>
     <string name="email">電郵</string>
     <string name="phone">手機號碼</string>

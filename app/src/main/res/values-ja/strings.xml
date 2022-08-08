@@ -248,9 +248,9 @@
     <string name="max_labels_exceeded">メッセージ %1$s には %2$d ラベル以上設定できません。</string>
     <string name="max_attachments_reached">添付できるファイル数の上限に達しています。</string>
     <string name="max_attachments_size_reached">添付できるファイルの容量の上限に達しています。</string>
-    <string name="expiration_days">%dD</string>
-    <string name="expiration_hours">%dH</string>
-    <string name="expiration_minutes">%dM</string>
+    <string name="expiration_days">%d 日</string>
+    <string name="expiration_hours">%d 時間</string>
+    <string name="expiration_minutes">%d 分</string>
     <plurals name="attachments">
         <item quantity="other">%d 件の添付ファイル</item>
     </plurals>
@@ -496,7 +496,7 @@
     <string name="learn_more"><u>詳細</u></string>
     <string name="info">情報</string>
     <string name="error_can_not_send_from_this_address">%s アドレスから送信するには有料プランへのアップグレードが必要です。</string>
-    <string name="email_empty">メールアドレスがありません。</string>
+    <string name="email_empty">メールアドレスがありません</string>
     <string name="encrypted_contact_details">暗号化された連絡先の詳細</string>
     <string name="convert_question">ローカルの連絡先をアップロード</string>
     <string name="convert_question_subtitle">デバイスのローカル連絡先が Proton Mail 連絡先ディレクトリにアップロードされます。Proton Mail を使用して、他のデバイスの連絡先にアクセスできます。</string>
@@ -506,7 +506,7 @@
     <string name="device_contacts">デバイスの連絡先</string>
     <string name="print_date_template">日付: %s</string>
     <string name="print_attachment_template">添付ファイル: %s;  </string>
-    <string name="pm_me_changed">\@pm.meアドレスからのメッセージ送信は有料の機能です。メッセージは既定アドレスの%sから送信されます。</string>
+    <string name="pm_me_changed">\@pm.me アドレスからのメッセージ送信は有料の機能です。あなたのメッセージは既定アドレスの %s から送信されます。</string>
     <string name="pm_me_can_not_be_default">%s のアドレスを既定にするためには有料プランにアップグレードしてください。</string>
     <string name="dont_remind_again">今後このメッセージを表示しない</string>
     <string name="load_embedded_images">埋め込み画像を読み込む</string>
