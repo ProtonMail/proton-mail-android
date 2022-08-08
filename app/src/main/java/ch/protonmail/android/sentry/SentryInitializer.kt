@@ -20,17 +20,15 @@
 package ch.protonmail.android.sentry
 
 import android.content.Context
-import android.os.Build
 import androidx.startup.Initializer
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.utils.AppUtil
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import io.sentry.Sentry
 import io.sentry.SentryOptions
+import io.sentry.android.core.SentryAndroid
 
 class SentryInitializer : Initializer<Unit> {
 
@@ -40,14 +38,11 @@ class SentryInitializer : Initializer<Unit> {
             SentryInitializerEntryPoint::class.java
         )
 
-        Sentry.init { options: SentryOptions ->
+        SentryAndroid.init(context.applicationContext) { options: SentryOptions ->
             with(options) {
                 dsn = BuildConfig.SENTRY_DSN
                 release = BuildConfig.VERSION_NAME
                 environment = Constants.HOST
-                setTag(APP_VERSION, AppUtil.getAppVersion())
-                setTag(SDK_VERSION, "${Build.VERSION.SDK_INT}")
-                setTag(DEVICE_MODEL, Build.MODEL)
                 beforeSend = entryPoint.vpnBeforeSendHook()
             }
         }
@@ -65,12 +60,5 @@ class SentryInitializer : Initializer<Unit> {
         fun vpnBeforeSendHook(): SentryVpnBeforeSendHook
         fun userObserver(): SentryUserObserver
         fun proxyObserver(): SentryProxyObserver
-    }
-
-    private companion object Tag {
-
-        const val APP_VERSION = "APP_VERSION"
-        const val SDK_VERSION = "SDK_VERSION"
-        const val DEVICE_MODEL = "DEVICE_MODEL"
     }
 }

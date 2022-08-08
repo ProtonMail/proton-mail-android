@@ -20,6 +20,7 @@
 package ch.protonmail.android.sentry
 
 import ch.protonmail.android.core.NetworkConnectivityManager
+import io.sentry.Hint
 import io.sentry.SentryEvent
 import io.sentry.SentryOptions.BeforeSendCallback
 import javax.inject.Inject
@@ -30,7 +31,7 @@ class SentryVpnBeforeSendHook @Inject constructor(
     private val networkConnectivityManager: NetworkConnectivityManager
 ) : BeforeSendCallback {
 
-    override fun execute(event: SentryEvent, hint: Any?): SentryEvent {
+    override fun execute(event: SentryEvent, hint: Hint): SentryEvent {
         return event.apply {
             setTag(ON_VPN, networkConnectivityManager.isConnectedToVpn().toString())
         }
