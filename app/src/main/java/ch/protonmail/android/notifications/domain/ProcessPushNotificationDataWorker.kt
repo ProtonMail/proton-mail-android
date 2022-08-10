@@ -153,9 +153,9 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
             }
             NotificationAction.TOUCHED -> {
                 fetchEventsAndReschedule()
-                val notification =
-                    checkNotNull(notificationRepository.getNotificationByIdBlocking(pushNotificationData.messageId))
-                clearNotification.invoke(userId, notification.id.value)
+                val notification = notificationRepository.getNotificationByIdBlocking(pushNotificationData.messageId)
+                if (notification != null) clearNotification.invoke(userId, notification.id.value)
+                else Timber.d("Notification has been removed")
             }
 
         }

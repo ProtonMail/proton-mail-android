@@ -19,6 +19,7 @@
 package ch.protonmail.android.views
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.MailTo
@@ -39,6 +40,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButto
 import kotlinx.coroutines.runBlocking
 import me.proton.core.presentation.utils.showToast
 import me.proton.core.util.kotlin.startsWith
+import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.net.MalformedURLException
 import java.net.URL
@@ -87,7 +89,12 @@ open class PmWebViewClient(
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(fixedUrl)
                 if (showHyperlinkConfirmation(fixedUrl).not()) {
-                    activity.startActivity(intent)
+                    try {
+                        activity.startActivity(intent)
+                    } catch (notFoundException: ActivityNotFoundException) {
+                        Timber.i(notFoundException, "Unable to open link")
+                        activity.showToast(R.string.no_application_found)
+                    }
                 }
             }
         }
@@ -179,7 +186,13 @@ open class PmWebViewClient(
             okListener = {
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(url)
-                activity.startActivity(intent)
+                try {
+                    activity.startActivity(intent)
+                } catch (notFoundException: ActivityNotFoundException) {
+                    Timber.i(notFoundException, "Unable to open link")
+                    activity.showToast(R.string.no_application_found)
+                    it.dismiss()
+                }
             },
             checkedListener = { isChecked ->
                 runBlocking {
@@ -206,7 +219,12 @@ open class PmWebViewClient(
         ) {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(url)
-            activity.startActivity(intent)
+            try {
+                activity.startActivity(intent)
+            } catch (notFoundException: ActivityNotFoundException) {
+                Timber.i(notFoundException, "Unable to open link")
+                activity.showToast(R.string.no_application_found)
+            }
         }
     }
 
