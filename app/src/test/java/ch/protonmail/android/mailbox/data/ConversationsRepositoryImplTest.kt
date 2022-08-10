@@ -1600,7 +1600,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
-    fun handlesExceptionDuringUnreadCountersRefresh() = runBlockingTest {
+    fun handlesExceptionDuringUnreadCountersRefreshAndContinuesObserving() = runBlockingTest {
         // given
         val expectedMessage = "Invalid username!"
         coEvery { api.fetchConversationsCounts(testUserId) } answers {
@@ -1613,8 +1613,6 @@ class ConversationsRepositoryImplTest : ArchTest {
             // then
             val actual = awaitItem() as DataResult.Error.Remote
             assertEquals(expectedMessage, actual.message)
-
-            awaitComplete()
         }
     }
 
