@@ -202,6 +202,7 @@
         android:padding="@dimen/message_details_header_chevron_icon_padding"
         app:srcCompat="@drawable/ic_proton_chevron_down"
         android:visibility="gone"
+        android:contentDescription="@string/expand_message_details"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/timeDateTextView"
         app:tint="@color/icon_weak"
