@@ -86,8 +86,8 @@
     <string name="composer_from">From:</string>
     <string name="composer_subject">Subject:</string>
     <string name="composer_to">To:</string>
-    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
-    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
 
