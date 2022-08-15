@@ -42,7 +42,7 @@
     <string name="drawer_lock_the_app">Bloquejar l\'aplicació</string>
     <string name="drawer_report_bug">Informar d\'un error</string>
     <string name="drawer_settings">Preferències</string>
-    <string name="drawer_sign_out">Tancar la sessió</string>
+    <string name="drawer_sign_out">Tanca la sessió</string>
     <string name="drawer_create_folder_description">Crear carpeta nova</string>
     <string name="drawer_create_label_description">Crear etiqueta nova</string>
     <!-- endregion -->
@@ -170,8 +170,8 @@
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">Proton Mail</string>
-    <string name="sign_out">Tancar sessió</string>
-    <string name="sign_out_question">Està segur que desitja tancar la sessió?</string>
+    <string name="sign_out">Tanca la sessió</string>
+    <string name="sign_out_question">Segur que voleu tancar la sessió?</string>
     <string name="processing_request">La teva sol·licitud s\'està processant</string>
     <!-- should check for html tag -->
     <!-- Toast messages -->
@@ -671,7 +671,7 @@
     <string name="default_mail_address">Adreça de correu per defecte</string>
     <string name="default_address">Adreça per defecte</string>
     <string name="display_name_n_signature">Nom de visualització i signatura</string>
-    <string name="display_name">Mostrar el nom</string>
+    <string name="display_name">Nom a mostrar</string>
     <string name="edit_display_name">Modificar el nom per mostrar</string>
     <string name="signature">Signatura</string>
     <string name="mobile_footer">Text al peu al mòbil</string>

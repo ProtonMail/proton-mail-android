@@ -56,7 +56,7 @@
     <string name="mailbox_no_messages">No hay mensajes</string>
     <plurals name="mailbox_unread_count">
         <item quantity="one">%d no leído</item>
-        <item quantity="other">%d no leído</item>
+        <item quantity="other">%d sin leer</item>
     </plurals>
     <string name="mailbox_updated_just_now">Actualizado justo ahora</string>
     <string name="mailbox_updated_recently">Actualizado recientemente</string>
@@ -678,7 +678,7 @@ compre más
     <string name="edit_mobile_footer">Activar pie de página en la aplicación móvil</string>
     <string name="default_mobile_footer">Enviado desde Proton Mail móvil</string>
     <string name="mobile_footer_is_premium">Cambiar el pie de página en la aplicación móvil solo le está permitido a usuarios de pago</string>
-    <string name="mobile_footer_info">Este pie de página se añade después de su firma</string>
+    <string name="mobile_footer_info">Este pie de página se añadirá después de su firma</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Silenciar</string>
     <string name="notifications_snooze">Silenciar notificaciones</string>
