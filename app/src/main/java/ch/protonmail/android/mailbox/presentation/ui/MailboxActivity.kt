@@ -43,7 +43,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.postDelayed
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.loader.app.LoaderManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -375,6 +377,7 @@ internal class MailboxActivity :
                 .launchIn(lifecycleScope)
 
             unreadCounters
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .onEach(sideDrawer::setUnreadCounters)
                 .launchIn(lifecycleScope)
 
