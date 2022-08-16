@@ -86,8 +86,11 @@ class AndroidUserNotifierTest : CoroutinesTest {
 
         userNotifier.showSendMessageError(errorMessage, subject)
 
-        val errorAndSubject = "\"$subject\" - $errorMessage"
-        verify { notificationServer.notifySingleErrorSendingMessage(testUserId, testUserName, errorAndSubject) }
+        verify {
+            notificationServer.notifySingleErrorSendingMessage(
+                testUserId, testUserName, errorMessage, "- \"$subject\""
+            )
+        }
     }
 
     @Test

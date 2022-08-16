@@ -24,4 +24,5 @@ sealed class SaveDraftResult {
     object OnlineDraftCreationFailed : SaveDraftResult()
     object UploadDraftAttachmentsFailed : SaveDraftResult()
     object MessageAlreadySent : SaveDraftResult()
+    object InvalidSender : SaveDraftResult()
 }

@@ -49,6 +49,7 @@ import ch.protonmail.android.compose.send.SendMessageWorkerError.DraftCreationFa
 import ch.protonmail.android.compose.send.SendMessageWorkerError.ErrorPerformingApiRequest
 import ch.protonmail.android.compose.send.SendMessageWorkerError.FailureBuildingApiRequest
 import ch.protonmail.android.compose.send.SendMessageWorkerError.FetchSendPreferencesFailed
+import ch.protonmail.android.compose.send.SendMessageWorkerError.InvalidSender
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageAlreadySent
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.SavedDraftMessageNotFound
@@ -177,6 +178,11 @@ class SendMessageWorker @AssistedInject constructor(
                 pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
                 saveMessageAsSent(message)
                 failureWithError(MessageAlreadySent)
+            }
+            is SaveDraftResult.InvalidSender -> {
+                pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
+                showInvalidSenderSendMessageError(message.subject)
+                failureWithError(InvalidSender)
             }
             is SaveDraftResult.UploadDraftAttachmentsFailed -> {
                 pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
@@ -318,6 +324,13 @@ class SendMessageWorker @AssistedInject constructor(
         )
     }
 
+    private fun showInvalidSenderSendMessageError(messageSubject: String?) {
+        userNotifier.showSendMessageError(
+            context.getString(R.string.notification_invalid_sender_sending_failed),
+            messageSubject
+        )
+    }
+
     private fun failureWithError(error: SendMessageWorkerError, exception: Throwable? = null): Result {
         Timber.e(exception, "Send Message Worker failed permanently. error = ${error.name}. FAILING")
         val errorData = workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to error.name)
@@ -326,7 +339,7 @@ class SendMessageWorker @AssistedInject constructor(
 
     private fun requireInputCurrentUserId(): UserId =
         requireNotNull(
-        inputData.getString(KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID)
+            inputData.getString(KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID)
             ?.let(::UserId)
         ) { "User Id not found as input parameter" }
 

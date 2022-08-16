@@ -68,6 +68,7 @@ const val RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED = 13_061
 const val RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST = 15_052
 const val RESPONSE_CODE_RECIPIENT_NOT_FOUND = 33_102
 const val RESPONSE_CODE_MESSAGE_ALREADY_SENT = 15_034
+const val RESPONSE_CODE_INVALID_VALUE = 2001
 
 open class BaseApi {
     protected inline fun <reified T : ResponseBody> executeAll(list: List<Call<T>>): List<T?> {

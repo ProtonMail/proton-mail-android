@@ -151,6 +151,8 @@
 
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">New messages</string>
+
+    <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"from\" email in the message is active.</string>
     <!-- endregion -->
 
     <!-- region Contacts Empty States -->
