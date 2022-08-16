@@ -35,7 +35,7 @@
     <!-- region Content descriptions: accessibility description for icons -->
     <string name="x_label_icon_description">標籤圖示</string>
     <string name="x_folder_icon_description">資料夾圖示</string>
-    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <string name="x_parent_folder_icon_description">帶有兒童圖示的資料夾</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">聯絡人</string>
@@ -204,7 +204,7 @@
     <string name="inbox">收件匣</string>
     <string name="starred">已加星號</string>
     <string name="drafts">草稿</string>
-    <string name="sent">已傳送</string>
+    <string name="sent">寄件備份</string>
     <string name="archive">封存</string>
     <string name="trash">垃圾桶</string>
     <string name="spam">垃圾郵件</string>
@@ -287,7 +287,7 @@
     <string name="attachment_limit">附件限制為 %1$s。附件全部的大小為 %2$s。</string>
     <string name="sending_message">傳送郵件中……</string>
     <string name="sending_message_offline">離線，等待稍後傳送……</string>
-    <string name="message_sent">郵件已送出</string>
+    <string name="message_sent">郵件已傳送</string>
     <string name="message_failed">郵件傳送失敗</string>
     <string name="storage_limit">儲存空間上限</string>
     <string name="edit_settings">編輯設定</string>
@@ -566,7 +566,7 @@
     <string name="print">列印</string>
     <string name="phishing_dialog_title">確認回報為網路釣魚</string>
     <string name="phishing_dialog_message">檢舉詐騙電郵會轉寄該郵件給我們，讓我們可以分析和改進篩選器。這意味我們可以完整閱讀郵件內容。</string>
-    <string name="phishing_report_send_message_moved_to_spam">提報已傳送。郵件已移動到垃圾郵件。</string>
+    <string name="phishing_report_send_message_moved_to_spam">提報已傳送。郵件移至垃圾郵件。</string>
     <string name="cannot_send_report_send">無法傳送回報</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
