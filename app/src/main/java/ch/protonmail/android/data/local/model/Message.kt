@@ -584,6 +584,12 @@ data class Message @JvmOverloads constructor(
         )
     }
 
+    fun isScheduled() = allLabelIDs.any { labelId ->
+        labelId in listOf(
+            MessageLocationType.ALL_SCHEDULED.asLabelIdString()
+        )
+    }
+
     fun isPhishing(): Boolean =
         MessageFlag.PHISHING_AUTO in flags || MessageFlag.PHISHING_MANUAL in flags
 

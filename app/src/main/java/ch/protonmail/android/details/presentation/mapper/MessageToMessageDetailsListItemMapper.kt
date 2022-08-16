@@ -35,6 +35,7 @@ class MessageToMessageDetailsListItemMapper @Inject constructor(
         message: Message,
         messageBody: String,
         shouldShowDecryptionError: Boolean,
+        shouldShowScheduledInfo: Boolean,
         shouldShowLoadEmbeddedImagesButton: Boolean
     ): MessageDetailsListItem.Body {
         val messageBodyParts = messageBodyParser.splitBody(messageBody)
@@ -44,7 +45,8 @@ class MessageToMessageDetailsListItemMapper @Inject constructor(
             messageFormattedHtmlWithQuotedHistory = messageBodyParts.messageBodyWithQuote,
             showOpenInProtonCalendar = protonCalendarUtil.hasCalendarAttachment(message),
             showLoadEmbeddedImagesButton = shouldShowLoadEmbeddedImagesButton,
-            showDecryptionError = shouldShowDecryptionError
+            showDecryptionError = shouldShowDecryptionError,
+            showScheduledInfo = shouldShowScheduledInfo
         )
     }
 }

@@ -61,6 +61,7 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.settings.data.AccountSettingsRepository
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.util.ProtonCalendarUtil
+import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.utils.ui.TYPE_HEADER
@@ -270,7 +271,8 @@ internal class MessageDetailsAdapter(
             message,
             validParsedBody,
             showDecryptionError,
-            showLoadEmbeddedImagesButton,
+            false,
+            showLoadEmbeddedImagesButton
         ).copy(embeddedImageIds = embeddedImageIds)
 
         visibleItems.indexOf(item).let { changedItemIndex ->
@@ -294,7 +296,8 @@ internal class MessageDetailsAdapter(
                 messageFormattedHtmlWithQuotedHistory = message.decryptedHTML,
                 showOpenInProtonCalendar = protonCalendarUtil.hasCalendarAttachment(message),
                 showLoadEmbeddedImagesButton = false,
-                showDecryptionError = false
+                showDecryptionError = false,
+                showScheduledInfo = true
             )
             items.add(header)
             items.add(body)
@@ -579,6 +582,7 @@ internal class MessageDetailsAdapter(
 
             val expirationInfoView = itemView.expirationInfoView
             val decryptionErrorView = itemView.decryptionErrorView
+            val scheduledInfoView = itemView.scheduledInfoView
             val displayRemoteContentButton = itemView.displayRemoteContentButton
             val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
             val openInProtonCalendarView = itemView.include_open_in_proton_calendar
@@ -598,6 +602,10 @@ internal class MessageDetailsAdapter(
             openInProtonCalendarView.isVisible = listItem.showOpenInProtonCalendar
             editDraftButton.isVisible = message.isDraft()
             decryptionErrorView.bind(listItem.showDecryptionError)
+            scheduledInfoView.bind(
+                message.isScheduled(), DateUtil.formatDetailedDateTime(context, listItem.message.timeMs)
+            )
+
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 

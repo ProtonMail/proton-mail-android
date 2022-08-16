@@ -35,7 +35,7 @@ class DecryptionErrorBanner @JvmOverloads constructor(
 ) : androidx.appcompat.widget.AppCompatTextView(context, attrs, defStyleAttr) {
 
     init {
-        val backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.message_details_banner_background)
+        val backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.message_details_error_banner_background)
         val padding = resources.getDimensionPixelSize(R.dimen.message_details_banner_margin_horizontal)
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         setPadding(padding, padding, padding, padding)

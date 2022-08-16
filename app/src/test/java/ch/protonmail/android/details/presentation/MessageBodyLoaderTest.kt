@@ -102,7 +102,11 @@ class MessageBodyLoaderTest {
         // then
         assertNull(messageWithLoadedBody)
         verify(exactly = 0) { decryptMessageBodyMock(any(), any()) }
-        verify(exactly = 0) { messageToMessageDetailsItemMapperMock.toMessageDetailsListItem(any(), any(), any(), any()) }
+        verify(exactly = 0) {
+            messageToMessageDetailsItemMapperMock.toMessageDetailsListItem(
+                any(), any(), any(), any(), any()
+            )
+        }
     }
 
     @Test
@@ -118,6 +122,7 @@ class MessageBodyLoaderTest {
                 fetchedMessage,
                 MessageTestData.MESSAGE_BODY_FORMATTED,
                 shouldShowDecryptionError = false,
+                shouldShowScheduledInfo = false,
                 shouldShowLoadEmbeddedImagesButton = true
             )
         } returns expectedLoadedMessage
@@ -140,6 +145,7 @@ class MessageBodyLoaderTest {
                 fetchedMessage,
                 MessageTestData.MESSAGE_BODY_FORMATTED,
                 shouldShowDecryptionError = false,
+                shouldShowScheduledInfo = false,
                 shouldShowLoadEmbeddedImagesButton = true
             )
         }
@@ -161,6 +167,7 @@ class MessageBodyLoaderTest {
                 fetchedMessage,
                 MessageTestData.MESSAGE_BODY_FORMATTED,
                 shouldShowDecryptionError = true,
+                shouldShowScheduledInfo = false,
                 shouldShowLoadEmbeddedImagesButton = false
             )
         } returns expectedLoadedMessage
@@ -181,6 +188,7 @@ class MessageBodyLoaderTest {
                 fetchedMessage,
                 MessageTestData.MESSAGE_BODY_FORMATTED,
                 shouldShowDecryptionError = true,
+                shouldShowScheduledInfo = false,
                 shouldShowLoadEmbeddedImagesButton = false
             )
         }
@@ -226,6 +234,7 @@ class MessageBodyLoaderTest {
 }
 
 private object TestData {
+
     const val RENDER_WIDTH = 42
     const val MESSAGE_BODY_CSS = "I am css"
     const val MESSAGE_BODY_DARK_MODE_CSS = "And I am a dark css"

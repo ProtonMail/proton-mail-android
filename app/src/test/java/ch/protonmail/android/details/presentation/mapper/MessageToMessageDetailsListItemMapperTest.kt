@@ -50,6 +50,8 @@ class MessageToMessageDetailsListItemMapperTest(
         protonCalendarUtil = protonCalendarUtil
     )
 
+    private val shouldShowScheduledInfo: Boolean = false
+
     @Test
     fun `should map message to message details list item`() {
         // given
@@ -60,6 +62,7 @@ class MessageToMessageDetailsListItemMapperTest(
             message = mappedMessage,
             messageBody = MessageTestData.MESSAGE_BODY,
             shouldShowDecryptionError = shouldShowDecryptionError,
+            shouldShowScheduledInfo = shouldShowScheduledInfo,
             shouldShowLoadEmbeddedImagesButton = shouldShowLoadEmbeddedImagesButton
         )
 
@@ -69,6 +72,7 @@ class MessageToMessageDetailsListItemMapperTest(
             assertEquals(messageFormattedHtml, TestData.MessageParts.BODY)
             assertEquals(messageFormattedHtmlWithQuotedHistory, TestData.MessageParts.BODY_WITH_QUOTE)
             assertEquals(showDecryptionError, shouldShowDecryptionError)
+            assertEquals(shouldShowScheduledInfo, shouldShowScheduledInfo)
             assertEquals(showLoadEmbeddedImagesButton, shouldShowLoadEmbeddedImagesButton)
         }
     }
@@ -82,7 +86,7 @@ class MessageToMessageDetailsListItemMapperTest(
                 arrayOf(true, true),
                 arrayOf(true, false),
                 arrayOf(false, true),
-                arrayOf(false, false)
+                arrayOf(false, false),
             )
         }
     }

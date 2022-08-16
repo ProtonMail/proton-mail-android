@@ -158,6 +158,16 @@
         tools:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/spamScoreView" />
 
+    <ch.protonmail.android.details.presentation.view.ScheduledInfoBanner
+        android:id="@+id/scheduledInfoView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/padding_l"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/decryptionErrorView" />
+
     <!-- add webview through code use application context to avoid memory leaks -->
     <!-- https://code.google.com/p/android/issues/detail?id=9375 -->
     <LinearLayout
@@ -167,7 +177,7 @@
         android:focusableInTouchMode="true"
         android:descendantFocusability="blocksDescendants"
         android:animateLayoutChanges="false"
-        app:layout_constraintTop_toBottomOf="@id/decryptionErrorView"
+        app:layout_constraintTop_toBottomOf="@id/scheduledInfoView"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical" />
 
