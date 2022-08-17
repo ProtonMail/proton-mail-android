@@ -177,15 +177,15 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         refreshUnreadCountersTrigger.flatMapLatest {
             observeUnreadCountersFromDatabase(userId)
                 .onStart { fetchAndSaveUnreadCounters(userId) }
-        }
-            .onStart { refreshUnreadCounters() }
-            .catch { exception ->
-                if (exception is CancellationException) {
-                    throw exception
-                } else {
-                    emit(Error.Remote(exception.message, exception))
+                .catch { exception ->
+                    if (exception is CancellationException) {
+                        throw exception
+                    } else {
+                        emit(Error.Remote(exception.message, exception))
+                    }
                 }
-            }
+        }.onStart { refreshUnreadCounters() }
+
 
     override fun refreshUnreadCounters() {
         refreshUnreadCountersTrigger.tryEmit(Unit)

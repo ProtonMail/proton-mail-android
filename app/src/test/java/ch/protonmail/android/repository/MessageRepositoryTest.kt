@@ -745,7 +745,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun handlesExceptionDuringUnreadCountersRefresh() = runBlockingTest {
+    fun handlesExceptionDuringUnreadCountersRefreshAndContinuesObserving() = runBlockingTest {
         // given
         val expectedMessage = "Invalid username!"
         coEvery { protonMailApiManager.fetchMessagesCounts(testUserId) } answers {
@@ -758,8 +758,6 @@ class MessageRepositoryTest {
             // then
             val actual = awaitItem() as DataResult.Error.Remote
             assertEquals(expectedMessage, actual.message)
-
-            awaitComplete()
         }
     }
 

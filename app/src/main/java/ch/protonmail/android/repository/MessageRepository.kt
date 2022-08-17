@@ -228,15 +228,14 @@ class MessageRepository @Inject constructor(
         refreshUnreadCountersTrigger.flatMapLatest {
             observerUnreadCountersFromDatabase(userId)
                 .onStart { fetchAndSaveUnreadCounters(userId) }
-        }
-            .onStart { refreshUnreadCounters() }
-            .catch { exception ->
-                if (exception is CancellationException) {
-                    throw exception
-                } else {
-                    emit(DataResult.Error.Remote(exception.message, exception))
+                .catch { exception ->
+                    if (exception is CancellationException) {
+                        throw exception
+                    } else {
+                        emit(DataResult.Error.Remote(exception.message, exception))
+                    }
                 }
-            }
+        }.onStart { refreshUnreadCounters() }
 
     private suspend fun fetchAndSaveUnreadCounters(userId: UserId) {
         val response = protonMailApiManager.fetchMessagesCounts(userId)
