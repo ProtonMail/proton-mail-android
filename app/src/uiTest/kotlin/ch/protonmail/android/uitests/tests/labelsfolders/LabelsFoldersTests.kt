@@ -79,7 +79,6 @@ class LabelsFoldersTests : BaseTest() {
             .verify { messageWithSubjectExists(selectedMessageSubject) }
     }
 
-    //@Ignore("Enable after add label action is added to message details v4 UI")
     @TestId("1441")
     @Test
     fun createRenameAndDeleteLabelFromInbox() {

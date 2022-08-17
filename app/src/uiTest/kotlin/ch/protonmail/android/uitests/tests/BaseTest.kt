@@ -63,10 +63,10 @@ open class BaseTest {
     @BeforeTest
     open fun setUp() {
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
-            Toast.makeText(targetContext, testName.methodName, TIMEOUT_15S).show()
+            Toast.makeText(targetContext, testName.methodName, Toast.LENGTH_LONG).show()
         }
         populateUsers()
-        setFlag()
+        shouldDisableOnboarding(true)
     }
 
     @After
@@ -85,7 +85,6 @@ open class BaseTest {
         private const val password = 1
         private const val mailboxPassword = 2
         private const val twoFaKey = 3
-        private const val TIMEOUT_15S = 15_000
         val users = User.Users("users.json")
         private val grantPermissionRule = GrantPermissionRule.grant(
             READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, READ_CONTACTS
@@ -101,8 +100,6 @@ open class BaseTest {
             automation.executeShellCommand("mkdir /data/data/ch.protonmail.android.beta/files/")
 
             val sharedPrefs = targetContext.getSharedPreferences(testContext.packageName, Context.MODE_PRIVATE)
-
-            sharedPrefs.edit().putBoolean(Constants.Prefs.PREF_NEW_USER_ONBOARDING_SHOWN, true).apply()
 
             // BeforeClass workaround for Android Test Orchestrator - shared prefs are not cleared
             val isFirstRun = sharedPrefs.getBoolean(oneTimeRunFlag, true)
@@ -146,9 +143,9 @@ open class BaseTest {
             FileUtils.copyAssetFileToInternalFilesStorage("lorem_ipsum.pdf")
         }
 
-        fun setFlag() {
+        fun shouldDisableOnboarding(flag :Boolean) {
             PreferenceManager
-                .getDefaultSharedPreferences(targetContext)[Constants.Prefs.PREF_NEW_USER_ONBOARDING_SHOWN] = true
+                .getDefaultSharedPreferences(targetContext)[Constants.Prefs.PREF_NEW_USER_ONBOARDING_SHOWN] = flag
         }
     }
 }
