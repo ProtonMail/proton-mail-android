@@ -21,12 +21,12 @@ package ch.protonmail.android.uitests.robots.mailbox.composer
 import androidx.annotation.IdRes
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.MockAddAttachmentIntent
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * Class represents Message Attachments.
  */
-open class MessageAttachmentsRobot : Robot {
+open class MessageAttachmentsRobot : Fusion {
 
     fun addImageCaptureAttachment(@IdRes drawable: Int): ComposerRobot =
         mockCameraImageCapture(drawable)
@@ -53,13 +53,13 @@ open class MessageAttachmentsRobot : Robot {
     }
 
     private fun mockCameraImageCapture(@IdRes drawableId: Int): ComposerRobot {
-        view.withId(takePhotoIconId).checkDisplayed()
+        view.withId(takePhotoIconId).checkIsDisplayed()
         MockAddAttachmentIntent.mockCameraImageCapture(takePhotoIconId, drawableId)
         return ComposerRobot()
     }
 
     private fun mockFileAttachment(@IdRes drawable: Int): ComposerRobot {
-        view.withId(addAttachmentIconId).checkDisplayed()
+        view.withId(addAttachmentIconId).checkIsDisplayed()
         MockAddAttachmentIntent.mockChooseAttachment(addAttachmentIconId, drawable)
         return ComposerRobot()
     }

@@ -21,13 +21,13 @@ package ch.protonmail.android.uitests.robots.mailbox.spam
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.AppCompatImageView
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [SpamRobot] class implements [MailboxRobotInterface],
  * contains actions and verifications for Spam mailbox functionality.
  */
-open class SpamRobot : MailboxRobotInterface, Robot {
+open class SpamRobot : MailboxRobotInterface, Fusion {
 
     override fun swipeLeftMessageAtPosition(position: Int): SpamRobot {
         super.swipeLeftMessageAtPosition(position)
@@ -40,7 +40,7 @@ open class SpamRobot : MailboxRobotInterface, Robot {
     }
 
     fun moreOptions(): SpamRobot {
-        view.instanceOf(AppCompatImageView::class.java).withParent(view.instanceOf(ActionMenuView::class.java)).click()
+        view.instanceOf(AppCompatImageView::class.java).hasParent(view.instanceOf(ActionMenuView::class.java)).click()
         return this
     }
 }

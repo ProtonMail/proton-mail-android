@@ -24,13 +24,13 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [DraftsRobot] implements [MailboxRobotInterface],
  * contains actions and verifications for Drafts composer functionality.
  */
-class DraftsRobot : MailboxRobotInterface, Robot {
+class DraftsRobot : MailboxRobotInterface, Fusion {
 
     override fun swipeLeftMessageAtPosition(position: Int): DraftsRobot {
         super.swipeLeftMessageAtPosition(position)
@@ -53,7 +53,7 @@ class DraftsRobot : MailboxRobotInterface, Robot {
     }
 
     fun moreOptions(): DraftsRobot {
-        view.instanceOf(AppCompatImageView::class.java).withParent(view.instanceOf(ActionMenuView::class.java))
+        view.instanceOf(AppCompatImageView::class.java).hasParent(view.instanceOf(ActionMenuView::class.java))
         return this
     }
 
@@ -85,7 +85,7 @@ class DraftsRobot : MailboxRobotInterface, Robot {
     /**
      * Contains all the validations that can be performed by [MenuRobot].
      */
-    class Verify : MailboxRobotInterface.verify(), Robot {
+    class Verify : MailboxRobotInterface.verify(), Fusion {
 
         fun folderEmpty() {
             // TODO - remove this workaround with 20 sec waiting time when possible

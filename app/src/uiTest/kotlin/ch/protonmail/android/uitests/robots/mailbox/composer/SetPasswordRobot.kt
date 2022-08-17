@@ -21,12 +21,12 @@ package ch.protonmail.android.uitests.robots.mailbox.composer
 
 import android.widget.EditText
 import ch.protonmail.android.R
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * Class represents Message Password dialog.
  */
-class SetPasswordRobot : Robot {
+class SetPasswordRobot : Fusion {
 
     fun definePasswordWithHint(password: String, hint: String): ComposerRobot {
         return definePassword(password)

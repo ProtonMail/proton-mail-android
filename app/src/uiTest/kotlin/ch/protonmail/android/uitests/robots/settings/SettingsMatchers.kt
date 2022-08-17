@@ -24,8 +24,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.matcher.BoundedMatcher
 import ch.protonmail.android.R
 import ch.protonmail.android.adapters.SettingsAdapter
-import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import me.proton.core.presentation.ui.adapter.ClickableAdapter
+import me.proton.fusion.utils.StringUtils.stringFromResource
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 

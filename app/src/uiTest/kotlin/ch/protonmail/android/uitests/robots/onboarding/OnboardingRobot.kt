@@ -26,9 +26,9 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions
 import ch.protonmail.android.uitests.testsHelper.waitForCondition
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
-class OnboardingRobot : Robot {
+class OnboardingRobot : Fusion {
 
     fun skipOnboarding(): InboxRobot {
         waitForCondition(

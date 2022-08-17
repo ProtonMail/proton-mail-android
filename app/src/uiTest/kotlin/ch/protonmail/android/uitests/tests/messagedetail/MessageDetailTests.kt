@@ -39,7 +39,7 @@ class MessageDetailTests : BaseTest() {
         super.setUp()
         subject = TestData.messageSubject
         body = TestData.messageBody
-        inboxRobot = loginRobot.loginOnePassUser().skipOnboarding()
+        inboxRobot = loginRobot.loginOnePassUser()
     }
 
     @TestId("1314")

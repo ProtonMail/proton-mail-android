@@ -21,12 +21,12 @@ package ch.protonmail.android.uitests.robots.contacts
 
 import android.widget.EditText
 import ch.protonmail.android.R
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [AddContactGroupRobot] class contains actions and verifications for Add/Edit Contact Groups.
  */
-class AddContactGroupRobot : Robot {
+class AddContactGroupRobot : Fusion {
 
     fun editNameAndSave(name: String): GroupDetailsRobot {
         groupName(name)
@@ -40,13 +40,17 @@ class AddContactGroupRobot : Robot {
     }
 
     fun groupName(name: String): AddContactGroupRobot {
-        view.withId(R.id.contactGroupName).instanceOf(EditText::class.java).replaceText(name)
+        view
+            .withId(R.id.input)
+            .isDescendantOf(
+                view.withId(R.id.contactGroupName)
+            )
+            .replaceText(name)
         return this
     }
 
     fun done(): ContactsRobot {
         view.withId(R.id.action_save).click()
-        view.withText(R.string.contact_group_saved).checkDisabled()
         return ContactsRobot()
     }
 }

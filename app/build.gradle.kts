@@ -268,6 +268,7 @@ tasks.withType<Test> {
 
 dependencies {
 
+    androidTestImplementation(files("libs/fusion-release.aar"))
     // Hilt
     kapt(
         `assistedInject-processor-dagger`,

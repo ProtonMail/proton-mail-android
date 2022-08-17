@@ -20,6 +20,7 @@ package ch.protonmail.android.uitests.testsHelper
 
 import ch.protonmail.android.uitests.testsHelper.StringUtils.getAlphaNumericStringWithSpecialCharacters
 import ch.protonmail.android.uitests.testsHelper.StringUtils.getEmailString
+import ch.protonmail.android.uitests.testsHelper.StringUtils.getNumericString
 
 /**
  * Contains users and data used in UI test runs.
@@ -31,8 +32,9 @@ object TestData {
     const val searchMessageSubjectNotFound = "MessageNotFound :O"
 
     // CONTACT DATA
-    val newContactName = getAlphaNumericStringWithSpecialCharacters()
-    val editContactName = getAlphaNumericStringWithSpecialCharacters()
+    val newContactName =
+        "${getNumericString(3)}${getAlphaNumericStringWithSpecialCharacters(7)}"
+    val editContactName = "${getNumericString(3)}${getAlphaNumericStringWithSpecialCharacters(7)}"
     val newEmailAddress = "${getEmailString()}@pm.me"
     val editEmailAddress = "${getEmailString()}@pm.me"
 

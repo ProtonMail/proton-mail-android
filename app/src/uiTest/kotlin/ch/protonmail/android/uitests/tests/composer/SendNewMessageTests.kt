@@ -53,7 +53,6 @@ class SendNewMessageTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessage(to, subject, body)
             .menuDrawer()
@@ -69,7 +68,6 @@ class SendNewMessageTests : BaseTest() {
         val to = internalEmailNotTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessage(to, subject, body)
             .menuDrawer()
@@ -85,8 +83,6 @@ class SendNewMessageTests : BaseTest() {
         val to = externalGmailPGPEncrypted.email
         loginRobot
             .loginOnePassUser()
-            .nextOnboardingScreen()
-            .finishOnboarding()
             .compose()
             .sendMessage(to, subject, body)
             .menuDrawer()
@@ -102,7 +98,6 @@ class SendNewMessageTests : BaseTest() {
         val to = externalOutlookPGPSigned.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessage(to, subject, body)
             .menuDrawer()
@@ -118,7 +113,6 @@ class SendNewMessageTests : BaseTest() {
         val cc = internalEmailNotTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageTOandCC(to, cc, subject, body)
             .menuDrawer()
@@ -136,8 +130,6 @@ class SendNewMessageTests : BaseTest() {
         val bcc = internalEmailNotTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .nextOnboardingScreen()
-            .finishOnboarding()
             .compose()
             .sendMessageTOandCCandBCC(to, cc, bcc, subject, body)
             .menuDrawer()
@@ -152,7 +144,6 @@ class SendNewMessageTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageExpiryTimeInDays(to, subject, body, 2)
             .menuDrawer()
@@ -169,7 +160,6 @@ class SendNewMessageTests : BaseTest() {
         val hint = editedPasswordHint
         loginRobot
             .loginTwoPassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageEOAndExpiryTime(to, subject, body, 1, password, hint)
             .menuDrawer()
@@ -185,7 +175,6 @@ class SendNewMessageTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .changeSenderTo(onePassUserPmMeAddress)
             .sendMessage(to, subject, body)
@@ -203,7 +192,6 @@ class SendNewMessageTests : BaseTest() {
         val hint = editedPasswordHint
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageWithPassword(to, subject, body, password, hint)
             .menuDrawer()
@@ -218,7 +206,6 @@ class SendNewMessageTests : BaseTest() {
         val to = externalGmailPGPEncrypted.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageExpiryTimeInDaysWithConfirmation(to, subject, body, 2)
             .menuDrawer()
@@ -234,7 +221,6 @@ class SendNewMessageTests : BaseTest() {
         val to = externalGmailPGPEncrypted.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .changeSenderTo(onePassUserPmMeAddress)
             .sendMessage(to, subject, body)
@@ -250,7 +236,6 @@ class SendNewMessageTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginTwoPassUser()
-            .skipOnboarding()
             .compose()
             .sendMessage(to, subject, body)
             .menuDrawer()
@@ -267,7 +252,6 @@ class SendNewMessageTests : BaseTest() {
         val hint = editedPasswordHint
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageEOAndExpiryTimeWithConfirmation(to, subject, body, 1, password, hint)
             .menuDrawer()
@@ -285,7 +269,6 @@ class SendNewMessageTests : BaseTest() {
         val hint = editedPasswordHint
         loginRobot
             .loginTwoPassUser()
-            .skipOnboarding()
             .compose()
             .recipients(toInternal)
             .sendMessageEOAndExpiryTimeWithConfirmation(toExternal, subject, body, 3, password, hint)

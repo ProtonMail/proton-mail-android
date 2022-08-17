@@ -23,13 +23,13 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatImageView
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [TrashRobot] class implements [MailboxRobotInterface],
  * contains actions and verifications for Trash mailbox functionality.
  */
-class TrashRobot : MailboxRobotInterface, Robot {
+class TrashRobot : MailboxRobotInterface, Fusion {
 
     override fun swipeLeftMessageAtPosition(position: Int): TrashRobot {
         super.swipeLeftMessageAtPosition(position)
@@ -42,7 +42,7 @@ class TrashRobot : MailboxRobotInterface, Robot {
     }
 
     fun moreOptions(): TrashRobot {
-        view.instanceOf(AppCompatImageView::class.java).withParent(view.instanceOf(ActionMenuView::class.java)).click()
+        view.instanceOf(AppCompatImageView::class.java).hasParent(view.instanceOf(ActionMenuView::class.java)).click()
         return this
     }
 
@@ -57,17 +57,17 @@ class TrashRobot : MailboxRobotInterface, Robot {
     }
 
     fun navigateUpToTrash(): TrashRobot {
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return TrashRobot()
     }
 
     /**
      * Contains all the validations that can be performed by [TrashRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun folderEmpty() {
-            view.withId(R.id.no_messages).checkDisplayed()
+            view.withId(R.id.no_messages).checkIsDisplayed()
         }
     }
 

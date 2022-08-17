@@ -19,9 +19,9 @@
 package ch.protonmail.android.uitests.robots.mailbox
 
 import ch.protonmail.android.R
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
-interface MoveToFolderRobotInterface : Robot {
+interface MoveToFolderRobotInterface : Fusion {
 
     fun moveToExistingFolder(name: String): Any {
         view.withId(R.id.textview_checkbox_manage_labels_title).withText(name).click()

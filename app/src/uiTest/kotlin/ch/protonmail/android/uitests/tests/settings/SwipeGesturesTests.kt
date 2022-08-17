@@ -41,8 +41,6 @@ class SwipeGesturesTests : BaseTest() {
     fun deleteMessageWithSwipe() {
         loginRobot
             .loginOnePassUser()
-            .nextOnboardingScreen()
-            .finishOnboarding()
             .menuDrawer()
             .sent()
             .deleteMessageWithSwipe(1)
@@ -56,7 +54,6 @@ class SwipeGesturesTests : BaseTest() {
     fun starMessageWithSwipe() {
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .menuDrawer()
             .sent()
             .swipeLeftMessageAtPosition(0)
@@ -67,7 +64,6 @@ class SwipeGesturesTests : BaseTest() {
     fun changeSwipingGesturesForMultipleAccounts() {
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()

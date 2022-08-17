@@ -43,7 +43,6 @@ class LabelsFoldersTests : BaseTest() {
         val newFolderName = StringUtils.getEmailString()
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .clickMessageByPosition(1)
             .openActionSheet()
             .openFoldersModal()
@@ -68,7 +67,6 @@ class LabelsFoldersTests : BaseTest() {
         val folderName = "Folder 1"
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .menuDrawer()
             .sent()
             .refreshMessageList()
@@ -81,7 +79,6 @@ class LabelsFoldersTests : BaseTest() {
             .verify { messageWithSubjectExists(selectedMessageSubject) }
     }
 
-    @Ignore("Enable after add label action is added to message details v4 UI")
     @TestId("1441")
     @Test
     fun createRenameAndDeleteLabelFromInbox() {
@@ -89,7 +86,6 @@ class LabelsFoldersTests : BaseTest() {
         val newLabelName = StringUtils.getAlphaNumericStringWithSpecialCharacters()
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .clickMessageByPosition(1)
             .openActionSheet()
             .openLabelsModal()
@@ -113,7 +109,6 @@ class LabelsFoldersTests : BaseTest() {
         val labelName = "Label 1"
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .menuDrawer()
             .sent()
             .clickMessageByPosition(1)
@@ -135,7 +130,6 @@ class LabelsFoldersTests : BaseTest() {
         val labelName = "Label 2"
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .menuDrawer()
             .sent()
             .longClickMessageOnPosition(1)
@@ -158,7 +152,6 @@ class LabelsFoldersTests : BaseTest() {
         val labelName = "Label 3"
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .menuDrawer()
             .sent()
             .refreshMessageList()

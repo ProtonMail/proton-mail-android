@@ -20,7 +20,7 @@ package ch.protonmail.android.uitests.robots.mailbox.messagedetail
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [ViewHeadersRobot] class contains actions and verifications for View Headers functionality.
@@ -30,10 +30,10 @@ class ViewHeadersRobot {
     /**
      * Contains all the validations that can be performed by [SentRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun messageHeadersDisplayed() {
-            view.withId(R.id.viewHeadersText).checkDisplayed()
+            view.withId(R.id.viewHeadersText).checkIsDisplayed()
         }
     }
 

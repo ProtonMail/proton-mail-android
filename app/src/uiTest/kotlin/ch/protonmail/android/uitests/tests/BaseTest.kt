@@ -23,11 +23,13 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Context
 import android.widget.Toast
+import androidx.preference.PreferenceManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.mailbox.presentation.ui.MailboxActivity
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
 import ch.protonmail.android.uitests.testsHelper.TestUser.populateUsers
@@ -37,6 +39,7 @@ import me.proton.core.test.android.instrumented.utils.FileUtils
 import me.proton.core.test.android.instrumented.utils.FileUtils.prepareArtifactsDir
 import me.proton.core.test.android.instrumented.utils.Shell.deleteDownloadArtifactsFolder
 import me.proton.core.test.android.plugins.data.User
+import me.proton.core.util.android.sharedpreferences.set
 import org.junit.After
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -60,9 +63,10 @@ open class BaseTest {
     @BeforeTest
     open fun setUp() {
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
-            Toast.makeText(targetContext, testName.methodName, tenSeconds).show()
+            Toast.makeText(targetContext, testName.methodName, Toast.LENGTH_LONG).show()
         }
         populateUsers()
+        shouldDisableOnboarding(true)
     }
 
     @After
@@ -71,6 +75,7 @@ open class BaseTest {
     }
 
     companion object {
+
         private val automation = InstrumentationRegistry.getInstrumentation().uiAutomation!!
         private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         var shouldReportToTestRail = false
@@ -80,7 +85,6 @@ open class BaseTest {
         private const val password = 1
         private const val mailboxPassword = 2
         private const val twoFaKey = 3
-        private const val tenSeconds = 10_000
         val users = User.Users("users.json")
         private val grantPermissionRule = GrantPermissionRule.grant(
             READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, READ_CONTACTS
@@ -137,6 +141,11 @@ open class BaseTest {
             FileUtils.copyAssetFileToInternalFilesStorage("lorem_ipsum.png")
             FileUtils.copyAssetFileToInternalFilesStorage("lorem_ipsum.jpeg")
             FileUtils.copyAssetFileToInternalFilesStorage("lorem_ipsum.pdf")
+        }
+
+        fun shouldDisableOnboarding(flag :Boolean) {
+            PreferenceManager
+                .getDefaultSharedPreferences(targetContext)[Constants.Prefs.PREF_NEW_USER_ONBOARDING_SHOWN] = flag
         }
     }
 }

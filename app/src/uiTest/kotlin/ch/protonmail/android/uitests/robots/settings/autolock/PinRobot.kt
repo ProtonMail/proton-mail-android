@@ -23,9 +23,9 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import junit.framework.Assert.fail
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
-class PinRobot : Robot {
+class PinRobot : Fusion {
 
     fun setPin(pin: String): AutoLockRobot {
         return typePin(pin)

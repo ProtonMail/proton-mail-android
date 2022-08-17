@@ -25,13 +25,13 @@ import androidx.test.espresso.matcher.ViewMatchers
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.settings.SettingsRobot
 import ch.protonmail.android.uitests.tests.BaseTest.Companion.targetContext
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 import org.hamcrest.CoreMatchers.anything
 
-class AutoLockRobot : Robot {
+class AutoLockRobot : Fusion {
 
     fun navigateUptToSettings(): SettingsRobot {
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return SettingsRobot()
     }
 
@@ -48,7 +48,7 @@ class AutoLockRobot : Robot {
     /**
      * Represents Auto lock timeout pop up with options list.
      */
-    class AutoLockTimeoutRobot : Robot {
+    class AutoLockTimeoutRobot : Fusion {
 
         fun selectImmediateAutoLockTimeout(): AutoLockRobot {
             listView

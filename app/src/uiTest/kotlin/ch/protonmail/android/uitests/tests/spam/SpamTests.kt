@@ -22,11 +22,11 @@ package ch.protonmail.android.uitests.tests.spam
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.login.LoginMailRobot
 import ch.protonmail.android.uitests.tests.BaseTest
-import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestUser.externalGmailPGPEncrypted
 import ch.protonmail.android.uitests.testsHelper.TestUser.onePassUser
 import ch.protonmail.android.uitests.testsHelper.mailer.Mail
+import me.proton.fusion.utils.StringUtils.stringFromResource
 import kotlin.test.Test
 
 class SpamTests : BaseTest() {
@@ -43,7 +43,6 @@ class SpamTests : BaseTest() {
         Mail.gmail.from(from).to(to).withSubject(subject).withBody(body).send()
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .clickMessageBySubject(subject)
             .moveToTrash()
             .menuDrawer()

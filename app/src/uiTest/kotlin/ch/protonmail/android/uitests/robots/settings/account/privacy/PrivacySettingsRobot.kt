@@ -29,15 +29,15 @@ import ch.protonmail.android.uitests.robots.settings.SettingsActions
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
 import ch.protonmail.android.uitests.robots.settings.account.AccountSettingsRobot
 import ch.protonmail.android.views.SettingsDefaultItemView
-import me.proton.core.test.android.instrumented.Robot
-import me.proton.core.test.android.instrumented.utils.ActivityProvider
-import me.proton.core.test.android.instrumented.utils.StringUtils.stringFromResource
+import me.proton.fusion.Fusion
+import me.proton.fusion.utils.ActivityProvider
+import me.proton.fusion.utils.StringUtils.stringFromResource
 
-class PrivacySettingsRobot : Robot {
+class PrivacySettingsRobot : Fusion {
 
     fun navigateUpToAccountSettings(): AccountSettingsRobot {
         view.instanceOf(AppCompatImageButton::class.java)
-            .withParent(view.withId(R.id.toolbar))
+            .hasParent(view.withId(R.id.toolbar))
             .click()
         return AccountSettingsRobot()
     }
@@ -111,20 +111,20 @@ class PrivacySettingsRobot : Robot {
     /**
      * Contains all the validations that can be performed by [PrivacySettingsRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun autoDownloadImagesIsEnabled() {
             view.withId(R.id.valueText)
                 .withText(R.string.enabled)
                 .isDescendantOf(view.withTag(R.string.auto_download_messages_title))
-                .checkDisplayed()
+                .checkIsDisplayed()
         }
 
         fun backgroundSyncIsEnabled() {
             view.withId(R.id.valueText)
                 .withText(R.string.disabled)
                 .isDescendantOf(view.withTag(R.string.settings_background_sync))
-                .checkDisplayed()
+                .checkIsDisplayed()
         }
 
         fun takingScreenshotIsDisabled() {

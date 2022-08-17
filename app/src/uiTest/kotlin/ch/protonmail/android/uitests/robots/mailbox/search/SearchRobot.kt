@@ -27,15 +27,15 @@ import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 
 /**
  * [SearchRobot] class contains actions and verifications for Search functionality.
  */
-class SearchRobot : Robot {
+class SearchRobot : Fusion {
 
     fun searchMessageText(subject: String): SearchRobot {
-        view.withId(R.id.search_src_text).typeText(subject).pressImeActionBtn().checkDisplayed()
+        view.withId(R.id.search_src_text).typeText(subject).performImeAction().checkIsDisplayed()
         return this
     }
 
@@ -58,7 +58,7 @@ class SearchRobot : Robot {
     }
 
     fun navigateUpToInbox(): InboxRobot {
-        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return InboxRobot()
     }
 
@@ -74,7 +74,7 @@ class SearchRobot : Robot {
     /**
      * Contains all the validations that can be performed by [InboxRobot].
      */
-    class Verify : Robot {
+    class Verify : Fusion {
 
         fun searchedMessageFound() {
             recyclerView
@@ -84,7 +84,7 @@ class SearchRobot : Robot {
         }
 
         fun noSearchResults() {
-            view.withId(R.id.no_messages).checkDisplayed()
+            view.withId(R.id.no_messages).checkIsDisplayed()
         }
     }
 

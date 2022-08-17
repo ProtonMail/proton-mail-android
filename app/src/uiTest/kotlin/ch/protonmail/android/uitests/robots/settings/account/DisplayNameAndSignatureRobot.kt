@@ -23,17 +23,15 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.settings.SettingsActions.changeToggleState
-import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
-
 import ch.protonmail.android.views.SettingsDefaultItemView
-import me.proton.core.test.android.instrumented.Robot
-import me.proton.core.test.android.instrumented.utils.ActivityProvider
-import me.proton.core.test.android.instrumented.utils.StringUtils
+import me.proton.fusion.Fusion
+import me.proton.fusion.utils.ActivityProvider
+import me.proton.fusion.utils.StringUtils.stringFromResource
 
 /**
  * Class represents Display name and Signature view.
  */
-class DisplayNameAndSignatureRobot: Robot {
+class DisplayNameAndSignatureRobot: Fusion {
 
     fun setSignatureToggleTo(state: Boolean): DisplayNameAndSignatureRobot {
         changeToggleState(state, signatureTitle, switch(signatureTitleId))
@@ -46,7 +44,7 @@ class DisplayNameAndSignatureRobot: Robot {
     }
 
     fun setDisplayNameTextTo(text: String): DisplayNameAndSignatureRobot {
-        view.withId(R.id.verificationCodeEditText).withParent(view.withText(displayName)).typeText(text)
+        view.withId(R.id.verificationCodeEditText).hasParent(view.withText(displayName)).typeText(text)
         return this
     }
 
@@ -70,7 +68,7 @@ class DisplayNameAndSignatureRobot: Robot {
 
     private fun switch(@StringRes tagId: Int) = ActivityProvider.currentActivity!!
         .findViewById<RecyclerView>(R.id.settingsRecyclerView)
-        .findViewWithTag<SettingsDefaultItemView>(StringUtils.stringFromResource(tagId))
+        .findViewWithTag<SettingsDefaultItemView>(stringFromResource(tagId))
         .findViewById<SwitchCompat>(switchId)
 
     companion object {

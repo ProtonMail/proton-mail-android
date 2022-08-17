@@ -50,7 +50,6 @@ class ForwardMessageTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessage(to, subject, body)
             .menuDrawer()
@@ -73,7 +72,6 @@ class ForwardMessageTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageWithFileAttachment(to, subject, body)
             .menuDrawer()
@@ -97,7 +95,6 @@ class ForwardMessageTests : BaseTest() {
         val searchMessageSubjectPart = "ProtonMail Logo"
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .searchBar()
             .searchMessageText(searchMessageSubject)
             .clickSearchedMessageBySubjectPart(searchMessageSubjectPart)
@@ -120,7 +117,6 @@ class ForwardMessageTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageTwoImageCaptureAttachments(to, subject, body)
             .menuDrawer()
@@ -145,7 +141,6 @@ class ForwardMessageTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-            .skipOnboarding()
             .compose()
             .sendMessageWithFileAttachment(to, subject, body)
             .menuDrawer()
