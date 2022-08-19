@@ -423,8 +423,13 @@ public class ComposeMessageActivity
 
         composeMessageViewModel.getDeleteResult().observe(ComposeMessageActivity.this, new CheckLocalMessageObserver());
         composeMessageViewModel.getOpenAttachmentsScreenResult().observe(ComposeMessageActivity.this, new AddAttachmentsObserver());
-        composeMessageViewModel.getSavingDraftError().observe(this, errorMessage ->
-                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show());
+        composeMessageViewModel.getSavingDraftError().observe(this, savingDraftError -> {
+            if (savingDraftError.getShowDialog()) {
+                DialogUtils.Companion.showInfoDialog(this, "", savingDraftError.getErrorMessage(), unit -> unit);
+            } else {
+                Toast.makeText(this, savingDraftError.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
         composeMessageViewModel.getSavingDraftComplete().observe(this, event -> {
             if (mUpdateDraftPmMeChanged) {
                 composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());

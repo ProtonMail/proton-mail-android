@@ -340,7 +340,7 @@ class SendMessageWorker @AssistedInject constructor(
     private fun requireInputCurrentUserId(): UserId =
         requireNotNull(
             inputData.getString(KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID)
-            ?.let(::UserId)
+                ?.let(::UserId)
         ) { "User Id not found as input parameter" }
 
     private fun requireInputMessageSecurityOptions(): MessageSecurityOptions =

@@ -1371,6 +1371,53 @@ class CreateDraftWorkerTest : CoroutinesTest {
         }
     }
 
+    @Test
+    fun `worker fails returning InvalidSender sent error when api response is 422 with InvalidSender error code`() {
+        runBlockingTest {
+            // Given
+            val messageDbId = 346L
+            val message = Message().apply {
+                dbId = messageDbId
+                messageId = "remoteMessageIdA71237=="
+                addressID = "addressId836"
+                messageBody = "messageBody"
+                subject = "Subject003"
+            }
+            val unprocessableEntityException = HttpException(
+                Response.error<String>(
+                    RESPONSE_CODE_UNPROCESSABLE_ENTITY,
+                    """{ "Code": 2001, "Error": "Invalid sender" }""".toResponseBody(
+                        "text/json".toMediaTypeOrNull()
+                    )
+                )
+            )
+            givenMessageIdInput(messageDbId)
+            givenActionTypeInput(NONE)
+            givenPreviousSenderAddress("")
+            coEvery { messageRepository.getMessage(any(), messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } returns mockk(relaxed = true) {
+                every { this@mockk.message.subject } returns "Subject003"
+            }
+            coEvery {
+                apiManager.updateDraft(
+                    "remoteMessageIdA71237==", any(), any()
+                )
+            } throws unprocessableEntityException
+
+            // When
+            val result = worker.doWork()
+
+            // Then
+            val expectedFailure = ListenableWorker.Result.failure(
+                Data.Builder().putString(
+                    KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
+                    CreateDraftWorkerErrors.InvalidSender.name
+                ).build()
+            )
+            assertEquals(expectedFailure, result)
+        }
+    }
+
     private fun givenPreviousSenderAddress(address: String) {
         every { parameters.inputData.getString(KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID) } answers { address }
     }
