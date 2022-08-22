@@ -79,8 +79,8 @@
     <string name="composer_from">Van:</string>
     <string name="composer_subject">Onderwerp:</string>
     <string name="composer_to">Aan:</string>
-    <string name="composer_removing_address_generic_error">Kan adres niet verifiëren: %s1. Verzenden kan mislukken.</string>
-    <string name="composer_removing_address_server_error">Adres verwijderen: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Kan e-mailadres niet verifiëren: %s. Verzenden kan mislukken.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Op %s, schreef %s &lt;%s&gt;:</string>
     <string name="set_msg_password_title">Wachtwoord instellen</string>

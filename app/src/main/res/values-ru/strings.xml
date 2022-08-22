@@ -81,8 +81,8 @@
     <string name="composer_from">От:</string>
     <string name="composer_subject">Тема:</string>
     <string name="composer_to">Кому:</string>
-    <string name="composer_removing_address_generic_error">Невозможно проверить адрес: %s1. Отправка может быть неудачной.</string>
-    <string name="composer_removing_address_server_error">Удаление адреса: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Невозможно проверить адрес: %s. Отправка может быть неудачной.</string>
+    <string name="composer_removing_address_server_error">Удаление адреса: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; написал:</string>
     <string name="set_msg_password_title">Установить пароль</string>

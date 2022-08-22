@@ -79,8 +79,8 @@
     <string name="composer_from">Von:</string>
     <string name="composer_subject">Betreff:</string>
     <string name="composer_to">An:</string>
-    <string name="composer_removing_address_generic_error">Die Adresse kann nicht verifiziert werden: %s1. Das Senden könnte fehlschlagen.</string>
-    <string name="composer_removing_address_server_error">Entferne Adresse: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Adresse konnte nicht verifiziert werden: %s. Das Senden könnte fehlschlagen.</string>
+    <string name="composer_removing_address_server_error">Adresse wird entfernt: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Am %s, schrieb %s &lt; %s&gt;:</string>
     <string name="set_msg_password_title">Passwort festlegen</string>
@@ -738,7 +738,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchtest 
     <string name="swipe_action_left">Nach links wischen</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Wischgeste wählen</string>
-    <string name="swipe_action_trash">In den Papierkorb verschieben</string>
+    <string name="swipe_action_trash">In den Papierkorb verschoben</string>
     <string name="swipe_action_trash_short">In Papierkorb verschieben</string>
     <string name="swipe_action_star">Kennzeichnung der Nachricht aktualisiert</string>
     <string name="swipe_action_star_short">Kennzeichnung aktualisieren</string>

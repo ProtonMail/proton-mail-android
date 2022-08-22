@@ -79,8 +79,8 @@
     <string name="composer_from">De:</string>
     <string name="composer_subject">Assunto:</string>
     <string name="composer_to">Para:</string>
-    <string name="composer_removing_address_generic_error">Não é possível verificar o endereço: %s1. O envio pode falhar.</string>
-    <string name="composer_removing_address_server_error">Removendo endereço: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Não é possível verificar o endereço: %s. O envio pode falhar.</string>
+    <string name="composer_removing_address_server_error">Removendo endereço: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Em %s, %s &lt; %s&gt; escreveu:</string>
     <string name="set_msg_password_title">Definir senha</string>

@@ -78,8 +78,8 @@
     <string name="composer_from">Dari:</string>
     <string name="composer_subject">Subjek:</string>
     <string name="composer_to">Kepada:</string>
-    <string name="composer_removing_address_generic_error">Tidak dapat memverifikasi alamat: %s1. Pengiriman berpotensi gagal.</string>
-    <string name="composer_removing_address_server_error">Menghapus alamat: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Tidak dapat memverifikasi alamat: %s. Pengiriman berpotensi gagal.</string>
+    <string name="composer_removing_address_server_error">Menghapus alamat: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Pada %s, %s &lt; %s&gt; menulis:</string>
     <string name="set_msg_password_title">Setel kata sandi</string>

@@ -79,12 +79,12 @@
     <string name="composer_from">De:</string>
     <string name="composer_subject">Asunto:</string>
     <string name="composer_to">Para:</string>
-    <string name="composer_removing_address_generic_error">No se puede verificar la dirección: %s1. El envío podría fallar.</string>
-    <string name="composer_removing_address_server_error">Eliminando la dirección: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">No se puede verificar la dirección: %s. El envío podría fallar.</string>
+    <string name="composer_removing_address_server_error">Eliminando la dirección: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
-    <string name="composer_quote_sender_header">A %s, %s &lt; %s&gt; escribió:</string>
+    <string name="composer_quote_sender_header">El %s, %s &lt; %s&gt; escribió:</string>
     <string name="set_msg_password_title">Establecer contraseña</string>
-    <string name="set_msg_password_info">Establece una contraseña para cifrar este mensaje para los usuarios que no son de Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Más información</a></string>
+    <string name="set_msg_password_info">Establezca una contraseña para cifrar este mensaje para los usuarios que no son de Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Más información</a></string>
     <string name="set_msg_password_info_icon_description">Información</string>
     <string name="set_msg_password_msg_password_title">Contraseña del mensaje</string>
     <string name="set_msg_password_msg_password_hint">Longitud de 4 a 21 caracteres</string>
@@ -212,12 +212,12 @@
     <string name="all_mail">Todos los mensajes</string>
     <string name="contacts">Contactos</string>
     <string name="search_contacts">Buscar contactos</string>
-    <string name="fetching_contacts">Obteniendo contactos de Proton Mail...</string>
+    <string name="fetching_contacts">Recuperando contactos de Proton Mail...</string>
     <string name="fetching_contacts_success">Contactos actualizados exitosamente</string>
     <string name="fetching_contacts_failure">No se pueden actualizar los contactos</string>
     <string name="compose">Redactar</string>
     <string name="compose_message">Redactar mensaje</string>
-    <string name="empty_folder">Carpeta vacía</string>
+    <string name="empty_folder">Vaciar carpeta</string>
     <string name="view_headers">Ver encabezados</string>
     <string name="message_headers">Encabezado del mensaje</string>
     <string name="delete_messages">Borrar mensajes</string>
@@ -248,23 +248,23 @@
     <string name="hours">Horas</string>
     <string name="max_labels_exceeded">El mensaje %1$s no puede tener más de %2$d etiquetas.</string>
     <string name="max_attachments_reached">Se alcanzó el límite máximo de archivos adjuntos por mensaje.</string>
-    <string name="max_attachments_size_reached">Se ha alcanzado el límite máximo de archivos adjuntos por mensaje</string>
+    <string name="max_attachments_size_reached">Se ha alcanzado el tamaño máximo de archivos adjuntos por mensaje</string>
     <string name="expiration_days">%dd</string>
     <string name="expiration_hours">%dh</string>
     <string name="expiration_minutes">%dm</string>
     <plurals name="attachments">
-        <item quantity="one">%d archivo adjunto</item>
-        <item quantity="other">%d archivos adjuntos</item>
+        <item quantity="one">%d Archivo adjunto</item>
+        <item quantity="other">%d Archivos adjuntos</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 %d Adjunto</item>
-        <item quantity="other">\u0020 %d Adjuntos</item>
+        <item quantity="one">\u0020 %d Archivo adjunto</item>
+        <item quantity="other">\u0020 %d Archivos adjuntos</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">%d archivo adjunto</item>
-        <item quantity="other">%d archivos adjuntos</item>
+        <item quantity="one">%d Archivo adjunto</item>
+        <item quantity="other">%d Archivos adjuntos</item>
     </plurals>
-    <string name="add_attachment">Añadir adjunto</string>
+    <string name="add_attachment">Agregar archivo adjunto</string>
     <string name="select_file">Seleccionar archivo</string>
     <string name="attach_file">Adjuntar archivo</string>
     <string name="take_photo">Tomar foto</string>
@@ -287,7 +287,7 @@
     <string name="invalid_email_address">La dirección \'%s\' es inválida</string>
     <string name="invalid_email_address_removed">La dirección \'%s\' no es válida y fue eliminada</string>
     <string name="no_recipients_specified">Agregue al menos un destinatario</string>
-    <string name="no_password_specified">Los tiempos de expiración sólo se pueden establecer en mensajes totalmente cifrados. Por favor, establece una contraseña para tus destinatarios que no sean de Proton Mail.</string>
+    <string name="no_password_specified">Los tiempos de expiración sólo se pueden establecer en mensajes totalmente cifrados. Por favor, establezca una contraseña para sus destinatarios que no sean de Proton Mail.</string>
     <string name="attachment_limit">Los archivos adjuntos están limitados a %1$s. El total adjunto sería %2$s.</string>
     <string name="sending_message">Enviando mensaje...</string>
     <string name="sending_message_offline">Sin conexión, en espera para enviar más tarde...</string>
@@ -299,12 +299,12 @@
     <string name="cancel">Cancelar</string>
     <string name="close">Cerrar</string>
     <string name="eo_password_title">Establecer contraseña</string>
-    <string name="eo_password_subtitle">Establece una contraseña para cifrar este mensaje para usuarios que no sean de Proton Mail</string>
+    <string name="eo_password_subtitle">Establezca una contraseña para cifrar este mensaje para usuarios que no sean de Proton Mail</string>
     <string name="eo_password_more_info">Obtener más información</string>
     <string name="no_attachments">0 archivos adjuntos</string>
     <string name="display_name_banned_chars">Nombre inválido. \'&gt;\' y \'&lt;\' no están permitidos</string>
     <string name="cont">Continuar</string>
-    <string name="reply_prefix_on">On</string>
+    <string name="reply_prefix_on">El</string>
     <string name="label_name">Nombre de la etiqueta</string>
     <string name="label_created">Etiqueta creada</string>
     <string name="label_invalid">Etiqueta no añadida debido a un nombre inválido.</string>
@@ -411,7 +411,7 @@
     <string name="contact_vcard_new_row_email">añadir dirección de correo</string>
     <string name="contact_vcard_new_row_phone">añadir número de teléfono</string>
     <string name="contact_vcard_new_row_address">añadir dirección</string>
-    <string name="contact_vcard_new_row_other">añadir dirección</string>
+    <string name="contact_vcard_new_row_other">añadir información</string>
     <string name="vcard_other_option_org">Organización</string>
     <string name="vcard_other_option_title">Título</string>
     <string name="vcard_other_option_nickname">Apodo</string>
@@ -479,7 +479,7 @@
     <string name="details_copied">Detalles copiados al portapapeles</string>
     <string name="saving">Guardando...</string>
     <string name="update_folder">Actualizar carpeta</string>
-    <string name="spam_score_100">Este correo parece ser de una dirección de Proton Mail, pero vino de fuera de nuestro sistema y ha fallado los requisitos de autenticación. ¡Pudo ser falsificado o reenviado incorrectamente!</string>
+    <string name="spam_score_100">Este correo parece llegar de una dirección de Proton Mail, pero vino de fuera de nuestro sistema y ha fallado los requisitos de autenticación. ¡Podría haber sido falsificado o reenviado incorrectamente!</string>
     <string name="spam_score_101">Este correo ha fallado sus requisitos de autenticación de dominio. ¡Pudo haber sido falsificado o reenviado incorrectamente!</string>
     <string name="spam_score_102">Este mensaje puede ser un intento de estafa. Compruebe que el remitente y el contenido sean legítimos. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MÁS INFORMACIÓN</a></string>
     <string name="print_from_template">De: %s</string>
@@ -505,13 +505,13 @@
     <string name="email_empty">Falta la dirección de correo electrónico</string>
     <string name="encrypted_contact_details">Datos de contacto cifrados</string>
     <string name="convert_question">Cargar contactos locales</string>
-    <string name="convert_question_subtitle">Esto sincronizará los contactos locales del dispositivo con el directorio de contactos de Proton Mail. Luego podrá acceder a estos contactos en sus otros dispositivos a través de Proton Mail.</string>
+    <string name="convert_question_subtitle">Esto cargará los contactos locales de su dispositivo en su directorio de contactos de Proton Mail. Luego podrá acceder a estos contactos desde sus otros dispositivos a través de Proton Mail.</string>
     <string name="refresh_contacts">Actualizar</string>
     <string name="invalid_email_some_contacts">La dirección de correo electrónico no es válida para algunos de sus contactos</string>
     <string name="protonmail_contacts">Contactos de Proton Mail</string>
     <string name="device_contacts">Contactos del dispositivo</string>
     <string name="print_date_template">Fecha: %s</string>
-    <string name="print_attachment_template">Archivos adjuntos: %s;  </string>
+    <string name="print_attachment_template">Archivo adjunto: %s;  </string>
     <string name="pm_me_changed">El envío de mensajes desde la dirección @pm.me es una característica de pago. Su mensaje será enviado desde su dirección predeterminada %s</string>
     <string name="pm_me_can_not_be_default">Actualice a un plan de pago para poder establecer %s como dirección principal</string>
     <string name="dont_remind_again">No volver a recordarme</string>
@@ -520,7 +520,7 @@
     <string name="remove_password_question">¿Quitar contraseña?</string>
     <string name="attachment_storage_value_current">Seleccionado actualmente: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Seleccionado actualmente: ilimitado</string>
-    <string name="attachment_offline_max_storage">Configure el almacenamiento máximo que Proton Mail puede utilizar en tu teléfono.</string>
+    <string name="attachment_offline_max_storage">Configure el almacenamiento máximo que Proton Mail podrá utilizar en su teléfono.</string>
     <string name="load_embedded_images_failed_no_network">Falló la carga de imágenes incrustadas. Compruebe su conexión de red.</string>
     <string name="load_embedded_images_failed">Falló la carga de imágenes incrustadas.</string>
     <string name="unlimited">Ilimitado</string>
@@ -537,26 +537,26 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Enviado por usted con cifrado de extremo a extremo</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Enviado por Proton Mail con cifrado de acceso cero</string>
+    <string name="sender_lock_sent_autoresponder">Enviado por Proton Mail con cifrado de conocimiento cero</string>
     <string name="sender_lock_verification_failed">La verificación del remitente ha fallado</string>
-    <string name="sender_lock_pgp_encrypted">Mensaje PGP-cifrado</string>
-    <string name="sender_lock_pgp_encrypted_verified">Mensaje PGP-cifrado de dirección verificada</string>
-    <string name="sender_lock_pgp_signed_verified_sender">Mensaje PGP-firmado de dirección verificada</string>
+    <string name="sender_lock_pgp_encrypted">Mensaje cifrado con PGP</string>
+    <string name="sender_lock_pgp_encrypted_verified">Mensaje cifrado con PGP desde dirección verificada</string>
+    <string name="sender_lock_pgp_signed_verified_sender">Mensaje firmado con PGP desde dirección verificada</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Mensaje cifrado y firmado de extremo a extremo</string>
-    <string name="sender_lock_internal_verified">Mensaje cifrado de extremo a extremo de dirección verificada</string>
+    <string name="sender_lock_internal_verified">Mensaje cifrado de extremo a extremo desde dirección verificada</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Cifrado de extremo a extremo</string>
     <string name="composer_lock_internal_pinned">Cifrado de extremo a extremo al destinatario verificado</string>
     <string name="composer_lock_pgp_encrypted_pinned">Cifrado PGP al destinatario verificado</string>
-    <string name="composer_lock_pgp_signed">PGP-firmado</string>
-    <string name="recipient_not_found_and_removed">No se encontró al destinatario: %s y eso se ha eliminado</string>
+    <string name="composer_lock_pgp_signed">firmado con PGP</string>
+    <string name="recipient_not_found_and_removed">No se encontró al destinatario: %s y se ha eliminado</string>
     <string name="recipient_error_and_removed">Ocurrió un error al recuperar la información del destinatario así que ha sido borrado: %s</string>
     <string name="send_anyway">Enviar de todos modos</string>
     <string name="expiration_error_title">Ha activado la expiración del mensaje, pero no todos los destinatarios lo admiten.</string>
     <string name="expiration_error_add_msg_password">Por favor, añade una contraseña al mensaje para los siguientes destinatarios:</string>
     <string name="expiration_error_disable_pgp_sending">Deshabilite el envío PGP para habilitar la expiración para los siguientes destinatarios:</string>
-    <string name="expiration_error_proceed">Pulse enviar para enviar sin expiración para estos destinatarios.</string>
+    <string name="expiration_error_proceed">Pulse enviar de todos modos para enviar sin expiración a estos destinatarios.</string>
     <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">MÁS INFORMACIÓN</a></string>
     <string name="channel_name_attachments">Adjuntos</string>
     <string name="channel_description_attachments">Informa acerca del estado de descarga de los adjuntos</string>
@@ -625,7 +625,7 @@
     <string name="fab_add_contact">Añadir contacto nuevo</string>
     <string name="fab_add_contact_group">Añadir grupo de contactos nuevo</string>
     <string name="contacts_add_photo_title">Añadir imagen</string>
-    <string name="contacts_add_photo_select_gallery">Seleccionar de la galería</string>
+    <string name="contacts_add_photo_select_gallery">Seleccionar desde la galería</string>
     <string name="contacts_add_photo_select_camera">Capturar desde la cámara</string>
     <string name="save_group_validation_error">Proporciona un nombre de grupo</string>
     <!-- region Storage Limit Reached -->
@@ -649,9 +649,9 @@ compre más
     <string name="app_locked">Aplicación bloqueada</string>
     <string name="use_pin_instead">Utilice el PIN en su lugar</string>
     <!-- strings used for biometric enrollment -->
-    <string name="no_biometric_data_enrolled">No hay datos biométricos inscritos</string>
+    <string name="no_biometric_data_enrolled">No hay datos biométricos registrados</string>
     <string name="log_in_using_biometric_credential">Desbloquear usando tus credenciales biométricas</string>
-    <string name="unlock_using_biometrics">Desbloquear usando biométricos</string>
+    <string name="unlock_using_biometrics">Desbloquear usando datos biométricos</string>
     <string name="biometric_error_hw_not_available">Hardware biométrico no disponible.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Destinatarios desconocidos</string>
@@ -674,14 +674,14 @@ compre más
     <string name="display_name">Nombre a mostrar</string>
     <string name="edit_display_name">Editar el nombre a mostrar</string>
     <string name="signature">Firma</string>
-    <string name="mobile_footer">Pie de página móvil</string>
+    <string name="mobile_footer">Pie de página para móvil</string>
     <string name="edit_mobile_footer">Activar pie de página en la aplicación móvil</string>
     <string name="default_mobile_footer">Enviado desde Proton Mail móvil</string>
-    <string name="mobile_footer_is_premium">Cambiar el pie de página en la aplicación móvil solo le está permitido a usuarios de pago</string>
+    <string name="mobile_footer_is_premium">Solamente los usuarios de pago pueden cambiar el pie de página en la aplicación móvil</string>
     <string name="mobile_footer_info">Este pie de página se añadirá después de su firma</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Silenciar</string>
-    <string name="notifications_snooze">Silenciar notificaciones</string>
+    <string name="notifications_snooze">Posponer notificaciones</string>
     <string-array name="quick_snooze_values">
         <item>30 minutos</item>
         <item>1 hora</item>
@@ -728,7 +728,7 @@ compre más
     <!-- endregion -->
     <string name="mailbox">Bandeja de entrada</string>
     <string name="privacy">Privacidad</string>
-    <string name="auto_download_messages_title">Auto descargar mensajes</string>
+    <string name="auto_download_messages_title">Descargar mensajes automáticamente</string>
     <string name="auto_download_messages_subtitle">Cuando esta opción está activada, los cuerpos de los mensajes se descargarán automáticamente cada vez que reciba una notificación nueva (esto consumirá más datos). Si la opción no está activada, los cuerpos de los mensajes solo se descargarán cuando abra el mensaje. (Nota: con cualquier opción, si vacía la caché o cierra la sesión, no podrá leer el cuerpo de los mensajes mientras no esté conectado).</string>
     <string name="settings_background_sync">Sincronizar en segundo plano</string>
     <string name="settings_auto_show_images">Mostrar imágenes remotas automáticamente</string>
@@ -809,7 +809,7 @@ compre más
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagen no encontrada</string>
-    <string name="error_image_bad_url">URL de imagen malformada</string>
+    <string name="error_image_bad_url">URL de imagen no válida</string>
     <string name="error_saving_try_again">Se ha producido un error al guardar el mensaje. Inténtalo de nuevo.</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>
