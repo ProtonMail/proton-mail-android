@@ -637,7 +637,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             messageData = null,
             messageLabels = emptyList(),
             allLabelsIds = emptyList(),
-            isDraft = false
+            isDraft = false,
+            isScheduled = false
         )
 
 

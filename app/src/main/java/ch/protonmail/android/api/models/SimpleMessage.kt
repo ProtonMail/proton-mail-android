@@ -16,40 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models;
+package ch.protonmail.android.api.models
 
-import ch.protonmail.android.data.local.model.Message;
-import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel;
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 
-public class SimpleMessage {
+data class SimpleMessage(
+    val messageId: String,
+    val isRead: Boolean,
+    val isStarred: Boolean,
+    val isScheduled: Boolean
+) {
 
-    private final String messageID;
-    private final boolean isRead;
-    private final boolean isStarred;
+    constructor(mailboxItemUiModel: MailboxItemUiModel) : this(
+        messageId = mailboxItemUiModel.itemId,
+        isRead = mailboxItemUiModel.isRead,
+        isStarred = mailboxItemUiModel.isStarred,
+        isScheduled = mailboxItemUiModel.isScheduled
+    )
 
-    public SimpleMessage(MailboxItemUiModel mailboxItemUiModel) {
-        messageID = mailboxItemUiModel.getItemId();
-        isRead = mailboxItemUiModel.isRead();
-        isStarred = mailboxItemUiModel.isStarred();
-    }
 
-    public SimpleMessage(Message message) {
-        messageID = message.getMessageId();
-        isRead = message.isRead();
-        final Boolean starred = message.isStarred();
-        isStarred = starred != null && starred;
-    }
-
-    public String getMessageId() {
-        return messageID;
-    }
-
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public boolean isStarred() {
-        return isStarred;
-    }
+    constructor(message: Message) : this(
+        messageId = message.messageId ?: "",
+        isRead = message.isRead,
+        isStarred = message.isStarred ?: false,
+        isScheduled = message.isScheduled
+    )
 
 }

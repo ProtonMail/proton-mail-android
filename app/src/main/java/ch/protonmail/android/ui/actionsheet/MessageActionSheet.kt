@@ -46,6 +46,7 @@ import ch.protonmail.android.mailbox.presentation.viewmodel.MailboxViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -90,7 +91,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         val binding = FragmentMessageActionSheetBinding.inflate(inflater)
 
         viewModel.stateFlow
-            .onEach { updateViewState(it, binding) }
+            .onEach { updateViewState(isScheduled, it, binding) }
             .launchIn(lifecycleScope)
 
         viewModel.setupViewState(
@@ -165,13 +166,14 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun updateViewState(
+        isScheduled: Boolean,
         state: MessageActionSheetState,
         binding: FragmentMessageActionSheetBinding
     ) {
         when (state) {
             is MessageActionSheetState.Data -> {
                 setupManageSectionBindings(binding, state.manageSectionState)
-                setupMoveSectionState(binding, state.moveSectionState)
+                setupMoveSectionState(isScheduled, binding, state.moveSectionState)
             }
             MessageActionSheetState.Initial -> {
             }
@@ -300,6 +302,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun setupMoveSectionState(
+        isScheduled: Boolean,
         binding: FragmentMessageActionSheetBinding,
         state: MessageActionSheetState.MoveSectionState
     ) {
@@ -320,7 +323,17 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         binding.textViewDetailsActionsTrash.apply {
             isVisible = state.showMoveToTrashAction
             setOnClickListener {
-                viewModel.moveToTrash(messageIds, currentLocation)
+                if (isScheduled) {
+                    context.showTwoButtonInfoDialog(
+                        titleStringId = R.string.scheduled_message_moved_to_trash_title,
+                        messageStringId = R.string.scheduled_message_moved_to_trash_desc,
+                        negativeStringId = R.string.cancel,
+                        onPositiveButtonClicked = {
+                            viewModel.moveToTrash(messageIds, currentLocation)
+                        }
+                    )
+                } else
+                    viewModel.moveToTrash(messageIds, currentLocation)
             }
         }
 

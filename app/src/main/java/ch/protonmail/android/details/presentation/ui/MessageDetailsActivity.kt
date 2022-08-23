@@ -687,8 +687,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     onBackPressed()
                 }
             } else {
-                viewModel.moveToTrash()
-                onBackPressed()
+                moveToTrash(message.isScheduled)
             }
         }
         messageDetailsActionsView.setOnSecondActionClickListener {
@@ -700,6 +699,23 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 if (hasMultipleRecipients) Constants.MessageActionType.REPLY_ALL else Constants.MessageActionType.REPLY,
                 messageOrConversationId
             )
+        }
+    }
+
+    private fun moveToTrash(isScheduled: Boolean) {
+        if (isScheduled) {
+            showTwoButtonInfoDialog(
+                titleStringId = R.string.scheduled_message_moved_to_trash_title,
+                messageStringId = R.string.scheduled_message_moved_to_trash_desc,
+                negativeStringId = R.string.cancel,
+                onPositiveButtonClicked = {
+                    viewModel.moveToTrash()
+                    onBackPressed()
+                }
+            )
+        } else {
+            viewModel.moveToTrash()
+            onBackPressed()
         }
     }
 
