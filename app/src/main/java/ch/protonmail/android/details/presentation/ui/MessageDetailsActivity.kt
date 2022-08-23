@@ -651,19 +651,25 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 getCurrentSubject(),
                 getMessagesFrom(message.sender?.name),
                 message.isStarred ?: false,
+                message.isScheduled,
                 viewModel.doesConversationHaveMoreThanOneMessage()
             )
                 .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
         }
 
         val hasMultipleRecipients = message.toList.size + message.ccList.size > 1
+
         val actionsUiModel = BottomActionsView.UiModel(
-            if (hasMultipleRecipients) R.drawable.ic_proton_arrows_up_and_left else R.drawable.ic_proton_arrow_up_and_left,
+            null,
             R.drawable.ic_proton_envelope_dot,
             if (viewModel.shouldShowDeleteActionInBottomActionBar()) R.drawable.ic_proton_trash_cross else R.drawable.ic_proton_trash,
             R.drawable.ic_proton_tag
         )
         messageDetailsActionsView.bind(actionsUiModel)
+        messageDetailsActionsView.setAction(
+            BottomActionsView.ActionPosition.ACTION_FIRST, !message.isScheduled,
+            if (hasMultipleRecipients) R.drawable.ic_proton_arrows_up_and_left else R.drawable.ic_proton_arrow_up_and_left
+        )
         messageDetailsActionsView.setOnFourthActionClickListener {
             showLabelsActionSheet(LabelType.MESSAGE_LABEL)
         }
@@ -883,7 +889,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             openedFolderLabelId ?: message.location.toString(),
             getCurrentSubject(),
             getMessagesFrom(message.sender?.name),
-            message.isStarred ?: false
+            message.isStarred ?: false,
+            message.isScheduled
         ).show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
     }
 

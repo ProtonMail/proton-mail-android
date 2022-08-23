@@ -303,6 +303,11 @@ data class Message @JvmOverloads constructor(
             return user!!.addresses!!.any { it.email.equals(senderEmail, ignoreCase = true) }
         }
 
+    val isScheduled: Boolean
+        get() {
+            return allLabelIDs.contains(MessageLocationType.ALL_SCHEDULED.asLabelIdString())
+        }
+    
     fun locationFromLabel(labelRepository: LabelRepository? = null): Constants.MessageLocationType =
         MessageLocationResolver(labelRepository).resolveLocationFromLabels(allLabelIDs)
 
@@ -581,12 +586,6 @@ data class Message @JvmOverloads constructor(
         labelId in listOf(
             MessageLocationType.DRAFT.asLabelIdString(),
             MessageLocationType.ALL_DRAFT.asLabelIdString()
-        )
-    }
-
-    fun isScheduled() = allLabelIDs.any { labelId ->
-        labelId in listOf(
-            MessageLocationType.ALL_SCHEDULED.asLabelIdString()
         )
     }
 
