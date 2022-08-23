@@ -79,8 +79,8 @@
     <string name="composer_from">Frá:</string>
     <string name="composer_subject">Viðfangsefni:</string>
     <string name="composer_to">Til:</string>
-    <string name="composer_removing_address_generic_error">Get ekki staðfest netfang: %s1. Sending gæti mistekist.</string>
-    <string name="composer_removing_address_server_error">Fjarlægi netföng: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Get ekki staðfest netfang: %s. Sending gæti mistekist.</string>
+    <string name="composer_removing_address_server_error">Fjarlægi netföng: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Þann %s, %s &lt; %s&gt; skrifaði:</string>
     <string name="set_msg_password_title">Stilltu lykilorð</string>

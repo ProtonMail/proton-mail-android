@@ -79,8 +79,8 @@
     <string name="composer_from">Feladó:</string>
     <string name="composer_subject">Tárgy:</string>
     <string name="composer_to">Címzett:</string>
-    <string name="composer_removing_address_generic_error">Cím ellenőrzése sikertelen: %s1. A küldés meghiúsulhat.</string>
-    <string name="composer_removing_address_server_error">Cím eltávolítása: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s-kor, %s &lt; %s&gt; ezt írta:</string>
     <string name="set_msg_password_title">Jelszó beállítása</string>

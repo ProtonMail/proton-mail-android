@@ -79,8 +79,8 @@
     <string name="composer_from">De:</string>
     <string name="composer_subject">Assumpte:</string>
     <string name="composer_to">A:</string>
-    <string name="composer_removing_address_generic_error">No es pot verificar l\'adreça: %s1. L\'enviament podria fallar.</string>
-    <string name="composer_removing_address_server_error">Eliminant l\'adreça: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">No es pot verificar l\'adreça: %s. L\'enviament podria fallar.</string>
+    <string name="composer_removing_address_server_error">Eliminant l\'adreça: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">El %s, %s &lt; %s&gt; va escriure:</string>
     <string name="set_msg_password_title">Establir contrasenya</string>

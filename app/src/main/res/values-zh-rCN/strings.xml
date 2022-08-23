@@ -78,8 +78,8 @@
     <string name="composer_from">发件人：</string>
     <string name="composer_subject">主题：</string>
     <string name="composer_to">收件人：</string>
-    <string name="composer_removing_address_generic_error">无法验证地址：%s1。发送邮件可能会失败。</string>
-    <string name="composer_removing_address_server_error">移除地址 %s1 失败：%s2</string>
+    <string name="composer_removing_address_generic_error">无法验证地址：%s。发送邮件可能会失败。</string>
+    <string name="composer_removing_address_server_error">移除地址 %s 失败：%s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s，%s &lt;%s&gt; 来信：</string>
     <string name="set_msg_password_title">设置密码</string>

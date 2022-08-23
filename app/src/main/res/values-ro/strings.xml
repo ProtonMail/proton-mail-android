@@ -80,8 +80,8 @@
     <string name="composer_from">De la:</string>
     <string name="composer_subject">Subiect:</string>
     <string name="composer_to">Către:</string>
-    <string name="composer_removing_address_generic_error">Nu se poate verifica adresa: %s1. Trimiterea ar putea eșua.</string>
-    <string name="composer_removing_address_server_error">Eliminare adresa: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Nu se poate verifica adresa: %s. Trimiterea ar putea eșua.</string>
+    <string name="composer_removing_address_server_error">Eliminare adresa: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">La %s, %s &lt; %s&gt; a scris:</string>
     <string name="set_msg_password_title">Setare parolă</string>

@@ -80,8 +80,8 @@
     <string name="composer_from">Od:</string>
     <string name="composer_subject">Predmet:</string>
     <string name="composer_to">Za:</string>
-    <string name="composer_removing_address_generic_error">Ne mogu potvrditi adresu: %s1. Slanje možda neće uspjeti.</string>
-    <string name="composer_removing_address_server_error">Uklanjanje adrese: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; napisao:</string>
     <string name="set_msg_password_title">Postavi lozinku</string>

@@ -79,8 +79,8 @@
     <string name="composer_from">Fra:</string>
     <string name="composer_subject">Emne:</string>
     <string name="composer_to">Til:</string>
-    <string name="composer_removing_address_generic_error">Kan ikke bekræfte adresse: %s1. Afsendelse mislykkes måske.</string>
-    <string name="composer_removing_address_server_error">Fjerner adresse: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Kan ikke bekræfte adresse: %s. Afsendelse vil måske mislykkes.</string>
+    <string name="composer_removing_address_server_error">Fjerner adresse: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s skrev %s &lt; %s&gt;:</string>
     <string name="set_msg_password_title">Indstil adgangskode</string>
