@@ -80,9 +80,9 @@ object TestUser {
 
     fun populateUsers() {
         val onePass = BaseTest.users.getUser { it.name == "onePassUser" }
-        val twoPass = BaseTest.users.getUser { it.name == "twoPassUser" }
+        val twoPass = BaseTest.users.getUsers(false) { it.name == "twoPassAccount" }[0]
         val onePassWith2FA = BaseTest.users.getUser { it.name == "onePassUserWith2FA" }
-        val twoPassWith2FA = BaseTest.users.getUser { it.name == "twoPassUserWith2FA" }
+        val twoPassWith2FA = BaseTest.users.getUsers(false)  { it.name == "twoPassUserWith2FA" }[0]
         val autoAttachPublicKey = BaseTest.users.getUser { it.name == "autoAttachPublicKeyUser" }
         val internalTrustedKeys = BaseTest.users.getUser { it.name == "internalTrustedKeys" }
         val internalUntrustedKeys = BaseTest.users.getUser { it.name == "internalUntrustedKeys" }

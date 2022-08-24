@@ -67,9 +67,10 @@
     "password": "auto123"
   },
   {
-    "name": "twoPassUser",
-    "email": "twoPassUser@protonmail.com",
-    "password": "auto123"
+    "name": "twoPassAccount",
+    "email": "twoPassAccount@protonmail.com",
+    "password": "auto1234",
+    "passphrase": "22222222"
   },
   {
     "name": "onePassUserWith2FA",
@@ -79,7 +80,8 @@
   {
     "name": "twoPassUserWith2FA",
     "email": "twoPassUserWith2FA@protonmail.com",
-    "password": "auto123"
+    "password": "auto123",
+    "passphrase": "123"
   },
   {
     "name": "autoAttachPublicKeyUser",

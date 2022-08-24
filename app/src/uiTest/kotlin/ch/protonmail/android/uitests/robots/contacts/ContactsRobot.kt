@@ -107,11 +107,10 @@ class ContactsRobot : Fusion {
             return InboxRobot()
         }
 
-        fun clickGroup(withName: String): GroupDetailsRobot {
-            view.withText(withName).waitForDisplayed()
+        fun clickGroup(groupName: String): GroupDetailsRobot {
             recyclerView
                 .withId(contactGroupsRecyclerView)
-                .onHolderItem(withContactGroupName(withName))
+                .onHolderItem(withContactGroupName(groupName))
                 .click()
             return GroupDetailsRobot()
         }

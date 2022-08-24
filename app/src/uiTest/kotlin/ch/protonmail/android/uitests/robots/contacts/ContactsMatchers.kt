@@ -18,13 +18,16 @@
  */
 package ch.protonmail.android.uitests.robots.contacts
 
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.matcher.BoundedMatcher
 import ch.protonmail.android.R
 import ch.protonmail.android.contacts.list.listView.ContactsListAdapter
 import kotlinx.android.synthetic.main.list_item_contacts.view.*
+import me.proton.fusion.ui.espresso.Actions
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 
@@ -59,6 +62,24 @@ object ContactsMatchers {
                 } else {
                     false
                 }
+            }
+        }
+    }
+
+    fun withContactEmailText(email: String): Matcher<RecyclerView.ViewHolder> {
+        return object : BoundedMatcher<RecyclerView.ViewHolder,
+            RecyclerView.ViewHolder>(RecyclerView.ViewHolder::class.java) {
+
+            val contactsList = ArrayList<String>()
+
+            override fun describeTo(description: Description) {
+                description.appendText("Contact item with email: \"$email\"\n")
+                description.appendText("Here is the actual list of contacts:\n")
+                contactsList.forEach { description.appendText(" - \"$it\"\n") }
+            }
+
+            override fun matchesSafely(item: RecyclerView.ViewHolder): Boolean {
+                return (item.itemView as ViewGroup).children.any { child -> child is TextView && child.text == email }
             }
         }
     }

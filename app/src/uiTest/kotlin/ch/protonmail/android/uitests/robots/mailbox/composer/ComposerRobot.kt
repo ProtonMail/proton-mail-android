@@ -284,17 +284,17 @@ class ComposerRobot : Fusion {
     }
 
     private fun subject(text: String): ComposerRobot {
-        view.withId(subjectId).click().clearText().typeText(text)
+        view.withId(subjectId).click().replaceText(text)
         return this
     }
 
     fun updateSubject(text: String): ComposerRobot {
-        view.withId(subjectId).clearText().typeText("Updated: $text")
+        view.withId(subjectId).replaceText("Updated: $text")
         return this
     }
 
     private fun body(text: String): ComposerRobot {
-        view.withId(messageBodyId).clearText().typeText(text)
+        view.withId(messageBodyId).replaceText(text)
         return this
     }
 
@@ -399,5 +399,6 @@ class ComposerRobot : Fusion {
         const val addressSpinnerId = R.id.composer_from_spinner
         const val toRecipientsId = R.id.composer_to_recipient_view
         const val ok = R.id.ok
+        const val sendAnywayButton = R.id.dialog_expiration_unsupported_send_anyway_button
     }
 }
