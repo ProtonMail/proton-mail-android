@@ -277,7 +277,9 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.saveDraft(message)
 
-            val expectedError = "Error creating draft for message $messageSubject"
+            val expectedError = ComposeMessageViewModel.SavingDraftError(
+                errorMessage = "Error creating draft for message $messageSubject", false
+            )
             coVerify { stringResourceResolver.invoke(errorResId) }
             assertEquals(expectedError, saveDraftErrorObserver.observedValues[0])
         }
@@ -298,7 +300,36 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.saveDraft(message)
 
-            val expectedError = "Error uploading attachments for subject $messageSubject"
+            val expectedError = ComposeMessageViewModel.SavingDraftError(
+                "Error uploading attachments for subject $messageSubject", false
+            )
+            coVerify { stringResourceResolver.invoke(errorResId) }
+            assertEquals(expectedError, saveDraftErrorObserver.observedValues[0])
+        }
+    }
+
+    @Test
+    fun `save draft resolves error and posts on live data when save draft use case fails with InvalidSender`() {
+        runBlockingTest {
+            // Given
+            val messageSubject = "subject"
+            val message = Message(subject = messageSubject)
+            val saveDraftErrorObserver = viewModel.savingDraftError.testObserver()
+            val errorResId = R.string.composer_invalid_sender_saving_draft_failed
+            givenViewModelPropertiesAreInitialised()
+            coEvery { saveDraft(any()) } returns SaveDraftResult.InvalidSender
+            every {
+                stringResourceResolver.invoke(
+                    errorResId
+                )
+            } returns "The \"From:\" address is invalid. Please change it to a valid one"
+
+            // When
+            viewModel.saveDraft(message)
+
+            val expectedError = ComposeMessageViewModel.SavingDraftError(
+                errorMessage = "The \"From:\" address is invalid. Please change it to a valid one", true
+            )
             coVerify { stringResourceResolver.invoke(errorResId) }
             assertEquals(expectedError, saveDraftErrorObserver.observedValues[0])
         }

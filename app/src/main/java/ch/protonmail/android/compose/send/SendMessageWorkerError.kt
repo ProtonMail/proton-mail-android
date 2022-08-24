@@ -28,5 +28,6 @@ enum class SendMessageWorkerError {
     MessageAlreadySent,
     MessageNotFound,
     SavedDraftMessageNotFound,
-    UploadAttachmentsFailed
+    UploadAttachmentsFailed,
+    InvalidSender
 }

@@ -143,7 +143,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val _setupComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _closeComposer: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _savingDraftComplete: MutableLiveData<Message> = MutableLiveData()
-    private val _savingDraftError: MutableLiveData<String> = MutableLiveData()
+    private val _savingDraftError: MutableLiveData<SavingDraftError> = MutableLiveData()
     private val _deleteResult: MutableLiveData<Event<PostResult>> = MutableLiveData()
     private val _loadingDraftResult: MutableLiveData<Message> = MutableLiveData()
     private val _messageResultError: MutableLiveData<Event<PostResult>> = MutableLiveData()
@@ -206,7 +206,7 @@ class ComposeMessageViewModel @Inject constructor(
         get() = setupComplete.value?.peekContent() ?: false
     val savingDraftComplete: LiveData<Message>
         get() = _savingDraftComplete
-    val savingDraftError: LiveData<String>
+    val savingDraftError: LiveData<SavingDraftError>
         get() = _savingDraftError
     val senderAddresses: List<String>
         get() = _senderAddresses
@@ -523,15 +523,21 @@ class ComposeMessageViewModel @Inject constructor(
 
         when (saveDraftResult) {
             is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
+            SaveDraftResult.InvalidSender -> {
+                val errorMessage = stringResourceResolver(R.string.composer_invalid_sender_saving_draft_failed)
+                _savingDraftError.postValue(SavingDraftError(errorMessage, true))
+            }
             SaveDraftResult.OnlineDraftCreationFailed -> {
                 val errorMessage = stringResourceResolver(
                     R.string.failed_saving_draft_online
                 ).format(message.subject)
-                _savingDraftError.postValue(errorMessage)
+                _savingDraftError.postValue(SavingDraftError(errorMessage, false))
             }
             SaveDraftResult.UploadDraftAttachmentsFailed -> {
                 val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
-                _savingDraftError.postValue(errorMessage)
+                _savingDraftError.postValue(
+                    SavingDraftError(errorMessage, false)
+                )
             }
         }
     }
@@ -1381,4 +1387,9 @@ class ComposeMessageViewModel @Inject constructor(
     private fun List<LocalAttachment>.withoutPgpData() = map {
         if (it.isPgpAttachment) it.apply { uri = Uri.EMPTY } else it
     }
+
+    data class SavingDraftError(
+        val errorMessage: String,
+        val showDialog: Boolean
+    )
 }

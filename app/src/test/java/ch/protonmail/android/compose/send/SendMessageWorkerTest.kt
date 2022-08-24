@@ -371,6 +371,32 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
+    fun `worker fails and notifies user when save draft fails with InvalidSender error`() = runBlockingTest {
+        val messageDbId = 2835L
+        val messageId = "823473"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = "Subject 005"
+        }
+        givenFullValidInput(messageDbId, messageId)
+        coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+        coEvery { saveDraft(any()) } returns SaveDraftResult.InvalidSender
+        every { context.getString(R.string.notification_invalid_sender_sending_failed) } returns "error message 823473"
+
+        val result = worker.doWork()
+
+        verify { pendingActionDao.deletePendingSendByMessageId("823473") }
+        verify { userNotifier.showSendMessageError("error message 823473", "Subject 005") }
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "InvalidSender")
+            ),
+            result
+        )
+    }
+
+    @Test
     fun workerGetsTheUpdatedMessageThatWasSavedAsDraftWhenSavingDraftSucceeds() = runBlockingTest {
         val messageDbId = 328_423L
         val messageId = "82384203"

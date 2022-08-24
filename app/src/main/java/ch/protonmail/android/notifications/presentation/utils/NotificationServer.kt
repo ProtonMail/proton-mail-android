@@ -333,6 +333,7 @@ class NotificationServer @Inject constructor(
                 isNotificationVisibleInLockScreen
             ).apply {
                 setContentTitle(sender)
+                setSubText(message?.toListString ?: userDisplayName)
                 setContentText(notificationBody)
                 setContentIntent(contentPendingIntent)
                 setDeleteIntent(dismissIntent)
@@ -423,13 +424,14 @@ class NotificationServer @Inject constructor(
         userId: UserId,
         username: Name,
         error: String,
+        subject: String = ""
     ) {
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .setSummaryText(username.s)
             .bigText(error)
 
         val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
-            .setContentTitle(context.getString(R.string.message_failed))
+            .setContentTitle(context.getString(R.string.message_failed) + " " + subject)
             .setStyle(bigTextStyle)
 
         val notification = notificationBuilder.build()

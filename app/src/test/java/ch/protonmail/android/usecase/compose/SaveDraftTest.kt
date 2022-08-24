@@ -649,6 +649,53 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
+    fun `save drafts returns InvalidSender sent failure when worker fails updating a draft on api with InvalidSender error`() {
+        runBlockingTest {
+            // Given
+            val localDraftId = "8346"
+            val message = Message().apply {
+                dbId = 124L
+                this.messageId = "45624"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+                localId = localDraftId
+            }
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM to CreateDraftWorkerErrors.InvalidSender.name
+            )
+            val workerStatusFlow = buildWorkerResponse(WorkInfo.State.FAILED, workOutputData)
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 9834L
+            coEvery { messageDetailsRepository.findMessageById("45624") } returns flowOf(message)
+            every {
+                createDraftScheduler.enqueue(
+                    userId = userId,
+                    message = message,
+                    parentId = "parentId235",
+                    actionType = NONE,
+                    previousSenderAddressId = "previousSenderId132424"
+                )
+            } answers { workerStatusFlow }
+
+
+            // When
+            val result = saveDraft.invoke(
+                SaveDraftParameters(
+                    userId = userId,
+                    message = message,
+                    newAttachmentIds = emptyList(),
+                    parentId = "parentId235",
+                    actionType = NONE,
+                    previousSenderAddressId = "previousSenderId132424",
+                    trigger = SaveDraft.SaveDraftTrigger.UserRequested
+                )
+            )
+
+            // Then
+            assertEquals(SaveDraftResult.InvalidSender, result)
+        }
+    }
+
+    @Test
     fun saveDraftsShowUploadAttachmentErrorAndReturnsErrorWhenUploadingNewAttachmentsFails() {
         runBlockingTest {
             // Given
