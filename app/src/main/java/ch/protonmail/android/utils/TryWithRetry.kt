@@ -20,26 +20,47 @@
 package ch.protonmail.android.utils
 
 import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import javax.inject.Inject
 
-private const val DEFAULT_RETRY_COUNT = 3
+private const val DEFAULT_RETRY_COUNT = 2
 
 class TryWithRetry @Inject constructor() {
 
     suspend operator fun <T> invoke(
         numberOfRetries: Int = DEFAULT_RETRY_COUNT,
+        shouldRetryOnError: (error: Exception) -> Boolean = { true },
+        shouldRetryOnResult: (result: T) -> Boolean = { false },
+        beforeRetry: suspend (retryCount: Int) -> Unit = { },
         block: suspend () -> T,
-    ): Either<List<Exception>, T> {
+    ): Either<Exception, T> {
         var retryCount = 0
-        val exceptions = mutableListOf<Exception>()
+        var lastResult: T? = null
+        var lastException: Exception? = null
+
+        try {
+            lastResult = block()
+            if (!shouldRetryOnResult(lastResult)) return lastResult.right()
+        } catch (exception: Exception) {
+            lastException = exception
+            if (!shouldRetryOnError(lastException)) return lastException.left()
+        }
+
         while (retryCount < numberOfRetries) {
             try {
-                retryCount++
-                return Either.right(block())
+                beforeRetry(retryCount)
+                lastResult = block()
+                if (!shouldRetryOnResult(lastResult)) return lastResult.right()
             } catch (exception: Exception) {
-                exceptions.add(exception)
+                lastException = exception
+                lastResult = null
+                if (!shouldRetryOnError(lastException)) return lastException.left()
             }
+            retryCount++
         }
-        return Either.left(exceptions)
+        return lastResult?.right()
+            ?: lastException?.left()
+            ?: IllegalStateException("No result nor exception").left()
     }
 }

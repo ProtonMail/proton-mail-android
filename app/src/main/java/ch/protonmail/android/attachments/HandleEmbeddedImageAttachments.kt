@@ -135,11 +135,8 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                     "Insert embd attachment id: ${embeddedImageWithFile.attachmentId} messageId: ${embeddedImageWithFile.messageId}"
                 )
                 attachmentMetadataDao.insertAttachmentMetadata(attachmentMetadata)
-            }.mapLeft { errors ->
-                errors.distinctBy { it.message }
-                    .forEach { error ->
-                        Timber.e(error, "handleEmbeddedImages exception")
-                    }
+            }.mapLeft { error ->
+                Timber.e(error, "handleEmbeddedImages exception")
                 hasFailed = true
             }
         }
