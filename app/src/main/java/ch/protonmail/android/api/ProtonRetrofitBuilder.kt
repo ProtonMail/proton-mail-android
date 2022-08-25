@@ -19,6 +19,7 @@
 package ch.protonmail.android.api
 
 import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
+import ch.protonmail.android.api.interceptors.RetryRequestInterceptor
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.segments.ATTACH_PATH
 import ch.protonmail.android.api.segments.ONE_MINUTE
@@ -61,6 +62,7 @@ class ProtonRetrofitBuilder @Inject constructor(
     private val cookieStore: ProtonCookieStore?,
     private val userNotifier: UserNotifier,
     private val sessionManager: SessionManager,
+    private val retryRequestInterceptor: RetryRequestInterceptor
 ) {
 
     private val cache = HashMap<RetrofitType, Retrofit>()
@@ -80,7 +82,8 @@ class ProtonRetrofitBuilder @Inject constructor(
                         networkUtil,
                         cookieStore,
                         userNotifier,
-                        sessionManager
+                        sessionManager,
+                        retryRequestInterceptor
                     ).build(endpointUri).build()
                 }
                 RetrofitType.PING -> {
@@ -92,7 +95,8 @@ class ProtonRetrofitBuilder @Inject constructor(
                         networkUtil,
                         cookieStore,
                         userNotifier,
-                        sessionManager
+                        sessionManager,
+                        retryRequestInterceptor
                     ).build(endpointUri).build()
                 }
                 RetrofitType.EXTENDED_TIMEOUT -> {
@@ -104,7 +108,8 @@ class ProtonRetrofitBuilder @Inject constructor(
                         networkUtil,
                         cookieStore,
                         userNotifier,
-                        sessionManager
+                        sessionManager,
+                        retryRequestInterceptor
                     ).buildExtended(endpointUri).build()
                 }
                 RetrofitType.ATTACHMENTS -> {
@@ -116,7 +121,8 @@ class ProtonRetrofitBuilder @Inject constructor(
                         networkUtil,
                         cookieStore,
                         userNotifier,
-                        sessionManager
+                        sessionManager,
+                        retryRequestInterceptor
                     ).build(endpointUri).build()
                 }
                 else -> { // secure is default
@@ -128,7 +134,8 @@ class ProtonRetrofitBuilder @Inject constructor(
                         networkUtil,
                         cookieStore,
                         userNotifier,
-                        sessionManager
+                        sessionManager,
+                        retryRequestInterceptor
                     ).build(endpointUri).build()
                 }
             }
@@ -154,6 +161,7 @@ sealed class ProtonRetrofit(
     networkUtil: QueueNetworkUtil,
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
+    val retryRequestInterceptor: RetryRequestInterceptor
 ) {
 
     private val defaultInterceptor =
@@ -212,7 +220,8 @@ class ProtonRetrofitPublic(
     private val cookieStore: ProtonCookieStore?,
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
-) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
+    retryRequestInterceptor: RetryRequestInterceptor
+) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager, retryRequestInterceptor) {
 
     override fun configureOkHttp(
         endpointUri: String,
@@ -226,6 +235,7 @@ class ProtonRetrofitPublic(
             HttpLoggingInterceptor.Level.HEADERS,
             spec,
             serverTimeInterceptor,
+            retryRequestInterceptor,
             cookieStore
         )
         return okHttpClient.okClientBuilder.build()
@@ -241,7 +251,8 @@ class ProtonRetrofitPing(
     private val cookieStore: ProtonCookieStore?,
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
-) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
+    retryRequestInterceptor: RetryRequestInterceptor
+) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager, retryRequestInterceptor) {
 
     override fun configureOkHttp(
         endpointUri: String,
@@ -255,6 +266,7 @@ class ProtonRetrofitPing(
             HttpLoggingInterceptor.Level.HEADERS,
             spec,
             serverTimeInterceptor,
+            retryRequestInterceptor,
             cookieStore
         )
         return okHttpClient.okClientBuilder.build()
@@ -270,7 +282,8 @@ class ProtonRetrofitExtended(
     private val cookieStore: ProtonCookieStore?,
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
-) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
+    retryRequestInterceptor: RetryRequestInterceptor
+) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager, retryRequestInterceptor) {
 
     override fun configureOkHttp(
         endpointUri: String,
@@ -284,6 +297,7 @@ class ProtonRetrofitExtended(
             HttpLoggingInterceptor.Level.HEADERS,
             spec,
             serverTimeInterceptor,
+            retryRequestInterceptor,
             cookieStore
         )
         return okHttpClient.okClientBuilder.build()
@@ -298,8 +312,9 @@ class ProtonRetrofitAttachments(
     networkUtil: QueueNetworkUtil,
     private val cookieStore: ProtonCookieStore?,
     userNotifier: UserNotifier,
-    sessionManager: SessionManager
-) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
+    sessionManager: SessionManager,
+    retryRequestInterceptor: RetryRequestInterceptor
+) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager, retryRequestInterceptor) {
 
     override fun configureOkHttp(
         endpointUri: String,
@@ -313,6 +328,7 @@ class ProtonRetrofitAttachments(
             HttpLoggingInterceptor.Level.BASIC,
             spec,
             serverTimeInterceptor,
+            retryRequestInterceptor,
             cookieStore
         )
         return okHttpClient.okClientBuilder.build()
@@ -328,7 +344,8 @@ class ProtonRetrofitSecure(
     private val cookieStore: ProtonCookieStore?,
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
-) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
+    retryRequestInterceptor: RetryRequestInterceptor
+) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager, retryRequestInterceptor) {
 
     override fun configureOkHttp(
         endpointUri: String,
@@ -342,6 +359,7 @@ class ProtonRetrofitSecure(
             HttpLoggingInterceptor.Level.BASIC,
             spec,
             serverTimeInterceptor,
+            retryRequestInterceptor,
             cookieStore
         )
         return okHttpClient.okClientBuilder.build()

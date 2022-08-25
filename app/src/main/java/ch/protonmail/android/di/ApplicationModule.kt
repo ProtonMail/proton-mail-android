@@ -30,6 +30,7 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
+import ch.protonmail.android.api.interceptors.RetryRequestInterceptor
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.messages.receive.AttachmentFactory
 import ch.protonmail.android.api.models.messages.receive.IAttachmentFactory
@@ -172,7 +173,8 @@ object ApplicationModule {
         @DefaultSharedPreferences prefs: SharedPreferences,
         userNotifier: UserNotifier,
         sessionManager: SessionManager,
-        @BaseUrl baseUrl: String
+        @BaseUrl baseUrl: String,
+        retryRequestInterceptor: RetryRequestInterceptor
     ): ProtonRetrofitBuilder {
 
         // userManager.user.allowSecureConnectionsViaThirdParties)
@@ -189,7 +191,8 @@ object ApplicationModule {
             networkUtil,
             cookieStore,
             userNotifier,
-            sessionManager
+            sessionManager,
+            retryRequestInterceptor
         ).apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
 

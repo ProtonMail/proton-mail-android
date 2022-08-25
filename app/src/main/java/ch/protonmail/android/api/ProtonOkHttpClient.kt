@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.api
 
+import ch.protonmail.android.api.interceptors.RetryRequestInterceptor
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
 import com.datatheorem.android.trustkit.TrustKit
@@ -52,6 +53,7 @@ sealed class ProtonOkHttpClient(
     loggingLevel: HttpLoggingInterceptor.Level,
     connectionSpecs: List<ConnectionSpec>,
     serverTimeInterceptor: ServerTimeInterceptor?,
+    retryRequestInterceptor: RetryRequestInterceptor,
     baseUrl: String,
     cookieStore: ProtonCookieStore? = null
 ) {
@@ -82,6 +84,7 @@ sealed class ProtonOkHttpClient(
         if (serverTimeInterceptor != null) {
             okClientBuilder.addInterceptor(serverTimeInterceptor)
         }
+        okClientBuilder.addInterceptor(retryRequestInterceptor)
         okClientBuilder.connectionSpecs(connectionSpecs)
     }
 }
@@ -95,6 +98,7 @@ class DefaultOkHttpClient(
     loggingLevel: HttpLoggingInterceptor.Level,
     connectionSpecs: List<ConnectionSpec>,
     serverTimeInterceptor: ServerTimeInterceptor?,
+    retryRequestInterceptor: RetryRequestInterceptor,
     baseUrl: String,
     cookieStore: ProtonCookieStore?
 ) : ProtonOkHttpClient(
@@ -103,6 +107,7 @@ class DefaultOkHttpClient(
     loggingLevel,
     connectionSpecs,
     serverTimeInterceptor,
+    retryRequestInterceptor,
     baseUrl,
     cookieStore
 ) {
@@ -125,6 +130,7 @@ class ProxyOkHttpClient(
     loggingLevel: HttpLoggingInterceptor.Level,
     connectionSpecs: List<ConnectionSpec>,
     serverTimeInterceptor: ServerTimeInterceptor?,
+    retryRequestInterceptor: RetryRequestInterceptor,
     endpointUri: String,
     pinnedKeyHashes: List<String>,
     cookieStore: ProtonCookieStore?
@@ -134,6 +140,7 @@ class ProxyOkHttpClient(
     loggingLevel,
     connectionSpecs,
     serverTimeInterceptor,
+    retryRequestInterceptor,
     endpointUri,
     cookieStore
 ) {

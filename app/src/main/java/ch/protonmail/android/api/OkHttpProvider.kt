@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.api
 
+import ch.protonmail.android.api.interceptors.RetryRequestInterceptor
 import ch.protonmail.android.di.AlternativeApiPins
 import ch.protonmail.android.di.BaseUrl
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
@@ -47,6 +48,7 @@ class OkHttpProvider @Inject constructor(
         loggingLevel: HttpLoggingInterceptor.Level,
         connectionSpecs: List<ConnectionSpec>,
         serverTimeInterceptor: ServerTimeInterceptor?,
+        retryRequestInterceptor: RetryRequestInterceptor,
         cookieStore: ProtonCookieStore?
     ): ProtonOkHttpClient {
         if (okHttpClients.containsKey(id)) {
@@ -59,6 +61,7 @@ class OkHttpProvider @Inject constructor(
                 loggingLevel,
                 connectionSpecs,
                 serverTimeInterceptor,
+                retryRequestInterceptor,
                 baseUrl,
                 cookieStore
             )
@@ -69,6 +72,7 @@ class OkHttpProvider @Inject constructor(
                 loggingLevel,
                 connectionSpecs,
                 serverTimeInterceptor,
+                retryRequestInterceptor,
                 endpointUri,
                 pinnedKeyHashes,
                 cookieStore
