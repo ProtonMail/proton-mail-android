@@ -156,6 +156,7 @@ class MessageRepositoryTest {
     private val inboxLabelId = LabelId("0")
     private val trashLabelId = LabelId("3")
     private val allMailLabelId = LabelId("5")
+    private val scheduledMailLabelId = LabelId("12")
     private val customLabelId = LabelId("customLabelId")
     private val customFolderId = LabelId("customFolderId")
 
@@ -867,6 +868,25 @@ class MessageRepositoryTest {
         coVerify { messagePreferenceDao.saveMessagePreference(capture(result)) }
         assertEquals(expectedResult, result.captured)
     }
+
+    @Test
+    fun `should return a count of messages withing the given location`() =
+        runBlockingTest {
+            // given
+            val mailboxLocation = Constants.MessageLocationType.ALL_SCHEDULED.asLabelIdString()
+            coEvery { messageDao.observeMessagesCountByLocation(mailboxLocation) } returns flowOf(1)
+
+            // when
+            messageRepository.observeMessagesCountByLocationFromDatabase(
+                testUserId, Constants.MessageLocationType.ALL_SCHEDULED.asLabelIdString()
+            ).test {
+
+                // then
+                coVerify { messageDao.observeMessagesCountByLocation(mailboxLocation) }
+                assertEquals(1, awaitItem())
+                awaitComplete()
+            }
+        }
 
     private fun setupUnreadCounterDaoToSimulateReplace() {
 

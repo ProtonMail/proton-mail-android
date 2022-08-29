@@ -135,6 +135,16 @@ abstract class MessageDao : BaseDao<Message>() {
     @Transaction
     protected abstract fun observeMessagesWithUnreadStatus(label: String, unread: Boolean): Flow<List<Message>>
 
+    @Query(
+        """SELECT COUNT($COLUMN_MESSAGE_ID) 
+            FROM $TABLE_MESSAGES 
+            WHERE ($COLUMN_MESSAGE_LABELS LIKE :location
+              OR $COLUMN_MESSAGE_LABELS LIKE :location || ';%' 
+              OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :location
+              OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :location || ';%')"""
+    )
+    abstract fun observeMessagesCountByLocation(location: String): Flow<Int>
+
     fun findMessageById(messageId: String): Flow<Message?> = findMessageInfoById(messageId)
         .onEach { message ->
             message ?: return@onEach

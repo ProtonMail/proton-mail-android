@@ -213,7 +213,7 @@ internal abstract class NavigationActivity : BaseActivity() {
                 .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
                 .onEach { userId ->
                     onPrimaryUserId(userId)
-                    navigationViewModel.shouldShowMovedMessages(userManager.currentUserId)
+                    navigationViewModel.shouldShowDynamicLocation(userManager.currentUserId)
                 }
                 .launchIn(lifecycleScope)
         }
@@ -352,7 +352,7 @@ internal abstract class NavigationActivity : BaseActivity() {
         return false
     }
 
-    private fun setUpDrawer(showMovedDrafts: Type, showMovedSent: Type) {
+    private fun setUpDrawer(showMovedDrafts: Type, showMovedSent: Type, showScheduled: Boolean) {
         drawerToggle = ActionBarDrawerToggle(
             this,
             drawerLayout,
@@ -362,7 +362,12 @@ internal abstract class NavigationActivity : BaseActivity() {
         )
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
-        setUpInitialDrawerItems(userManager.currentLegacyUser?.isUsePin ?: false, showMovedDrafts, showMovedSent)
+        setUpInitialDrawerItems(
+            userManager.currentLegacyUser?.isUsePin ?: false,
+            showMovedDrafts,
+            showMovedSent,
+            showScheduled
+        )
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
 
@@ -386,15 +391,19 @@ internal abstract class NavigationActivity : BaseActivity() {
         })
     }
 
-    private fun setUpInitialDrawerItems(isPinEnabled: Boolean, showMovedDrafts: Type, showMovedSent: Type) {
+    private fun setUpInitialDrawerItems(
+        isPinEnabled: Boolean, showMovedDrafts: Type, showMovedSent: Type, showScheduled: Boolean
+    ) {
         val hasPin = isPinEnabled && userManager.getMailboxPin() != null
 
         sideDrawer.setLocationItems(
-            listOf(
+            listOfNotNull(
                 Primary.Static(Type.INBOX, R.string.inbox, R.drawable.ic_proton_inbox),
                 Primary.Static(showMovedDrafts, R.string.drafts, R.drawable.ic_proton_file),
                 Primary.Static(showMovedSent, R.string.sent, R.drawable.ic_proton_paper_plane),
-                Primary.Static(Type.SCHEDULED, R.string.drawer_scheduled, R.drawable.ic_proton_clock),
+                if (showScheduled) Primary.Static(
+                    Type.SCHEDULED, R.string.drawer_scheduled, R.drawable.ic_proton_clock
+                ) else null,
                 Primary.Static(Type.STARRED, R.string.starred, R.drawable.ic_proton_star),
                 Primary.Static(Type.ARCHIVE, R.string.archive, R.drawable.ic_proton_archive_box),
                 Primary.Static(Type.SPAM, R.string.spam, R.drawable.ic_proton_fire),
@@ -495,14 +504,14 @@ internal abstract class NavigationActivity : BaseActivity() {
         navigationViewModel.viewStateFlow
             .onEach(::renderViewState)
             .launchIn(lifecycleScope)
-        navigationViewModel.showMovedRefreshFlow
-            .onEach { showMoved ->
-                when (showMoved) {
+        navigationViewModel.showDynamicItemsOnSideMenuFlow
+            .onEach {
+                when (it.showMoved) {
                     true -> {
-                        setUpDrawer(Type.ALL_DRAFTS, Type.ALL_SENT)
+                        setUpDrawer(Type.ALL_DRAFTS, Type.ALL_SENT, it.showScheduled)
                     }
                     false -> {
-                        setUpDrawer(Type.DRAFTS, Type.SENT)
+                        setUpDrawer(Type.DRAFTS, Type.SENT, it.showScheduled)
                     }
                 }
             }

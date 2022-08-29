@@ -559,4 +559,9 @@ class MessageRepository @Inject constructor(
             )
         }
     }
+
+    fun observeMessagesCountByLocationFromDatabase(userId: UserId, location: String): Flow<Int> =
+        databaseProvider
+            .provideMessageDao(userId)
+            .observeMessagesCountByLocation(location)
 }
