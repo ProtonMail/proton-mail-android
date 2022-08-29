@@ -105,6 +105,7 @@
     <string name="set_msg_expiration_1_week">1 n yimalas</string>
     <string name="set_msg_expiration_custom">Yugen</string>
     <string name="set_msg_expiration_check_description">Aferdis-agi yettwafren</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Asentel</string>
@@ -136,6 +137,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Iznan imaynuten</string>
+    <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"From:\" email in the message is active.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Ulac inermisen</string>
@@ -483,7 +485,7 @@
     <string name="spam_score_101">Imayl-agi yecceḍ deg usekyed n usesteb n taɣult-is. Ahat beddlen-t neɣ wwin-t s tuccḍa aniɣer nniḍen!</string>
     <string name="spam_score_102">Izen-agi yezmer ad yili d aneɛruḍ n ukellex. Ttxil-k senqed amazan akked ugbur iwakken ad tḥeqqqeḍ belli d izerfanen. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ISSIN UGAR</a></string>
     <string name="print_from_template">Si: %s</string>
-    <string name="print_to_template">To: %s;  </string>
+    <string name="print_to_template">I: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Tansa: </string>

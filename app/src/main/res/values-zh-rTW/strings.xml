@@ -104,6 +104,7 @@
     <string name="set_msg_expiration_1_week">1 週</string>
     <string name="set_msg_expiration_custom">自定義</string>
     <string name="set_msg_expiration_check_description">此項目已保留</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">佈景主題</string>
@@ -135,6 +136,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">新郵件</string>
+    <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"From:\" email in the message is active.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">無聯絡人</string>

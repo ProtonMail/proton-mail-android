@@ -105,6 +105,7 @@
     <string name="set_msg_expiration_1_week">1 semaine</string>
     <string name="set_msg_expiration_custom">Personnalisée</string>
     <string name="set_msg_expiration_check_description">Cet élément est coché</string>
+    <string name="composer_invalid_sender_saving_draft_failed">L\'adresse \"De :\" n\'est pas valide. Veuillez la changer pour une adresse valide</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Thème</string>
@@ -136,6 +137,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nouveaux messages</string>
+    <string name="notification_invalid_sender_sending_failed">Votre message se trouve dans vos brouillons. Vérifiez que l\'adresse « De » (expéditeur) est active.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Aucun contact</string>
@@ -191,7 +193,7 @@
     <string name="invalid_email">L\'adresse électronique n\'est pas valide</string>
     <string name="duplicate_email">L’adresse électronique est un doublon</string>
     <string name="message_drafted">L\'envoi du message a échoué. Vos messages sont sauvegardés dans le dossier brouillons</string>
-    <string name="attachment_failed_message_drafted">Veuillez supprimer et rattacher « %s » et renvoyer le message. Votre message se trouve dans le dossier « Brouillons ».</string>
+    <string name="attachment_failed_message_drafted">Veuillez supprimer et rattacher « %s », puis renvoyer le message. Votre message se trouve dans le dossier Brouillons.</string>
     <string name="open_drawer">Ouvrir</string>
     <string name="close_drawer">Fermer</string>
     <string name="inbox_option">Boîte de réception</string>
@@ -286,8 +288,8 @@
     <string name="original_message_divider">-------- Message d\'origine --------</string>
     <string name="invalid_email_address">L’adresse « %s » n’est pas valide</string>
     <string name="invalid_email_address_removed">L\'adresse « %s » n’est pas valide et a été supprimée</string>
-    <string name="no_recipients_specified">Veuillez ajouter au moins un destinataire</string>
-    <string name="no_password_specified">Définir un délai d\'expiration n\'est possible que sur les messages entièrement chiffrés. Veuillez définir un mot de passe pour vos destinataires qui n\'utilisent pas Proton Mail.</string>
+    <string name="no_recipients_specified">Ajoutez au moins un destinataire</string>
+    <string name="no_password_specified">Définir un délai d\'expiration n\'est possible que sur les messages entièrement chiffrés. Nous vous invitons à définir un mot de passe pour vos destinataires qui n\'utilisent pas Proton Mail.</string>
     <string name="attachment_limit">Les pièces jointes sont limitées à %1$s. Le poids total des pièces jointes est de %2$s.</string>
     <string name="sending_message">Envoi du message en cours...</string>
     <string name="sending_message_offline">Hors-ligne, placé en file d\'attente pour un envoi différé...</string>
@@ -311,7 +313,7 @@
     <string name="undo">Annuler</string>
     <string name="label_apply">Appliquer</string>
     <string name="label_add">Ajouter</string>
-    <string name="no_browser_found">Veuillez installer un navigateur afin de terminer cette action</string>
+    <string name="no_browser_found">Veuillez installer un navigateur afin de terminer cette action.</string>
     <string name="no_application_found">Aucune application n’a été trouvée pour gérer cette action</string>
     <string name="no_application_found_or_link_invalid">Aucune application n’a été trouvée pour gérer cette action ou URL non valide</string>
     <string name="label_deleted">Label supprimé</string>
@@ -330,7 +332,7 @@
     <string name="saving_failed_no_conn">Échec de la sauvegarde, aucune connexion</string>
     <string name="attachment_exists">Pièce jointe déjà ajoutée</string>
     <string name="eo_password_not_completed">Mot de passe du message non renseigné.</string>
-    <string name="delinquency_subtitle">L\'accès à ce compte est désactivé en raison d’un défaut de paiement. Veuillez vous connecter via protonmail.com pour régler votre facture impayée.</string>
+    <string name="delinquency_subtitle">L\'accès à ce compte est désactivé en raison d’un défaut de paiement. Nous vous invitons à vous connecter via protonmail.com pour régler votre facture impayée.</string>
     <string name="downloading">Téléchargement en cours...</string>
     <string name="cant_download_attachment">Impossible de télécharger la pièce jointe</string>
     <string-array name="auto_logout_options_array">
@@ -402,7 +404,7 @@
     <string name="email_type_home">Domicile</string>
     <string name="type_title">Choisir un type</string>
     <string name="sync_local_contacts">Importer sur Proton Mail</string>
-    <string name="please_select_only_phone_contacts">Veuillez sélectionner uniquement les contacts locaux</string>
+    <string name="please_select_only_phone_contacts">Sélectionnez uniquement les contacts locaux</string>
     <string name="contact_vcard_hint_email">Saisir une adresse électronique</string>
     <string name="contact_vcard_hint_phone">Saisir un numéro de téléphone</string>
     <string name="contact_vcard_hint_address">Saisir une adresse</string>
@@ -460,7 +462,7 @@
     <string name="message_expires_in">Ce message expirera dans %s</string>
     <string name="unsaved_changes_title">Modifications non enregistrées</string>
     <string name="unsaved_changes_subtitle">Le formulaire contient des modifications non enregistrées. Êtes-vous sûr de ne pas vouloir les conserver ?</string>
-    <string name="request_timeout">La requête a expiré, veuillez réessayer</string>
+    <string name="request_timeout">La requête a expiré, veuillez réessayer.</string>
     <string name="no_folders">Aucun dossier</string>
     <string name="folder_add_new">Ajouter un nouveau dossier</string>
     <string name="folder_name">Nom du dossier</string>
@@ -481,7 +483,7 @@
     <string name="update_folder">Mettre à jour le dossier</string>
     <string name="spam_score_100">Cet e-mail semble provenir d\'une adresse Proton Mail, mais il vient de l\'extérieur de notre système et à échoué aux tests d\'authentification. Il a peut-être été falsifié ou transféré incorrectement.</string>
     <string name="spam_score_101">Cet e-mail a échoué aux tests d\'authentification de son domaine. Il a peut-être été falsifié ou transféré incorrectement.</string>
-    <string name="spam_score_102">Ce message peut être une tentative d’hameçonnage. Veuillez vérifier l’expéditeur et le contenu afin de vous assurer qu’ils sont légitimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">EN SAVOIR PLUS</a></string>
+    <string name="spam_score_102">Ce message peut être une tentative d’hameçonnage. Vérifiez l’expéditeur et le contenu afin de vous assurer qu’ils sont légitimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">EN SAVOIR PLUS</a></string>
     <string name="print_from_template">De : %s</string>
     <string name="print_to_template">À : %s;  </string>
     <string name="print_cc_template">Cc : %s;  </string>
@@ -554,8 +556,8 @@
     <string name="recipient_error_and_removed">Une erreur s’est produite lors de la récupération des informations du destinataire et le destinataire a été supprimé : %s</string>
     <string name="send_anyway">Envoyer quand même</string>
     <string name="expiration_error_title">Vous avez ajouté un délai d\'expiration, mais tous les destinataires ne prennent pas cette fonction en charge.</string>
-    <string name="expiration_error_add_msg_password">Veuillez ajouter un mot de passe de chiffrement pour les destinataires suivants :</string>
-    <string name="expiration_error_disable_pgp_sending">Veuillez désactiver l\'envoi PGP pour activer le délai d\'expiration pour les destinataires suivants :</string>
+    <string name="expiration_error_add_msg_password">Ajoutez un mot de passe de chiffrement pour les destinataires suivants :</string>
+    <string name="expiration_error_disable_pgp_sending">Désactivez l\'envoi PGP pour activer le délai d\'expiration pour les destinataires suivants :</string>
     <string name="expiration_error_proceed">Appuyez sur envoyer quand même pour envoyer à ces destinataires sans délai d’expiration.</string>
     <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">EN SAVOIR PLUS</a></string>
     <string name="channel_name_attachments">Pièces jointes</string>
@@ -604,7 +606,7 @@
     <string name="contact_group_saved">Groupe enregistré</string>
     <string name="no_recipients">Aucun destinataire</string>
     <string name="contact_group_selected">%d sélectionné</string>
-    <string name="paid_plan_needed">Veuillez passer à une offre payante pour ces fonctionnalités premium</string>
+    <string name="paid_plan_needed">Nous vous invitons à passer à un abonnement payant pour ces fonctionnalités premium.</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d membres)</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">Êtes-vous sûr de vouloir supprimer ce groupe ?</item>

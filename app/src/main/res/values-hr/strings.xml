@@ -35,7 +35,7 @@
     <!-- region Content descriptions: accessibility description for icons -->
     <string name="x_label_icon_description">Ikona oznake</string>
     <string name="x_folder_icon_description">Ikona mape</string>
-    <string name="x_parent_folder_icon_description">Mapa s ikonom djece</string>
+    <string name="x_parent_folder_icon_description">Ikona mape s podmapama</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakti</string>
@@ -55,21 +55,21 @@
     <string name="mailbox_empty_state_try_a_different_term">Pokušajte s drugim pojmom za pretraživanje</string>
     <string name="mailbox_no_messages">Nema poruka</string>
     <plurals name="mailbox_unread_count">
-        <item quantity="one">%d unread</item>
-        <item quantity="few">%d unread</item>
-        <item quantity="other">%d unread</item>
+        <item quantity="one">%d nepročitana</item>
+        <item quantity="few">%d nepročitane</item>
+        <item quantity="other">%d nepročitanih</item>
     </plurals>
     <string name="mailbox_updated_just_now">Upravo ažurirano</string>
     <string name="mailbox_updated_recently">Nedavno ažurirano</string>
     <string name="mailbox_updating">Ažuriranje…</string>
     <!-- endregion -->
     <!-- region Details -->
-    <string name="details_open_in_proton_calendar_title">Otvori u Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_title">Otvori u Proton Calendaru</string>
     <string name="details_open_in_proton_calendar_subtitle">Osiguraj šifrirani kalendar</string>
-    <string name="details_open_in_proton_calendar_icon_desc">Ikona Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Ikona Proton Calendara</string>
     <string name="details_play_store_error">Ne mogu otvoriti Play Store</string>
-    <string name="details_hyperlink_phishing_dialog_title">Upozorenje: sumnja na lažnu web stranicu</string>
-    <string name="details_hyperlink_phishing_dialog_content">Ova hiperveza vodi do web-mjesta koje možda pokušava ukrasti vaše podatke, kao što su lozinke i podaci o kreditnoj kartici.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Zbog vaše sigurnosti nemojte nastaviti.</string>
+    <string name="details_hyperlink_phishing_dialog_title">Upozorenje: sumnja na lažnu web-stranicu</string>
+    <string name="details_hyperlink_phishing_dialog_content">Ova poveznica vodi do web-mjesta koje možda pokušava ukrasti vaše podatke, kao što su lozinke i podaci o kreditnoj kartici.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Zbog vaše sigurnosti nemojte nastaviti.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Vrati se (preporučeno)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Zanemarite upozorenje i nastavite</string>
     <!-- endregion -->
@@ -80,12 +80,12 @@
     <string name="composer_from">Od:</string>
     <string name="composer_subject">Predmet:</string>
     <string name="composer_to">Za:</string>
-    <string name="composer_removing_address_generic_error">Cannot verify address: %s. Sending might fail.</string>
-    <string name="composer_removing_address_server_error">Removing address: %s. %s</string>
+    <string name="composer_removing_address_generic_error">Nije moguće potvrditi adresu: %s. Slanje možda neće uspjeti.</string>
+    <string name="composer_removing_address_server_error">Uklanjanje adrese: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; napisao:</string>
     <string name="set_msg_password_title">Postavi lozinku</string>
-    <string name="set_msg_password_info">Postavite lozinku za šifriranje ove poruke za korisnike koji nisu dio ProtonMail-a. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saznajte više</a></string>
+    <string name="set_msg_password_info">Postavite lozinku za šifriranje ove poruke za korisnike koji nisu dio ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saznajte više</a></string>
     <string name="set_msg_password_info_icon_description">Informacije</string>
     <string name="set_msg_password_msg_password_title">Lozinka poruke</string>
     <string name="set_msg_password_msg_password_hint">4 do 21 znakova dugo</string>
@@ -106,6 +106,7 @@
     <string name="set_msg_expiration_1_week">1 tjedan</string>
     <string name="set_msg_expiration_custom">Prilagođeno</string>
     <string name="set_msg_expiration_check_description">Stavka je označena</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -123,7 +124,7 @@
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Tema aplikacije</string>
-    <string name="app_theme_light">Svjetlo</string>
+    <string name="app_theme_light">Svijetlo</string>
     <string name="app_theme_dark">Tamno</string>
     <string name="app_theme_system">Zadani sustav</string>
     <!-- endregion -->
@@ -137,15 +138,16 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nove poruke</string>
+    <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"From:\" email in the message is active.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
-    <string name="contacts_empty_state_no_contacts">Nema kontakta</string>
+    <string name="contacts_empty_state_no_contacts">Nema kontakata</string>
     <string name="contacts_empty_state_no_groups">Nema grupa</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Grupe kontakata neće biti uvezene. Nadogradite na plaćeni plan da biste uživali u premium značajkama.</string>
     <string name="contact_details_remote_content_dialog_title">Udaljeni sadržaj</string>
-    <string name="contact_details_remote_content_dialog_message">Ova poruka sadrži udaljeni sadržaj.</string>
+    <string name="contact_details_remote_content_dialog_message">Ovaj kontakt sadrži udaljeni sadržaj.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Učitaj sadržaj</string>
     <!-- endregion -->
     <!-- region Onboarding -->
@@ -254,19 +256,19 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">%d Attachment</item>
-        <item quantity="few">%d Attachments</item>
-        <item quantity="other">%d Attachments</item>
+        <item quantity="one">%d privitak</item>
+        <item quantity="few">%d privitka</item>
+        <item quantity="other">%d privitaka</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 %d Attachment</item>
-        <item quantity="few">\u0020 %d Attachments</item>
-        <item quantity="other">\u0020 %d Attachments</item>
+        <item quantity="one">\u0020 %d privitak</item>
+        <item quantity="few">\u0020 %d privitka</item>
+        <item quantity="other">\u0020 %d privitaka</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">%d Attachment</item>
-        <item quantity="few">%d Attachments</item>
-        <item quantity="other">%d Attachments</item>
+        <item quantity="one">%d privitak</item>
+        <item quantity="few">%d privitka</item>
+        <item quantity="other">%d privitaka</item>
     </plurals>
     <string name="add_attachment">Dodavanje privitka</string>
     <string name="select_file">Odaberi datoteku</string>
@@ -322,7 +324,7 @@
     <string name="label_deleted_error">Pogreška tijekom brisanja oznake</string>
     <string name="message_deleted_error">Pogreška tijekom brisanja nekih poruka. Neke od odabranih poruka su u procesu slanja?!</string>
     <string name="respond_inline">Odgovori u ravnini s ostalim tekstom</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Poslužitelj nije dostupan… (<u>Rješavanje problema</u>)</string>
     <string name="connectivity_checking">Provjera veze...</string>
     <string name="draft_label_attachments_uploading">učitavanje privitaka…</string>
     <string name="draft_label_message_uploading">slanje poruke…</string>
@@ -429,7 +431,7 @@
     <string name="contacts_import_contact">Uvezi kontakte</string>
     <string name="contacts_import">Uvoz</string>
     <string name="upload_contacts">Učitavanje kontakata</string>
-    <string name="uploading_contacts">Uploading contacts…</string>
+    <string name="uploading_contacts">Prijenos kontakata…</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
         <item>Mobitel</item>
@@ -489,7 +491,7 @@
     <string name="spam_score_101">Ova poruka e-pošte nije ispunila zahtjeve za provjeru autentičnosti svoje domene. Može biti lažna ili nepropisno proslijeđena!</string>
     <string name="spam_score_102">Ova poruka može biti pokušaj krađe identiteta. Provjerite pošiljatelja i sadržaj kako biste bili sigurni da su legitimni. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SAZNAJTE VIŠE</a></string>
     <string name="print_from_template">Od: %s</string>
-    <string name="print_to_template">To: %s;  </string>
+    <string name="print_to_template">Za: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Adresa: </string>
@@ -517,7 +519,7 @@
     <string name="protonmail_contacts">Proton Mail Kontakti</string>
     <string name="device_contacts">Kontakti uređaja</string>
     <string name="print_date_template">Datum: %s</string>
-    <string name="print_attachment_template">Attachment: %s;  </string>
+    <string name="print_attachment_template">Privitak: %s;  </string>
     <string name="pm_me_changed">Slanje poruka s @pm.me adrese je plaćena značajka. Vaša će poruka biti poslana s Vaše zadane adrese %s</string>
     <string name="pm_me_can_not_be_default">Nadogradite na plaćeni plan kako biste mogli postaviti vašu %s adresu e-pošte kao zadanu</string>
     <string name="dont_remind_again">Ne podsjećaj me više</string>
@@ -635,8 +637,8 @@
     <string name="fab_add_contact">Dodaj novi kontakt</string>
     <string name="fab_add_contact_group">Dodaj novu grupu kontakata</string>
     <string name="contacts_add_photo_title">Dodaj fotografiju</string>
-    <string name="contacts_add_photo_select_gallery">Odabir iz galerije</string>
-    <string name="contacts_add_photo_select_camera">Snimite fotoaparatom</string>
+    <string name="contacts_add_photo_select_gallery">Odaberi iz galerije</string>
+    <string name="contacts_add_photo_select_camera">Snimi fotoaparatom</string>
     <string name="save_group_validation_error">Molimo unesite naziv grupe</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Dosegnuto je ograničenje pohrane. Nije moguće poslati ili primiti e-poštu.
@@ -710,9 +712,9 @@
     <string name="snooze_end_time">Vrijeme završetka:</string>
     <string name="snooze_repeat">Ponovi:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Notifications will resume in %d min</item>
-        <item quantity="few">Notifications will resume in %d mins</item>
-        <item quantity="other">Notifications will resume in %d mins</item>
+        <item quantity="one">Obavještavanje će se nastaviti za %d minutu</item>
+        <item quantity="few">Obavještavanje će se nastaviti za %d minute</item>
+        <item quantity="other">Obavještavanje će se nastaviti za %d minuta</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Obavijesti će nastaviti za %1$d sati i %2$d minuta</string>
     <string name="minutes">Minute</string>
@@ -851,7 +853,7 @@
     <string name="manage">Upravljanje</string>
     <string name="message_from">Poruka od %s</string>
     <string name="not_spam_move_to_inbox">Nije neželjena pošta (premjesti u Pristiglu poštu)</string>
-    <string name="action_sheet_view_in_light_mode">Pogled u svjetlosnom načinu</string>
+    <string name="action_sheet_view_in_light_mode">Pogled u svijetlom načinu</string>
     <string name="action_sheet_view_in_dark_mode">Pogled u tamnom načinu</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d poruka</item>
