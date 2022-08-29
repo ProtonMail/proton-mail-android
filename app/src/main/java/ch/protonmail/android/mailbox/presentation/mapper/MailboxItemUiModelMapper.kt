@@ -128,7 +128,8 @@ class MailboxItemUiModelMapper @Inject constructor(
             MessageLocationType.DRAFT,
             MessageLocationType.ALL_DRAFT,
             MessageLocationType.SENT,
-            MessageLocationType.ALL_SENT
+            MessageLocationType.ALL_SENT,
+            MessageLocationType.ALL_SCHEDULED
         ).map { it.asLabelId() }
 
         return currentLabelId in sentAndDraftLabels

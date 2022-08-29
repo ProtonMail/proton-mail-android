@@ -875,6 +875,7 @@ internal class MailboxActivity :
             MessageLocationType.TRASH -> R.string.trash_option
             MessageLocationType.SPAM -> R.string.spam_option
             MessageLocationType.ALL_MAIL -> R.string.allmail_option
+            MessageLocationType.ALL_SCHEDULED -> R.string.drawer_scheduled
             else -> R.string.app_name
         }
         supportActionBar?.setTitle(titleRes)

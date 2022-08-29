@@ -342,6 +342,7 @@ class MessageLocationResolverTest {
             Constants.MessageLocationType.ARCHIVE,
             Constants.MessageLocationType.SENT,
             Constants.MessageLocationType.DRAFT,
+            Constants.MessageLocationType.ALL_SCHEDULED,
         )
         val invalidLocations = Constants.MessageLocationType.values()
             .toList()

@@ -30,7 +30,8 @@ object MessageDetailsListItemTestData {
         messageFormattedHtmlWithQuotedHistory = null,
         showOpenInProtonCalendar = false,
         showLoadEmbeddedImagesButton = false,
-        showDecryptionError = false
+        showDecryptionError = false,
+        showScheduledInfo = false
     )
 
     fun withLoadedBodyFrom(message: Message) = MessageDetailsListItem.Body(
@@ -39,6 +40,7 @@ object MessageDetailsListItemTestData {
         messageFormattedHtmlWithQuotedHistory = MessageTestData.MESSAGE_BODY_FORMATTED,
         showOpenInProtonCalendar = false,
         showLoadEmbeddedImagesButton = false,
-        showDecryptionError = false
+        showDecryptionError = false,
+        showScheduledInfo = false
     )
 }

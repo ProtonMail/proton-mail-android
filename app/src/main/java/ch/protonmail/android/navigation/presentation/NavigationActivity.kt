@@ -394,6 +394,7 @@ internal abstract class NavigationActivity : BaseActivity() {
                 Primary.Static(Type.INBOX, R.string.inbox, R.drawable.ic_proton_inbox),
                 Primary.Static(showMovedDrafts, R.string.drafts, R.drawable.ic_proton_file),
                 Primary.Static(showMovedSent, R.string.sent, R.drawable.ic_proton_paper_plane),
+                Primary.Static(Type.SCHEDULED, R.string.drawer_scheduled, R.drawable.ic_proton_clock),
                 Primary.Static(Type.STARRED, R.string.starred, R.drawable.ic_proton_star),
                 Primary.Static(Type.ARCHIVE, R.string.archive, R.drawable.ic_proton_archive_box),
                 Primary.Static(Type.SPAM, R.string.spam, R.drawable.ic_proton_fire),
@@ -464,7 +465,7 @@ internal abstract class NavigationActivity : BaseActivity() {
             )
             Type.SUBSCRIPTION -> plansOrchestrator.showCurrentPlanWorkflow(userManager.requireCurrentUserId())
             Type.INBOX -> onInbox(type.drawerOptionType)
-            Type.ARCHIVE, Type.STARRED, Type.DRAFTS, Type.ALL_DRAFTS, Type.SENT, Type.ALL_SENT, Type.TRASH, Type.SPAM, Type.ALLMAIL ->
+            Type.ARCHIVE, Type.STARRED, Type.DRAFTS, Type.ALL_DRAFTS, Type.SENT, Type.ALL_SENT, Type.TRASH, Type.SPAM, Type.ALLMAIL, Type.SCHEDULED ->
                 onOtherMailBox(type.drawerOptionType)
             Type.LOCK -> {
                 val user = userManager.currentLegacyUser

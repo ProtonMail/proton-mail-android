@@ -91,6 +91,7 @@ class MailboxItemView @JvmOverloads constructor(
 
     private fun getIconForMessageLocation(messageLocation: MessageLocationType) = when (messageLocation) {
         MessageLocationType.INBOX -> R.drawable.ic_proton_inbox
+        MessageLocationType.ALL_SCHEDULED -> R.drawable.ic_proton_clock
         MessageLocationType.SENT -> R.drawable.ic_proton_paper_plane
         MessageLocationType.DRAFT -> R.drawable.ic_proton_pencil
         MessageLocationType.ALL_DRAFT -> R.drawable.ic_proton_pencil

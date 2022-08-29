@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">Folder with children icon</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">Scheduled</string>
     <string name="drawer_contacts">Contacts</string>
     <string name="drawer_lock_the_app">Lock the app</string>
     <string name="drawer_report_bug">Report bug</string>
