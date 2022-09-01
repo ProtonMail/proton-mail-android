@@ -76,15 +76,15 @@ class NetworkConfigurator @Inject constructor(
         }
     }
 
-    fun reconfigureProxy(proxies: Proxies?) {
-        networkSwitcher.reconfigureProxy(proxies)
+    fun forceSwitchToMainBackend() {
+        networkSwitcher.forceSwitchToMainBackend()
     }
 
     private suspend fun queryDomains() {
         val freshAlternativeUrls = mutableListOf<String>()
         val user = userManager.requireCurrentLegacyUser()
         if (!user.allowSecureConnectionsViaThirdParties) {
-            networkSwitcher.reconfigureProxy(null) // force switch to old proxy
+            networkSwitcher.forceSwitchToMainBackend()
             user.usingDefaultApi = true
             isRunning = false
             callback?.stopDohSignal()
@@ -193,7 +193,7 @@ class NetworkConfigurator @Inject constructor(
                 }
             }
             callback?.stopAutoRetry()
-            networkSwitcher.reconfigureProxy(null)
+            networkSwitcher.forceSwitchToMainBackend()
             user.usingDefaultApi = true
             isRunning = false
             callback?.stopDohSignal()

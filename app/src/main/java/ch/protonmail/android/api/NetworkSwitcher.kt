@@ -21,7 +21,6 @@ package ch.protonmail.android.api
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.segments.event.EventManager
 import ch.protonmail.android.di.BaseUrl
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,15 +37,21 @@ class NetworkSwitcher @Inject constructor(
      * This method is used to reconfigure the underlying OkHttp/Retrofit instances to work with 3rd
      * party proxies.
      */
-    fun reconfigureProxy(proxies: Proxies?) { // TODO: DoH this can be done without null
-        val proxyItem = proxies?.getCurrentActiveProxy()?.baseUrl ?: baseUrl
-        Timber.v("proxyItem url is: $proxyItem")
-        val newApi: ProtonMailApi = apiProvider.rebuild(protonOkHttpProvider, proxyItem)
-        api.reset(newApi)
-        eventManager.reconfigure(newApi.securedServices.event)
+    fun reconfigureProxy(proxies: Proxies) {
+        reconfigureFor(proxies.getCurrentActiveProxy().baseUrl)
     }
 
     suspend fun tryRequest() {
         api.ping()
+    }
+
+    fun forceSwitchToMainBackend() {
+        reconfigureFor(baseUrl)
+    }
+
+    private fun reconfigureFor(url: String) {
+        val newApi: ProtonMailApi = apiProvider.rebuild(protonOkHttpProvider, url)
+        api.reset(newApi)
+        eventManager.reconfigure(newApi.securedServices.event)
     }
 }

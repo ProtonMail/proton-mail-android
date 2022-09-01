@@ -107,7 +107,7 @@ abstract class BaseRequestInterceptor(
     private fun revertToOldApiIfNeeded(user: User, timeStamp: Long?, force: Boolean): Boolean {
         if (force) {
             Timber.d("force switching to old api, since the new api is not available")
-            networkUtils.networkConfigurator.reconfigureProxy(null) // force switch to old proxy
+            networkUtils.networkConfigurator.forceSwitchToMainBackend()
             user.usingDefaultApi = true
             return true
         }
@@ -118,7 +118,7 @@ abstract class BaseRequestInterceptor(
         val timeDiff = kotlin.math.abs(currentTime - lastApiAttempt)
         if (timeDiff >= switchInterval) {
             Timber.d("time difference is greater than switch interval, switching to old API")
-            networkUtils.networkConfigurator.reconfigureProxy(null) // force switch to old proxy
+            networkUtils.networkConfigurator.forceSwitchToMainBackend()
             user.usingDefaultApi = true
             return true
         }
