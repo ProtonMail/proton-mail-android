@@ -21,7 +21,6 @@ package ch.protonmail.android.uitests.robots.contacts
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.test.espresso.matcher.ViewMatchers
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactEmail
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactGroupName
@@ -29,10 +28,8 @@ import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContac
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactNameAndEmail
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import me.proton.fusion.Fusion
 import me.proton.fusion.utils.StringUtils.stringFromResource
-import org.hamcrest.CoreMatchers.containsString
 
 /**
  * [ContactsRobot] class contains actions and verifications for Contacts functionality.
@@ -80,7 +77,6 @@ class ContactsRobot : Fusion {
     }
 
     fun clickContactByEmail(email: String): ContactDetailsRobot {
-        view.withText(email).waitForDisplayed()
         recyclerView
             .withId(contactsRecyclerView)
             .onHolderItem(withContactEmail(email))
