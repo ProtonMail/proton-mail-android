@@ -51,6 +51,7 @@ class NetworkConfigurator @Inject constructor(
     @AppCoroutineScope private val scope: CoroutineScope,
     private val userManager: UserManager,
     private val connectivityManager: NetworkConnectivityManager,
+    private val switchToMainBackendIfAvailable: SwitchToMainBackendIfAvailable,
     networkSwitcherLazy: Lazy<NetworkSwitcher>
 ) {
 
@@ -133,21 +134,7 @@ class NetworkConfigurator @Inject constructor(
         scope.launch {
             val user = userManager.requireCurrentLegacyUser()
             // double-check if normal API call works before resorting to use alternative routing url
-            val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
-                val result = try {
-                    networkSwitcher.tryRequest()
-                } catch (e: Exception) {
-                    Timber.w(e, "Exception while pinging API before using alternative routing.")
-                    null
-                }
-                result != null
-            }
-            if (success == null) {
-                Timber.w("Timeout while pinging API before using alternative routing.")
-            }
-            if (success == true) {
-                callback?.stopAutoRetry()
-                networkSwitcher.reconfigureProxy(null)
+            if (switchToMainBackendIfAvailable()) {
                 isRunning = false
                 callback?.stopDohSignal()
                 return@launch
