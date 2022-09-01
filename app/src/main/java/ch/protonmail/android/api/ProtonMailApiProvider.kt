@@ -29,12 +29,13 @@ class ProtonMailApiProvider @Inject constructor(
 ) {
     private val cache = HashMap<String, ProtonMailApi>()
 
+    @Synchronized
     fun rebuild(okHttpProvider: OkHttpProvider, endpointUri: String): ProtonMailApi {
         protonRetrofitBuilder.rebuildMapFor(okHttpProvider, endpointUri)
         return provideApi(endpointUri)
     }
 
-    fun provideApi(endpointUri: String): ProtonMailApi {
+    private fun provideApi(endpointUri: String): ProtonMailApi {
         if (!cache.containsKey(endpointUri)) {
             cache[endpointUri] = ProtonMailApi(protonRetrofitBuilder, apiProvider)
         }
