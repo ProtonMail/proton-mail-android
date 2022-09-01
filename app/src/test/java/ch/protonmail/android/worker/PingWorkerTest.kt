@@ -24,12 +24,14 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.TryToSwitchAwayFromProxy
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
@@ -38,7 +40,6 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import java.io.IOException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -60,10 +61,14 @@ class PingWorkerTest {
 
     private lateinit var worker: PingWorker
 
+    private val tryToSwitchAwayFromProxy = mockk<TryToSwitchAwayFromProxy> {
+        coEvery { this@mockk() } returns false
+    }
+
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        worker = PingWorker(context, parameters, api, queueNetworkUtil, TestDispatcherProvider)
+        worker = PingWorker(context, parameters, api, queueNetworkUtil, tryToSwitchAwayFromProxy)
     }
 
     @Test
@@ -143,5 +148,19 @@ class PingWorkerTest {
             verify { queueNetworkUtil.setConnectivityHasFailed(ioException) }
             assertEquals(operationResult, expected)
         }
+    }
+
+    @Test
+    fun `should return a success and not call api when switching away from the proxy succeeded`() = runBlockingTest {
+        // given
+        coEvery { tryToSwitchAwayFromProxy() } returns true
+        val expectedResult = ListenableWorker.Result.success()
+
+        // when
+        val actualResult = worker.doWork()
+
+        // then
+        assertEquals(expectedResult, actualResult)
+        coVerify(exactly = 0) { api.ping() }
     }
 }
