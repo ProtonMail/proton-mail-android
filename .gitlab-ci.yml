@@ -228,9 +228,9 @@ include:
     ref: master
     file: '/jobs/release.gitlab-ci.yml'
 
-  - project: 'ProtonVPN/android/android-app-new'
-    ref: development
-    file: '/appetize-integration.yml'
+  - project: 'proton/mobile/android/proton-libs'
+    ref: main
+    file: '/ci/templates-shared/appetize-integration.yml'
 
   - project: 'proton/mobile/android/proton-libs'
     ref: main
