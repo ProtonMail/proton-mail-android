@@ -137,12 +137,6 @@ class QueueNetworkUtil @Inject constructor(
             }
             if (checkReal && currentStatus != hasConnection) {
                 Timber.d("Network statuses differs hasConnection $hasConnection currentStatus $currentStatus")
-            } else if (checkReal) {
-                if (hasConnection) {
-                    networkConfigurator.startAutoRetry()
-                } else {
-                    networkConfigurator.stopAutoRetry()
-                }
             }
             return hasConnection
         }

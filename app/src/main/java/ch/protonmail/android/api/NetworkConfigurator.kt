@@ -128,14 +128,6 @@ class NetworkConfigurator @Inject constructor(
         findWorkingDomain(proxies, currentTimestamp)
     }
 
-    fun stopAutoRetry() {
-        callback?.stopAutoRetry()
-    }
-
-    fun startAutoRetry() {
-        callback?.startAutoRetry()
-    }
-
     private fun findWorkingDomain(proxies: Proxies, timestamp: Long) {
         val proxyListReference = proxies.proxyList.proxies
         scope.launch {
@@ -181,7 +173,6 @@ class NetworkConfigurator @Inject constructor(
                     proxies.save()
                     isRunning = false
                     user.usingDefaultApi = false
-                    callback?.startAutoRetry()
                     callback?.stopDohSignal()
                     return@launch
                 } else {
@@ -192,7 +183,6 @@ class NetworkConfigurator @Inject constructor(
                     alternativeServerPingErrors.add(Pair(it.baseUrl, Exception("Timeout while pinging the server.")))
                 }
             }
-            callback?.stopAutoRetry()
             networkSwitcher.forceSwitchToMainBackend()
             user.usingDefaultApi = true
             isRunning = false
