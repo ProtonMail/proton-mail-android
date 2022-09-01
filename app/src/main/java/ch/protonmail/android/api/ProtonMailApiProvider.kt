@@ -18,12 +18,14 @@
  */
 package ch.protonmail.android.api
 
+import ch.protonmail.android.di.ConfigurableProtonRetrofitBuilder
 import me.proton.core.network.data.ApiProvider
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ProtonMailApiProvider @Inject constructor(
+    @ConfigurableProtonRetrofitBuilder
     private val protonRetrofitBuilder: ProtonRetrofitBuilder,
     private val apiProvider: ApiProvider
 ) {

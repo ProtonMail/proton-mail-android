@@ -47,16 +47,14 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Modifier
 import javax.inject.Inject
-import javax.inject.Singleton
 
 enum class RetrofitType {
     PUBLIC, PING, EXTENDED_TIMEOUT, ATTACHMENTS, SECURE
 }
 
-@Singleton
 class ProtonRetrofitBuilder @Inject constructor(
-    val userManager: UserManager,
-    val jobManager: JobManager,
+    private val userManager: UserManager,
+    private val jobManager: JobManager,
     private val serverTimeListener: ServerTimeListener,
     private val networkUtil: QueueNetworkUtil,
     private val cookieStore: ProtonCookieStore?,

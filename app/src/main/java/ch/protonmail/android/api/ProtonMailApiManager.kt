@@ -56,6 +56,7 @@ import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
+import ch.protonmail.android.di.MainBackendApi
 import ch.protonmail.android.labels.data.remote.LabelApiSpec
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
@@ -83,7 +84,10 @@ import javax.inject.Singleton
  * which can work directly with the Proton API or use any alternative proxy.
  */
 @Singleton
-class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
+class ProtonMailApiManager @Inject constructor(
+    private var api: ProtonMailApi,
+    @MainBackendApi private val mainBackendApi: ProtonMailApi
+) :
     BaseApi(),
     AttachmentApiSpec,
     ConnectivityApiSpec,
@@ -102,6 +106,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     }
 
     fun getSecuredServices(): SecuredServices = api.securedServices
+
+    suspend fun pingMainBackend(): ResponseBody = mainBackendApi.ping()
 
     override fun deleteAttachment(attachmentId: String): ResponseBody =
         api.deleteAttachment(attachmentId)

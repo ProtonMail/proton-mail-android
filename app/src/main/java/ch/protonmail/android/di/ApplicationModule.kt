@@ -29,6 +29,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
+import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.api.ProtonRetrofitBuilder
 import ch.protonmail.android.api.interceptors.RetryRequestInterceptor
 import ch.protonmail.android.api.models.doh.Proxies
@@ -67,6 +68,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import me.proton.core.accountmanager.domain.SessionManager
 import me.proton.core.domain.entity.UserId
+import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.data.ProtonCookieStore
 import me.proton.core.network.domain.server.ServerTimeListener
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -163,6 +165,7 @@ object ApplicationModule {
 
     @Provides
     @Singleton
+    @ConfigurableProtonRetrofitBuilder
     fun protonRetrofitBuilder(
         userManager: UserManager,
         jobManager: JobManager,
@@ -195,6 +198,40 @@ object ApplicationModule {
             retryRequestInterceptor
         ).apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
+
+    @Provides
+    @Singleton
+    @MainBackendProtonRetrofitBuilder
+    fun provideMainBackendRetrofitBuilder(
+        userManager: UserManager,
+        jobManager: JobManager,
+        serverTimeListener: ServerTimeListener,
+        networkUtil: QueueNetworkUtil,
+        cookieStore: ProtonCookieStore,
+        okHttpProvider: OkHttpProvider,
+        userNotifier: UserNotifier,
+        sessionManager: SessionManager,
+        @BaseUrl baseUrl: String
+    ): ProtonRetrofitBuilder {
+
+        return ProtonRetrofitBuilder(
+            userManager,
+            jobManager,
+            serverTimeListener,
+            networkUtil,
+            cookieStore,
+            userNotifier,
+            sessionManager
+        ).apply { rebuildMapFor(okHttpProvider, baseUrl) }
+    }
+
+    @Provides
+    @Singleton
+    @MainBackendApi
+    fun provideMainBackendApi(
+        @MainBackendProtonRetrofitBuilder protonRetrofitBuilder: ProtonRetrofitBuilder,
+        apiProvider: ApiProvider
+    ) = ProtonMailApi(protonRetrofitBuilder, apiProvider)
 
     @Provides
     @Singleton
