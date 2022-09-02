@@ -24,7 +24,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.TryToSwitchAwayFromProxy
+import ch.protonmail.android.api.SwitchToMainBackendIfOnProxy
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
@@ -61,14 +61,14 @@ class PingWorkerTest {
 
     private lateinit var worker: PingWorker
 
-    private val tryToSwitchAwayFromProxy = mockk<TryToSwitchAwayFromProxy> {
-        coEvery { this@mockk() } returns false
+    private val switchToMainBackendIfOnProxy = mockk<SwitchToMainBackendIfOnProxy> {
+        coEvery { this@mockk() } returns SwitchToMainBackendIfOnProxy.AlreadyUsingMainBackend
     }
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        worker = PingWorker(context, parameters, api, queueNetworkUtil, tryToSwitchAwayFromProxy)
+        worker = PingWorker(context, parameters, api, queueNetworkUtil, switchToMainBackendIfOnProxy)
     }
 
     @Test
@@ -151,9 +151,9 @@ class PingWorkerTest {
     }
 
     @Test
-    fun `should return a success and not call api when switching away from the proxy succeeded`() = runBlockingTest {
+    fun `should return a success and not call api when switching to main BE succeeded`() = runBlockingTest {
         // given
-        coEvery { tryToSwitchAwayFromProxy() } returns true
+        coEvery { switchToMainBackendIfOnProxy() } returns SwitchToMainBackendIfOnProxy.SwitchSuccess
         val expectedResult = ListenableWorker.Result.success()
 
         // when
@@ -161,6 +161,33 @@ class PingWorkerTest {
 
         // then
         assertEquals(expectedResult, actualResult)
+        verify { queueNetworkUtil.setCurrentlyHasConnectivity() }
         coVerify(exactly = 0) { api.ping() }
+    }
+
+    @Test
+    fun `should call the api when already switched to the main BE`() = runBlockingTest {
+        // given
+        coEvery { switchToMainBackendIfOnProxy() } returns SwitchToMainBackendIfOnProxy.AlreadyUsingMainBackend
+        coEvery { api.ping() } returns ResponseBody()
+
+        // when
+        worker.doWork()
+
+        // then
+        coVerify { api.ping() }
+    }
+
+    @Test
+    fun `should call the api when switching to main BE failed`() = runBlockingTest {
+        // given
+        coEvery { switchToMainBackendIfOnProxy() } returns SwitchToMainBackendIfOnProxy.SwitchFailure
+        coEvery { api.ping() } returns ResponseBody()
+
+        // when
+        worker.doWork()
+
+        // then
+        coVerify { api.ping() }
     }
 }

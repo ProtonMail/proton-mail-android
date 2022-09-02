@@ -22,15 +22,24 @@ package ch.protonmail.android.api
 import ch.protonmail.android.core.UserManager
 import javax.inject.Inject
 
-class TryToSwitchAwayFromProxy @Inject constructor(
+class SwitchToMainBackendIfOnProxy @Inject constructor(
     private val userManager: UserManager,
     private val switchToMainBackendIfAvailable: SwitchToMainBackendIfAvailable
 ) {
 
-    suspend operator fun invoke(): Boolean =
+    suspend operator fun invoke(): Result =
         if (userManager.requireCurrentLegacyUser().usingDefaultApi) {
-            false
+            AlreadyUsingMainBackend
         } else {
-            switchToMainBackendIfAvailable()
+            if (switchToMainBackendIfAvailable()) {
+                SwitchSuccess
+            } else {
+                SwitchFailure
+            }
         }
+
+    sealed class Result
+    object AlreadyUsingMainBackend : Result()
+    object SwitchSuccess : Result()
+    object SwitchFailure : Result()
 }

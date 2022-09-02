@@ -27,57 +27,59 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
-internal class TryToSwitchAwayFromProxyTest {
+internal class SwitchToMainBackendIfOnProxyTest {
 
     private val legacyUserMock = mockk<User>()
     private val userManagerMock = mockk<UserManager> {
         every { requireCurrentLegacyUser() } returns legacyUserMock
     }
     private val switchToMainBackendIfAvailableMock = mockk<SwitchToMainBackendIfAvailable>()
-    private val tryToSwitchAwayFromProxy = TryToSwitchAwayFromProxy(
+    private val switchToMainBackendIfOnProxy = SwitchToMainBackendIfOnProxy(
         userManagerMock,
         switchToMainBackendIfAvailableMock
     )
 
     @Test
-    fun `should return false without trying to switch to main backend when using the default api`() = runBlockingTest {
+    fun `should return correct result without trying to switch to main BE when using the main BE`() = runBlockingTest {
         // given
+        val expectedResult = SwitchToMainBackendIfOnProxy.AlreadyUsingMainBackend
         every { legacyUserMock.usingDefaultApi } returns true
 
         // when
-        val switchedAwayFromProxy = tryToSwitchAwayFromProxy()
+        val actualResult = switchToMainBackendIfOnProxy()
 
         // then
-        assertFalse(switchedAwayFromProxy)
+        assertEquals(expectedResult, actualResult)
         coVerify(exactly = 0) { switchToMainBackendIfAvailableMock() }
     }
 
     @Test
-    fun `should return false when not using the default api and switching to main backend failed`() = runBlockingTest {
+    fun `should return failure result when not using main BE and switching to main BE failed`() = runBlockingTest {
         // given
+        val expectedResult = SwitchToMainBackendIfOnProxy.SwitchFailure
         every { legacyUserMock.usingDefaultApi } returns false
         coEvery { switchToMainBackendIfAvailableMock() } returns false
 
         // when
-        val switchedAwayFromProxy = tryToSwitchAwayFromProxy()
+        val actualResult = switchToMainBackendIfOnProxy()
 
         // then
-        assertFalse(switchedAwayFromProxy)
+        assertEquals(expectedResult, actualResult)
     }
 
     @Test
-    fun `should return true when not using default api and switching to main backend succeeded`() = runBlockingTest {
+    fun `should return success result when not using main BE and switching to main BE succeeded`() = runBlockingTest {
         // given
+        val expectedResult = SwitchToMainBackendIfOnProxy.SwitchSuccess
         every { legacyUserMock.usingDefaultApi } returns false
         coEvery { switchToMainBackendIfAvailableMock() } returns true
 
         // when
-        val switchedAwayFromProxy = tryToSwitchAwayFromProxy()
+        val actualResult = switchToMainBackendIfOnProxy()
 
         // then
-        assertTrue(switchedAwayFromProxy)
+        assertEquals(expectedResult, actualResult)
     }
 }

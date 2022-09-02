@@ -32,7 +32,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.TryToSwitchAwayFromProxy
+import ch.protonmail.android.api.SwitchToMainBackendIfOnProxy
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
 import dagger.assisted.Assisted
@@ -52,11 +52,14 @@ class PingWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
     private val queueNetworkUtil: QueueNetworkUtil,
-    private val tryToSwitchAwayFromProxy: TryToSwitchAwayFromProxy
+    private val switchToMainBackendIfOnProxy: SwitchToMainBackendIfOnProxy
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        if (tryToSwitchAwayFromProxy()) return Result.success()
+        if (switchToMainBackendIfOnProxy() == SwitchToMainBackendIfOnProxy.SwitchSuccess) {
+            queueNetworkUtil.setCurrentlyHasConnectivity()
+            return Result.success()
+        }
 
         return runCatching {
             isBackendStillReachable()
