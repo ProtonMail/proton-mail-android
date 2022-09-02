@@ -50,6 +50,6 @@ internal class NetworkConfiguratorTest {
         networkConfigurator.forceSwitchToMainBackend()
 
         // then
-        verify { networkConfigurator.forceSwitchToMainBackend() }
+        verify { networkSwitcherMock.forceSwitchToMainBackend() }
     }
 }
