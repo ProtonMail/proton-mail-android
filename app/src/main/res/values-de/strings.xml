@@ -105,6 +105,7 @@
     <string name="set_msg_expiration_1_week">1 Woche</string>
     <string name="set_msg_expiration_custom">Benutzerdefiniert</string>
     <string name="set_msg_expiration_check_description">Dieser Eintrag wurde markiert</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Die „Von:“-E-Mail-Adresse ist ungültig. Bitte ändere sie in eine gültige Adresse</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Farbschema</string>
@@ -136,6 +137,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Neue Nachrichten</string>
+    <string name="notification_invalid_sender_sending_failed">Deine Nachricht liegt als Entwurf vor. Bitte überprüfe, ob die „Von:“-E-Mail-Adresse in der Nachricht aktiv ist.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Keine Kontakte</string>

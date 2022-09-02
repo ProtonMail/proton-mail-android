@@ -105,6 +105,7 @@
     <string name="set_msg_expiration_1_week">1 hafta</string>
     <string name="set_msg_expiration_custom">Özel</string>
     <string name="set_msg_expiration_check_description">Bu seçenek işaretlendi</string>
+    <string name="composer_invalid_sender_saving_draft_failed">\"Kimden:\" e-posta adresi geçersiz. Lütfen geçerli bir adres belirtin</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -136,6 +137,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Yeni iletiler</string>
+    <string name="notification_invalid_sender_sending_failed">İletinizi taslaklar klasöründe bulabilirsiniz. Lütfen \"Kimden:\" e-posta adresinin geçerli olduğunu doğrulayın.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Henüz bir kişi yok</string>
@@ -303,7 +305,7 @@
     <string name="eo_password_more_info">Ayrıntılı bilgi alın</string>
     <string name="no_attachments">0 ek dosya</string>
     <string name="display_name_banned_chars">Görüntülenecek ad geçersiz. \'&gt;\' ve \'&lt;\' kullanılamaz</string>
-    <string name="cont">Devam et</string>
+    <string name="cont">İlerle</string>
     <string name="reply_prefix_on"> Zaman:</string>
     <string name="label_name">Etiket adı</string>
     <string name="label_created">Etiket oluşturuldu</string>
@@ -358,7 +360,7 @@
     <string name="share_link">Bağlantıyı paylaş</string>
     <string name="sync_attachments">Ek dosyalar eşitleniyor</string>
     <string name="processing_attachment">Ek dosya işleniyor</string>
-    <string name="hyperlink_confirmation_dialog_text_html">Web tarayıcısını başlatarak gezinmek üzeresiniz: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Devam etmek istiyor musunuz?</string>
+    <string name="hyperlink_confirmation_dialog_text_html">Web tarayıcısını başlatarak gezinmek üzeresiniz: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;İlerlemek istiyor musunuz?</string>
     <string name="dont_ask_again">Bir daha sorma</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN kodu yanlış. %d deneme kaldı</item>

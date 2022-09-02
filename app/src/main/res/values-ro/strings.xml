@@ -106,6 +106,7 @@
     <string name="set_msg_expiration_1_week">o săptămână</string>
     <string name="set_msg_expiration_custom">Personalizat</string>
     <string name="set_msg_expiration_check_description">Acest articol este selectat</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Adresa din câmpul „De la:” nu este validă. Modificați-o cu una validă.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -137,6 +138,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Mesaje noi</string>
+    <string name="notification_invalid_sender_sending_failed">Mesajul poate fi găsit în ciorne. Verificați dacă adresa din câmpul „De la:” din mesaj este activă.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Nu sunt contacte</string>
