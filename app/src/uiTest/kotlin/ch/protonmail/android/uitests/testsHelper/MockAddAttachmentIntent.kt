@@ -28,24 +28,20 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.provider.MediaStore
 import androidx.annotation.IdRes
-import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.intent.IntentCallback
 import androidx.test.runner.intent.IntentMonitorRegistry
-import me.proton.core.test.android.instrumented.Robot
+import me.proton.fusion.Fusion
 import org.jetbrains.annotations.Contract
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.ArrayList
 
-object MockAddAttachmentIntent : Robot {
-    private fun createImage(@IdRes resourceId: Int) {
-        val icon = BitmapFactory.decodeResource(
-            InstrumentationRegistry.getInstrumentation().targetContext.resources,
-            resourceId
-        )
+object MockAddAttachmentIntent : Fusion {
+    private fun createImage(assetsFilename: String) {
+        val icon = BitmapFactory
+            .decodeStream(InstrumentationRegistry.getInstrumentation().context.assets.open(assetsFilename))
         val file = File(InstrumentationRegistry.getInstrumentation()
             .targetContext.externalCacheDir, "pickImageResult.jpeg")
         try {
@@ -72,16 +68,16 @@ object MockAddAttachmentIntent : Robot {
         return ActivityResult(Activity.RESULT_OK, resultData)
     }
 
-    fun mockChooseAttachment(@IdRes objectId: Int, @IdRes imageResourceId: Int) {
-        createImage(imageResourceId)
+    fun mockChooseAttachment(@IdRes objectId: Int, assetsFilename: String) {
+        createImage(assetsFilename)
         val result = pickImageResult()
-        Intents.intending(IntentMatchers.hasAction(Intent.ACTION_GET_CONTENT)).respondWith(result)
+        intent.hasAction(Intent.ACTION_CHOOSER).respondWith(result)
         view.withId(objectId).click()
     }
 
     fun mockCameraImageCapture(@IdRes objectId: Int, @IdRes imageResourceId: Int) {
         val result = ActivityResult(Activity.RESULT_OK, null)
-        Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result)
+        intent.hasAction(MediaStore.ACTION_IMAGE_CAPTURE).respondWith(result)
         val cameraCallback = intentCallback(imageResourceId)
         IntentMonitorRegistry.getInstance().addIntentCallback(cameraCallback)
         view.withId(objectId).click()

@@ -24,6 +24,7 @@ import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Compan
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.deletedMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.swipeLeftMessageSubject
 import ch.protonmail.android.uitests.tests.BaseTest
+import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestUser.onePassUser
 import ch.protonmail.android.uitests.testsHelper.TestUser.twoPassUser
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
@@ -39,13 +40,18 @@ class SwipeGesturesTests : BaseTest() {
     @Category(SmokeTest::class)
     @Test
     fun deleteMessageWithSwipe() {
+        val subject = TestData.messageSubject
+        val body = TestData.messageBody
         loginRobot
             .loginOnePassUser()
+            .compose()
+            .sendMessage(twoPassUser.email, subject, body)
             .menuDrawer()
             .sent()
-            .deleteMessageWithSwipe(1)
+            .refreshMessageList()
+            .deleteMessageWithSwipe(0)
             .verify {
-                messageMovedToTrash(deletedMessageSubject, deletedMessageDate)
+                messageMovedToTrash(subject)
             }
     }
 

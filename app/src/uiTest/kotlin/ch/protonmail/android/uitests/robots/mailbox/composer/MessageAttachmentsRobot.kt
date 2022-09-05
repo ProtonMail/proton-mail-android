@@ -19,8 +19,10 @@
 package ch.protonmail.android.uitests.robots.mailbox.composer
 
 import androidx.annotation.IdRes
+import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.MockAddAttachmentIntent
+import ch.protonmail.android.uitests.testsHelper.TestData
 import me.proton.fusion.Fusion
 
 /**
@@ -28,7 +30,7 @@ import me.proton.fusion.Fusion
  */
 open class MessageAttachmentsRobot : Fusion {
 
-    fun addImageCaptureAttachment(@IdRes drawable: Int): ComposerRobot =
+    fun addImageCaptureAttachment(@IdRes drawable: Int): MessageAttachmentsRobot =
         mockCameraImageCapture(drawable)
 
     fun addTwoImageCaptureAttachments(
@@ -36,35 +38,54 @@ open class MessageAttachmentsRobot : Fusion {
         @IdRes secondDrawable: Int
     ): ComposerRobot =
         mockCameraImageCapture(firstDrawable)
-            .attachments()
             .mockCameraImageCapture(secondDrawable)
+            .navigateUpToComposer()
 
     fun addFileAttachment(@IdRes drawable: Int): MessageAttachmentsRobot {
+        intent.init()
         mockFileAttachment(drawable)
+        intent.release()
         return this
     }
 
-    fun removeLastAttachment(): MessageAttachmentsRobot {
+    fun removeAttachmentAtPosition(position: Int): MessageAttachmentsRobot =
+        waitForLoadingToBeNotVisible().removeAttachment(position)
+
+    private fun removeAttachment(position: Int): MessageAttachmentsRobot {
+        listView
+            .onListItem()
+            .inAdapterView(view.withId(R.id.attachment_list))
+            .atPosition(position)
+            .onChild(view.withId(R.id.remove)).click()
         return this
     }
 
-    fun goBackToComposer(): ComposerRobot {
+    private fun waitForLoadingToBeNotVisible(): MessageAttachmentsRobot {
+        view.withText(R.string.sync_attachments).waitForNotDisplayed()
+        return this
+    }
+
+    fun navigateUpToComposer(): ComposerRobot {
+        view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return ComposerRobot()
     }
 
-    private fun mockCameraImageCapture(@IdRes drawableId: Int): ComposerRobot {
-        view.withId(takePhotoIconId).checkIsDisplayed()
+    private fun mockCameraImageCapture(@IdRes drawableId: Int): MessageAttachmentsRobot {
+        intent.init()
+        view.withId(takePhotoIconId).waitForDisplayed()
         MockAddAttachmentIntent.mockCameraImageCapture(takePhotoIconId, drawableId)
-        return ComposerRobot()
+        intent.release()
+        return this
     }
 
     private fun mockFileAttachment(@IdRes drawable: Int): ComposerRobot {
         view.withId(addAttachmentIconId).checkIsDisplayed()
-        MockAddAttachmentIntent.mockChooseAttachment(addAttachmentIconId, drawable)
+        MockAddAttachmentIntent.mockChooseAttachment(addAttachmentIconId, TestData.pngFile)
         return ComposerRobot()
     }
 
     companion object {
+
         private const val takePhotoIconId = R.id.take_photo
         private const val addAttachmentIconId = R.id.attach_file
     }

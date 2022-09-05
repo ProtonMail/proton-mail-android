@@ -27,6 +27,7 @@ import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_15S
 import me.proton.fusion.Fusion
 
 /**
@@ -65,7 +66,7 @@ class SearchRobot : Fusion {
     fun clickSearchedMessageBySubjectPart(subject: String): MessageRobot {
         recyclerView
             .withId(messagesRecyclerViewId)
-//            .waitUntilPopulated()
+            .withTimeout(TIMEOUT_15S)
             .onHolderItem(withMessageSubjectContaining(subject))
             .click()
         return MessageRobot()

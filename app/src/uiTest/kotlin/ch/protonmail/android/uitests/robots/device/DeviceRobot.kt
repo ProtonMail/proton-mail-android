@@ -25,39 +25,40 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import me.proton.core.test.android.instrumented.utils.Shell
+import me.proton.fusion.Fusion
 
-open class DeviceRobot {
+open class DeviceRobot: Fusion {
 
     fun clickHomeButton(): DeviceRobot {
-        device.pressHome()
+        uiDevice.pressHome()
         return this
     }
 
     fun clickRecentAppsButton(): DeviceRobot {
-        device.pressRecentApps()
+        uiDevice.pressRecentApps()
         return this
     }
 
     fun clickRecentAppView(): DeviceRobot {
         val recentAppSelector = UiSelector().resourceId("com.google.android.apps.nexuslauncher:id/overview_panel")
-        device.findObject(recentAppSelector).waitForExists(5000)
-        device.findObject(recentAppSelector).click()
+        uiDevice.findObject(recentAppSelector).waitForExists(5000)
+        uiDevice.findObject(recentAppSelector).click()
         return this
     }
 
     fun expandNotifications(): DeviceRobot {
-        device.openNotification()
+        uiDevice.openNotification()
         return this
     }
 
     fun clickNotificationByText(text: String): DeviceRobot {
-        device.wait(Until.findObject(By.text(text)), TIMEOUT_5S).click()
+        uiDevice.wait(Until.findObject(By.text(text)), TIMEOUT_5S).click()
         return this
     }
 
     fun clickShareDialogJustOnceButton(): DeviceRobot {
-        device.wait(Until.findObject(By.textContains("ProtonMail")), TIMEOUT_30S)?.click()
-        device.wait(Until.findObject(By.res("android:id/button_once")), TIMEOUT_30S).click()
+        byObject.containsText("Proton Mail").withTimeout(TIMEOUT_30S).click()
+        byObject.withResName("android:id/button_once").withTimeout(TIMEOUT_30S).click()
         return this
     }
 
@@ -70,6 +71,6 @@ open class DeviceRobot {
 
         private const val TIMEOUT_5S = 5000L
         private const val TIMEOUT_30S = 30_000L
-        private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        private val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     }
 }

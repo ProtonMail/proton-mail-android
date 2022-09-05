@@ -154,6 +154,7 @@ class ComposerRobot : Fusion {
             .setExpirationInDays(days)
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
+            .navigateUpToComposer()
             .send()
 
     fun sendMessageEOAndExpiryTimeWithAttachmentAndConfirmation(
@@ -171,6 +172,7 @@ class ComposerRobot : Fusion {
             .setExpirationInDays(days)
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
+            .navigateUpToComposer()
             .sendWithNotSupportedExpiryConfirmation()
             .sendAnyway()
 
@@ -178,27 +180,28 @@ class ComposerRobot : Fusion {
         composeMessage(to, subject, body)
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
+            .navigateUpToComposer()
             .send()
 
     fun sendMessageWithFileAttachment(to: String, subject: String, body: String): InboxRobot =
         composeMessage(to, subject, body)
             .attachments()
             .addFileAttachment(logoDrawable)
-            .goBackToComposer()
+            .navigateUpToComposer()
             .send()
 
     fun sendMessageTwoImageCaptureAttachments(to: String, subject: String, body: String): InboxRobot =
         composeMessage(to, subject, body)
             .attachments()
-            .addTwoImageCaptureAttachments(logoDrawable, welcomeDrawable)
+            .addTwoImageCaptureAttachments(logoDrawable, driveDrawable)
             .send()
 
     fun addAndRemoveAttachmentAndSend(to: String, subject: String, body: String): InboxRobot =
         composeMessage(to, subject, body)
             .attachments()
             .addFileAttachment(logoDrawable)
-            .removeLastAttachment()
-            .goBackToComposer()
+            .removeAttachmentAtPosition(0)
+            .navigateUpToComposer()
             .send()
 
     fun draftToSubjectBody(to: String, messageSubject: String, body: String): ComposerRobot =
@@ -218,6 +221,7 @@ class ComposerRobot : Fusion {
         return draftToSubjectBody(to, messageSubject, body)
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
+            .navigateUpToComposer()
     }
 
     fun editBodyAndReply(newBody: String): MessageRobot =
@@ -349,7 +353,7 @@ class ComposerRobot : Fusion {
     }
 
     private fun waitForConditionAndSend() {
-        view.withId(sendMessageId).waitForEnabled().checkEnabled().click()
+        view.withId(sendMessageId).waitForEnabled().checkIsEnabled().click()
     }
 
     /**
@@ -359,7 +363,6 @@ class ComposerRobot : Fusion {
 
         fun sendAnyway(): InboxRobot {
             view.withId(ok).click()
-//            view.withText(R.string.message_sent).inRoot(rootView.withNotCurrentActivityDecorView())
             return InboxRobot()
         }
     }
@@ -391,8 +394,8 @@ class ComposerRobot : Fusion {
         const val sendMessageId = R.id.send_button
         const val messageBodyId = R.id.composer_message_body_edit_text
         const val subjectId = R.id.composer_subject_edit_text
-        const val logoDrawable = R.drawable.ic_launcher_foreground
-        const val welcomeDrawable = R.drawable.welcome
+        const val logoDrawable = R.drawable.ic_logo_proton
+        const val driveDrawable = R.drawable.ic_logo_drive
         const val addressSpinnerId = R.id.composer_from_spinner
         const val toRecipientsId = R.id.composer_to_recipient_view
         const val ok = R.id.ok

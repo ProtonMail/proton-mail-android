@@ -40,7 +40,10 @@ open class SpamRobot : MailboxRobotInterface, Fusion {
     }
 
     fun moreOptions(): SpamRobot {
-        view.instanceOf(AppCompatImageView::class.java).hasParent(view.instanceOf(ActionMenuView::class.java)).click()
+        view
+            .instanceOf(AppCompatImageView::class.java)
+            .hasParent(view.instanceOf(ActionMenuView::class.java))
+            .click()
         return this
     }
 }

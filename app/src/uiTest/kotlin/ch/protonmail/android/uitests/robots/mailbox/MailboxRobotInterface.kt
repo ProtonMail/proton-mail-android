@@ -22,15 +22,20 @@ package ch.protonmail.android.uitests.robots.mailbox
 
 import android.widget.ImageView
 import androidx.annotation.IdRes
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstInstanceMessageSubject
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectAndFlag
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectAndRecipient
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
@@ -39,9 +44,12 @@ import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_15S
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_30S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_60S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
 import ch.protonmail.android.uitests.testsHelper.waitForCondition
+import com.google.android.material.snackbar.SnackbarContentLayout
 import me.proton.fusion.Fusion
 import okhttp3.internal.wait
 
@@ -65,11 +73,16 @@ interface MailboxRobotInterface : Fusion {
         return Any()
     }
 
+    fun deleteMessageWithSwipe(subject: String): Any {
+        recyclerView.onHolderItem(withMessageSubject(subject)).swipeRight()
+        return Any()
+    }
+
     fun deleteMessageWithSwipe(position: Int): Any {
-        saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetDeleteWithSwipeMessage)())
         recyclerView
             .withId(messagesRecyclerViewId)
             .onItemAtPosition(position)
+            .withTimeout(TIMEOUT_15S)
             .swipeRight()
         return Any()
     }
@@ -145,10 +158,9 @@ interface MailboxRobotInterface : Fusion {
             view.withId(messageTitleTextViewId).withText(draftSubject).checkIsDisplayed()
         }
 
-        fun messageMovedToTrash(subject: String, date: String) {
-            val messageMovedToTrash = StringUtils.quantityStringFromResource(R.plurals.action_move_to_trash, 1)
-            view.withText(messageMovedToTrash).checkIsDisplayed()
-            view.withId(R.id.subject_text_view).withText(subject).checkDoesNotExist()
+        fun messageMovedToTrash(subject: String) {
+            view.withText(R.string.swipe_action_trash).waitForDisplayed().checkIsDisplayed()
+            view.withId(R.id.subject_text_view).withText(subject).waitUntilGone().checkDoesNotExist()
         }
 
         fun messageDeleted(subject: String) {
@@ -157,7 +169,7 @@ interface MailboxRobotInterface : Fusion {
 
         fun multipleMessagesMovedToTrash(subjectMessageOne: String, subjectMessageTwo: String) {
             val messagesMovedToTrash = StringUtils.quantityStringFromResource(R.plurals.action_move_to_trash, 2)
-            view.withText(messagesMovedToTrash).checkIsDisplayed()
+            view.withText(messagesMovedToTrash).waitForDisplayed().checkIsDisplayed()
             view.withId(R.id.subject_text_view).withText(subjectMessageOne).checkDoesNotExist()
             view.withId(R.id.subject_text_view).withText(subjectMessageTwo).checkDoesNotExist()
         }
@@ -168,9 +180,9 @@ interface MailboxRobotInterface : Fusion {
         }
 
         fun messageWithSubjectExists(subject: String) {
-            view.withText(subject).waitForDisplayed()
             recyclerView
                 .withId(messagesRecyclerViewId)
+                .withTimeout(TIMEOUT_30S)
                 .scrollToHolder(withFirstInstanceMessageSubject(subject))
         }
 
@@ -189,6 +201,7 @@ interface MailboxRobotInterface : Fusion {
         fun messageWithSubjectHasForwardedFlag(subject: String) {
             recyclerView
                 .withId(messagesRecyclerViewId)
+                .withTimeout(TIMEOUT_30S)
                 .scrollToHolder(withMessageSubjectAndFlag(subject, R.id.forward_image_view))
         }
 

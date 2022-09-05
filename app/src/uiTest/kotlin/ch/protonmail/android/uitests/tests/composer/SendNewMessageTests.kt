@@ -20,6 +20,7 @@ package ch.protonmail.android.uitests.tests.composer
 
 import ch.protonmail.android.uitests.robots.login.LoginMailRobot
 import ch.protonmail.android.uitests.tests.BaseTest
+import ch.protonmail.android.uitests.tests.suites.RegressionSuite
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.editedPassword
 import ch.protonmail.android.uitests.testsHelper.TestData.editedPasswordHint

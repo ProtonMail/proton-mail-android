@@ -19,6 +19,7 @@
 package ch.protonmail.android.uitests.tests.composer
 
 import ch.protonmail.android.uitests.robots.login.LoginMailRobot
+import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.reSubject
@@ -32,6 +33,7 @@ import kotlin.test.Test
 class ReplyToMessageTests : BaseTest() {
 
     private val loginRobot = LoginMailRobot()
+    private val sentRobot = SentRobot()
     private lateinit var subject: String
     private lateinit var body: String
 
@@ -58,12 +60,11 @@ class ReplyToMessageTests : BaseTest() {
             .editBodyAndReply("Reply")
             .navigateUpToSent()
             .refreshMessageList()
-            .verify {
-                messageWithSubjectExists(reSubject(subject))
-            }
+            .verify { messageWithSubjectExists(reSubject(subject)) }
     }
 
     @TestId("1946")
+    @Category(SmokeTest::class)
     @Test
     fun replyMessageWithAttachment() {
         val to = internalEmailTrustedKeys.email
@@ -78,7 +79,8 @@ class ReplyToMessageTests : BaseTest() {
             .reply()
             .editBodyAndReply("Robot Reply With Attachment")
             .navigateUpToSent()
-            .verify { messageWithSubjectExists(TestData.reSubject(subject)) }
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(reSubject(subject)) }
     }
 
     @TestId("21093")
@@ -96,9 +98,10 @@ class ReplyToMessageTests : BaseTest() {
             .replyAll()
             .editBodyAndReply("Robot ReplyAll")
             .navigateUpToSent()
-            .verify {
-                messageWithSubjectExists(TestData.reSubject(subject))
-                messageWithSubjectHasRepliedAllFlag(subject)
-            }
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(reSubject(subject)) }
+        sentRobot
+            .refreshMessageList()
+            .verify { messageWithSubjectHasRepliedAllFlag(subject) }
     }
 }
