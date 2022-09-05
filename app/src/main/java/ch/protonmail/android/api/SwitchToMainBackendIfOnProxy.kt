@@ -19,19 +19,32 @@
 
 package ch.protonmail.android.api
 
+import android.content.SharedPreferences
+import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.di.DefaultSharedPreferences
+import timber.log.Timber
 import javax.inject.Inject
 
 class SwitchToMainBackendIfOnProxy @Inject constructor(
     private val userManager: UserManager,
-    private val switchToMainBackendIfAvailable: SwitchToMainBackendIfAvailable
+    private val switchToMainBackendIfAvailable: SwitchToMainBackendIfAvailable,
+    @DefaultSharedPreferences private val sharedPreferences: SharedPreferences
 ) {
 
     suspend operator fun invoke(): Result =
         if (userManager.requireCurrentLegacyUser().usingDefaultApi) {
             AlreadyUsingMainBackend
         } else {
+            val proxyBeforeSwitch = Proxies.getInstance(proxyList = null, sharedPreferences)
+                .getCurrentActiveProxy()
             if (switchToMainBackendIfAvailable()) {
+                Timber.w(
+                    """
+                    Switched away from proxy ${proxyBeforeSwitch.baseUrl}
+                    after ${System.currentTimeMillis() - proxyBeforeSwitch.lastTrialTimestamp} ms
+                    """.trimIndent()
+                )
                 SwitchSuccess
             } else {
                 SwitchFailure

@@ -18,13 +18,10 @@
  */
 package ch.protonmail.android.api.segments.attachment
 
-import androidx.preference.PreferenceManager
 import ch.protonmail.android.api.models.AttachmentUploadResponse
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.model.Attachment
 import okhttp3.RequestBody
 import java.io.IOException
@@ -84,13 +81,6 @@ class AttachmentApi(
             dataPackage,
             signature
         )
-    }
-
-    override fun getAttachmentUrl(attachmentId: String): String {
-        // return Constants.ENDPOINT_URI + "/attachments/" + attachmentId
-        val prefs = PreferenceManager.getDefaultSharedPreferences(ProtonMailApplication.getApplication())
-        val apiUrl = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
-        return "$apiUrl/mail/v4/attachments/$attachmentId"
     }
 
 }

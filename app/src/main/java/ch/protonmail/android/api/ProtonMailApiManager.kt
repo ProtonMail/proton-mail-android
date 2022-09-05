@@ -135,8 +135,6 @@ class ProtonMailApiManager @Inject constructor(
         signature: RequestBody
     ): AttachmentUploadResponse = api.uploadAttachment(attachment, keyPackage, dataPackage, signature)
 
-    override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
-
     override suspend fun ping(): ResponseBody = api.ping()
 
     override suspend fun fetchContacts(
