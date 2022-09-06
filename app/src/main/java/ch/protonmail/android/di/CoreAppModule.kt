@@ -26,6 +26,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.account.domain.entity.AccountType
+import me.proton.core.domain.entity.AppStore
 import me.proton.core.domain.entity.Product
 import javax.inject.Singleton
 
@@ -36,6 +37,10 @@ object CoreAppModule {
     @Provides
     @Singleton
     fun provideProduct(): Product = Product.Mail
+
+    @Provides
+    @Singleton
+    fun provideAppStore() = AppStore.GooglePlay
 
     @Provides
     @Singleton

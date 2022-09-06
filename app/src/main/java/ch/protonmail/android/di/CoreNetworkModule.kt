@@ -27,9 +27,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.auth.domain.ClientSecret
 import me.proton.core.network.data.client.ExtraHeaderProviderImpl
-import me.proton.core.network.data.di.AlternativeApiPins
 import me.proton.core.network.data.di.BaseProtonApiUrl
-import me.proton.core.network.data.di.CertificatePins
 import me.proton.core.network.data.di.Constants
 import me.proton.core.network.data.di.DohProviderUrls
 import me.proton.core.network.domain.ApiClient

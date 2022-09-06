@@ -312,6 +312,7 @@ dependencies {
         `Proton-key`,
         `Proton-human-verification`,
         `Proton-payment`,
+        // `Proton-payment-iap`,
         `Proton-plan`,
         `Proton-contact`,
         `Proton-country`,
@@ -424,6 +425,7 @@ dependencies {
         `uiautomator`,
         `android-activation`,
         `Proton-android-instrumented-test`,
+        `Proton-payment-iap`,
         `junit-ext`,
         `mock-web-server`,
         `okhttp-tls`

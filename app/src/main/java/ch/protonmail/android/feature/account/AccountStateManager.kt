@@ -71,11 +71,6 @@ import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.auth.presentation.onAddAccountResult
 import me.proton.core.domain.entity.Product
 import me.proton.core.domain.entity.UserId
-import me.proton.core.humanverification.domain.HumanVerificationManager
-import me.proton.core.humanverification.presentation.HumanVerificationManagerObserver
-import me.proton.core.humanverification.presentation.HumanVerificationOrchestrator
-import me.proton.core.humanverification.presentation.observe
-import me.proton.core.humanverification.presentation.onHumanVerificationNeeded
 import me.proton.core.user.domain.UserManager
 import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -92,7 +87,6 @@ internal class AccountStateManager @Inject constructor(
     private val eventManager: EventManager,
     private val jobManager: JobManager,
     private val authOrchestrator: AuthOrchestrator,
-    private val humanVerificationManager: HumanVerificationManager,
     private val oldUserManager: ch.protonmail.android.core.UserManager,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val clearUserData: ClearUserData,
@@ -105,8 +99,6 @@ internal class AccountStateManager @Inject constructor(
 
     private val scope = lifecycleOwner.lifecycleScope
     private val lifecycle = lifecycleOwner.lifecycle
-
-    private lateinit var currentHumanVerificationOrchestrator: HumanVerificationOrchestrator
 
     private val mutableStateFlow = MutableStateFlow(State.Processing)
 
@@ -138,9 +130,6 @@ internal class AccountStateManager @Inject constructor(
     private fun observeAccountManager(lifecycle: Lifecycle): AccountManagerObserver =
         accountManager.observe(lifecycle, Lifecycle.State.CREATED)
 
-    private fun observeHumanVerificationManager(lifecycle: Lifecycle): HumanVerificationManagerObserver =
-        humanVerificationManager.observe(lifecycle, Lifecycle.State.STARTED)
-
     /**
      * Observe all accounts states that can be solved without any workflow ([AuthOrchestrator]).
      */
@@ -170,18 +159,6 @@ internal class AccountStateManager @Inject constructor(
             .onSessionSecondFactorNeeded { authOrchestrator.startSecondFactorWorkflow(it) }
             .onAccountTwoPassModeNeeded { authOrchestrator.startTwoPassModeWorkflow(it) }
             .onAccountCreateAddressNeeded { authOrchestrator.startChooseAddressWorkflow(it) }
-    }
-
-    /**
-     * Observe all human verification states that can be solved with [HumanVerificationOrchestrator].
-     */
-    fun observeHVStateWithExternalLifecycle(lifecycle: Lifecycle) {
-        observeHumanVerificationManager(lifecycle)
-            .onHumanVerificationNeeded { currentHumanVerificationOrchestrator.startHumanVerificationWorkflow(it) }
-    }
-
-    fun setHumanVerificationOrchestrator(humanVerificationOrchestrator: HumanVerificationOrchestrator) {
-        currentHumanVerificationOrchestrator = humanVerificationOrchestrator
     }
 
     fun register(context: ComponentActivity) {

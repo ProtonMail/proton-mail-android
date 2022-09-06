@@ -33,7 +33,7 @@ object HumanVerificationModule {
 
     @Provides
     // Can be either HumanVerificationVersion.HV2 or HV3.
-    fun provideHumanVerificationVersion() = HumanVerificationVersion.HV2
+    fun provideHumanVerificationVersion() = HumanVerificationVersion.HV3
 
     @Provides
     @CaptchaApiHost
