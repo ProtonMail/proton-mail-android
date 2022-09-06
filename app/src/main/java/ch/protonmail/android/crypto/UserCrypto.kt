@@ -20,7 +20,6 @@ package ch.protonmail.android.crypto
 
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.PgpField
-import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.UserKey
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.utils.crypto.OpenPGP
@@ -93,10 +92,6 @@ class UserCrypto @AssistedInject constructor(
         } catch (ignored: Exception) {
             KeyInformation.EMPTY()
         }
-    }
-
-    fun isAllowedForSending(key: AddressKey): Boolean = userPassphrase.use {
-        if (it == null) false else openPgp.checkPassphrase(key.privateKey.string, it)
     }
 
     @AssistedInject.Factory

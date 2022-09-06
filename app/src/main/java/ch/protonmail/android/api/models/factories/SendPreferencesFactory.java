@@ -50,7 +50,6 @@ import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse;
-import me.proton.core.domain.entity.UserId;
 import ch.protonmail.android.domain.entity.user.Address;
 import ch.protonmail.android.domain.entity.user.AddressKey;
 import ch.protonmail.android.domain.entity.user.Addresses;
@@ -62,6 +61,7 @@ import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.property.Key;
 import ezvcard.property.RawProperty;
+import me.proton.core.domain.entity.UserId;
 
 public class SendPreferencesFactory {
 
@@ -124,15 +124,9 @@ public class SendPreferencesFactory {
 
     private PublicKeyResponse toPublicKeyResponse(Address address) {
         List<PublicKeyBody> sendbodies = new ArrayList<>();
-        List<PublicKeyBody> verbodies = new ArrayList<>();
         for (AddressKey key : address.getKeys().getKeys()) {
-            if (crypto.isAllowedForSending(key)) {
                 sendbodies.add(new PublicKeyBody(key.buildBackEndFlags(), crypto.buildArmoredPublicKeyOrNull(key.getPrivateKey())));
-            } else {
-                verbodies.add(new PublicKeyBody(key.buildBackEndFlags(), crypto.buildArmoredPublicKeyOrNull(key.getPrivateKey())));
-            }
         }
-        sendbodies.addAll(verbodies);
         return new PublicKeyResponse(PublicKeyResponse.RecipientType.INTERNAL.getValue(),
                 "text/html" ,
                 sendbodies.toArray(new PublicKeyBody[0]));
