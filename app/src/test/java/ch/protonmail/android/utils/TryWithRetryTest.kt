@@ -21,55 +21,127 @@ package ch.protonmail.android.utils
 
 import ch.protonmail.android.domain.util.leftOrNull
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import java.io.IOException
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class TryWithRetryTest {
 
-    private val block = mockk<() -> Int>()
+    private val block = mockk<() -> String>()
+    private val beforeRetry = mockk<(Int) -> Unit> {
+        every { this@mockk(any()) } just runs
+    }
     private val tryWithRetry = TryWithRetry()
 
     @Test
-    fun `should return the result when block returns`() = runBlockingTest {
+    fun `should return the result when block returns and not call the before-retry block`() = runBlockingTest {
         // given
-        val expectedResult = 42
+        val expectedResult = "great success"
         every { block() } returns expectedResult
 
         // when
-        val actualResult = tryWithRetry { block() }.orNull()
+        val actualResult = tryWithRetry(
+            numberOfRetries = NUMBER_OF_RETRIES,
+            beforeRetry = beforeRetry,
+            block = block
+        ).orNull()
 
         // then
         assertEquals(expectedResult, actualResult)
+        verify(exactly = 0) { beforeRetry(any()) }
     }
 
     @Test
-    fun `should return errors when all retries fail`() = runBlockingTest {
+    fun `should return error when all retries fail`() = runBlockingTest {
         // given
-        every { block() } throws IOException()
+        val expectedError = IOException("Nah")
+        every { block() } throws expectedError
 
         // when
         val actualResult = tryWithRetry { block() }.leftOrNull()
 
         // then
-        assertEquals(3, actualResult?.size)
-        assertTrue(actualResult!!.all { it is IOException })
+        assertEquals(expectedError, actualResult)
     }
 
     @Test
-    fun `should try the provided number of times before failing`() = runBlockingTest {
+    fun `should try the expected number of times before failing`() = runBlockingTest {
         // given
-        val expectedNumberOfRetries = 42
+        val expectedNumberOfBlockCalls = NUMBER_OF_RETRIES + 1
         every { block() } throws IOException()
 
         // when
-        tryWithRetry(numberOfRetries = expectedNumberOfRetries) { block() }
+        tryWithRetry(numberOfRetries = NUMBER_OF_RETRIES) { block() }
 
         // then
-        verify(exactly = expectedNumberOfRetries) { block() }
+        verify(exactly = expectedNumberOfBlockCalls) { block() }
+    }
+
+    @Test
+    fun `should call the before-retry block before each retry passing the current retry count`() = runBlockingTest {
+        // given
+        every { block() } throws IOException()
+
+        // when
+        tryWithRetry(
+            numberOfRetries = NUMBER_OF_RETRIES,
+            beforeRetry = beforeRetry
+        ) { block() }
+
+        // then
+        val capturedRetryCounts = mutableListOf<Int>()
+        verify(exactly = NUMBER_OF_RETRIES) { beforeRetry(capture(capturedRetryCounts)) }
+        capturedRetryCounts.forEachIndexed { index, capturedRetryCount ->
+            assertEquals(index, capturedRetryCount)
+        }
+    }
+
+    @Test
+    fun `should retry as long as the error is retryable`() = runBlockingTest {
+        // given
+        val isErrorRetryable: (Exception) -> Boolean = { it is IOException }
+        every { block() } throws IOException() andThenThrows IOException() andThenThrows IllegalStateException()
+
+        // when
+        tryWithRetry(
+            numberOfRetries = NUMBER_OF_RETRIES,
+            beforeRetry = beforeRetry,
+            shouldRetryOnError = isErrorRetryable
+        ) { block() }
+
+        // then
+        verify(exactly = 3) { block() }
+        verify(exactly = 2) { beforeRetry(any()) }
+    }
+
+    @Test
+    fun `should retry as long as the result is retryable`() = runBlockingTest {
+        // given
+        val expectedResult = "123456"
+        val isResultRetryable: (String) -> Boolean = { result -> result.length < 6 }
+        every { block() } returns "123" andThen "1234" andThen "12345" andThen expectedResult andThen "1234567"
+
+        // when
+        val actualResult = tryWithRetry(
+            numberOfRetries = NUMBER_OF_RETRIES,
+            beforeRetry = beforeRetry,
+            shouldRetryOnError = { true },
+            shouldRetryOnResult = isResultRetryable
+        ) { block() }.orNull()
+
+        // then
+        assertEquals(expectedResult, actualResult)
+        verify(exactly = 4) { block() }
+        verify(exactly = 3) { beforeRetry(any()) }
+    }
+
+    private companion object {
+
+        const val NUMBER_OF_RETRIES = 42
     }
 }
