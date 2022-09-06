@@ -211,7 +211,8 @@ object ApplicationModule {
         okHttpProvider: OkHttpProvider,
         userNotifier: UserNotifier,
         sessionManager: SessionManager,
-        @BaseUrl baseUrl: String
+        @BaseUrl baseUrl: String,
+        retryRequestInterceptor: RetryRequestInterceptor
     ): ProtonRetrofitBuilder {
 
         return ProtonRetrofitBuilder(
@@ -221,7 +222,8 @@ object ApplicationModule {
             networkUtil,
             cookieStore,
             userNotifier,
-            sessionManager
+            sessionManager,
+            retryRequestInterceptor
         ).apply { rebuildMapFor(okHttpProvider, baseUrl) }
     }
 
