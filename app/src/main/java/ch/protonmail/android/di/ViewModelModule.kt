@@ -40,7 +40,6 @@ import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
-import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
@@ -98,7 +97,6 @@ internal class ViewModelModule {
         networkConfigurator: NetworkConfigurator,
         conversationModeEnabled: ConversationModeEnabled,
         observeConversationsByLocation: ObserveConversationsByLocation,
-        observeConversationModeEnabled: ObserveConversationModeEnabled,
         changeMessagesReadStatus: ChangeMessagesReadStatus,
         changeConversationsReadStatus: ChangeConversationsReadStatus,
         changeMessagesStarredStatus: ChangeMessagesStarredStatus,
@@ -124,7 +122,6 @@ internal class ViewModelModule {
         verifyConnection = verifyConnection,
         networkConfigurator = networkConfigurator,
         conversationModeEnabled = conversationModeEnabled,
-        observeConversationModeEnabled = observeConversationModeEnabled,
         observeMessagesByLocation = observeMessagesByLocation,
         observeConversationsByLocation = observeConversationsByLocation,
         changeMessagesReadStatus = changeMessagesReadStatus,

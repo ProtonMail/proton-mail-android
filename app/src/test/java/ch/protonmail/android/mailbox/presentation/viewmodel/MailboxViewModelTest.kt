@@ -252,7 +252,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             verifyConnection = verifyConnection,
             networkConfigurator = networkConfigurator,
             conversationModeEnabled = conversationModeEnabled,
-            observeConversationModeEnabled = mockk(),
             observeMessagesByLocation = observeMessagesByLocation,
             observeConversationsByLocation = observeConversationsByLocation,
             changeMessagesReadStatus = changeMessagesReadStatus,
