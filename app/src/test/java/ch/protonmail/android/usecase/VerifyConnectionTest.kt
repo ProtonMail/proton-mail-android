@@ -80,7 +80,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns true
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
-        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
+        every { queueNetworkUtil.connectionStateFlow } returns backendConnectionsFlow
         val expected = listOf(Constants.ConnectionState.CONNECTED, Constants.ConnectionState.CONNECTED)
 
         // when
@@ -105,7 +105,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns true
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
-        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
+        every { queueNetworkUtil.connectionStateFlow } returns backendConnectionsFlow
 
         val expected = listOf(Constants.ConnectionState.CONNECTED, Constants.ConnectionState.CANT_REACH_SERVER)
 
@@ -131,7 +131,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns true
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
-        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
+        every { queueNetworkUtil.connectionStateFlow } returns backendConnectionsFlow
 
         val expected = Constants.ConnectionState.CONNECTED
 
@@ -157,7 +157,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns false
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
-        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
+        every { queueNetworkUtil.connectionStateFlow } returns backendConnectionsFlow
 
         val expected = listOf(Constants.ConnectionState.CONNECTED, Constants.ConnectionState.NO_INTERNET)
 
@@ -183,7 +183,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns false
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
-        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
+        every { queueNetworkUtil.connectionStateFlow } returns backendConnectionsFlow
 
         val expected = listOf(Constants.ConnectionState.CANT_REACH_SERVER, Constants.ConnectionState.NO_INTERNET)
 
@@ -209,7 +209,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns false
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
-        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
+        every { queueNetworkUtil.connectionStateFlow } returns backendConnectionsFlow
 
         val expected = listOf(Constants.ConnectionState.NO_INTERNET, Constants.ConnectionState.CONNECTED)
 
