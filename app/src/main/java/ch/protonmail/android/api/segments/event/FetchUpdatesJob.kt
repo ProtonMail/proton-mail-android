@@ -25,6 +25,7 @@ import ch.protonmail.android.jobs.Priority
 import ch.protonmail.android.jobs.ProtonMailBaseJob
 import com.birbit.android.jobqueue.Params
 import timber.log.Timber
+import java.io.IOException
 import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 
@@ -50,7 +51,7 @@ class FetchUpdatesJob internal constructor(private val eventManager: EventManage
             eventManager.consumeEventsForBlocking(loggedInUsers)
         } catch (e: Exception) {
             Timber.e(e, "FetchUpdatesJob has failed")
-            if (e is ConnectException) {
+            if (e is IOException) {
                 getQueueNetworkUtil().retryPingAsPreviousRequestWasInconclusive(e)
             }
         }
