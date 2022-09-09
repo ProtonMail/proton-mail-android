@@ -33,8 +33,8 @@ import kotlin.test.assertEquals
 internal class TryWithRetryTest {
 
     private val block = mockk<() -> String>()
-    private val beforeRetry = mockk<(Int) -> Unit> {
-        every { this@mockk(any()) } just runs
+    private val beforeRetry = mockk<(Int, String?) -> Unit> {
+        every { this@mockk(any(), any()) } just runs
     }
     private val tryWithRetry = TryWithRetry()
 
@@ -53,7 +53,7 @@ internal class TryWithRetryTest {
 
         // then
         assertEquals(expectedResult, actualResult)
-        verify(exactly = 0) { beforeRetry(any()) }
+        verify(exactly = 0) { beforeRetry(any(), any()) }
     }
 
     @Test
@@ -83,23 +83,30 @@ internal class TryWithRetryTest {
     }
 
     @Test
-    fun `should call the before-retry block before each retry passing the current retry count`() = runBlockingTest {
-        // given
-        every { block() } throws IOException()
+    fun `should call the before-retry block before each retry passing the current retry count and the last result`() =
+        runBlockingTest {
+            // given
+            val expectedResult = "block result"
+            every { block() } returns expectedResult
 
-        // when
-        tryWithRetry(
-            numberOfRetries = NUMBER_OF_RETRIES,
-            beforeRetry = beforeRetry
-        ) { block() }
+            // when
+            tryWithRetry(
+                numberOfRetries = NUMBER_OF_RETRIES,
+                beforeRetry = beforeRetry,
+                shouldRetryOnResult = { true }
+            ) { block() }
 
-        // then
-        val capturedRetryCounts = mutableListOf<Int>()
-        verify(exactly = NUMBER_OF_RETRIES) { beforeRetry(capture(capturedRetryCounts)) }
-        capturedRetryCounts.forEachIndexed { index, capturedRetryCount ->
-            assertEquals(index, capturedRetryCount)
+            // then
+            val capturedRetryCounts = mutableListOf<Int>()
+            val capturedResults = mutableListOf<String>()
+            verify(exactly = NUMBER_OF_RETRIES) { beforeRetry(capture(capturedRetryCounts), capture(capturedResults)) }
+            capturedRetryCounts.forEachIndexed { index, capturedRetryCount ->
+                assertEquals(index, capturedRetryCount)
+            }
+            capturedResults.forEach { actualResult ->
+                assertEquals(expectedResult, actualResult)
+            }
         }
-    }
 
     @Test
     fun `should retry as long as the error is retryable`() = runBlockingTest {
@@ -116,7 +123,7 @@ internal class TryWithRetryTest {
 
         // then
         verify(exactly = 3) { block() }
-        verify(exactly = 2) { beforeRetry(any()) }
+        verify(exactly = 2) { beforeRetry(any(), any()) }
     }
 
     @Test
@@ -137,7 +144,7 @@ internal class TryWithRetryTest {
         // then
         assertEquals(expectedResult, actualResult)
         verify(exactly = 4) { block() }
-        verify(exactly = 3) { beforeRetry(any()) }
+        verify(exactly = 3) { beforeRetry(any(), any()) }
     }
 
     private companion object {

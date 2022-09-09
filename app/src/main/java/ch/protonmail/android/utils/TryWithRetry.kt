@@ -32,7 +32,7 @@ class TryWithRetry @Inject constructor() {
         numberOfRetries: Int = DEFAULT_RETRY_COUNT,
         shouldRetryOnError: (error: Exception) -> Boolean = { true },
         shouldRetryOnResult: (result: T) -> Boolean = { false },
-        beforeRetry: suspend (retryCount: Int) -> Unit = { },
+        beforeRetry: suspend (retryCount: Int, lastResult: T?) -> Unit = { _, _ -> },
         block: suspend () -> T,
     ): Either<Exception, T> {
         var retryCount = 0
@@ -49,7 +49,7 @@ class TryWithRetry @Inject constructor() {
 
         while (retryCount < numberOfRetries) {
             try {
-                beforeRetry(retryCount)
+                beforeRetry(retryCount, lastResult)
                 lastResult = block()
                 if (!shouldRetryOnResult(lastResult)) return lastResult.right()
             } catch (exception: Exception) {

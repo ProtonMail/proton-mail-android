@@ -22,8 +22,11 @@ package ch.protonmail.android.utils
 import arrow.core.right
 import ch.protonmail.android.utils.extensions.exponentialDelay
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.runs
 import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
@@ -46,9 +49,18 @@ internal class TryWithExponentialBackoffTest {
         val shouldRetryOnError: (Exception) -> Boolean = { true }
         val shouldRetryOnResult: (String) -> Boolean = { true }
         val block: () -> String = { EXPECTED_RESULT }
-        val beforeRetrySlot = slot<suspend (Int) -> Unit>()
+        val beforeRetryMock = mockk<suspend (Int, String?) -> Unit> {
+            coEvery { this@mockk(any(), any()) } just runs
+        }
+        val beforeRetrySlot = slot<suspend (Int, String?) -> Unit>()
         coEvery {
-            tryWithRetry(NUMBER_OF_RETRIES, shouldRetryOnError, shouldRetryOnResult, capture(beforeRetrySlot), block)
+            tryWithRetry(
+                NUMBER_OF_RETRIES,
+                shouldRetryOnError,
+                shouldRetryOnResult,
+                capture(beforeRetrySlot),
+                block
+            )
         } returns EXPECTED_RESULT.right()
 
         // when
@@ -58,12 +70,14 @@ internal class TryWithExponentialBackoffTest {
             exponentialBase = EXPONENTIAL_BASE,
             shouldRetryOnError = shouldRetryOnError,
             shouldRetryOnResult = shouldRetryOnResult,
+            beforeRetry = beforeRetryMock,
             block = block
         ).orNull()
 
         // then
         assertEquals(EXPECTED_RESULT, actualResult)
-        beforeRetrySlot.captured(RETRY_COUNT)
+        beforeRetrySlot.captured(RETRY_COUNT, EXPECTED_RESULT)
+        coVerify { beforeRetryMock(RETRY_COUNT, EXPECTED_RESULT) }
         verify { BACKOFF_DURATION.exponentialDelay(RETRY_COUNT, EXPONENTIAL_BASE) }
 
         unmockkStatic(Duration::exponentialDelay)
