@@ -22,16 +22,25 @@ package ch.protonmail.android.core
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import app.cash.turbine.test
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.testutils.extensions.asArray
+import ch.protonmail.android.utils.extensions.isCanceledRequestException
 import com.birbit.android.jobqueue.network.NetworkEventProvider
 import com.birbit.android.jobqueue.network.NetworkUtil
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import java.io.IOException
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
 
 @RunWith(Enclosed::class)
 internal open class QueueNetworkUtilTest {
@@ -191,6 +200,82 @@ internal open class QueueNetworkUtilTest {
             val isConnectedOrConnecting: Boolean,
             val connectionState: Constants.ConnectionState,
             val expectedNetworkStatus: Int
+        )
+    }
+
+    @RunWith(Parameterized::class)
+    internal class RetryPing(
+        private val testInput: TestInput
+    ) : QueueNetworkUtilTest() {
+
+        @BeforeTest
+        fun setUp() {
+            mockkStatic(Exception::isCanceledRequestException)
+        }
+
+        @Test
+        fun `should emit ping needed state when no exception or exception is canceled request`() = runBlockingTest {
+            // given
+            if (testInput.exception != null) {
+                every { testInput.exception.isCanceledRequestException() } returns testInput.isExceptionCanceledRequest
+            }
+
+            queueNetworkUtil.connectionStateFlow.test {
+                // when
+                queueNetworkUtil.retryPingAsPreviousRequestWasInconclusive(testInput.exception)
+
+                // then
+                if (testInput.shouldEmitPingNeededState) {
+                    val initialEmission = awaitItem()
+                    val pingEmission = awaitItem()
+                    assertEquals(Constants.ConnectionState.CONNECTED, initialEmission)
+                    assertEquals(Constants.ConnectionState.PING_NEEDED, pingEmission)
+                } else {
+                    val initialEmission = awaitItem()
+                    assertEquals(Constants.ConnectionState.CONNECTED, initialEmission)
+                }
+            }
+        }
+
+        @AfterTest
+        fun cleanUp() {
+            unmockkStatic(Exception::isCanceledRequestException)
+        }
+
+        companion object {
+
+            @JvmStatic
+            @Parameterized.Parameters
+            fun data(): Collection<Array<Any>> {
+                return listOf(
+                    TestInput(
+                        exception = null,
+                        isExceptionCanceledRequest = false,
+                        shouldEmitPingNeededState = true
+                    ),
+                    TestInput(
+                        exception = null,
+                        isExceptionCanceledRequest = true,
+                        shouldEmitPingNeededState = true
+                    ),
+                    TestInput(
+                        exception = IOException(),
+                        isExceptionCanceledRequest = false,
+                        shouldEmitPingNeededState = true
+                    ),
+                    TestInput(
+                        exception = IOException(),
+                        isExceptionCanceledRequest = true,
+                        shouldEmitPingNeededState = false
+                    )
+                ).map { it.asArray() }
+            }
+        }
+
+        internal data class TestInput(
+            val exception: Exception?,
+            val isExceptionCanceledRequest: Boolean,
+            val shouldEmitPingNeededState: Boolean
         )
     }
 }

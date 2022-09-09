@@ -24,6 +24,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.utils.extensions.isCanceledRequestException
 import com.birbit.android.jobqueue.network.NetworkEventProvider
 import com.birbit.android.jobqueue.network.NetworkUtil
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -107,8 +108,11 @@ class QueueNetworkUtil @Inject constructor(
 
     fun setCurrentlyHasConnectivity() = updateRealConnectivity(true)
 
-    fun retryPingAsPreviousRequestWasInconclusive() =
-        updateRealConnectivity(false, Constants.ConnectionState.PING_NEEDED)
+    fun retryPingAsPreviousRequestWasInconclusive(exception: Exception? = null) {
+        if (exception == null || !exception.isCanceledRequestException()) {
+            updateRealConnectivity(false, Constants.ConnectionState.PING_NEEDED)
+        }
+    }
 
     fun setConnectivityHasFailed(throwable: Throwable) {
         // for valid failure types specified below

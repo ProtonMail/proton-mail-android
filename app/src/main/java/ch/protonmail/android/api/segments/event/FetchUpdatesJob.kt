@@ -51,7 +51,7 @@ class FetchUpdatesJob internal constructor(private val eventManager: EventManage
         } catch (e: Exception) {
             Timber.e(e, "FetchUpdatesJob has failed")
             if (e is ConnectException) {
-                getQueueNetworkUtil().retryPingAsPreviousRequestWasInconclusive()
+                getQueueNetworkUtil().retryPingAsPreviousRequestWasInconclusive(e)
             }
         }
     }

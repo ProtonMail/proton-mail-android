@@ -48,9 +48,10 @@ public abstract class ProtonMailEndlessJob extends ProtonMailBaseJob {
     @Override
     protected RetryConstraint shouldReRunOnThrowable(@NonNull Throwable throwable, int runCount, int maxRunCount) {
         if (throwable instanceof Exception) {
+            Exception exception = (Exception) throwable;
             if (throwable.getCause() instanceof IOException) {
                 shouldReschedule = true;
-                getQueueNetworkUtil().retryPingAsPreviousRequestWasInconclusive();
+                getQueueNetworkUtil().retryPingAsPreviousRequestWasInconclusive(exception);
             }
         }
         return RetryConstraint.RETRY;

@@ -30,7 +30,9 @@ fun Exception.isRetryableNetworkError() = when (this) {
     is HttpException ->
         isServerError() || code() == RESPONSE_CODE_TOO_MANY_REQUESTS || code() == RESPONSE_CODE_REQUEST_TIMEOUT
     is SSLPeerUnverifiedException,
-    is SSLHandshakeException -> false
-    is IOException -> true
+    is SSLHandshakeException, -> false
+    is IOException -> !isCanceledRequestException()
     else -> false
 }
+
+fun Exception.isCanceledRequestException() = this is IOException && this.message == "Canceled"
