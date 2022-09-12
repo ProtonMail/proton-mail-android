@@ -20,6 +20,7 @@
 package ch.protonmail.android.api.segments.event
 
 import android.content.Context
+import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.testdata.UserTestData
 import io.mockk.called
 import io.mockk.coEvery
@@ -34,6 +35,8 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Test
+import retrofit2.HttpException
+import java.io.IOException
 
 internal class FetchEventsAndRescheduleTest {
 
@@ -77,5 +80,19 @@ internal class FetchEventsAndRescheduleTest {
         // then
         coVerify { eventManagerMock.consumeEventsFor(listOf(UserTestData.userId)) }
         verify { alarmReceiverMock.setAlarm(contextMock) }
+    }
+
+    @Test
+    fun `when event manager throws a network error, should not propagate the error to the caller`() = runBlockingTest {
+        // given
+        every { accountManagerMock.getPrimaryUserId() } returns flowOf(UserTestData.userId)
+        coEvery {
+            eventManagerMock.consumeEventsFor(listOf(UserTestData.userId))
+        } throws IOException() andThenThrows mockk<ApiException>() andThenThrows mockk<HttpException>()
+
+        // when/then
+        fetchEventsAndReschedule()
+        fetchEventsAndReschedule()
+        fetchEventsAndReschedule()
     }
 }

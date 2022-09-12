@@ -20,10 +20,14 @@
 package ch.protonmail.android.api.segments.event
 
 import android.content.Context
+import ch.protonmail.android.api.exceptions.ApiException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.util.kotlin.DispatcherProvider
+import retrofit2.HttpException
+import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 
 internal class FetchEventsAndReschedule @Inject constructor(
@@ -39,8 +43,16 @@ internal class FetchEventsAndReschedule @Inject constructor(
             accountManager.getPrimaryUserId()
                 .first()
                 ?.let { userId ->
-                    eventManager.consumeEventsFor(listOf(userId))
-                    alarmReceiver.setAlarm(context)
+                    try {
+                        eventManager.consumeEventsFor(listOf(userId))
+                        alarmReceiver.setAlarm(context)
+                    } catch (e: IOException) {
+                        Timber.d(e)
+                    } catch (e: ApiException) {
+                        Timber.d(e)
+                    } catch (e: HttpException) {
+                        Timber.d(e)
+                    }
                 }
         }
     }
