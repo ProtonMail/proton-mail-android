@@ -42,6 +42,7 @@ import ch.protonmail.android.api.segments.report.ReportApi
 import ch.protonmail.android.api.segments.report.ReportApiSpec
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApi
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
+import ch.protonmail.android.di.ConfigurableProtonRetrofitBuilder
 import ch.protonmail.android.mailbox.data.remote.ConversationApi
 import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import me.proton.core.network.data.ApiProvider
@@ -52,7 +53,7 @@ import javax.inject.Inject
  */
 class ProtonMailApi private constructor(
     private val attachmentApi: AttachmentApiSpec,
-    val connectivityApi: ConnectivityApiSpec,
+    private val connectivityApi: ConnectivityApiSpec,
     private val contactApi: ContactApiSpec,
     private val deviceApi: DeviceApiSpec,
     private val keyApi: KeyApiSpec,
@@ -80,7 +81,7 @@ class ProtonMailApi private constructor(
     // region hack to insert parameters in the constructor instead of init, otherwise delegation doesn't work
     @Inject
     constructor(
-        protonRetrofitBuilder: ProtonRetrofitBuilder,
+        @ConfigurableProtonRetrofitBuilder protonRetrofitBuilder: ProtonRetrofitBuilder,
         apiProvider: ApiProvider
     ) :
         this(createConstructionParams(protonRetrofitBuilder, apiProvider))

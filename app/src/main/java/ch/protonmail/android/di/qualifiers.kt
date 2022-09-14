@@ -74,3 +74,18 @@ annotation class DohProviders
 @Retention(AnnotationRetention.BINARY)
 @Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.FIELD])
 annotation class BaseUrl
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.FIELD])
+annotation class MainBackendApi
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.FIELD])
+annotation class ConfigurableProtonRetrofitBuilder
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.FIELD])
+annotation class MainBackendProtonRetrofitBuilder

@@ -31,8 +31,6 @@ interface AttachmentApiSpec {
 
     suspend fun downloadAttachment(attachmentId: String): okhttp3.ResponseBody?
 
-    fun getAttachmentUrl(attachmentId: String): String
-
     suspend fun uploadAttachment(
         attachment: Attachment,
         keyPackage: RequestBody,

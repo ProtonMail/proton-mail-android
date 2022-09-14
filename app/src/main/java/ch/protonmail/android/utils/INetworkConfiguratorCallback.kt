@@ -25,9 +25,5 @@ interface INetworkConfiguratorCallback {
 
     fun stopDohSignal()
 
-    fun startAutoRetry()
-
-    fun stopAutoRetry()
-
     fun onDohFailed()
 }

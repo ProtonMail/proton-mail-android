@@ -32,12 +32,11 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.SwitchToMainBackendIfOnProxy
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.withContext
-import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -53,32 +52,36 @@ class PingWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
     private val queueNetworkUtil: QueueNetworkUtil,
-    private val dispatchers: DispatcherProvider
+    private val switchToMainBackendIfOnProxy: SwitchToMainBackendIfOnProxy
 ) : CoroutineWorker(context, params) {
 
-    override suspend fun doWork(): Result =
-        withContext(dispatchers.Io) {
-            runCatching {
-                isBackendStillReachable()
-            }.fold(
-                onSuccess = { isAccessible ->
-                    Timber.v("Ping isAccessible: $isAccessible")
-                    if (isAccessible) {
-                        queueNetworkUtil.setCurrentlyHasConnectivity()
-                        Result.success()
-                    } else {
-                        Result.failure()
-                    }
-                },
-                onFailure = { throwable ->
-                    Timber.v(throwable, "Ping call has failed.")
-                    queueNetworkUtil.setConnectivityHasFailed(throwable)
-                    Result.failure(
-                        workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${throwable.message}")
-                    )
-                }
-            )
+    override suspend fun doWork(): Result {
+        if (switchToMainBackendIfOnProxy() == SwitchToMainBackendIfOnProxy.SwitchSuccess) {
+            queueNetworkUtil.setCurrentlyHasConnectivity()
+            return Result.success()
         }
+
+        return runCatching {
+            isBackendStillReachable()
+        }.fold(
+            onSuccess = { isAccessible ->
+                Timber.v("Ping isAccessible: $isAccessible")
+                if (isAccessible) {
+                    queueNetworkUtil.setCurrentlyHasConnectivity()
+                    Result.success()
+                } else {
+                    Result.failure()
+                }
+            },
+            onFailure = { throwable ->
+                Timber.v(throwable, "Ping call has failed.")
+                queueNetworkUtil.setConnectivityHasFailed(throwable)
+                Result.failure(
+                    workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${throwable.message}")
+                )
+            }
+        )
+    }
 
     private suspend fun isBackendStillReachable(): Boolean =
         when (api.ping().code) {

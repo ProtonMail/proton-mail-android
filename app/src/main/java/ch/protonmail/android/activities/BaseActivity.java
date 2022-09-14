@@ -153,7 +153,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     protected boolean isDohOngoing = false;
-    protected boolean autoRetry = true;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -382,15 +381,5 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Override
     public void onDohFailed() {
         Timber.d("BaseActivity: Doh All alternative proxies failed");
-    }
-
-    @Override
-    public void startAutoRetry() {
-        autoRetry = true;
-    }
-
-    @Override
-    public void stopAutoRetry() {
-        autoRetry = false;
     }
 }
