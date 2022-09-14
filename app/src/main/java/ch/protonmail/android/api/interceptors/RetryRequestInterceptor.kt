@@ -25,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.internal.closeQuietly
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -46,6 +47,7 @@ class RetryRequestInterceptor @Inject constructor(
                 block = { chain.proceed(request) },
                 shouldRetryOnError = { error -> error.isRetryableNetworkError() },
                 shouldRetryOnResult = { response -> response.isRetryableError() },
+                beforeRetry = { _, lastResponse -> lastResponse?.body?.closeQuietly() }
             ).fold(
                 ifLeft = { throw it },
                 ifRight = { result -> result }

@@ -27,11 +27,14 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import retrofit2.HttpException
 import retrofit2.Response
+import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.SocketTimeoutException
 import javax.net.ssl.SSLHandshakeException
 import javax.net.ssl.SSLPeerUnverifiedException
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @RunWith(Enclosed::class)
 internal class ExceptionExtensionsKtTest {
@@ -56,7 +59,8 @@ internal class ExceptionExtensionsKtTest {
                 429.httpException(),
                 408.httpException(),
                 InterruptedIOException(),
-                SocketTimeoutException()
+                SocketTimeoutException(),
+                IOException("Canceled but with different message"),
             )
             private val nonRetryableExceptions = listOf(
                 400.httpException(),
@@ -67,7 +71,8 @@ internal class ExceptionExtensionsKtTest {
                 SSLPeerUnverifiedException(ERROR_MESSAGE),
                 SSLHandshakeException(ERROR_MESSAGE),
                 IllegalStateException(),
-                InterruptedException()
+                InterruptedException(),
+                IOException("Canceled")
             )
 
             private fun Int.httpException() = HttpException(
@@ -80,6 +85,22 @@ internal class ExceptionExtensionsKtTest {
                 return retryableExceptions.map { exception -> arrayOf<Any>(exception, true) } +
                     nonRetryableExceptions.map { exception -> arrayOf(exception, false) }
             }
+        }
+    }
+
+    class NonParametrisedTests {
+
+        @Test
+        fun `should check if an exception is a canceled network call`() {
+            // given
+            val canceledIOException = IOException("Canceled")
+            val canceledOtherException = IllegalStateException("Canceled")
+            val nonCanceledIOException = IOException("Another message")
+
+            // then
+            assertTrue(canceledIOException.isCanceledRequestException())
+            assertFalse(canceledOtherException.isCanceledRequestException())
+            assertFalse(nonCanceledIOException.isCanceledRequestException())
         }
     }
 }

@@ -50,6 +50,7 @@ import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.domain.model.AllUnreadCounters
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
@@ -59,7 +60,6 @@ import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
-import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
@@ -87,8 +87,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -119,7 +119,6 @@ internal class MailboxViewModel @Inject constructor(
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator,
     private val conversationModeEnabled: ConversationModeEnabled,
-    private val observeConversationModeEnabled: ObserveConversationModeEnabled,
     private val observeMessagesByLocation: ObserveMessagesByLocation,
     private val observeConversationsByLocation: ObserveConversationsByLocation,
     private val changeMessagesReadStatus: ChangeMessagesReadStatus,
@@ -201,35 +200,26 @@ internal class MailboxViewModel @Inject constructor(
             drawerFoldersAndLabelsSectionUiModelMapper.toUiModels(labelsAndFolders)
         }
 
+    private val allCounters = mutableUserId.filterNotNull()
+        .flatMapLatest { userId -> observeAllUnreadCounters(userId) }
+        .filterIsInstance<DataResult.Success<AllUnreadCounters>>()
+        .map { countersDataResult ->
+            if (conversationModeEnabled(mailboxLocation.value)) {
+                countersDataResult.value.conversationsCounters
+            } else {
+                countersDataResult.value.messagesCounters
+            }
+        }
+
     val unreadCounters: Flow<List<UnreadCounter>> = combine(
-        mutableUserId,
         mailboxLocation,
         mutableMailboxLabelId,
-        mutableRefreshFlow.onStart { emit(false) }
-    ) { userId, _, _, _ -> userId }
-        .flatMapLatest { userId ->
-            if (userId == null) return@flatMapLatest flowOf(emptyList())
-            combineTransform(
-                observeAllUnreadCounters(userId),
-                observeConversationModeEnabled(userId, labelId = null)
-            ) { allCountersResult, isConversationsModeEnabled ->
-
-                if (allCountersResult is DataResult.Error) {
-                    Timber.e(allCountersResult.cause, allCountersResult.message)
-                }
-
-                if (allCountersResult is DataResult.Success) {
-                    val value = if (isConversationsModeEnabled) {
-                        allCountersResult.value.conversationsCounters
-                    } else {
-                        allCountersResult.value.messagesCounters
-                    }
-                    emit(value)
-                }
-            }
-        }.onEach { list ->
+        mutableRefreshFlow.onStart { emit(false) },
+        allCounters
+    ) { _, _, _, allCounters -> allCounters }
+        .onEach { allCounters ->
             val currentLabelId = getLabelId(mailboxLocation.value, mutableMailboxLabelId.value).id
-            val currentLocationUnreadCounter = list.find { it.labelId == currentLabelId }
+            val currentLocationUnreadCounter = allCounters.find { it.labelId == currentLabelId }
                 ?.unreadCount
                 ?: 0
             val newUnreadChipState = UnreadChipState.Data(
@@ -285,7 +275,7 @@ internal class MailboxViewModel @Inject constructor(
                 )
             }
             .onEach { mailboxListState ->
-                mutableMailboxState.value =  mailboxState.value.copy(list = mailboxListState)
+                mutableMailboxState.value = mailboxState.value.copy(list = mailboxListState)
             }
             .launchIn(viewModelScope)
 

@@ -37,13 +37,15 @@ class TryWithExponentialBackoff @Inject constructor(
         exponentialBase: Double = 1.2,
         shouldRetryOnError: (error: Exception) -> Boolean = { true },
         shouldRetryOnResult: (result: T) -> Boolean = { false },
+        beforeRetry: suspend (retryCount: Int, lastResult: T?) -> Unit = { _, _ -> },
         block: suspend () -> T,
     ): Either<Exception, T> {
         return tryWithRetry(
             numberOfRetries = numberOfRetries,
             shouldRetryOnError = shouldRetryOnError,
             shouldRetryOnResult = shouldRetryOnResult,
-            beforeRetry = { retryCount ->
+            beforeRetry = { retryCount, lastResult ->
+                beforeRetry(retryCount, lastResult)
                 delay(
                     backoffDuration.exponentialDelay(retryCount, exponentialBase)
                 )

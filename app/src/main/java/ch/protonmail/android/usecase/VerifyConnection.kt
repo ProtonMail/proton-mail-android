@@ -60,7 +60,7 @@ class VerifyConnection @Inject constructor(
 
         val connectivityManagerFlow = flowOf(
             connectivityManager.isConnectionAvailableFlow(),
-            queueNetworkUtil.isBackendRespondingWithoutErrorFlow
+            queueNetworkUtil.connectionStateFlow
         )
             .flattenMerge()
             .filter { it != Constants.ConnectionState.CONNECTED } // observe only disconnections

@@ -24,6 +24,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.utils.extensions.isCanceledRequestException
 import com.birbit.android.jobqueue.network.NetworkEventProvider
 import com.birbit.android.jobqueue.network.NetworkUtil
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,11 +48,7 @@ class QueueNetworkUtil @Inject constructor(
     private var isServerAccessible: Boolean = true
     private var lastEmissionTime = 0L
 
-    /**
-     * Flow that emits false when backend replies with an error, or true when
-     * a correct reply is received.
-     */
-    val isBackendRespondingWithoutErrorFlow: StateFlow<Constants.ConnectionState>
+    val connectionStateFlow: StateFlow<Constants.ConnectionState>
         get() = backendExceptionFlow
 
     private val backendExceptionFlow = MutableStateFlow(Constants.ConnectionState.CONNECTED)
@@ -61,7 +58,7 @@ class QueueNetworkUtil @Inject constructor(
         context.applicationContext.registerReceiver(
             object : BroadcastReceiver() {
                 override fun onReceive(context: Context, intent: Intent) {
-                    if (listener == null) { // shall not be but just be safe
+                    if (listener == null) {
                         return
                     }
                     // so in this moment, our hardware connectivity has changed
@@ -101,14 +98,21 @@ class QueueNetworkUtil @Inject constructor(
                 backendExceptionFlow.value = connectionState
             }
         }
+
+        // Lets the job manager know if the server is reachable again as soon as we update the connectivity;
+        // this way, the jobs that require network will run as soon as we have decided the server is in fact reachable
+        listener?.onNetworkChange(getNetworkStatus(context))
     }
 
     fun isConnected(): Boolean = hasConn(false)
 
     fun setCurrentlyHasConnectivity() = updateRealConnectivity(true)
 
-    fun retryPingAsPreviousRequestWasInconclusive() =
-        updateRealConnectivity(false, Constants.ConnectionState.PING_NEEDED)
+    fun retryPingAsPreviousRequestWasInconclusive(exception: Exception? = null) {
+        if (exception == null || !exception.isCanceledRequestException()) {
+            updateRealConnectivity(false, Constants.ConnectionState.PING_NEEDED)
+        }
+    }
 
     fun setConnectivityHasFailed(throwable: Throwable) {
         // for valid failure types specified below
@@ -126,20 +130,19 @@ class QueueNetworkUtil @Inject constructor(
         listener = netListener
     }
 
+    @Synchronized
     private fun hasConn(checkReal: Boolean): Boolean {
-        synchronized(isServerAccessible) {
-            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val netInfo = cm.activeNetworkInfo
-            var hasConnection = netInfo != null && netInfo.isConnectedOrConnecting
-            val currentStatus = isServerAccessible
-            if (checkReal) {
-                hasConnection = hasConnection && isServerAccessible
-            }
-            if (checkReal && currentStatus != hasConnection) {
-                Timber.d("Network statuses differs hasConnection $hasConnection currentStatus $currentStatus")
-            }
-            return hasConnection
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val netInfo = cm.activeNetworkInfo
+        var hasConnection = netInfo != null && netInfo.isConnectedOrConnecting
+        val currentStatus = isServerAccessible
+        if (checkReal) {
+            hasConnection = hasConnection && isServerAccessible
         }
+        if (checkReal && currentStatus != hasConnection) {
+            Timber.d("Network statuses differs hasConnection $hasConnection currentStatus $currentStatus")
+        }
+        return hasConnection
     }
 
     override fun getNetworkStatus(context: Context): Int =

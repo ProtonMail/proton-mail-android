@@ -26,8 +26,10 @@ import ch.protonmail.android.utils.extensions.isRetryableError
 import ch.protonmail.android.utils.extensions.isRetryableNetworkError
 import io.mockk.coEvery
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.runs
 import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
@@ -36,6 +38,8 @@ import okhttp3.Interceptor
 import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.ResponseBody
+import okhttp3.internal.closeQuietly
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -52,7 +56,7 @@ internal class RetryRequestInterceptorTest {
     fun `should throw exception when exponential retry failed`() {
         // given
         coEvery {
-            tryWithExponentialBackoffMock<Response>(any(), any(), any(), any(), any(), any())
+            tryWithExponentialBackoffMock<Response>(any(), any(), any(), any(), any(), any(), any())
         } returns exception.left()
 
         // when
@@ -63,7 +67,7 @@ internal class RetryRequestInterceptorTest {
     fun `should return a response when exponential backoff returns it`() {
         // given
         coEvery {
-            tryWithExponentialBackoffMock<Response>(any(), any(), any(), any(), any(), any())
+            tryWithExponentialBackoffMock<Response>(any(), any(), any(), any(), any(), any(), any())
         } returns response.right()
 
         // when
@@ -74,12 +78,13 @@ internal class RetryRequestInterceptorTest {
     }
 
     @Test
-    fun `should try with exponential backoff using correct params`() = runBlockingTest {
+    fun `should try with backoff using correct params and close response body before retry`() = runBlockingTest {
         // given
-        mockkStatic(Exception::isRetryableNetworkError, Response::isRetryableError)
+        mockkStatic(Exception::isRetryableNetworkError, Response::isRetryableError, ResponseBody::closeQuietly)
 
         val shouldRetryOnErrorSlot = slot<(Exception) -> Boolean>()
         val shouldRetryOnResultSlot = slot<(Response) -> Boolean>()
+        val beforeRetrySlot = slot<suspend (Int, Response?) -> Unit>()
         val blockSlot = slot<suspend () -> Response>()
         coEvery {
             tryWithExponentialBackoffMock(
@@ -88,6 +93,7 @@ internal class RetryRequestInterceptorTest {
                 any(),
                 capture(shouldRetryOnErrorSlot),
                 capture(shouldRetryOnResultSlot),
+                capture(beforeRetrySlot),
                 capture(blockSlot)
             )
         } returns response.right()
@@ -102,10 +108,13 @@ internal class RetryRequestInterceptorTest {
         shouldRetryOnResultSlot.captured(response)
         verify { response.isRetryableError() }
 
+        beforeRetrySlot.captured(0, response)
+        verify { response.body!!.closeQuietly() }
+
         blockSlot.captured()
         verify { interceptorChainMock.proceed(request) }
 
-        unmockkStatic(Exception::isRetryableNetworkError, Response::isRetryableError)
+        unmockkStatic(Exception::isRetryableNetworkError, Response::isRetryableError, ResponseBody::closeQuietly)
     }
 
     private class TestException : Exception()
@@ -113,7 +122,16 @@ internal class RetryRequestInterceptorTest {
     private companion object TestData {
 
         val request = Request.Builder().url("https://protonmail.com").build()
-        val response = Response.Builder().request(request).code(200).message("OK").protocol(Protocol.HTTP_2).build()
+        val responseBody = mockk<ResponseBody> {
+            every { closeQuietly() } just runs
+        }
+        val response = Response.Builder()
+            .request(request)
+            .code(200)
+            .message("OK")
+            .body(responseBody)
+            .protocol(Protocol.HTTP_2)
+            .build()
         val exception = TestException()
     }
 }
