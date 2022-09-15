@@ -1495,7 +1495,7 @@ internal class MailboxActivity :
             ).apply { anchorView = mailboxActionsView }
             val isDraftLocation =
                 currentMailboxLocation in listOf(MessageLocationType.DRAFT, MessageLocationType.ALL_DRAFT)
-            if (!(swipeAction == SwipeAction.TRASH && isDraftLocation)) {
+            if (!(swipeAction == SwipeAction.TRASH && (isDraftLocation || messageSwiped.isScheduled))) {
                 undoSnack!!.show()
             }
             if (swipeCustomizeSnack != null && !customizeSwipeSnackShown) {
