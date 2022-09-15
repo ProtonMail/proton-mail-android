@@ -32,8 +32,9 @@ class SwitchToMainBackendIfOnProxy @Inject constructor(
     @DefaultSharedPreferences private val sharedPreferences: SharedPreferences
 ) {
 
-    suspend operator fun invoke(): Result =
-        if (userManager.requireCurrentLegacyUser().usingDefaultApi) {
+    suspend operator fun invoke(): Result {
+        val currentLegacyUser = userManager.currentLegacyUser
+        return if (currentLegacyUser == null || currentLegacyUser.usingDefaultApi) {
             AlreadyUsingMainBackend
         } else {
             val proxyBeforeSwitch = Proxies.getInstance(proxyList = null, sharedPreferences)
@@ -50,6 +51,7 @@ class SwitchToMainBackendIfOnProxy @Inject constructor(
                 SwitchFailure
             }
         }
+    }
 
     sealed class Result
     object AlreadyUsingMainBackend : Result()

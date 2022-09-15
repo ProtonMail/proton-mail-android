@@ -41,6 +41,7 @@ internal class SwitchToMainBackendIfOnProxyTest {
     private val legacyUserMock = mockk<User>()
     private val userManagerMock = mockk<UserManager> {
         every { requireCurrentLegacyUser() } returns legacyUserMock
+        every { currentLegacyUser } returns legacyUserMock
     }
     private val switchToMainBackendIfAvailableMock = mockk<SwitchToMainBackendIfAvailable>()
     private val sharedPrefsMock = mockk<SharedPreferences>()
@@ -65,6 +66,20 @@ internal class SwitchToMainBackendIfOnProxyTest {
         // given
         val expectedResult = SwitchToMainBackendIfOnProxy.AlreadyUsingMainBackend
         every { legacyUserMock.usingDefaultApi } returns true
+
+        // when
+        val actualResult = switchToMainBackendIfOnProxy()
+
+        // then
+        assertEquals(expectedResult, actualResult)
+        coVerify(exactly = 0) { switchToMainBackendIfAvailableMock() }
+    }
+
+    @Test
+    fun `should assume main BE is used without trying to switch to main BE when user is null`() = runBlockingTest {
+        // given
+        val expectedResult = SwitchToMainBackendIfOnProxy.AlreadyUsingMainBackend
+        every { userManagerMock.currentLegacyUser } returns null
 
         // when
         val actualResult = switchToMainBackendIfOnProxy()
