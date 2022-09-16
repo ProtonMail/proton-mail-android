@@ -75,6 +75,7 @@ import timber.log.Timber
 
 class EventHandler @AssistedInject constructor(
     private val context: Context,
+    private val protonMailApiManager: ProtonMailApiManager,
     private val unreadCounterDao: UnreadCounterDao,
     private val apiToDatabaseUnreadCounterMapper: ApiToDatabaseUnreadCounterMapper,
     private val userManager: UserManager,
@@ -154,46 +155,47 @@ class EventHandler @AssistedInject constructor(
             val messageID = event.messageID
             val type = ActionType.fromInt(event.type)
 
-            if (
-                (type != ActionType.UPDATE && type != ActionType.UPDATE_FLAGS) ||
+            if ((type != ActionType.UPDATE && type != ActionType.UPDATE_FLAGS) ||
                 checkPendingForSending(pendingActionDao, messageID)
             ) {
                 continue
             }
-
-            if (checkPendingForSending(pendingActionDao, messageID)) {
-                continue
+            if (type == ActionType.UPDATE_FLAGS) {
+                stagedMessages[messageID] = messageFactory.createMessage(event.message)
             }
 
-            val messageResponse = protonMailApiManager.fetchMessageDetailsBlocking(messageID, UserIdTag(userId))
-            val isMessageStaged = if (messageResponse == null) {
-                // If the response is null, an exception has been thrown while fetching message details
-                // Return false and with that terminate processing this event any further
-                // We'll try to process the same event again next time
-                false
-            } else {
-                // If the response is not null, check the response code and act accordingly
-                when (messageResponse.code) {
-                    Constants.RESPONSE_CODE_OK -> {
-                        stagedMessages[messageID] = messageResponse.message
+            if (type == ActionType.UPDATE) {
+                val messageResponse = protonMailApiManager.fetchMessageDetailsBlocking(messageID, UserIdTag(userId))
+                val isMessageStaged = if (messageResponse == null) {
+                    // If the response is null, an exception has been thrown while fetching message details
+                    // Return false and with that terminate processing this event any further
+                    // We'll try to process the same event again next time
+                    false
+                } else {
+                    // If the response is not null, check the response code and act accordingly
+                    when (messageResponse.code) {
+                        Constants.RESPONSE_CODE_OK -> {
+                            stagedMessages[messageID] = messageResponse.message
+                        }
+                        RESPONSE_CODE_INVALID_ID,
+                        RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST,
+                        RESPONSE_CODE_MESSAGE_READING_RESTRICTED -> {
+                            Timber.e("Error when fetching message: ${messageResponse.error}")
+                        }
+                        else -> {
+                            Timber.e("Error when fetching message: ${messageResponse.error}")
+                        }
                     }
-                    RESPONSE_CODE_INVALID_ID,
-                    RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST,
-                    RESPONSE_CODE_MESSAGE_READING_RESTRICTED -> {
-                        Timber.e("Error when fetching message: ${messageResponse.error}")
-                    }
-                    else -> {
-                        Timber.e("Error when fetching message: ${messageResponse.error}")
-                    }
+                    true
                 }
-                true
-            }
 
-            Timber.d("isMessageStaged: $isMessageStaged, messages size: ${stagedMessages.size}")
-            if (!isMessageStaged) {
-                return false
+                Timber.d("isMessageStaged: $isMessageStaged, messages size: ${stagedMessages.size}")
+                if (!isMessageStaged) {
+                    return false
+                }
             }
         }
+
         return true
     }
 
