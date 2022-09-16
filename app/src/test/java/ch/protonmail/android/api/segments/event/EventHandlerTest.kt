@@ -59,7 +59,6 @@ class EventHandlerTest {
 
     private val eventHandler = EventHandler(
         context = context,
-        protonMailApiManager = mockk(),
         unreadCounterDao = unreadCounterDao,
         apiToDatabaseUnreadCounterMapper = apiToDatabaseUnreadCounterMapper,
         userManager = userManager,

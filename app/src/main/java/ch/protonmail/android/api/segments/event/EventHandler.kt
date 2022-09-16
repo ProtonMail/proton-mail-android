@@ -75,7 +75,6 @@ import timber.log.Timber
 
 class EventHandler @AssistedInject constructor(
     private val context: Context,
-    private val protonMailApiManager: ProtonMailApiManager,
     private val unreadCounterDao: UnreadCounterDao,
     private val apiToDatabaseUnreadCounterMapper: ApiToDatabaseUnreadCounterMapper,
     private val userManager: UserManager,
@@ -155,7 +154,10 @@ class EventHandler @AssistedInject constructor(
             val messageID = event.messageID
             val type = ActionType.fromInt(event.type)
 
-            if (type != ActionType.UPDATE && type != ActionType.UPDATE_FLAGS) {
+            if (
+                (type != ActionType.UPDATE && type != ActionType.UPDATE_FLAGS) ||
+                checkPendingForSending(pendingActionDao, messageID)
+            ) {
                 continue
             }
 
@@ -318,7 +320,7 @@ class EventHandler @AssistedInject constructor(
                     if (savedMessage == null) {
                         messageDetailsRepository.saveMessageBlocking(messageFactory.createMessage(event.message))
                     } else {
-                        updateMessageFlags(messageDao, messageId, event)
+                        updateMessageFlags(messageId, event)
                     }
                 } catch (syntaxException: JsonSyntaxException) {
                     Timber.w(syntaxException, "unable to create Message object")
@@ -356,18 +358,17 @@ class EventHandler @AssistedInject constructor(
                     stagedMessages.remove(messageId)
                 }
 
-                updateMessageFlags(messageDao, messageId, event)
+                updateMessageFlags(messageId, event)
             }
 
             ActionType.UPDATE_FLAGS -> {
-                updateMessageFlags(messageDao, messageId, event)
+                updateMessageFlags(messageId, event)
             }
         }
         return
     }
 
     private fun updateMessageFlags(
-        messageDao: MessageDao,
         messageId: String,
         item: EventResponse.MessageEventBody
     ) {
@@ -410,7 +411,8 @@ class EventHandler @AssistedInject constructor(
                 message.isReplied = newMessage.flags and MessageFlag.REPLIED.flagValue == MessageFlag.REPLIED.flagValue
                 message.isRepliedAll =
                     newMessage.flags and MessageFlag.REPLIED_ALL.flagValue == MessageFlag.REPLIED_ALL.flagValue
-                message.isForwarded = newMessage.flags and MessageFlag.FORWARDED.flagValue == MessageFlag.FORWARDED.flagValue
+                message.isForwarded =
+                    newMessage.flags and MessageFlag.FORWARDED.flagValue == MessageFlag.FORWARDED.flagValue
 
                 message.Type = MessageUtils.calculateType(newMessage.flags)
                 message.messageEncryption = messageFlagsToEncryptionMapper.flagsToMessageEncryption(newMessage.flags)

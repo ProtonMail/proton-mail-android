@@ -22,8 +22,6 @@ import com.birbit.android.jobqueue.Params;
 
 import ch.protonmail.android.api.models.messages.receive.MessageResponse;
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.data.local.MessageDao;
-import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
 import ch.protonmail.android.labels.domain.LabelRepository;
@@ -45,9 +43,6 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() {
-        final MessageDao messageDao = MessageDatabase.Factory
-                .getInstance(getApplicationContext(), getUserId())
-                .getDao();
         if (!getQueueNetworkUtil().isConnected()) {
             Logger.doLog(TAG_FETCH_MESSAGE_DETAIL_JOB, "no network cannot fetch message detail");
             AppUtil.postEventOnUi(new FetchMessageDetailEvent(false, mMessageId));
