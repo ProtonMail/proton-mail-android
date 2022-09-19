@@ -19,6 +19,7 @@
 package ch.protonmail.android.uitests.tests.composer
 
 import ch.protonmail.android.uitests.robots.login.LoginMailRobot
+import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.fwSubject
@@ -34,6 +35,7 @@ import kotlin.test.Test
 class ForwardMessageTests : BaseTest() {
 
     private val loginRobot = LoginMailRobot()
+    private val sentRobot = SentRobot()
     private lateinit var subject: String
     private lateinit var body: String
 
@@ -60,13 +62,14 @@ class ForwardMessageTests : BaseTest() {
             .forwardMessage(to, body)
             .navigateUpToSent()
             .refreshMessageList()
-            .verify {
-                messageWithSubjectExists(fwSubject(subject))
-                messageWithSubjectHasForwardedFlag(subject)
-            }
+            .verify { messageWithSubjectExists(fwSubject(subject)) }
+        sentRobot
+            .refreshMessageList()
+            .verify { messageWithSubjectHasForwardedFlag(subject) }
     }
 
     @TestId("1950")
+    @Category(SmokeTest::class)
     @Test
     fun forwardMessageWithAttachment() {
         val to = internalEmailTrustedKeys.email
@@ -83,7 +86,6 @@ class ForwardMessageTests : BaseTest() {
             .navigateUpToSent()
             .refreshMessageList()
             .clickMessageBySubject(fwSubject(subject))
-            .expandAttachments()
             .verify { messageContainsOneAttachment() }
     }
 
@@ -107,7 +109,6 @@ class ForwardMessageTests : BaseTest() {
             .sent()
             .refreshMessageList()
             .clickMessageBySubject(updatedSubject(subject))
-            .expandAttachments()
             .verify { messageContainsOneAttachment() }
     }
 
@@ -126,12 +127,11 @@ class ForwardMessageTests : BaseTest() {
             .openActionSheet()
             .forward()
             .attachments()
-            .removeLastAttachment()
-            .goBackToComposer()
+            .removeAttachmentAtPosition(1)
+            .navigateUpToComposer()
             .forwardMessage(to, body)
             .navigateUpToSent()
             .clickMessageBySubject(fwSubject(subject))
-            .expandAttachments()
             .verify { messageContainsOneAttachment() }
     }
 
@@ -152,7 +152,6 @@ class ForwardMessageTests : BaseTest() {
             .forwardMessage(to, body)
             .navigateUpToSent()
             .clickMessageBySubject(fwSubject(subject))
-            .expandAttachments()
             .verify { messageContainsOneAttachment() }
     }
 }

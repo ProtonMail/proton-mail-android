@@ -39,6 +39,7 @@ import ch.protonmail.android.uitests.robots.mailbox.trash.TrashRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.TestData.pgpEncryptedTextDecrypted
 import ch.protonmail.android.uitests.testsHelper.TestData.pgpSignedTextDecrypted
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_30S
 import me.proton.fusion.Fusion
 import org.hamcrest.CoreMatchers.`is`
 
@@ -80,13 +81,12 @@ class MessageRobot : Fusion {
     }
 
     fun openActionSheet(): MessageActionSheet {
-        view.withId(R.id.messageWebViewContainer).checkIsDisplayed()
+        view.withId(R.id.messageWebViewContainer).withTimeout(TIMEOUT_30S).waitForDisplayed()
         view.withId(R.id.moreActionImageButton).click()
         return MessageActionSheet()
     }
 
     fun navigateUpToSearch(): SearchRobot {
-        view.withId(R.id.messageWebViewContainer).checkIsDisplayed()
         view.instanceOf(AppCompatImageButton::class.java).hasParent(view.withId(R.id.toolbar)).click()
         return SearchRobot()
     }
@@ -268,18 +268,20 @@ class MessageRobot : Fusion {
         }
 
         fun messageContainsAttachment() {
-            view.withId(R.id.attachmentsView).checkIsDisplayed()
+            view.withId(R.id.attachmentsView).waitForDisplayed().checkIsDisplayed()
         }
 
         fun messageContainsOneAttachment() {
-            val oneAttachmentString = StringUtils.quantityStringFromResource(R.plurals.attachments_number, 1)
-            view.withId(R.id.attachments_text_view).containsText(oneAttachmentString).checkIsDisplayed()
-            view.withId(R.id.attachment_name_text_view).checkIsDisplayed()
+            val oneAttachmentString = String.format(StringUtils.quantityStringFromResource(R.plurals.attachments_number, 1), 1)
+            view
+                .withId(R.id.attachments_text_view)
+                .containsText(oneAttachmentString)
+                .waitForDisplayed()
+                .checkIsDisplayed()
         }
 
         fun messageContainsTwoAttachments() {
-            val twoAttachmentString = StringUtils.quantityStringFromResource(R.plurals.attachments_number, 2)
-                .replace("%d", "2")
+            val twoAttachmentString = String.format(StringUtils.quantityStringFromResource(R.plurals.attachments_number, 2), 2)
             view.withId(R.id.attachments_text_view).containsText(twoAttachmentString).checkIsDisplayed()
         }
 

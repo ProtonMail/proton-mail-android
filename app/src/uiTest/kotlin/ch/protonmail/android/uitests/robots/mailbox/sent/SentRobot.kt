@@ -43,6 +43,11 @@ class SentRobot : MailboxRobotInterface, Fusion {
         return SelectionStateRobot()
     }
 
+    override fun deleteMessageWithSwipe(subject: String): SentRobot {
+        super.deleteMessageWithSwipe(subject)
+        return this
+    }
+
     override fun deleteMessageWithSwipe(position: Int): SentRobot {
         super.deleteMessageWithSwipe(position)
         return this

@@ -43,12 +43,13 @@ import ch.protonmail.android.uitests.testsHelper.TestUser.onePassUser
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import me.proton.core.test.android.instrumented.utils.FileUtils
+import me.proton.fusion.Fusion
 import org.hamcrest.CoreMatchers.not
 import org.junit.experimental.categories.Category
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class AttachmentsTests : BaseTest() {
+class AttachmentsTests : BaseTest(), Fusion {
 
     private val loginRobot = LoginMailRobot()
     private val composeRobot = ComposerRobot()
@@ -62,8 +63,6 @@ class AttachmentsTests : BaseTest() {
         super.setUp()
         subject = TestData.messageSubject
         body = TestData.messageBody
-        intending(not(isInternal()))
-            .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, null))
     }
 
     @TestId("53707")
@@ -72,7 +71,6 @@ class AttachmentsTests : BaseTest() {
         val messageSubject = "One inline image and one attachment"
         loginRobot
             .loginOnePassUser()
-
             .searchBar()
             .searchMessageText(messageSubject)
             .clickSearchedMessageBySubject(messageSubject)
@@ -86,7 +84,6 @@ class AttachmentsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
-
             .mailboxLayoutShown()
 
         deviceRobot
@@ -307,7 +304,7 @@ class AttachmentsTests : BaseTest() {
             .sent()
             .clickMessageBySubject(subject)
             .expandAttachments()
-            .verify { messageContainsOneAttachment() }
+            .verify { messageContainsTwoAttachments() }
     }
 
     @TestId("1485")

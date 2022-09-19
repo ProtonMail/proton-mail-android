@@ -36,8 +36,9 @@ import me.proton.fusion.utils.StringUtils.stringFromResource
  */
 class ContactsRobot : Fusion {
 
-    private fun openAddContactsMenu() {
+    private fun openAddContactsMenu(): ContactsRobot {
         view.withId(R.id.fab_contacts_add_menu).click()
+        return this
     }
 
     fun addContact(): AddContactRobot {
