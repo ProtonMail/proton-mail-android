@@ -157,6 +157,7 @@ class MessageRepositoryTest {
     private val trashLabelId = LabelId("3")
     private val allMailLabelId = LabelId("5")
     private val scheduledMailLabelId = LabelId("12")
+    private val allSendLabelId = LabelId("2")
     private val customLabelId = LabelId("customLabelId")
     private val customFolderId = LabelId("customFolderId")
 
@@ -839,15 +840,40 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun `should save message preference if it does not exist in DB when saving view in dark mode preference`() = runBlockingTest {
+    fun `verify correct labels are added and removed when scheduled message is moved to trash`() = runBlockingTest {
         // given
-        val expectedResult = buildMessagePreference(viewInDarkMode = true)
-        coEvery { messagePreferenceDao.findMessagePreference(messageId) } returns null
+        val messageIds = listOf(messageId)
+        val labelIds = listOf(scheduledMailLabelId, allSendLabelId, allMailLabelId)
+        val expectedLabelIds = listOf(trashLabelId, allMailLabelId).ids()
+        val message = Message(
+            messageId = messageId,
+            allLabelIDs = labelIds.ids()
+        )
+        val customLabel = buildLabel(id = customLabelId)
+        coEvery { messageDao.findMessageByIdOnce(messageId) } returns message
+        coEvery { counterDao.findUnreadLocationById(any()) } returns mockk(relaxed = true)
+        coEvery { labelRepository.findLabel(customLabelId) } returns customLabel
 
         // when
-        messageRepository.saveViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true)
+        messageRepository.moveToTrash(messageIds, testUserId)
 
         // then
+        val savedMessageCaptor = slot<Message>()
+        coVerify { messageDao.saveMessage(capture(savedMessageCaptor)) }
+        assertEquals(expectedLabelIds, savedMessageCaptor.captured.allLabelIDs)
+    }
+
+    @Test
+    fun `should save message preference if it does not exist in DB when saving view in dark mode preference`() =
+        runBlockingTest {
+            // given
+            val expectedResult = buildMessagePreference(viewInDarkMode = true)
+            coEvery { messagePreferenceDao.findMessagePreference(messageId) } returns null
+
+            // when
+            messageRepository.saveViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true)
+
+            // then
         val result = slot<MessagePreferenceEntity>()
         coVerify { messagePreferenceDao.saveMessagePreference(capture(result)) }
         assertEquals(expectedResult, result.captured)

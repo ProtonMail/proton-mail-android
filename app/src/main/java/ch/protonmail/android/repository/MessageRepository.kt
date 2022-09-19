@@ -518,7 +518,8 @@ class MessageRepository @Inject constructor(
         message.removeLabels(
             getLabelIdsToRemoveOnMoveToFolderAction(
                 labelIds = message.allLabelIDs,
-                isTrashAction = newLocation == MessageLocationType.TRASH
+                isTrashAction = newLocation == MessageLocationType.TRASH,
+                message.isScheduled
             )
         )
         message.addLabels(listOf(newLocationString))
@@ -536,7 +537,8 @@ class MessageRepository @Inject constructor(
      */
     private suspend fun getLabelIdsToRemoveOnMoveToFolderAction(
         labelIds: List<String>,
-        isTrashAction: Boolean
+        isTrashAction: Boolean,
+        isScheduled: Boolean
     ): List<String> {
         return labelIds.filter { labelId ->
             val isLabelExclusive = if (labelId.length > MAX_LABEL_ID_LENGTH) {
@@ -544,6 +546,11 @@ class MessageRepository @Inject constructor(
             } else {
                 labelId != MessageLocationType.STARRED.asLabelIdString()
             }
+
+            if (isScheduled) return@filter labelId !in arrayOf(
+                MessageLocationType.ALL_DRAFT.asLabelIdString(),
+                MessageLocationType.ALL_MAIL.asLabelIdString()
+            )
 
             if (isTrashAction) return@filter labelId !in arrayOf(
                 MessageLocationType.ALL_DRAFT.asLabelIdString(),
