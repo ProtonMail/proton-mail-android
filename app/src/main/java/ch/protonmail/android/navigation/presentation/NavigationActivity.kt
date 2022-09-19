@@ -514,6 +514,9 @@ internal abstract class NavigationActivity : BaseActivity() {
                         setUpDrawer(Type.DRAFTS, Type.SENT, it.showScheduled)
                     }
                 }
+                if (!it.showScheduled && currentMailboxLocation == Constants.MessageLocationType.ALL_SCHEDULED) {
+                    onDrawerStaticItemSelected(Type.INBOX)
+                }
             }
             .launchIn(lifecycleScope)
     }
