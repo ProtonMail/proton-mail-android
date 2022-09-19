@@ -52,7 +52,7 @@
     <string name="mailbox_empty_spam_subtitle">您的垃圾郵件資料夾是空的</string>
     <string name="mailbox_empty_trash_subtitle">垃圾桶是空的</string>
     <string name="mailbox_empty_state_no_results_found">查無結果</string>
-    <string name="mailbox_empty_state_try_a_different_term">嘗試使用其它搜尋關鍵字</string>
+    <string name="mailbox_empty_state_try_a_different_term">嘗試使用其他搜尋關鍵字</string>
     <string name="mailbox_no_messages">沒有郵件</string>
     <plurals name="mailbox_unread_count">
         <item quantity="other">%d 則未讀</item>
@@ -104,7 +104,7 @@
     <string name="set_msg_expiration_1_week">1 週</string>
     <string name="set_msg_expiration_custom">自定義</string>
     <string name="set_msg_expiration_check_description">此項目已保留</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">寄件者電郵位址是無效的。請更換為有效的位址。</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">佈景主題</string>
@@ -158,7 +158,7 @@
     <string name="existing_user_onboarding_new_features_headline">新功能</string>
     <string name="existing_user_onboarding_new_features_description">享受深色模式、改善後的通知、未讀郵件過濾器與子資料夾等新功能。</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton 再進化，保護更一統</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">瞭解更多</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">下一步</string>
     <string name="onboarding_get_started">入門指南</string>
     <string name="onboarding_got_it">知道</string>
@@ -316,7 +316,7 @@
     <string name="label_deleted_error">刪除標籤時發生錯誤</string>
     <string name="message_deleted_error">刪除部分郵件時發生錯誤。一些選取的郵件在傳送過程?!</string>
     <string name="respond_inline">在內文回覆</string>
-    <string name="server_not_reachable_troubleshoot">無法連線到伺服器… (<u>疑難排解</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">正在檢查網際網路連線……</string>
     <string name="draft_label_attachments_uploading">正在上載附件……</string>
     <string name="draft_label_message_uploading">正在傳送郵件……</string>
@@ -330,7 +330,7 @@
     <string name="eo_password_not_completed">未完成郵件密碼設置。</string>
     <string name="delinquency_subtitle">此帳號因未付款，存取已被停用。請登入 protonmail.com 支付未付帳單。</string>
     <string name="downloading">正在下載……</string>
-    <string name="cant_download_attachment">無法下載附件</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>立即</item>
         <item>5分鐘內沒有任何動作</item>
@@ -419,7 +419,7 @@
     <string name="contacts_import_contact">匯入聯絡人</string>
     <string name="contacts_import">匯入</string>
     <string name="upload_contacts">上載聯絡人</string>
-    <string name="uploading_contacts">正在上載聯絡人…</string>
+    <string name="uploading_contacts">Uploading contacts…</string>
     <string-array name="vcard_option_phone">
         <item>電話</item>
         <item>手機</item>
@@ -479,9 +479,9 @@
     <string name="spam_score_101">此電郵無法通過網域驗證。這可能是詐騙郵件或是轉發不當導致，請再三留意！</string>
     <string name="spam_score_102">此郵件可能有網路釣魚的企圖。請檢查寄件者和內容，以確保它們是正當的。<a href="https://protonmail.com/blog/prevent-phishing-attacks/">瞭解更多</a></string>
     <string name="print_from_template">寄件者：%s</string>
-    <string name="print_to_template">收件者：%s;  </string>
-    <string name="print_cc_template">副本：%s;  </string>
-    <string name="print_bcc_template">密件副本：%s;  </string>
+    <string name="print_to_template">To: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">位址： </string>
     <string name="address_street">街道</string>
     <string name="address_extended_street">延伸街道名稱</string>
@@ -507,7 +507,7 @@
     <string name="protonmail_contacts">Proton Mail 聯絡人</string>
     <string name="device_contacts">裝置通訊錄</string>
     <string name="print_date_template">日期：%s</string>
-    <string name="print_attachment_template">附件：%s;  </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">從 @pm.me 位址寄送郵件是付費功能，您的郵件將會從預設位址 %s 寄出</string>
     <string name="pm_me_can_not_be_default">升級至付費方案就能將您的 %s 位址設定為預設值</string>
     <string name="dont_remind_again">不要再提醒我</string>
@@ -561,8 +561,8 @@
     <string name="channel_name_account">帳號</string>
     <string name="channel_description_account">帳號狀態</string>
     <string name="channel_name_ongoing_operations">正在進行的操作</string>
-    <string name="channel_description_ongoing_operations">顯示所有進行中操作，例如
-		新郵件在背景中下載</string>
+    <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
+		message download on background</string>
     <string name="retrieving_notifications">正在擷取通知</string>
     <string name="report_phishing">回報網路釣魚</string>
     <string name="print">列印</string>
@@ -787,8 +787,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">常見連線問題及解決方案</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.

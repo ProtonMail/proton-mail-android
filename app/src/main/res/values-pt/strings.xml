@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Senha da mensagem não concluída.</string>
     <string name="delinquency_subtitle">O acesso a esta conta está desactivado devido a falta de pagamento. Por favor, entre através do protonmail.com para liquidar as suas dívidas.</string>
     <string name="downloading">A transferir...</string>
-    <string name="cant_download_attachment">Impossível transferir o anexo</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>Imediatamente</item>
         <item>5 min inactivo</item>
@@ -567,8 +567,8 @@
     <string name="channel_name_account">Conta</string>
     <string name="channel_description_account">Estado da conta</string>
     <string name="channel_name_ongoing_operations">Operações em curso</string>
-    <string name="channel_description_ongoing_operations">Mostra todas as operações em curso,
-		como a transferência de novas mensagens em segundo plano</string>
+    <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
+		message download on background</string>
     <string name="retrieving_notifications">Recuperar notificações</string>
     <string name="report_phishing">Denunciar phishing</string>
     <string name="print">Imprimir</string>
@@ -801,8 +801,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemas e soluções comuns de ligação</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.

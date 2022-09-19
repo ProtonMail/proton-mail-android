@@ -104,7 +104,7 @@
     <string name="set_msg_expiration_1_week">1 pekan</string>
     <string name="set_msg_expiration_custom">Sesuaikan</string>
     <string name="set_msg_expiration_check_description">Item ini sudah dicentang</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Alamat yang tertera pada kolom \"Dari:\" tidak valid. Silakan ubah isi kolom yang bersangkutan dengan alamat yang valid</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -136,7 +136,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Pesan baru</string>
-    <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"From:\" email in the message is active.</string>
+    <string name="notification_invalid_sender_sending_failed">Pesan Anda tersedia dalam bentuk draf. Mohon periksa apakah alamat yang tertera pada kolom \"Dari:\" merupakan alamat yang aktif.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Tidak ada kontak</string>
@@ -158,7 +158,7 @@
     <string name="existing_user_onboarding_new_features_headline">Fitur baru</string>
     <string name="existing_user_onboarding_new_features_description">Nikmati berbagai fitur baru seperti mode gelap, sistem notifikasi yang telah disempurnakan, filter untuk pesan-pesan yang belum dibaca, dan subfolder.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton yang baru, dengan perlindungan yang tersatukan</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Pelajari lebih lanjut</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Memperkenalkan tampilan baru Proton. Beragam layanan, satu misi. Selamat datang di internet yang menjunjung privasi sebagai hal yang baku. <a href="https://proton.me/news/updated-proton">Pelajari lebih lanjut</a></string>
     <string name="onboarding_next">Berikutnya</string>
     <string name="onboarding_get_started">Mulai</string>
     <string name="onboarding_got_it">Dimengerti</string>
@@ -185,7 +185,7 @@
     <string name="update_app_title">Pembaruan dibutuhkan</string>
     <string name="update_app">Aplikasi Proton Mail Anda tidak dapat digunakan sebelum diperbarui</string>
     <string name="you_are_offline">Anda sedang offline</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail sedang offline. Kunjungi https://protonstatus.com atau akun Twitter kami untuk mengetahui status kami saat ini: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontak telah tersimpan</string>
     <string name="contact_saved_offline">Kontak tersimpan, akan disinkronkan saat koneksi tersedia</string>
     <string name="contact_exist">Email kontak sudah ada</string>
@@ -316,7 +316,7 @@
     <string name="label_deleted_error">Kesalahan saat menghapus label</string>
     <string name="message_deleted_error">Kesalahan saat menghapus beberapa pesan. Beberapa pesan yang di pilih sedang dalam proses pengiriman?!</string>
     <string name="respond_inline">Tanggapi dalam-baris</string>
-    <string name="server_not_reachable_troubleshoot">Server tidak dapat dijangkau… (<u>Penyelesaian masalah</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server tidak dapat dijangkau… (<u>Cari Solusi</u>)</string>
     <string name="connectivity_checking">Memeriksa koneksi...</string>
     <string name="draft_label_attachments_uploading">mengunggah lampiran…</string>
     <string name="draft_label_message_uploading">mengirim pesan…</string>
@@ -330,7 +330,7 @@
     <string name="eo_password_not_completed">Kata Sandi Pesan tidak lengkap.</string>
     <string name="delinquency_subtitle">Akses ke akun ini telah dinonaktifkan karena adanya tagihan yang belum dibayar. Silakan masuk melalui protonmail.com untuk membayar tagihan Anda.</string>
     <string name="downloading">Mengunduh...</string>
-    <string name="cant_download_attachment">Tidak Dapat Mengunduh Lampiran</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>Segera</item>
         <item>5 menit tidak aktif</item>
@@ -480,9 +480,9 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="spam_score_101">Email ini tidak memenuhi syarat otentikasi domainnya. Email ini mungkin telah dipalsukan atau tidak diteruskan dengan benar!</string>
     <string name="spam_score_102">Pesan ini mungkin merupakan sebuah upaya phishing. Mohon periksa nama pengirim dan konten yang tertera secara seksama untuk memastikan keabsahan email ini. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">PELAJARI LEBIH LANJUT</a></string>
     <string name="print_from_template">Dari: %s</string>
-    <string name="print_to_template">Kepada: %s;  </string>
-    <string name="print_cc_template">CC: %s;  </string>
-    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="print_to_template">Kepada: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Alamat: </string>
     <string name="address_street">Jalan</string>
     <string name="address_extended_street">Ekstensi</string>
@@ -508,7 +508,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="protonmail_contacts">Kontak Proton Mail</string>
     <string name="device_contacts">Kontak Perangkat</string>
     <string name="print_date_template">Tanggal: %s</string>
-    <string name="print_attachment_template">Lampiran: %s;  </string>
+    <string name="print_attachment_template">Lampiran: %s;  </string>
     <string name="pm_me_changed">Pengiriman pesan dari alamat @pm.me merupakan fitur berbayar. Pesan Anda akan dikirim dari alamat bawaan Anda %s</string>
     <string name="pm_me_can_not_be_default">Tingkatkan ke paket berbayar untuk dapat mengatur alamat %s Anda sebagai yang utama</string>
     <string name="dont_remind_again">Jangan ingatkan saya lagi</string>
@@ -562,8 +562,8 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="channel_name_account">Akun</string>
     <string name="channel_description_account">Status akun</string>
     <string name="channel_name_ongoing_operations">Operasi yang sedang berlangsung</string>
-    <string name="channel_description_ongoing_operations">Memperlihatkan semua operasi yang sedang berlangsung seperti
-		unduh pesan baru di latar belakang</string>
+    <string name="channel_description_ongoing_operations">Menampilkan seluruh operasi yang sedang berlangsung
+		seperti unduhan pesan baru di latar belakang</string>
     <string name="retrieving_notifications">Mengembalikan notifikasi</string>
     <string name="report_phishing">Laporkan phishing</string>
     <string name="print">Cetak</string>
@@ -790,8 +790,8 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Masalah umum terkait sambungan dan solusinya</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.

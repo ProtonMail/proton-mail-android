@@ -146,14 +146,14 @@
     <string name="contacts_empty_state_no_groups">Žádné skupiny</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">Skupiny kontaktů nebudou importovány. Chcete-li využívat prémiové funkce, přejděte na placený plán.</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">Skupiny kontaktů nebudou importovány. Chcete-li využívat prémiové funkce, přejděte na placený tarif.</string>
     <string name="contact_details_remote_content_dialog_title">Vzdálený obsah</string>
     <string name="contact_details_remote_content_dialog_message">Tento kontakt obsahuje vzdálený obsah.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Načíst obsah</string>
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Soukromí pro všechny</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Pozvěte své kontakty do služby Proton Mail, abyste mohli využívat bezproblémové end-to-end šifrování, nebo přidejte ochranu heslem do zpráv, které jim posíláte.</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Pozvěte své kontakty do služby Proton Mail, abyste mohli využívat bezproblémové koncové šifrování, nebo přidejte ochranu heslem do zpráv, které jim posíláte.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Upravený a organizovaný</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Třiďte soubory, označte štítky a barevnými kódy pro perfektní schránku na míru.</string>
     <string name="existing_user_onboarding_new_look_headline">Nový vzhled, stejná ochrana</string>
@@ -161,7 +161,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nové funkce</string>
     <string name="existing_user_onboarding_new_features_description">Využijte nové funkce, jako je tmavý režim, vylepšená oznámení, filtr nepřečtených zpráv a podsložky.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Aktualizovaný Proton, jednotná ochrana</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Další informace</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Představujeme nový vzhled Protonu. Mnoho služeb, jedno poslání. Vítejte na internetu, kde je soukromí standardem. <a href="https://proton.me/news/updated-proton">Více informací</a></string>
     <string name="onboarding_next">Další</string>
     <string name="onboarding_get_started">Začínáme</string>
     <string name="onboarding_got_it">Rozumím</string>
@@ -188,7 +188,7 @@
     <string name="update_app_title">Je vyžadována aktualizace</string>
     <string name="update_app">Aplikaci Proton Mail nelze použít, dokud nebude aktualizována</string>
     <string name="you_are_offline">Jste v režimu offline</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail je momentálně nedostupný, aktuální stav najdete na https://protonstatus.com nebo na našem Twitteru: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontakt byl uložen</string>
     <string name="contact_saved_offline">Kontakt byl uložen, synchronizace proběhne po připojení k internetu.</string>
     <string name="contact_exist">E-mail kontaktu již existuje</string>
@@ -342,7 +342,7 @@
     <string name="eo_password_not_completed">Heslo zpráv není dokončeno.</string>
     <string name="delinquency_subtitle">Přístup k tomuto účtu je zakázán z důvodu neuhrazené platby. Přihlaste se k protonmail.com a uhraďte nezaplacenou fakturu.</string>
     <string name="downloading">Stahování...</string>
-    <string name="cant_download_attachment">Nelze stáhnout přílohu</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>Okamžitě</item>
         <item>5 min nečinnosti</item>
@@ -437,7 +437,7 @@
     <string name="contacts_import_contact">Importovat kontakty</string>
     <string name="contacts_import">Import</string>
     <string name="upload_contacts">Nahrát kontakty</string>
-    <string name="uploading_contacts">Nahrávání kontaktů……</string>
+    <string name="uploading_contacts">Nahrávání kontaktů…</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
         <item>Mobil</item>
@@ -549,7 +549,7 @@
     <!-- Sender locks -->
     <string name="sender_lock_zero_access">Uloženo s nulovým přístupem šifrování</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_end_to_end">Odesláno Vámi s end-to-end šifrováním</string>
+    <string name="sender_lock_sent_end_to_end">Odesláno vámi s koncovým šifrováním</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_autoresponder">Odesláno pomocí Proton Mail s nulovým přístupem šifrování</string>
     <string name="sender_lock_verification_failed">Ověření odesílatele se nezdařilo</string>
@@ -557,11 +557,11 @@
     <string name="sender_lock_pgp_encrypted_verified">Zpráva šifrovaná pomocí PGP z ověřené adresy</string>
     <string name="sender_lock_pgp_signed_verified_sender">Zpráva podepsaná pomocí PGP z ověřené adresy</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-End šifrovaná a podepsaná zpráva</string>
-    <string name="sender_lock_internal_verified">End-to-end šifrovaná zpráva z ověřené adresy</string>
+    <string name="sender_lock_internal">Podepsaná zpráva s koncovým šifrováním</string>
+    <string name="sender_lock_internal_verified">Zpráva z ověřené adresy s koncovým šifrováním</string>
     <!-- Composer locks -->
-    <string name="composer_lock_internal">End-to-End šifrováno</string>
-    <string name="composer_lock_internal_pinned">Zašifrováno End-to-end k ověřenému příjemci</string>
+    <string name="composer_lock_internal">Koncové šifrování</string>
+    <string name="composer_lock_internal_pinned">Ověřenému příjemci včetně koncového šifrování</string>
     <string name="composer_lock_pgp_encrypted_pinned">Šifrované PGP odesílatel ověřen</string>
     <string name="composer_lock_pgp_signed">Podepsané pomocí PGP</string>
     <string name="recipient_not_found_and_removed">Příjemce nebyl nalezen: %s byl odstraněn</string>
@@ -825,8 +825,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problémy a řešení běžného připojení</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.

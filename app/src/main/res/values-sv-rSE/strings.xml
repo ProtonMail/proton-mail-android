@@ -159,7 +159,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nya funktioner</string>
     <string name="existing_user_onboarding_new_features_description">Njut av nya funktioner som mörkt läge, förbättrade aviseringar, ett filter för olästa meddelanden och undermappar.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Uppdaterat Proton, enhetligt skydd</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Lär dig mer</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Nästa</string>
     <string name="onboarding_get_started">Kom igång</string>
     <string name="onboarding_got_it">Jag förstår</string>
@@ -186,7 +186,7 @@
     <string name="update_app_title">Uppdatering krävs</string>
     <string name="update_app">Din Proton Mail-app kan inte användas förrän den har uppdaterats</string>
     <string name="you_are_offline">Du är offline</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail är för närvarande offline, kolla https://protonstatus.com eller vår Twitter för den nuvarande statusen: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontakt sparad</string>
     <string name="contact_saved_offline">Kontakt sparad, synkroniseras när anslutning är tillgänglig</string>
     <string name="contact_exist">E-postkontakt finns redan</string>
@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Lösenord för meddelandet har inte slutförts.</string>
     <string name="delinquency_subtitle">Åtkomst till detta konto är inaktiverat på grund av utebliven betalning. Logga in via protonmail.com för att betala din obetalda faktura.</string>
     <string name="downloading">Laddar ner...</string>
-    <string name="cant_download_attachment">Kunde inte ladda ner bilagor</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>Omedelbart</item>
         <item>5 min. inaktivitet</item>
@@ -485,9 +485,9 @@
     <string name="spam_score_101">Denna e-post har misslyckats med domänens autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefordrat!</string>
     <string name="spam_score_102">Detta meddelande kan vara ett nätfiskeförsök. Kontrollera avsändaren och innehållet för att säkerställa att de är legitima. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LÄR DIG MER</a></string>
     <string name="print_from_template">Från: %s</string>
-    <string name="print_to_template">Till: %s;  </string>
-    <string name="print_cc_template">Kopia: %s;  </string>
-    <string name="print_bcc_template">Hemlig kopia: %s;  </string>
+    <string name="print_to_template">Till: %s,  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Adress: </string>
     <string name="address_street">Gata</string>
     <string name="address_extended_street">Utökad gata</string>
@@ -513,7 +513,7 @@
     <string name="protonmail_contacts">Proton Mail-kontakter</string>
     <string name="device_contacts">Enhetens kontakter</string>
     <string name="print_date_template">Datum: %s</string>
-    <string name="print_attachment_template">Bilaga: %s;  </string>
+    <string name="print_attachment_template">Bilaga: %s,  </string>
     <string name="pm_me_changed">Att skicka meddelanden från @pm.me-adress är en betald funktion. Ditt meddelande kommer att skickas från din standardadress %s</string>
     <string name="pm_me_can_not_be_default">Uppgradera till ett betalt paket för att kunna ställa in din %s-adress som standard</string>
     <string name="dont_remind_again">Påminn mig inte igen</string>
@@ -567,8 +567,8 @@
     <string name="channel_name_account">Konto</string>
     <string name="channel_description_account">Kontostatus</string>
     <string name="channel_name_ongoing_operations">Pågående aktiviteter</string>
-    <string name="channel_description_ongoing_operations">Visar alla pågående aktiviteter som nedladdning
-		av nya meddelanden i bakgrunden</string>
+    <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
+		message download on background</string>
     <string name="retrieving_notifications">Hämtar aviseringar</string>
     <string name="report_phishing">Rapportera nätfiske</string>
     <string name="print">Skriv ut</string>
@@ -799,8 +799,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Vanliga anslutningsproblem och lösningar</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.

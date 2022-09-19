@@ -84,7 +84,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Þann %s, %s &lt; %s&gt; skrifaði:</string>
     <string name="set_msg_password_title">Stilltu lykilorð</string>
-    <string name="set_msg_password_info">Stilltu lykilorð til að dulkóða þessi skilaboð fyrir ekki-Proton tölvupóstnotendur. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Skoða nánar</a></string>
+    <string name="set_msg_password_info">Stilltu lykilorð til að dulrita þessi skilaboð fyrir tölvupóstnotendur sem ekki eru með Proton. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Skoða nánar</a></string>
     <string name="set_msg_password_info_icon_description">Upplýsingar</string>
     <string name="set_msg_password_msg_password_title">Lykilorð skilaboða</string>
     <string name="set_msg_password_msg_password_hint">4 til 21 stafa langt</string>
@@ -105,7 +105,7 @@
     <string name="set_msg_expiration_1_week">1 viku</string>
     <string name="set_msg_expiration_custom">Sérsniðið</string>
     <string name="set_msg_expiration_check_description">Þetta atriði er merkt</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Heimilisfangið „Frá:“ er ógilt. Vinsamlegast breyttu því í gilt</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Þema</string>
@@ -137,7 +137,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Ný skilaboð</string>
-    <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"From:\" email in the message is active.</string>
+    <string name="notification_invalid_sender_sending_failed">Skilaboðin þín eru geymd sem drög. Vinsamlegast staðfestu að „Frá:“ tölvupósturinn í skilaboðunum sé virkur.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Engir tengiliðir</string>
@@ -159,7 +159,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nýir eiginleikar</string>
     <string name="existing_user_onboarding_new_features_description">Njóttu nýrra eiginleika eins og dökkrar stillingar, bættra tilkynninga, ólesinna skilaboðasíu og undirmöppur.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Upppfært Proton, sameinuð vörn</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Skoða nánar</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Kynni hressandi útlit Protons. Margar þjónustur, eitt verkefni. Velkomin á internet þar sem næði er sjálfgefið. <a href="https://proton.me/news/updated-proton">Skoða nánar</a></string>
     <string name="onboarding_next">Næsta</string>
     <string name="onboarding_get_started">Byrja</string>
     <string name="onboarding_got_it">Náði því</string>
@@ -186,7 +186,7 @@
     <string name="update_app_title">Uppfærsla nauðsynleg</string>
     <string name="update_app">Ekki er hægt að nota Proton tölvupóstforritið fyrr en það hefur verið uppfært</string>
     <string name="you_are_offline">Þú ert án nettengingar</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton tölvupóstur er í augnablikinu ótengdur, skoðaðu https://protonstatus.com eða síðustu stöðu mála á Twitter: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Tengiliður vistaður</string>
     <string name="contact_saved_offline">Tengiliður vistaður, verður samstilltur næst þegar nettenging er til staðar</string>
     <string name="contact_exist">Netfang tengiliðar þegar til</string>
@@ -320,7 +320,7 @@
     <string name="label_deleted_error">Villa kom upp við að eyða merkingu</string>
     <string name="message_deleted_error">Villa kom upp við eyðingu á sumum skilaboðum. Gætu skilaboðin verið í sendingarferli?!</string>
     <string name="respond_inline">Svara innan-texta</string>
-    <string name="server_not_reachable_troubleshoot">Netþjónn ekki tiltækur… (<u>Bilanaleit</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Netþjónn ekki aðgengilegur... (<u>Bilanagreina</u>)</string>
     <string name="connectivity_checking">Athuga með tengingu...</string>
     <string name="draft_label_attachments_uploading">sendi inn viðhengi…</string>
     <string name="draft_label_message_uploading">sendi skilaboð…</string>
@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Lykilorð skilaboða ekki klárað.</string>
     <string name="delinquency_subtitle">Þessi notandaaðgangur er óvirkur vegna ógreidds reiknings. Skráðu þig inn í protonmail.com til að greiða ófrágenginn reikning.</string>
     <string name="downloading">Sæki...</string>
-    <string name="cant_download_attachment">Get ekki sótt viðhengið</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>Strax</item>
         <item>5mín aðgerðaleysi</item>
@@ -425,7 +425,7 @@
     <string name="contacts_import_contact">Flytja inn tengilið</string>
     <string name="contacts_import">Flytja inn</string>
     <string name="upload_contacts">Senda inn tengiliði</string>
-    <string name="uploading_contacts">Hleð inn tengiliðum…</string>
+    <string name="uploading_contacts">Hleð inn tengiliðum...</string>
     <string-array name="vcard_option_phone">
         <item>Sími</item>
         <item>Farsími</item>
@@ -485,9 +485,9 @@
     <string name="spam_score_101">Þessi tölvupóstur féll á auðkenningarprófunum lénsins. Hann gæti verið áframsendur á rangan hátt eða falsaður!</string>
     <string name="spam_score_102">Þessi skilaboð gætu verið tilraun til gagnaveiði (phishing). Skoðaðu vel sendandann og efnisinnihald til að ganga úr skugga um lögmæti þeirra. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SKOÐA NÁNAR</a></string>
     <string name="print_from_template">Frá: %s</string>
-    <string name="print_to_template">Til: %s;  </string>
-    <string name="print_cc_template">Afrit: %s;  </string>
-    <string name="print_bcc_template">Falið afrit: %s;  </string>
+    <string name="print_to_template">Til: %s;  </string>
+    <string name="print_cc_template">Afrit: %s; </string>
+    <string name="print_bcc_template">Falið afrit: %s; </string>
     <string name="address">Heimilisfang: </string>
     <string name="address_street">Gata</string>
     <string name="address_extended_street">Ítarlegri götuupplýsingar</string>
@@ -513,7 +513,7 @@
     <string name="protonmail_contacts">Proton tölvupóst tengiliðir</string>
     <string name="device_contacts">Tengiliðir tækis</string>
     <string name="print_date_template">Dagsetning: %s</string>
-    <string name="print_attachment_template">Viðhengi: %s;  </string>
+    <string name="print_attachment_template">Viðhengi: %s;  </string>
     <string name="pm_me_changed">Að senda skilaboð frá @pm.me póstföngum er eiginleiki sem greiða þarf fyrir. Skilaboðin þín verða send frá sjálfgefna tölvupóstfanginu %s</string>
     <string name="pm_me_can_not_be_default">Uppfærðu í greidda áskrift til að geta sett %s netfangið þitt sem sjálfgefið</string>
     <string name="dont_remind_again">Ekki minna mig aftur á þetta</string>
@@ -801,8 +801,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Algeng tengivandamál og lausnir á þeim</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
