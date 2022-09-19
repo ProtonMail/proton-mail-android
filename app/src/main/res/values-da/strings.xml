@@ -105,7 +105,7 @@
     <string name="set_msg_expiration_1_week">1 uge</string>
     <string name="set_msg_expiration_custom">Tilpasset</string>
     <string name="set_msg_expiration_check_description">Dette emne er afmærket</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">\"Fra:\"-adressen er ugyldig. Ændr den venligst til en gyldig</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -137,7 +137,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nye beskeder</string>
-    <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"From:\" email in the message is active.</string>
+    <string name="notification_invalid_sender_sending_failed">Din besked gemmes som kladde. Bekræft venligst at \"Fra:\" emailen i beskeden er aktiv.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Ingen kontakter</string>
@@ -159,7 +159,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nye funktioner</string>
     <string name="existing_user_onboarding_new_features_description">Du kan nyde godt af nye funktioner som mørk tilstand, forbedrede beskeder, et filter for ulæste meddelelser og undermapper.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Opdateret Proton, forenet beskyttelse</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Lær mere</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Vi præsenterer Protons nye udseende. Mange tjenester, én mission. Velkommen til et internet, hvor privatlivsbeskyttelse er standard. <a href="https://proton.me/news/updated-proton">Læs mere</a></string>
     <string name="onboarding_next">Næste</string>
     <string name="onboarding_get_started">Kom godt i gang</string>
     <string name="onboarding_got_it">Forstået</string>
@@ -186,7 +186,7 @@
     <string name="update_app_title">Opdatering nødvendig</string>
     <string name="update_app">Din Proton Mail-app kan ikke benyttes, før den opdateres</string>
     <string name="you_are_offline">Du er offline</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail er i øjeblikket offline. Tjek https://protonstatus.com eller vores Twitter for den aktuelle status: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontakt er gemt</string>
     <string name="contact_saved_offline">Kontakt gemt. Den synkes, når en forbindelse bliver tilgængelig.</string>
     <string name="contact_exist">Kontaktmail findes allerede</string>
@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Keypteringsadgangskode mangler.</string>
     <string name="delinquency_subtitle">Adgang til denne konto er deaktiveret grundet manglende betaling. Log ind via protonmail.com for at betale din udestående faktura.</string>
     <string name="downloading">Downloader...</string>
-    <string name="cant_download_attachment">Kan ikke download vedhæftning</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>Straks</item>
         <item>5 min inaktivitet</item>
@@ -485,8 +485,8 @@
     <string name="spam_score_101">Denne e-mail bestod ikke sit domænes godkendelseskrav. Den kan være falsk eller ukorrekt videresendt!</string>
     <string name="spam_score_102">Denne besked kan være et phishing-forsøg. Tjek afsenderen og indholdet for at sikre, at de er legitime. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">FÅ MERE AT VIDE</a></string>
     <string name="print_from_template">Fra: %s</string>
-    <string name="print_to_template">Til: %s;   </string>
-    <string name="print_cc_template">CC: %s;   </string>
+    <string name="print_to_template">Til: %s; </string>
+    <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Adresse: </string>
     <string name="address_street">Gade</string>
@@ -801,8 +801,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Almindelige forbindelsesproblemer og løsninger</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.

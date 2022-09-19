@@ -80,7 +80,7 @@
     <string name="composer_subject">Onderwerp:</string>
     <string name="composer_to">Aan:</string>
     <string name="composer_removing_address_generic_error">Kan e-mailadres niet verifiëren: %s. Verzenden kan mislukken.</string>
-    <string name="composer_removing_address_server_error">Removing address: %s. %s</string>
+    <string name="composer_removing_address_server_error">E-mailadres %s wordt verwijderd: %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Op %s, schreef %s &lt;%s&gt;:</string>
     <string name="set_msg_password_title">Wachtwoord instellen</string>
@@ -105,7 +105,7 @@
     <string name="set_msg_expiration_1_week">1 week</string>
     <string name="set_msg_expiration_custom">Aangepast</string>
     <string name="set_msg_expiration_check_description">Dit item is aangevinkt</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Het \"Van:\" e-mailadres is ongeldig. Wijzig dit naar een geldig alsjeblieft</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Thema</string>
@@ -137,7 +137,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nieuwe berichten</string>
-    <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"From:\" email in the message is active.</string>
+    <string name="notification_invalid_sender_sending_failed">Uw bericht kan als concept worden teruggevonden. Verifieer dat het \"Van:\" e-mailadres in het bericht actief is.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Geen contacten</string>
@@ -159,7 +159,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nieuwe functionaliteiten</string>
     <string name="existing_user_onboarding_new_features_description">Geniet van nieuwe functionaliteiten zoals donkere modus, verbeterde meldingen, een filter voor ongelezen berichten, en submappen.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Geüpdatete Proton, verenigde bescherming</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Meer leren</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Ontdek de nieuwe look van Proton. Veel diensten, één missie. Welkom in een internetomgeving waar privacy de standaard is. <a href="https://proton.me/news/updated-proton">Meer info</a></string>
     <string name="onboarding_next">Volgende</string>
     <string name="onboarding_get_started">Aan de slag</string>
     <string name="onboarding_got_it">Begrepen</string>
@@ -186,7 +186,7 @@
     <string name="update_app_title">Update vereist</string>
     <string name="update_app">Uw Proton Mail-app kan niet worden gebruikt totdat het is bijgewerkt</string>
     <string name="you_are_offline">U bent offline</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail is momenteel offline, kijk op https://protonstatus.com of onze Twitter voor de actuele status: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Contact opgeslagen</string>
     <string name="contact_saved_offline">Contactpersoon opgeslagen. Het wordt gesynchroniseerd zodra er een verbinding beschikbaar is.</string>
     <string name="contact_exist">Contact met dit e-mailadres bestaat reeds</string>
@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Voer wachtwoord in.</string>
     <string name="delinquency_subtitle">Toegang tot dit account is geblokkeerd als gevolg van niet betaalde facturen. Gelieve aan te melden via protonmail.com om uw onbetaalde factuur te betalen.</string>
     <string name="downloading">Downloaden...</string>
-    <string name="cant_download_attachment">Kan bijlage niet downloaden</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>Onmiddellijk</item>
         <item>5 minuten inactiviteit</item>
@@ -485,9 +485,9 @@
     <string name="spam_score_101">Deze e-mail voldoet niet aan de authenticatievereisten van de domainnaam. Mogelijk is de e-mail vals of onjuist doorgestuurd!</string>
     <string name="spam_score_102">Dit bericht kan phishing zijn. Controleer de afzender en de inhoud om te controleren dat ze legitiem zijn. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MEER INFORMATIE</a></string>
     <string name="print_from_template">Van: %s</string>
-    <string name="print_to_template">Aan: %s;   </string>
-    <string name="print_cc_template">CC: %s;   </string>
-    <string name="print_bcc_template">BCC: %s;   </string>
+    <string name="print_to_template">Aan: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Adres:</string>
     <string name="address_street">Straat</string>
     <string name="address_extended_street">Straat (uitgebreid)</string>
@@ -513,7 +513,7 @@
     <string name="protonmail_contacts">Proton Mail Contacten</string>
     <string name="device_contacts">Contactpersonen van apparaat</string>
     <string name="print_date_template">Datum: %s</string>
-    <string name="print_attachment_template">Bijlage: %s;   </string>
+    <string name="print_attachment_template">Bijlage: %s;  </string>
     <string name="pm_me_changed">Het verzenden van berichten vanaf een @pm.me adres is een betaalde functionaliteit. Uw bericht zal vanaf uw standaard adres %s worden verzonden</string>
     <string name="pm_me_can_not_be_default">Upgrade naar een betaald plan om uw %s -adres als standaard te kunnen instellen</string>
     <string name="dont_remind_again">Niet opnieuw herinneren</string>
@@ -801,8 +801,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Gemeenschappelijke verbindingsproblemen en oplossingen</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.

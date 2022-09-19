@@ -105,7 +105,7 @@
     <string name="set_msg_expiration_1_week">1 semana</string>
     <string name="set_msg_expiration_custom">Personalizar</string>
     <string name="set_msg_expiration_check_description">Este item está selecionado</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">O endereço \"De:\" é inválido. Por favor, altere-o para um válido</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -137,7 +137,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Novas mensagens</string>
-    <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"From:\" email in the message is active.</string>
+    <string name="notification_invalid_sender_sending_failed">Sua mensagem pode ser encontrada como rascunho. Verifique se o e-mail \"De:\" na mensagem está ativo.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Nenhum contato</string>
@@ -159,7 +159,7 @@
     <string name="existing_user_onboarding_new_features_headline">Novos recursos</string>
     <string name="existing_user_onboarding_new_features_description">Aproveite novos recursos como modo escuro, notificações aprimoradas, um filtro de mensagens não lidas e subpastas.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton atualizado, proteção unificada</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Saiba mais</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Apresentando a aparência renovada do Proton. Muitos serviços, uma missão. Boas-vindas a uma internet onde a privacidade é o padrão. <a href="https://proton.me/news/updated-proton">Saiba mais</a></string>
     <string name="onboarding_next">Próximo</string>
     <string name="onboarding_get_started">Começar</string>
     <string name="onboarding_got_it">Entendi</string>
@@ -186,7 +186,7 @@
     <string name="update_app_title">Atualização necessária</string>
     <string name="update_app">O aplicativo do Proton Mail não pode ser usado até ser atualizado</string>
     <string name="you_are_offline">Você está desconectado</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">O Proton Mail está temporariamente indisponível. Verifique o nosso Twitter para maiores informações: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Contato salvo</string>
     <string name="contact_saved_offline">Contato salvo. Ele será sincronizado quando uma conexão estiver disponível.</string>
     <string name="contact_exist">O e-mail de contato já existe</string>
@@ -320,7 +320,7 @@
     <string name="label_deleted_error">Ocorreu um erro ao excluir o marcador</string>
     <string name="message_deleted_error">Erro ao excluir algumas mensagens. Algumas mensagens selecionadas estão em processo de envio?!</string>
     <string name="respond_inline">Responder no corpo</string>
-    <string name="server_not_reachable_troubleshoot">Servidor não acessível… (<u>Solução de problemas</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Servidor não acessível… (<u>Solucionar problemas</u>)</string>
     <string name="connectivity_checking">Verificando a conexão...</string>
     <string name="draft_label_attachments_uploading">enviando anexos…</string>
     <string name="draft_label_message_uploading">enviando mensagem…</string>
@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Senha da mensagem não concluída.</string>
     <string name="delinquency_subtitle">O acesso a esta conta foi desativada devido a falta de pagamento. Por favor, Faça login no protonmail.com para pagar sua fatura pendente.</string>
     <string name="downloading">Baixando...</string>
-    <string name="cant_download_attachment">Não é possível baixar o anexo</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>Imediatamente</item>
         <item>5 min de inatividade</item>
@@ -465,7 +465,7 @@
     <string name="request_timeout">Solicitação expirada. Por favor, tente novamente</string>
     <string name="no_folders">Nenhuma pasta</string>
     <string name="folder_add_new">Adicionar nova pasta</string>
-    <string name="folder_name">Nome da Pasta</string>
+    <string name="folder_name">Nome da pasta</string>
     <string name="available_folders">Pastas disponíveis</string>
     <string name="folder_created">Pasta criada</string>
     <string name="folder_invalid">Pasta não criada devido a nome inválido.</string>
@@ -485,7 +485,7 @@
     <string name="spam_score_101">Este e-mail falhou nos requisitos de autenticação de domínio. Ele pode ser falsificado ou encaminhado incorretamente!</string>
     <string name="spam_score_102">Esta mensagem pode ser uma tentativa de phishing. Por favor, verifique o remetente e seu conteúdo para certificar-se de que são legítimos. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SAIBA MAIS</a></string>
     <string name="print_from_template">De: %s</string>
-    <string name="print_to_template">Para: %s;  </string>
+    <string name="print_to_template">Para: %s  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">CCO: %s;  </string>
     <string name="address">Endereço: </string>
@@ -513,7 +513,7 @@
     <string name="protonmail_contacts">Contatos do Proton Mail</string>
     <string name="device_contacts">Contatos do dispositivo</string>
     <string name="print_date_template">Data: %s</string>
-    <string name="print_attachment_template">Anexo: %s;  </string>
+    <string name="print_attachment_template">Anexo: %s;  </string>
     <string name="pm_me_changed">O envio de mensagens de um endereço @pm.me é um recurso pago. A sua mensagem será enviada do seu endereço padrão %s</string>
     <string name="pm_me_can_not_be_default">Faça o upgrade para um plano pago para poder definir seu endereço %s como padrão</string>
     <string name="dont_remind_again">Não lembrar novamente</string>
@@ -682,7 +682,7 @@
     <string name="mobile_footer_is_premium">A alteração de assinatura móvel é permitido apenas para usuários pagos</string>
     <string name="mobile_footer_info">Este rodapé é adicionado após a sua assinatura</string>
     <!-- region Snooze Settings -->
-    <string name="snooze_header">Soneca</string>
+    <string name="snooze_header">Adiar</string>
     <string name="notifications_snooze">Suspensão de notificações</string>
     <string-array name="quick_snooze_values">
         <item>30 minutos</item>
@@ -801,8 +801,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemas e soluções comuns de conexão</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.

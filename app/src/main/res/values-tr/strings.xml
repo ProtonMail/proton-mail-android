@@ -49,7 +49,7 @@
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Bu klasör boş</string>
     <string name="mailbox_empty_inbox_subtitle">Posta kutunuz güncel</string>
-    <string name="mailbox_empty_spam_subtitle">İstenmeyen klasörünüz boş</string>
+    <string name="mailbox_empty_spam_subtitle">İstenmeyen kutunuz boş</string>
     <string name="mailbox_empty_trash_subtitle">Çöp kutusu boş</string>
     <string name="mailbox_empty_state_no_results_found">Herhangi bir sonuç bulunamadı</string>
     <string name="mailbox_empty_state_try_a_different_term">Farklı bir ifade ile aramayı deneyin</string>
@@ -133,11 +133,11 @@
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Üst klasör</string>
-    <string name="parent_picker_header">Üst klasör belirtmezseniz, yeni klasör ana klasör olarak oluşturulur.</string>
+    <string name="parent_picker_header">Üst klasör belirtmezseniz, yeni klasör ana klasör olarak eklenir.</string>
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Yeni iletiler</string>
-    <string name="notification_invalid_sender_sending_failed">İletinizi taslaklar klasöründe bulabilirsiniz. Lütfen \"Kimden:\" e-posta adresinin geçerli olduğunu doğrulayın.</string>
+    <string name="notification_invalid_sender_sending_failed">İletinizi Taslaklar kutunuzda bulabilirsiniz. Lütfen \"Kimden:\" e-posta adresinin geçerli olduğunu doğrulayın.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Henüz bir kişi yok</string>
@@ -159,7 +159,7 @@
     <string name="existing_user_onboarding_new_features_headline">Yeni özellikler</string>
     <string name="existing_user_onboarding_new_features_description">Karanlık kip, geliştirilmiş bildirimler, okunmamış iletiler süzgeci ve alt klasörler gibi yeni özelliklerin tadını çıkarın.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Güncellenmiş Proton, birleşik koruma</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Ayrıntılı bilgi alın</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Yenilenmiş Proton böyle görünüyor. Birçok hizmet, tek amaç. Kişisel gizliliğin doğal sayıldığı internet fikrine hoş geldiniz. <a href="https://proton.me/news/updated-proton">Ayrıntılı bilgi alın</a></string>
     <string name="onboarding_next">Sonraki</string>
     <string name="onboarding_get_started">Başlayalım</string>
     <string name="onboarding_got_it">Anladım</string>
@@ -186,13 +186,13 @@
     <string name="update_app_title">Güncelleme gerekli</string>
     <string name="update_app">Proton Mail uygulamanız güncellenene kadar kullanılamaz</string>
     <string name="you_are_offline">Çevrimdışısınız</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail şu anda çevrimdışı. Güncel durum için https://protonstatus.com sitemize veya https://twitter.com/ProtonPrivacy Twitter adresimize bakabilirsiniz</string>
     <string name="contact_saved">Kişi kaydedildi</string>
     <string name="contact_saved_offline">Kişi kaydedildi. Bağlantı kurulduğunda eşitlenecek</string>
     <string name="contact_exist">Kişi e-posta adresi zaten var</string>
     <string name="invalid_email">E-posta adresi geçersiz</string>
     <string name="duplicate_email">E-posta adresi çift</string>
-    <string name="message_drafted">İleti gönderilemedi. İletileriniz taslaklar kutusuna kaydedildi</string>
+    <string name="message_drafted">İleti gönderilemedi. İletileriniz Taslaklar kutusuna kaydedildi</string>
     <string name="attachment_failed_message_drafted">Lütfen \"%s\" ekini kaldırıp yeniden ekleyin ve iletiyi yeniden gönderin. İletinizi \"Taslaklar\" kutusunda bulabilirsiniz.</string>
     <string name="open_drawer">Aç</string>
     <string name="close_drawer">Kapat</string>
@@ -276,7 +276,7 @@
     <string name="delete_contact">%s, kişilerden kaldırılsın mı?</string>
     <string name="confirm">Onayla</string>
     <string name="confirm_destructive_action">Emin misiniz? Bu işlem geri alınamaz.</string>
-    <string name="create">Oluştur</string>
+    <string name="create">Ekle</string>
     <string name="email">E-posta</string>
     <string name="phone">Telefon numarası</string>
     <string name="save">Kaydet</string>
@@ -308,7 +308,7 @@
     <string name="cont">İlerle</string>
     <string name="reply_prefix_on"> Zaman:</string>
     <string name="label_name">Etiket adı</string>
-    <string name="label_created">Etiket oluşturuldu</string>
+    <string name="label_created">Etiket eklendi</string>
     <string name="label_invalid">Etiket, adı geçersiz olduğundan oluşturulamadı.</string>
     <string name="undo">Geri al</string>
     <string name="label_apply">Uygula</string>
@@ -320,7 +320,7 @@
     <string name="label_deleted_error">Etiket silinirken sorun çıktı</string>
     <string name="message_deleted_error">Bazı iletiler silinirken sorun çıktı. Seçilmiş iletilerin bazıları gönderilme aşamasında mı?!</string>
     <string name="respond_inline">Satır arasında yanıtla</string>
-    <string name="server_not_reachable_troubleshoot">Sunucuya erişilemiyor… (<u>Sorun giderme</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Sunucuya erişilemiyor (<u>Sorun giderme</u>)</string>
     <string name="connectivity_checking">Bağlantı denetleniyor…</string>
     <string name="draft_label_attachments_uploading">ek dosyalar yükleniyor…</string>
     <string name="draft_label_message_uploading">ileti gönderiliyor…</string>
@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">İleti parolası tamamlanmamış.</string>
     <string name="delinquency_subtitle">Ödeme yapılmadığı için bu hesaba erişim engellendi. Ödenmemiş faturalarınızı ödemek için lütfen protonmail.com üzerinden oturum açın.</string>
     <string name="downloading">İndiriliyor...</string>
-    <string name="cant_download_attachment">Ek dosya indirilemedi</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>Hemen</item>
         <item>5 dakika hareketsizlik</item>
@@ -344,7 +344,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Seçilmiş etiketler silinsin mi?</string>
     <string name="delete_folder_confirmation_title">Seçilmiş klasörler silinsin mi?</string>
-    <string name="delete_label_confirmation_message">Buradaki e-postalar <b>Tüm e-postalar</b> kutusunda bulunacak</string>
+    <string name="delete_label_confirmation_message">Buradaki e-postalar <b>Tüm e-postalar</b> klasöründe bulunacak</string>
     <string name="pin_invalid">PIN kodu geçersiz, 4 rakamlı doğru kodu yazın</string>
     <string name="pin_not_match">PIN kodu eşleşmiyor</string>
     <string name="new_pin_saved">Yeni PIN kodu kaydedildi</string>
@@ -467,8 +467,8 @@
     <string name="folder_add_new">Yeni klasör ekle</string>
     <string name="folder_name">Klasör adı</string>
     <string name="available_folders">Kullanılabilecek klasörler</string>
-    <string name="folder_created">Klasör oluşturuldu</string>
-    <string name="folder_invalid">Klasör, adı geçersiz olduğundan oluşturulamadı.</string>
+    <string name="folder_created">Klasör eklendi</string>
+    <string name="folder_invalid">Adı geçersiz olduğundan klasör eklenemedi.</string>
     <string name="folder_deleted">Klasör silindi</string>
     <string name="folder_deleted_error">Klasör silinirken sorun çıktı</string>
     <string name="empty_emails">Henüz bir e-posta yok</string>
@@ -485,7 +485,7 @@
     <string name="spam_score_101">Bu e-posta, etki alanının doğrulama gereksinimlerini karşılayamadı. E-posta, sahte ya da hatalı iletilmiş olabilir!</string>
     <string name="spam_score_102">Bu ileti bir kimlik avı girişimi olabilir. Lütfen göründüğü gibi olduklarından emin olmak için gönderici adresini ve ileti içeriğini kontrol edin. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">AYRINTILI BİLGİ ALIN</a></string>
     <string name="print_from_template">Kimden: %s</string>
-    <string name="print_to_template">Bitiş: %s;  </string>
+    <string name="print_to_template">Kime: %s;  </string>
     <string name="print_cc_template">Kopya: %s;  </string>
     <string name="print_bcc_template">Gizli kopya: %s;  </string>
     <string name="address">Adres: </string>
@@ -567,14 +567,15 @@
     <string name="channel_name_account">Hesap</string>
     <string name="channel_description_account">Hesap durumu</string>
     <string name="channel_name_ongoing_operations">Süren işlemler</string>
-    <string name="channel_description_ongoing_operations">Yeni iletilerin arka planda indirilmesi gibi süren tüm işlemleri gösterir</string>
+    <string name="channel_description_ongoing_operations">Yeni iletilerin arka planda indirilmesi gibi
+		süren tüm işlemleri gösterir</string>
     <string name="retrieving_notifications">Bildirimler alınıyor</string>
     <string name="report_phishing">Kimlik avı bildir</string>
     <string name="print">Yazdır</string>
     <string name="phishing_dialog_title">Kimlik avı bildirimini onayla</string>
     <string name="phishing_dialog_message">Bir iletiyi kimlik avı girişimi olarak bildirdiğinizde, ileti bize gönderilir.
 		Böylece onu inceleyebilir ve süzgeçlerimizi geliştirebiliriz. Bu durum iletinin tüm içeriğini görebileceğimi anlamına gelir.</string>
-    <string name="phishing_report_send_message_moved_to_spam">Bildirim gönderildi. İleti istenmeyen postalara taşındı.</string>
+    <string name="phishing_report_send_message_moved_to_spam">Bildirim gönderildi. İleti istenmeyen kutusuna taşındı.</string>
     <string name="cannot_send_report_send">Bildirim gönderilemedi</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
@@ -584,7 +585,7 @@
     <string name="no_groups">Henüz bir grup yok</string>
     <string name="contact_vcard_note">Not</string>
     <string name="edit_contact">Kişiyi düzenle</string>
-    <string name="create_contact_group">Kişi grubu oluştur</string>
+    <string name="create_contact_group">Kişi grubu ekle</string>
     <string name="edit_contact_group">Kişi grubunu düzenle</string>
     <string name="contact_groups_manage_members">Üye yönetimi</string>
     <string name="contact_group_display_name">Görüntülenecek ad</string>
@@ -747,7 +748,7 @@
     <string name="swipe_action_trash_short">Çöpe at</string>
     <string name="swipe_action_star">İleti yıldızını güncelle</string>
     <string name="swipe_action_star_short">Yıldızı güncelle</string>
-    <string name="swipe_action_spam">İletiyi istenmeyen olarak işaretle</string>
+    <string name="swipe_action_spam">İletiyi istenmeyen olarak işaretlendi</string>
     <string name="swipe_action_spam_short">İstenmeyen</string>
     <string name="swipe_action_archive">İletiyi arşivle</string>
     <string name="swipe_action_archive_short">Arşivle</string>
@@ -799,8 +800,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Sık karşılaşılan bağlantı sorunları ve çözümleri</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
@@ -838,7 +839,7 @@
     <string name="move_message">İletiyi taşı</string>
     <string name="manage">Yönet</string>
     <string name="message_from">%s kişisinden ileti</string>
-    <string name="not_spam_move_to_inbox">İstenmeyen değil (gelen kutusuna taşı)</string>
+    <string name="not_spam_move_to_inbox">İstenmeyen değil (Gelen kutusuna taşı)</string>
     <string name="action_sheet_view_in_light_mode">Açık kipte görüntüle</string>
     <string name="action_sheet_view_in_dark_mode">Koyu kipte görüntüle</string>
     <plurals name="x_messages_count">

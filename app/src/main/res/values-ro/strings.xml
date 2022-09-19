@@ -160,7 +160,7 @@
     <string name="existing_user_onboarding_new_features_headline">Caracteristici noi</string>
     <string name="existing_user_onboarding_new_features_description">Bucurați-vă de caracteristici noi, cum ar fi modul întunecat, notificări îmbunătățite, un filtru pentru mesajele necitite și subfoldere.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualizat, protecție unificată</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Detalii</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Vă prezentăm aspectul reînnoit al lui Proton. Multe servicii, o singură misiune. Bun venit la un internet unde intimitatea este implicită. <a href="https://proton.me/news/updated-proton">Detalii</a></string>
     <string name="onboarding_next">Înainte</string>
     <string name="onboarding_get_started">Începeți</string>
     <string name="onboarding_got_it">Am înțeles</string>
@@ -187,7 +187,7 @@
     <string name="update_app_title">Necesită actualizare</string>
     <string name="update_app">Nu puteți folosi aplicația Proton Mail înainte de a o actualiza</string>
     <string name="you_are_offline">Sunteți deconectat</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail este momentan indisponibil. Verificați la https://protonstatus.com sau pe pagina nostră de Twitter pentru starea actuală: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Contact salvat</string>
     <string name="contact_saved_offline">Contact salvat, va fi sincronizat când conexiunea va fi disponibilă</string>
     <string name="contact_exist">E-mailul de contact există deja</string>
@@ -338,7 +338,7 @@
     <string name="eo_password_not_completed">Nu a fost introdusă parola mesajului.</string>
     <string name="delinquency_subtitle">Accesul la acest cont este blocat datorită unei plăți restante. Autentificați-vă la protonmail.com și achitați factura restantă.</string>
     <string name="downloading">Se descarcă...</string>
-    <string name="cant_download_attachment">Nu se poate descărca fișierul atașat</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>Imediat</item>
         <item>5 minute de inactivitate</item>
@@ -574,7 +574,7 @@
     <string name="channel_description_account">Stare cont</string>
     <string name="channel_name_ongoing_operations">Operații în derulare</string>
     <string name="channel_description_ongoing_operations">Arată operațiile în derulare cum ar fi
-		descărcarea în fundal a mesajelor</string>
+descărcarea în fundal a mesajelor noi</string>
     <string name="retrieving_notifications">Se obțin notificările</string>
     <string name="report_phishing">Raportare înșelăciune</string>
     <string name="print">Tipărire</string>
@@ -813,8 +813,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Probleme comune conexiune și soluții</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.

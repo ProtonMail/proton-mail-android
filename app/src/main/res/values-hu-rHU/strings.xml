@@ -159,7 +159,7 @@
     <string name="existing_user_onboarding_new_features_headline">Új funkciók</string>
     <string name="existing_user_onboarding_new_features_description">Élvezze az új funkciókat, mint például a sötét mód, javított értesítések, egy olvasatlan üzenet szűrő és almappák.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Frissített Proton, egységesített védelem</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">További információk</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Következő</string>
     <string name="onboarding_get_started">Kezdés</string>
     <string name="onboarding_got_it">Értem</string>
@@ -320,7 +320,7 @@
     <string name="label_deleted_error">Hiba a címke törlése közben</string>
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Válaszolás az eredeti levélben</string>
-    <string name="server_not_reachable_troubleshoot">A szerver nem elérhető… (<u>Hibajavítás</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Várakozás a kapcsolatra...</string>
     <string name="draft_label_attachments_uploading">mellékletek feltöltése…</string>
     <string name="draft_label_message_uploading">üzenet küldése…</string>
@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Jelszó hiányzik.</string>
     <string name="delinquency_subtitle">A fiók elérése számlatartozás miatt le van tiltva. Kérjük, lépjen be a protonmail.com weblapon és egyenlítse ki a számláit.</string>
     <string name="downloading">Letöltés...</string>
-    <string name="cant_download_attachment">A melléklet nem tölthető le</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>Azonnal</item>
         <item>5 perc inaktivitás</item>
@@ -425,7 +425,7 @@
     <string name="contacts_import_contact">Névjegy importálása</string>
     <string name="contacts_import">Importálás</string>
     <string name="upload_contacts">Névjegyek feltöltése</string>
-    <string name="uploading_contacts">Névjegyek feltöltése…</string>
+    <string name="uploading_contacts">Uploading contacts…</string>
     <string-array name="vcard_option_phone">
         <item>Telefonszám</item>
         <item>Mobil</item>
@@ -485,9 +485,9 @@
     <string name="spam_score_101">Az e-mail nem felelt meg a domain név ellenőrzési követelményeinek. Lehet becsapós üzenet vagy hibásan továbbított!</string>
     <string name="spam_score_102">Ez az üzenet lehetséges, hogy egy adathalászati kísérlet! Kérjük, alaposan ellenőrizze, hogy a feladó és az üzenet szövege megbízható-e. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">TOVÁBBI INFORMÁCIÓK</a></string>
     <string name="print_from_template">Feladó: %s</string>
-    <string name="print_to_template">Címzett: %s;  </string>
-    <string name="print_cc_template">Másolat: %s;  </string>
-    <string name="print_bcc_template">Titkos másolat: %s;  </string>
+    <string name="print_to_template">To: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Cím: </string>
     <string name="address_street">Utca, házszám</string>
     <string name="address_extended_street">Bővített utca</string>
@@ -513,7 +513,7 @@
     <string name="protonmail_contacts">Proton Mail Névjegyek</string>
     <string name="device_contacts">Eszköz névjegyek</string>
     <string name="print_date_template">Dátum: %s</string>
-    <string name="print_attachment_template">Melléklet: %s;   </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Üzenetek küldése a @pm.me címről előfizetéshez kötött. Az Ön üzenete az %s, alapértelmezett címről lesz elküldve</string>
     <string name="pm_me_can_not_be_default">Váltson fizetős csomagra, hogy ezt a címet is beállíthassa alapértelmezettként: %s</string>
     <string name="dont_remind_again">Ne emlékeztessen újra</string>
@@ -567,8 +567,8 @@
     <string name="channel_name_account">Fiók</string>
     <string name="channel_description_account">Fiók állapota</string>
     <string name="channel_name_ongoing_operations">Folyamatban lévő műveletek</string>
-    <string name="channel_description_ongoing_operations">Mutatja az összes folyamatban lévő műveletet,
-	mint új üzenet letöltése a háttérben</string>
+    <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
+		message download on background</string>
     <string name="retrieving_notifications">Értesítések keresése</string>
     <string name="report_phishing">Adathalászat bejelentése</string>
     <string name="print">Nyomtatás</string>
@@ -801,8 +801,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Általános kapcsolódási problémák és megoldásuk</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.

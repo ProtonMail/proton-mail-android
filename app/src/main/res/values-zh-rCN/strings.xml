@@ -104,7 +104,7 @@
     <string name="set_msg_expiration_1_week">1 周</string>
     <string name="set_msg_expiration_custom">自定义</string>
     <string name="set_msg_expiration_check_description">已勾选该项</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">“发件人：”的地址无效。请替换为有效的地址。</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">配色</string>
@@ -136,7 +136,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">收到新邮件</string>
-    <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"From:\" email in the message is active.</string>
+    <string name="notification_invalid_sender_sending_failed">您的消息可作为草稿找到。请验证消息中的“发件人:”电子邮件处于活跃状态。</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">无联系人</string>
@@ -158,7 +158,7 @@
     <string name="existing_user_onboarding_new_features_headline">新功能</string>
     <string name="existing_user_onboarding_new_features_description">畅享深色模式、改良的推送通知、未读邮件筛选、子文件夹等新功能。</string>
     <string name="existing_user_onboarding_updated_proton_headline">新版 Proton，全方位的隐私保护</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">了解详情</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Proton 界面现已焕然一新。服务繁多，使命不变。欢迎进入隐私优先的互联网。<a href="https://proton.me/news/updated-proton">了解详情</a></string>
     <string name="onboarding_next">继续</string>
     <string name="onboarding_get_started">立即体验</string>
     <string name="onboarding_got_it">知道了</string>
@@ -185,7 +185,7 @@
     <string name="update_app_title">需要更新</string>
     <string name="update_app">Proton Mail 应用需要更新方可使用</string>
     <string name="you_are_offline">网络未连接</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">暂时无法连接 Proton Mail，可前往 https://protonstatus.com 或 https://twitter.com/ProtonPrivacy 了解情况</string>
     <string name="contact_saved">联系人已保存</string>
     <string name="contact_saved_offline">联系人已保存，将在联网后同步</string>
     <string name="contact_exist">此联系人已存在</string>
@@ -330,7 +330,7 @@
     <string name="eo_password_not_completed">尚未输入邮件密码</string>
     <string name="delinquency_subtitle">此账户因欠费已被停用。请登录 protonmail.com 续费。</string>
     <string name="downloading">下载中...</string>
-    <string name="cant_download_attachment">附件下载失败</string>
+    <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
         <item>立刻</item>
         <item>五分钟无操作</item>
@@ -479,9 +479,9 @@
     <string name="spam_score_101">不能确定此邮件是否来自该域名，这可能是欺诈邮件，也可能是投递过程出现了问题。</string>
     <string name="spam_score_102">此邮件可能具有欺诈性质，请检查发件人身份和邮件内容，确认信息真实性。<a href="https://protonmail.com/blog/prevent-phishing-attacks/">了解详情</a></string>
     <string name="print_from_template">发件人：%s</string>
-    <string name="print_to_template">收件人：%s;  </string>
-    <string name="print_cc_template">抄送：%s;  </string>
-    <string name="print_bcc_template">密送：%s;  </string>
+    <string name="print_to_template">收件人：%s;</string>
+    <string name="print_cc_template">抄送：%s;</string>
+    <string name="print_bcc_template">密送：%s;</string>
     <string name="address">地址：</string>
     <string name="address_street">街道</string>
     <string name="address_extended_street">详细地址</string>
@@ -781,8 +781,8 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">常见网络问题与对策</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
