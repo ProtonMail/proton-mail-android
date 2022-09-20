@@ -155,43 +155,47 @@ class EventHandler @AssistedInject constructor(
             val messageID = event.messageID
             val type = ActionType.fromInt(event.type)
 
-            if (type != ActionType.UPDATE && type != ActionType.UPDATE_FLAGS) {
+            if ((type != ActionType.UPDATE && type != ActionType.UPDATE_FLAGS) ||
+                checkPendingForSending(pendingActionDao, messageID)
+            ) {
                 continue
             }
-
-            if (checkPendingForSending(pendingActionDao, messageID)) {
-                continue
+            if (type == ActionType.UPDATE_FLAGS) {
+                stagedMessages[messageID] = messageFactory.createMessage(event.message)
             }
 
-            val messageResponse = protonMailApiManager.fetchMessageDetailsBlocking(messageID, UserIdTag(userId))
-            val isMessageStaged = if (messageResponse == null) {
-                // If the response is null, an exception has been thrown while fetching message details
-                // Return false and with that terminate processing this event any further
-                // We'll try to process the same event again next time
-                false
-            } else {
-                // If the response is not null, check the response code and act accordingly
-                when (messageResponse.code) {
-                    Constants.RESPONSE_CODE_OK -> {
-                        stagedMessages[messageID] = messageResponse.message
+            if (type == ActionType.UPDATE) {
+                val messageResponse = protonMailApiManager.fetchMessageDetailsBlocking(messageID, UserIdTag(userId))
+                val isMessageStaged = if (messageResponse == null) {
+                    // If the response is null, an exception has been thrown while fetching message details
+                    // Return false and with that terminate processing this event any further
+                    // We'll try to process the same event again next time
+                    false
+                } else {
+                    // If the response is not null, check the response code and act accordingly
+                    when (messageResponse.code) {
+                        Constants.RESPONSE_CODE_OK -> {
+                            stagedMessages[messageID] = messageResponse.message
+                        }
+                        RESPONSE_CODE_INVALID_ID,
+                        RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST,
+                        RESPONSE_CODE_MESSAGE_READING_RESTRICTED -> {
+                            Timber.e("Error when fetching message: ${messageResponse.error}")
+                        }
+                        else -> {
+                            Timber.e("Error when fetching message: ${messageResponse.error}")
+                        }
                     }
-                    RESPONSE_CODE_INVALID_ID,
-                    RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST,
-                    RESPONSE_CODE_MESSAGE_READING_RESTRICTED -> {
-                        Timber.e("Error when fetching message: ${messageResponse.error}")
-                    }
-                    else -> {
-                        Timber.e("Error when fetching message: ${messageResponse.error}")
-                    }
+                    true
                 }
-                true
-            }
 
-            Timber.d("isMessageStaged: $isMessageStaged, messages size: ${stagedMessages.size}")
-            if (!isMessageStaged) {
-                return false
+                Timber.d("isMessageStaged: $isMessageStaged, messages size: ${stagedMessages.size}")
+                if (!isMessageStaged) {
+                    return false
+                }
             }
         }
+
         return true
     }
 
@@ -318,7 +322,7 @@ class EventHandler @AssistedInject constructor(
                     if (savedMessage == null) {
                         messageDetailsRepository.saveMessageBlocking(messageFactory.createMessage(event.message))
                     } else {
-                        updateMessageFlags(messageDao, messageId, event)
+                        updateMessageFlags(messageId, event)
                     }
                 } catch (syntaxException: JsonSyntaxException) {
                     Timber.w(syntaxException, "unable to create Message object")
@@ -356,18 +360,17 @@ class EventHandler @AssistedInject constructor(
                     stagedMessages.remove(messageId)
                 }
 
-                updateMessageFlags(messageDao, messageId, event)
+                updateMessageFlags(messageId, event)
             }
 
             ActionType.UPDATE_FLAGS -> {
-                updateMessageFlags(messageDao, messageId, event)
+                updateMessageFlags(messageId, event)
             }
         }
         return
     }
 
     private fun updateMessageFlags(
-        messageDao: MessageDao,
         messageId: String,
         item: EventResponse.MessageEventBody
     ) {
@@ -410,7 +413,8 @@ class EventHandler @AssistedInject constructor(
                 message.isReplied = newMessage.flags and MessageFlag.REPLIED.flagValue == MessageFlag.REPLIED.flagValue
                 message.isRepliedAll =
                     newMessage.flags and MessageFlag.REPLIED_ALL.flagValue == MessageFlag.REPLIED_ALL.flagValue
-                message.isForwarded = newMessage.flags and MessageFlag.FORWARDED.flagValue == MessageFlag.FORWARDED.flagValue
+                message.isForwarded =
+                    newMessage.flags and MessageFlag.FORWARDED.flagValue == MessageFlag.FORWARDED.flagValue
 
                 message.Type = MessageUtils.calculateType(newMessage.flags)
                 message.messageEncryption = messageFlagsToEncryptionMapper.flagsToMessageEncryption(newMessage.flags)

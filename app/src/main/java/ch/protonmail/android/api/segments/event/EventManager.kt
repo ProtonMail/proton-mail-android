@@ -178,12 +178,17 @@ class EventManager @Inject constructor(
             refresh(handler)
             return
         }
-        Timber.d("EventManager handler stage and write")
-        if (handler.stage(response.messageUpdates)) {
-            // Write the updates since the staging was completed without any error
-            handler.write(response)
-            // Update next event id only after writing updates to local cache has finished successfully
-            backupNextEventId(handler.userId, response.eventID)
+
+        if (response.code == Constants.RESPONSE_CODE_OK) {
+            Timber.d("EventManager handler stage and write")
+            if (handler.stage(response.messageUpdates)) {
+                // Write the updates since the staging was completed without any error
+                handler.write(response)
+                // Update next event id only after writing updates to local cache has finished successfully
+                backupNextEventId(handler.userId, response.eventID)
+            }
+        } else {
+            Timber.d("Error when fetching event: ${response.error}")
         }
     }
 

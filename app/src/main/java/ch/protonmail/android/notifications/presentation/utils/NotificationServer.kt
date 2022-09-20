@@ -164,6 +164,7 @@ class NotificationServer @Inject constructor(
             .setPriority(PRIORITY_LOW)
             .setSmallIcon(R.drawable.ic_brand_mail)
             .setContentTitle(notificationTitle)
+            .setSilent(true)
             .build()
     }
 

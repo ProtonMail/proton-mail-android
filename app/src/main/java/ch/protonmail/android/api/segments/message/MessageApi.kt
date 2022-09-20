@@ -33,7 +33,6 @@ import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
-import io.reactivex.Observable
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import java.io.IOException
@@ -95,11 +94,6 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
             Timber.e(exc, "An exception was thrown while fetching message details")
             null
         }
-
-    @WorkerThread
-    @Throws(Exception::class)
-    override fun messageDetailObservable(messageId: String): Observable<MessageResponse> =
-        service.messageDetailObservable(messageId)
 
     override suspend fun createDraft(draftBody: DraftBody): MessageResponse = service.createDraft(draftBody)
 

@@ -32,7 +32,6 @@ import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
-import io.reactivex.Observable
 import me.proton.core.domain.entity.UserId
 import java.io.IOException
 
@@ -62,10 +61,6 @@ interface MessageApiSpec {
 
     @WorkerThread
     fun fetchMessageDetailsBlocking(messageId: String, userIdTag: UserIdTag): MessageResponse?
-
-    @WorkerThread
-    @Throws(Exception::class)
-    fun messageDetailObservable(messageId: String): Observable<MessageResponse>
 
     suspend fun createDraft(draftBody: DraftBody): MessageResponse
 

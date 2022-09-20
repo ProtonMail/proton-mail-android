@@ -31,7 +31,6 @@ import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
-import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -126,10 +125,6 @@ interface MessageService {
         @Path("messageId") messageId: String,
         @Tag userIdTag: UserIdTag
     ): Call<MessageResponse>
-
-    @GET("mail/v4/messages/{messageId}")
-    @Headers(ACCEPT_HEADER_V1)
-    fun messageDetailObservable(@Path("messageId") messageId: String): Observable<MessageResponse>
 
     @DELETE("mail/v4/messages/empty")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

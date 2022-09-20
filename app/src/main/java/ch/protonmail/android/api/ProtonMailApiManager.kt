@@ -255,10 +255,6 @@ class ProtonMailApiManager @Inject constructor(
     override fun fetchMessageDetailsBlocking(messageId: String, userIdTag: UserIdTag): MessageResponse? =
         api.fetchMessageDetailsBlocking(messageId, userIdTag)
 
-    override fun messageDetailObservable(
-        messageId: String
-    ): Observable<MessageResponse> = api.messageDetailObservable(messageId)
-
     override suspend fun createDraft(draftBody: DraftBody): MessageResponse = api.createDraft(draftBody)
 
     override suspend fun updateDraft(
