@@ -603,7 +603,7 @@ internal class MessageDetailsAdapter(
             editDraftButton.isVisible = message.isDraft()
             decryptionErrorView.bind(listItem.showDecryptionError)
             scheduledInfoView.bind(
-                message.isScheduled, DateUtil.formatDetailedDateTime(context, listItem.message.timeMs)
+                message.isScheduled, DateUtil.formatDateMonthYearAtTime(context, listItem.message.timeMs)
             )
 
             expirationInfoView.bind(message.expirationTime)
