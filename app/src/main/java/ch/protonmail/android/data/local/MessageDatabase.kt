@@ -44,9 +44,10 @@ import me.proton.core.data.room.db.CommonConverters
         UnreadCounterEntity::class
     ],
     autoMigrations = [
-        AutoMigration(from = 15, to = 16)
+        AutoMigration(from = 15, to = 16),
+        AutoMigration(from = 16, to = 17)
     ],
-    version = 16
+    version = 17
 )
 @TypeConverters(
     value = [

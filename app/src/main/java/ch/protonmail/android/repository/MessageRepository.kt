@@ -359,7 +359,11 @@ class MessageRepository @Inject constructor(
             dao.searchMessages(params.keyword)
         } else {
             requireNotNull(params.labelId) { "Label Id is required" }
-            dao.observeMessages(params.labelId.id, unread = unreadFilter)
+            dao.observeMessages(
+                params.labelId.id,
+                unread = unreadFilter,
+                params.sortDirection == GetAllMessagesParameters.SortDirection.DESCENDANT
+            )
         }.combineTransform(contactDao.findAllContactsEmails()) { messages, contactEmails ->
             // Makes sure that the correct name of the contact is displayed when showing the messages, because
             //  the sender/recipient name in the message can be outdated if the name of the contact has been changed

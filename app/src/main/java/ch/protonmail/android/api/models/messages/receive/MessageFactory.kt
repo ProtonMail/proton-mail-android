@@ -77,7 +77,8 @@ class MessageFactory @Inject constructor(
             replyTos = serverMessage.ReplyTos?.toList() ?: listOf(),
             header = serverMessage.Header,
             parsedHeaders = serverMessage.parsedHeaders,
-            flags = serverMessage.flags
+            flags = serverMessage.flags,
+            order = serverMessage.Order
         ).apply {
             attachments = serverMessage.Attachments?.map(attachmentFactory::createAttachment) ?: emptyList()
             embeddedImageIds = serverMessage.embeddedImagesArray?.toList() ?: emptyList()

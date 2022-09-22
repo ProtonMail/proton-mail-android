@@ -736,7 +736,12 @@ internal class MailboxViewModel @Inject constructor(
         fun toGetAllMessagesParameters() = GetAllMessagesParameters(
             userId = userId,
             labelId = labelId,
-            unreadStatus = if (isUnreadFilterEnabled) UnreadStatus.UNREAD_ONLY else UnreadStatus.ALL
+            unreadStatus = if (isUnreadFilterEnabled) UnreadStatus.UNREAD_ONLY else UnreadStatus.ALL,
+            sortDirection = if (labelId.id == Constants.MessageLocationType.ALL_SCHEDULED.asLabelIdString()) {
+                GetAllMessagesParameters.SortDirection.ASCENDANT
+            } else {
+                GetAllMessagesParameters.SortDirection.DESCENDANT
+            }
         )
     }
 

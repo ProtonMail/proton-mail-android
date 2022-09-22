@@ -34,7 +34,7 @@ data class ServerMessage(
     val id: String? = null,
     val ConversationID: String,
     val Subject: String? = null,
-    val Order: Long? = null,
+    val Order: Long = Long.MAX_VALUE,
     val Unread: Int = -1,
     val Type: Int = -1, // 0 = INBOX, 1 = DRAFT, 2 = SENT, 3 = INBOX_AND_SENT
     val Sender: ServerMessageSender? = null,
