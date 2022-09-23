@@ -58,11 +58,28 @@ class MessageLocationResolverTest {
         }
 
         @Test
-        fun verifyThatSingleAllLocationIsInvalid() {
+        fun `verify that single All_Mail location is valid`() {
 
             // given
             val testLabelIds = listOf(
                 "5"
+            )
+            val expected = Constants.MessageLocationType.ALL_MAIL
+
+            // when
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
+
+            // then
+            assertEquals(expected, result)
+        }
+
+        @Test
+        fun `verify that All_Mail location with multiple others invalid locations is valid`() {
+
+            // given
+            val testLabelIds = listOf(
+                "5",
+                "21"
             )
             val expected = Constants.MessageLocationType.ALL_MAIL
 

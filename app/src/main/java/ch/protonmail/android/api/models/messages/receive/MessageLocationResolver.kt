@@ -81,6 +81,11 @@ class MessageLocationResolver @Inject constructor(
             return Constants.MessageLocationType.STARRED
         }
 
+        // If there are still multiple locations but none of them were valid except All Mail
+        if (labelIds.contains(Constants.MessageLocationType.ALL_MAIL.asLabelIdString())) {
+            return Constants.MessageLocationType.ALL_MAIL
+        }
+
         throw IllegalArgumentException("No valid location found in IDs: $labelIds ")
     }
 
