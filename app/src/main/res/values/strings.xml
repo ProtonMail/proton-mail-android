@@ -75,7 +75,7 @@
 
     <string name="scheduled_message_info">This message will be sent on %s</string>
     <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
-    <string name="scheduled_message_moved_to_trash_title">Schedule will be lost</string>
+    <string name="scheduled_message_moved_to_trash_title">Message will not be sent</string>
     <string name="scheduled_message_moved_to_trash_desc">Moving this message to trash will cancel its schedule.</string>
     <!-- endregion -->
     <!-- region Composer -->
