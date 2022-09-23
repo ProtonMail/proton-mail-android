@@ -291,7 +291,7 @@
     <string name="no_subject">Odeslat zprávu bez předmětu?</string>
     <string name="yes">Ano</string>
     <string name="no">Ne</string>
-    <string name="okay">Potvrdit</string>
+    <string name="ok">Potvrdit</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Původní zpráva --------</string>
     <string name="invalid_email_address">Adresa \'%s\' je neplatná</string>

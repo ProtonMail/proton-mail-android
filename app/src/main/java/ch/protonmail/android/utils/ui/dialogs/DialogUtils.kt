@@ -52,7 +52,7 @@ class DialogUtils {
 
             builder.setTitle(title)
                 .setMessage(messageWithLinks)
-                .setNeutralButton(R.string.okay) { dialog, _ ->
+                .setNeutralButton(R.string.ok) { dialog, _ ->
                     run {
                         okListener?.invoke(Unit)
                         dialog.dismiss()
@@ -73,7 +73,7 @@ class DialogUtils {
             val builder = AlertDialog.Builder(context)
             builder.setTitle(title)
                 .setView(view)
-                .setNeutralButton(R.string.okay) { dialog, _ ->
+                .setNeutralButton(R.string.ok) { dialog, _ ->
                     run {
                         okListener?.invoke(Unit)
                         dialog.dismiss()
@@ -168,7 +168,7 @@ class DialogUtils {
          *  optional
          *
          * @param positiveStringId [StringRes] for text of the right button
-         *  default is [R.string.okay]
+         *  default is [R.string.ok]
          *
          * @param negativeStringId [StringRes] for text of the left button
          *  default is [R.string.cancel]
@@ -191,7 +191,7 @@ class DialogUtils {
             title: CharSequence? = titleStringId?.let(::getText),
             @StringRes messageStringId: Int? = null,
             message: CharSequence? = messageStringId?.let(::getText),
-            @StringRes positiveStringId: Int = R.string.okay,
+            @StringRes positiveStringId: Int = R.string.ok,
             @StringRes negativeStringId: Int = R.string.cancel,
             cancelable: Boolean = true,
             cancelOnTouchOutside: Boolean = true,

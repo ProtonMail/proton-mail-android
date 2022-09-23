@@ -346,7 +346,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         AlertDialog.Builder(this)
             .setTitle(title)
             .setMessage(R.string.delete_label_confirmation_message)
-            .setPositiveButton(R.string.okay) { _, _ -> viewModel.deleteSelectedLabels() }
+            .setPositiveButton(R.string.ok) { _, _ -> viewModel.deleteSelectedLabels() }
             .setNegativeButton(R.string.cancel) { _, _ -> }
             .show()
     }

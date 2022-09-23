@@ -283,7 +283,7 @@
     <string name="no_subject">Enviar missatge sense assumpte?</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
-    <string name="okay">D\'acord</string>
+    <string name="ok">D\'acord</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Missatge Original --------</string>
     <string name="invalid_email_address">La direcció \'%s\' no és vàlida</string>

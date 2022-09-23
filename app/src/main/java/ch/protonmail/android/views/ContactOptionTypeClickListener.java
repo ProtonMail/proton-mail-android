@@ -111,7 +111,7 @@ public class ContactOptionTypeClickListener implements View.OnClickListener {
         }
 
         builder.setView(dialogView);
-        builder.setPositiveButton(mContext.getString(R.string.okay), (dialog, which) -> {
+        builder.setPositiveButton(mContext.getString(R.string.ok), (dialog, which) -> {
             boolean previousValueBDay = mContext.getString(R.string.vcard_other_option_birthday).equals(mCurrentUIValue);
             for (RadioButton radioButton : mStandardOptionsRadioButtons) {
                 if (radioButton.isChecked()) {

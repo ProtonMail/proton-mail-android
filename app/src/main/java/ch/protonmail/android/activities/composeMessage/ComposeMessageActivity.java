@@ -1737,7 +1737,7 @@ public class ComposeMessageActivity
 
     private void showPmChangedDialog(String address) {
 
-        DialogUtils.Companion.warningDialog(ComposeMessageActivity.this, getString(R.string.dont_remind_again), getString(R.string.okay), String.format(getString(R.string.pm_me_changed), address),
+        DialogUtils.Companion.warningDialog(ComposeMessageActivity.this, getString(R.string.dont_remind_again), getString(R.string.ok), String.format(getString(R.string.pm_me_changed), address),
                 unit -> {
                     defaultSharedPreferences.edit().putBoolean(Constants.Prefs.PREF_PM_ADDRESS_CHANGED, true).apply();
                     return unit;

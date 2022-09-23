@@ -290,7 +290,7 @@
     <string name="no_subject">Send message without subject?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="okay">Okay</string>
+    <string name="ok">OK</string>
     <string name="reply_prefix" translatable="false">Re:</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Original Message --------</string>

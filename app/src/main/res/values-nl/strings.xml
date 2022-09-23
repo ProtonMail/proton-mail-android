@@ -283,7 +283,7 @@
     <string name="no_subject">Bericht zonder onderwerp versturen?</string>
     <string name="yes">Ja</string>
     <string name="no">Nee</string>
-    <string name="okay">Oké</string>
+    <string name="ok">Oké</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Oorspronkelijk bericht --------</string>
     <string name="invalid_email_address">Het adres \'%s\' is ongeldig</string>

@@ -283,7 +283,7 @@
     <string name="no_subject">Nachricht ohne Betreff senden?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
-    <string name="okay">OK</string>
+    <string name="ok">OK</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Original-Nachricht --------</string>
     <string name="invalid_email_address">Die Adresse „%s” ist ungültig</string>

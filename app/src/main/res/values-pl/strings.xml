@@ -291,7 +291,7 @@
     <string name="no_subject">Wysłać wiadomość bez tematu?</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
-    <string name="okay">Ok</string>
+    <string name="ok">Ok</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Oryginalna wiadomość --------</string>
     <string name="invalid_email_address">Adres \'%s\' jest nieprawidłowy</string>
