@@ -30,6 +30,7 @@ import java.util.concurrent.ArrayBlockingQueue
 const val ATTACH_PATH = "attach"
 
 const val ONE_MINUTE = 60L
+const val THREE_SECONDS = 3L
 const val TEN_SECONDS = 10L
 const val THIRTY_SECONDS = 30L
 
