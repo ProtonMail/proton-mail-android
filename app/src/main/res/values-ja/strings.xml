@@ -330,7 +330,7 @@
     <string name="eo_password_not_completed">メッセージのパスワードが不完全です。</string>
     <string name="delinquency_subtitle">このアカウントへのアクセスは不払いのため無効化されています。未払い分を支払うには、 protonmail.com からサインインしてください。</string>
     <string name="downloading">ダウンロード中...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">添付ファイルをダウンロードできません</string>
     <string-array name="auto_logout_options_array">
         <item>切替/終了時に直ちに</item>
         <item>5 分間未使用の場合</item>
@@ -780,14 +780,7 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">一般的な接続の問題と解決策</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
-    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;インターネット接続がありません&lt;/i&gt; - インターネットに接続されているか確認してください。        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;ISP の問題&lt;/i&gt; - ほかのネットワークから Proton への接続を試してください。(または &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; や &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; を使用してください。)        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;政府によるブロック&lt;/i&gt; - あなたの国では Proton への接続がブロックされています。&lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; やその他の VPN、または &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; から Proton へのアクセスを試してください。        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;アンチウイルスとの干渉&lt;/i&gt; - 一時的にアンチウイルスソフトウェアを無効にするか削除してください。        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;プロキシーやファイアウォールとの干渉&lt;/i&gt; - プロキシーやファイアウォールを無効にするか、ネットワーク管理者に連絡します。        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton が落ちている&lt;/i&gt; - &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; からシステム状況を確認してください。        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;まだ解決方法が見つからない&lt;/i&gt; - &lt;a href=\"https://protonmail.com/support-form\"&gt;サポートフォーム&lt;/a&gt; や &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;メール&lt;/a&gt; (support@protonmail.zendesk.com)、および &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt; から直接お問い合わせできます。    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">画像が見つかりませんでした。</string>

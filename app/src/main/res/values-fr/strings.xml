@@ -129,7 +129,7 @@
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Sélectionnez le dossier parent (facultatif)</string>
-    <string name="labels_manager_parent_folder_selected"><b>Dossier parent sélectionné.</b> Appuyez pour modifier</string>
+    <string name="labels_manager_parent_folder_selected"><b>Dossier parent sélectionné.</b> Tapotez pour modifier</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Dossier parent</string>
@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Mot de passe du message non renseigné.</string>
     <string name="delinquency_subtitle">L\'accès à ce compte est désactivé en raison d’un défaut de paiement. Nous vous invitons à vous connecter via protonmail.com pour régler votre facture impayée.</string>
     <string name="downloading">Téléchargement en cours...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Impossible de télécharger la pièce jointe</string>
     <string-array name="auto_logout_options_array">
         <item>Immédiatement</item>
         <item>5 minutes d\'inactivité</item>
@@ -558,7 +558,7 @@
     <string name="expiration_error_title">Vous avez ajouté un délai d\'expiration, mais tous les destinataires ne prennent pas cette fonction en charge.</string>
     <string name="expiration_error_add_msg_password">Ajoutez un mot de passe de chiffrement pour les destinataires suivants :</string>
     <string name="expiration_error_disable_pgp_sending">Désactivez l\'envoi PGP pour activer le délai d\'expiration pour les destinataires suivants :</string>
-    <string name="expiration_error_proceed">Appuyez sur Envoyer quand même pour envoyer à ces destinataires sans délai d’expiration.</string>
+    <string name="expiration_error_proceed">Tapotez sur Envoyer quand même pour envoyer à ces destinataires sans délai d’expiration.</string>
     <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">EN SAVOIR PLUS</a></string>
     <string name="channel_name_attachments">Pièces jointes</string>
     <string name="channel_description_attachments">Informe sur l\'état du téléchargement des pièces jointes</string>
@@ -736,7 +736,7 @@
     <string name="swipe_action_left">Balayer vers la gauche</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Choisir une action de balayage</string>
-    <string name="swipe_action_trash">Message déplacé dans Corbeille</string>
+    <string name="swipe_action_trash">Message déplacé dans le dossier Corbeille</string>
     <string name="swipe_action_trash_short">Déplacer dans Corbeille</string>
     <string name="swipe_action_star">Message favori mis à jour</string>
     <string name="swipe_action_star_short">Mettre à jour le favori</string>
@@ -747,8 +747,8 @@
     <string name="swipe_action_mark_read">Message marqué comme lu</string>
     <string name="swipe_action_mark_read_short">Lu</string>
     <plurals name="action_move_to_trash">
-        <item quantity="one">Message déplacé dans Corbeille</item>
-        <item quantity="other">Messages déplacés dans Corbeille</item>
+        <item quantity="one">Message déplacé dans le dossier Corbeille</item>
+        <item quantity="other">Messages déplacés dans le dossier Corbeille</item>
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Limite de stockage local</string>
@@ -791,13 +791,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problèmes de connexion fréquents et solutions</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Pas de connexion internet&lt;/i&gt; - Assurez-vous que votre connexion internet fonctionne.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problème de fournisseur d\'accès internet (FAI)&lt;/i&gt; - Essayez de vous connecter à Proton depuis un autre réseau (ou utilisez &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; ou &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blocage gouvernemental&lt;/i&gt; - Votre pays bloque peut-être l\'accès à Proton. Essayez &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (ou tout autre VPN) ou &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pour accéder à Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférence avec un antivirus&lt;/i&gt; - Désactivez ou supprimez temporairement votre logiciel antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférence avec un proxy ou un pare-feu&lt;/i&gt; - Désactivez tout proxy ou pare-feu, ou contactez votre administrateur réseau.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton est en panne&lt;/i&gt; - Consultez &lt;a href=\"http://protonstatus.com/\"&gt;le statut Proton&lt;/a&gt; pour l\'état de notre système.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez toujours pas de solution&lt;/i&gt; - Contactez-nous directement avec notre &lt;a href=\"https://protonmail.com/support-form\"&gt;formulaire de support&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;l\'envoi d\'un e-mail&lt;/a&gt; (support@protonmail.zendesk.com), ou sur notre compte &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

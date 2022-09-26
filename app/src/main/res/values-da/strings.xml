@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Keypteringsadgangskode mangler.</string>
     <string name="delinquency_subtitle">Adgang til denne konto er deaktiveret grundet manglende betaling. Log ind via protonmail.com for at betale din udestående faktura.</string>
     <string name="downloading">Downloader...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Kan ikke downloade vedhæftning</string>
     <string-array name="auto_logout_options_array">
         <item>Straks</item>
         <item>5 min inaktivitet</item>

@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">İleti parolası tamamlanmamış.</string>
     <string name="delinquency_subtitle">Ödeme yapılmadığı için bu hesaba erişim engellendi. Ödenmemiş faturalarınızı ödemek için lütfen protonmail.com üzerinden oturum açın.</string>
     <string name="downloading">İndiriliyor...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Ek dosya indirilemedi</string>
     <string-array name="auto_logout_options_array">
         <item>Hemen</item>
         <item>5 dakika hareketsizlik</item>
@@ -799,13 +799,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Sık karşılaşılan bağlantı sorunları ve çözümleri</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;İnternet bağlantısı yok&lt;/i&gt; - Lütfen internet bağlantınızın çalıştığından emin olun.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;İnternet hizmeti sağlayıcısı (ISP) sorunu&lt;/i&gt; - Proton ile bağlantı kurmak için farklı bir ağ kullanmayı deneyin (alternatif olarak &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; ya da &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; kullanın).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Hükümet sansürü&lt;/i&gt; - Ülkeniz Proton sunucularına bağlanmanızı engelliyor olabilir. &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (ya da başka bir VPN) ya da &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; kullanmayı deneyin.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus etkileşimi&lt;/i&gt; - Antivirus uygulamanızı geçici olarak devre dışı bırakın ya da kaldırın.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vekil sunucu/&amp;güvenlik duvarı etkileşimi&lt;/i&gt; - Vekil sunucu veya güvenlik duvarlarını devre dışı bırakın ya da ağ yöneticiniz ile görüşün.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton çalışmıyor&lt;/i&gt; - Sistemimizin durumunu görmek için &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; sitesine bakın.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Sorun hala çözülmediyse&lt;/i&gt; - Bizimle doğrudan &lt;a href=\"https://protonmail.com/support-form\"&gt;destek formumuz&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-posta adresimiz&lt;/a&gt; (support@protonmail.zendesk.com) ya da &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter hesabımız&lt;/a&gt; üzerinden görüşün.
     </string>
     <!-- endregion -->
     <!-- region errors -->

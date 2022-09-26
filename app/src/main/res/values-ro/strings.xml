@@ -338,7 +338,7 @@
     <string name="eo_password_not_completed">Nu a fost introdusă parola mesajului.</string>
     <string name="delinquency_subtitle">Accesul la acest cont este blocat datorită unei plăți restante. Autentificați-vă la protonmail.com și achitați factura restantă.</string>
     <string name="downloading">Se descarcă...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Nu se poate descărca fișierul atașat</string>
     <string-array name="auto_logout_options_array">
         <item>Imediat</item>
         <item>5 minute de inactivitate</item>
@@ -812,13 +812,13 @@ descărcarea în fundal a mesajelor noi</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Probleme comune conexiune și soluții</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Fără conexiune la internet&lt;/i&gt; - Asigurați-vă că funcționează conexiunea la internet.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problemă (ISP) Furnizor Servicii Internet&lt;/i&gt; - Încercați să vă conectați la Proton dintr-o altă rețea (sau folosiți &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; sau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blocare guvernamentală&lt;/i&gt; - Țara dvs. s-ar putea să blocheze accesul către Proton. Încercați &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (sau oricare alt VPN) sau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pentru a accesa Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferență antivirus&lt;/i&gt; - Dezactivați temporar sau eliminați programul antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferențe Proxy/Paravan de protecție&lt;/i&gt; - Dezactivați orice paravan de protecție sau proxy sau contactați administratorul de rețea.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton este căzut&lt;/i&gt; - Accesați &lt;a href=\"http://protonstatus.com/\"&gt;Stare Proton&lt;/a&gt; pentru aflarea stării sistemului nostru.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Încă nu ați găsit soluția?&lt;/i&gt; - Contactați-ne direct prin &lt;a href=\"https://protonmail.com/support-form\"&gt;formularul de suport&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.com) sau &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

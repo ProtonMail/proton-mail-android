@@ -342,7 +342,7 @@
     <string name="eo_password_not_completed">Hasło wiadomości nie zostało ustawione.</string>
     <string name="delinquency_subtitle">Dostęp do tego konta jest wyłączony z powodu braku płatności. Zaloguj się za pomocą protonmail.com, aby zapłacić zaległe faktury.</string>
     <string name="downloading">Pobieranie...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Nie można pobrać załącznika</string>
     <string-array name="auto_logout_options_array">
         <item>Natychmiast</item>
         <item>5 minut bezczynności</item>
@@ -821,14 +821,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Typowe problemy z połączeniem i rozwiązania</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
-    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Brak połączenia z Internetem&lt;/i&gt; - Upewnij się, że Twoje połączenie sieciowe działa.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problem z dostawcą Internetu (ISP)&lt;/i&gt; - Spróbuj połączyć się z usługą Proton z innej sieci (lub skorzystaj z &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; lub &lt;a href=\"https://www.torproject.org/\"&gt;sieci Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blokada rządowa&lt;/i&gt; - Twój kraj może blokować dostęp do usług Proton. Spróbuj połączyć się przez &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (lub inną usługę VPN) lub &lt;a href=\"https://www.torproject.org/\"&gt;sieć Tor&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Konflikt z antywirusem&lt;/i&gt; - Tymczasowo wyłącz lub usuń oprogramowanie antywirusowe.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Konflikt z zaporą sieciową/serwerem proxy&lt;/i&gt; - Wyłącz zaporę oraz proxy lub skontaktuj się z administratorem sieci.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton jest niedostępny&lt;/i&gt; - Sprawdź &lt;a href=\"http://protonstatus.com/\"&gt;Status usług Proton&lt;/a&gt; na naszej stronie.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Nadal nie mogę znaleźć rozwiązania&lt;/i&gt; - Skontaktuj się z nami przez &lt;a href=\"https://protonmail.com/support-form\"&gt;formularz kontaktowy&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;wiadomość e-mail&lt;/a&gt; (support@protonmail.zendesk.com) lub &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twittera&lt;/a&gt;.</string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Obraz nie został znaleziony</string>

@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Senha da mensagem não concluída.</string>
     <string name="delinquency_subtitle">O acesso a esta conta foi desativada devido a falta de pagamento. Por favor, Faça login no protonmail.com para pagar sua fatura pendente.</string>
     <string name="downloading">Baixando...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Não é possível baixar o anexo</string>
     <string-array name="auto_logout_options_array">
         <item>Imediatamente</item>
         <item>5 min de inatividade</item>

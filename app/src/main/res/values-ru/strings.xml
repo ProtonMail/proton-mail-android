@@ -342,7 +342,7 @@
     <string name="eo_password_not_completed">Пароль сообщения введён не полностью.</string>
     <string name="delinquency_subtitle">Доступ к этой учётной записи приостановлен из-за неуплаты. Пожалуйста, войдите в систему, используя protonmail.com, чтобы оплатить счёт.</string>
     <string name="downloading">Скачивание...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Невозможно скачать вложение</string>
     <string-array name="auto_logout_options_array">
         <item>Сразу</item>
         <item>5 минут бездействия</item>
@@ -770,7 +770,7 @@
     <string name="swipe_action_trash">Сообщение перемещено в корзину</string>
     <string name="swipe_action_trash_short">Переместить в корзину</string>
     <string name="swipe_action_star">Звезда сообщения обновлена</string>
-    <string name="swipe_action_star_short">Обновить отметку</string>
+    <string name="swipe_action_star_short">Обновить звездочку</string>
     <string name="swipe_action_spam">Сообщение помечено как спам</string>
     <string name="swipe_action_spam_short">Спам</string>
     <string name="swipe_action_archive">Сообщение отправлено в архив</string>
@@ -824,13 +824,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Общие проблемы с подключением и их решения</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Нет подключения к Интернету&lt;/i&gt; - Пожалуйста, убедитесь, что ваше подключение к Интернету работает.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема с поставщиком интернет-услуг (ISP)&lt;/i&gt; - Попробуйте подключиться к Proton из другой сети (или используйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Правительственная блокировка&lt;/i&gt; - Возможно, что ваша страна блокирует доступ к Proton. Попробуйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (или любую другую VPN) или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; для доступа к Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Вмешательство антивируса&lt;/i&gt; - Временно утключите или удалите ваше антивирусное программное обеспечение.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Вмешательство прокси-сервера/брандмауэра&lt;/i&gt; - Отключите все прокси-серверы/брандмауэры или свяжитесь со своим администратором сети.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton не работает&lt;/i&gt; - Проверьте &lt;a href=\"http://protonstatus.com/\"&gt;состояние Proton&lt;/a&gt; для получения информации о состоянии нашей системы.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Все еще не удается найти решение&lt;/i&gt; - Свяжитесь с нами напрямую через нашу &lt;a href=\"https://protonmail.com/support-form\"&gt;форму поддержки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;электронную почту&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
@@ -855,8 +855,8 @@
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
     <string name="star">Важное</string>
-    <string name="unstar">Снять отметку</string>
-    <string name="star_unstar">Отметить важным / снять отметку</string>
+    <string name="unstar">Снять звездочку</string>
+    <string name="star_unstar">Отметить звездочкой / снять звездочку</string>
     <string name="send_to_archive">Отправить в архив?</string>
     <string name="label_as">Отметить как…</string>
     <string name="mark_as_unread">Отметить как непрочитанное</string>
