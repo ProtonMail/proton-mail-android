@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Contraseña del mensaje incompleta.</string>
     <string name="delinquency_subtitle">El acceso a esta cuenta se ha deshabilitado por falta de pago. Inicia sesión a través de protonmail.com para pagar tu factura pendiente.</string>
     <string name="downloading">Descargando...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">No se puede descargar el archivo adjunto</string>
     <string-array name="auto_logout_options_array">
         <item>Inmediatamente</item>
         <item>tras 5 minutos de inactividad</item>
@@ -702,7 +702,7 @@ compre más
     <string name="snooze_end_time">Hora final:</string>
     <string name="snooze_repeat">Repetir:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Las notificaciones se reanudarán en %d min</item>
+        <item quantity="one">Las notificaciones se reanudarán en %d minuto</item>
         <item quantity="other">Las notificaciones se reanudarán en %d minutos</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Las notificaciones se reanudarán en %1$d horas y %2$d minutos</string>

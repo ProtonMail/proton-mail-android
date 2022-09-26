@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Passwort der Nachricht unvollständig.</string>
     <string name="delinquency_subtitle">Der Zugriff auf dieses Konto ist aufgrund eines Zahlungsverzugs deaktiviert. Bitte melde dich bei proton.me an, um deine ausstehende Rechnung zu begleichen.</string>
     <string name="downloading">Wird heruntergeladen …</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Anhang konnte nicht heruntergeladen werden</string>
     <string-array name="auto_logout_options_array">
         <item>Sofort</item>
         <item>Nach 5-minütiger Inaktivität</item>
@@ -795,13 +795,13 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchtest 
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Häufige Verbindungsprobleme und Lösungen</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Keine Internetverbindung&lt;/i&gt; - Bitte stelle sicher, dass deine Internetverbindung funktioniert.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problem mit dem Internetdienstanbieter (ISP)&lt;/i&gt; - Versuche, dich von einem anderen Netzwerk aus mit Proton zu verbinden (oder verwende &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; oder &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Regierungssperre&lt;/i&gt; - Dein Land sperrt möglicherweise den Zugang zu Proton. Versuche &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (oder einen anderen VPN-Dienst) oder &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; um dich mit Proton zu verbinden.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus-Störungen&lt;/i&gt; - Deaktiviere oder entferne vorübergehend deine Antivirus-Software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall-Störungen&lt;/i&gt; - Deaktiviere alle Proxies oder Firewalls, oder wende dich an deinen Netzwerkadministrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton ist ausgefallen&lt;/i&gt; - Überprüfe den &lt;a href=\"http://protonstatus.com/\"&gt;Status von Proton&lt;/a&gt; für unseren Systemstatus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Noch immer keine Lösung gefunden&lt;/i&gt; - Kontaktiere uns direkt über unser &lt;a href=\"https://protonmail.com/support-form\"&gt;Support-Formular&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;E-Mail&lt;/a&gt; (support@protonmail.zendesk.com), oder &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

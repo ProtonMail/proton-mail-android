@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Password del messaggio non completata.</string>
     <string name="delinquency_subtitle">L\'accesso a questo account è disabilitato a causa di mancato pagamento. Per favore accedi su protonmail.com per pagare la fattura pendente.</string>
     <string name="downloading">Scaricamento...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Impossibile scaricare l\'allegato</string>
     <string-array name="auto_logout_options_array">
         <item>Immediatamente</item>
         <item>5 minuti di inattività</item>
@@ -800,13 +800,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemi di connessione comuni e soluzioni</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Nessuna connessione a Internet&lt;/i&gt; - Per favore assicurati che la tua connessione a internet sia funzionante.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema del fornitore del servizio internet (ISP) &lt;/i&gt; - Prova a collegarti a Proton tramite un\'altra connessione (o usa &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blocco governativo&lt;/i&gt; - Il tuo Paese potrebbe stare bloccando l\'accesso a Proton. Prova &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (o qualsiasi altra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; per accedere a Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Conflitto con Antivirus &lt;/i&gt; - Disabilita o rimuovi temporaneamente il tuo Antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Conflitto Proxy/Firewall&lt;/i&gt; - Disabilita qualunque proxy o firewall, o contatta il tuo amministratore di sistema.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton è down&lt;/i&gt; - Controlla &lt;a href=\"http://protonstatus.com/\"&gt;Stato di Proton&lt;/a&gt; per lo stato dei nostri sistemi.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Non ho risolto il problema&lt;/i&gt; - Contattaci direttamente attraverso il nostro indirizzo &lt;/a&gt;, &lt;a &lt;a href=\"https://protonmail.com/support-form\"&gt;support formhref=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

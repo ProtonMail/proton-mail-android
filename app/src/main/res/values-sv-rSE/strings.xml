@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">Lösenord för meddelandet har inte slutförts.</string>
     <string name="delinquency_subtitle">Åtkomst till detta konto är inaktiverat på grund av utebliven betalning. Logga in via protonmail.com för att betala din obetalda faktura.</string>
     <string name="downloading">Laddar ner...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Kan inte ladda ner bilaga</string>
     <string-array name="auto_logout_options_array">
         <item>Omedelbart</item>
         <item>5 min. inaktivitet</item>

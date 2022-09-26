@@ -223,11 +223,11 @@
     <string name="view_headers">Mostrar capçaleres</string>
     <string name="message_headers">Capçalera del missatge</string>
     <string name="delete_messages">Eliminar missatges</string>
-    <string name="move_to_archive">Moure a l\'arxiu</string>
-    <string name="move_to_trash">Moure a la paperera</string>
-    <string name="move_to_spam">Moure a correu brossa</string>
-    <string name="move_to_inbox">Moure a la safata d\'entrada</string>
-    <string name="move_to">Moure a…</string>
+    <string name="move_to_archive">Mou a l\'arxiu</string>
+    <string name="move_to_trash">Mou a la paperera</string>
+    <string name="move_to_spam">Mou al correu brossa</string>
+    <string name="move_to_inbox">Mou a la safata d\'entrada</string>
+    <string name="move_to">Mou a…</string>
     <string name="are_you_sure_empty">Està segur que vol esborrar tots els missatges d\'aquesta carpeta?</string>
     <string name="send">Enviar</string>
     <string name="selected">Seleccionat</string>
@@ -310,7 +310,7 @@
     <string name="label_name">Nom de etiqueta</string>
     <string name="label_created">Etiqueta creada</string>
     <string name="label_invalid">L\'etiqueta no s\'ha afegit a causa del nom no vàlid.</string>
-    <string name="undo">Desfer</string>
+    <string name="undo">Desfés</string>
     <string name="label_apply">Aplicar</string>
     <string name="label_add">Afegir</string>
     <string name="no_browser_found">Instal·leu una aplicació del navegador per finalitzar aquesta acció</string>
@@ -334,7 +334,7 @@
     <string name="eo_password_not_completed">La contrasenya del missatge no s\'ha completat.</string>
     <string name="delinquency_subtitle">L\'accés a aquest compte està desactivat per falta de pagament. Inicieu la sessió a través de protonmail.com per pagar la factura no pagada.</string>
     <string name="downloading">Descarregant...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">No es pot baixar l\'adjunt</string>
     <string-array name="auto_logout_options_array">
         <item>Immediatament</item>
         <item>Inactivitat de 5 minuts</item>
@@ -567,8 +567,7 @@
     <string name="channel_name_account">Compte</string>
     <string name="channel_description_account">Estat del compte</string>
     <string name="channel_name_ongoing_operations">Operacions en curs</string>
-    <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
-		message download on background</string>
+    <string name="channel_description_ongoing_operations">Mostra totes les operacions en curs com la baixada en segon pla d\'un missatge nou</string>
     <string name="retrieving_notifications">Recuperant notificacions</string>
     <string name="report_phishing">Informar de phishing</string>
     <string name="print">Imprimir</string>
@@ -837,10 +836,10 @@
     <string name="label_as">Etiquetar com a…</string>
     <string name="mark_as_unread">Marcar com a no llegit</string>
     <string name="mark_as_read">Marcar com a llegit</string>
-    <string name="move_message">Moure missatge</string>
+    <string name="move_message">Mou el missatge</string>
     <string name="manage">Gestionar</string>
     <string name="message_from">Missatge de %s</string>
-    <string name="not_spam_move_to_inbox">No és correu brossa (moure a la Safata d\'entrada)</string>
+    <string name="not_spam_move_to_inbox">No és correu brossa (mou a la safata d\'entrada)</string>
     <string name="action_sheet_view_in_light_mode">Veure en mode Clar</string>
     <string name="action_sheet_view_in_dark_mode">Veure en mode Fosc</string>
     <plurals name="x_messages_count">

@@ -72,8 +72,8 @@
     <string name="details_hyperlink_phishing_dialog_confirm_action">忽略警語並繼續</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">密件副本 :</string>
-    <string name="composer_cc">副本 :</string>
+    <string name="composer_bcc">密件副本：</string>
+    <string name="composer_cc">副本：</string>
     <string name="composer_compose_email">撰寫電郵</string>
     <string name="composer_from">寄件人：</string>
     <string name="composer_subject">主旨：</string>
@@ -88,7 +88,7 @@
     <string name="set_msg_password_msg_password_title">郵件密碼</string>
     <string name="set_msg_password_msg_password_hint">長度為 4 至 21 個字元</string>
     <string name="set_msg_password_repeat_password_title">重複輸入密碼</string>
-    <string name="set_msg_password_repeat_password_hint">輸入的密碼必須完全相同</string>
+    <string name="set_msg_password_repeat_password_hint">密碼必須相符</string>
     <string name="set_msg_password_password_hint_title">密碼提示</string>
     <string name="set_msg_password_password_hint_hint">自訂密碼提示 (可選)</string>
     <string name="set_msg_password_apply_password">套用密碼</string>
@@ -103,8 +103,8 @@
     <string name="set_msg_expiration_3_days">3 天</string>
     <string name="set_msg_expiration_1_week">1 週</string>
     <string name="set_msg_expiration_custom">自定義</string>
-    <string name="set_msg_expiration_check_description">此項目已保留</string>
-    <string name="composer_invalid_sender_saving_draft_failed">寄件者電郵位址是無效的。請更換為有效的位址。</string>
+    <string name="set_msg_expiration_check_description">已勾選此項目</string>
+    <string name="composer_invalid_sender_saving_draft_failed">寄件者電郵位址無效。請更換為有效的位址。</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">佈景主題</string>
@@ -116,9 +116,9 @@
     <string name="settings_storage_limit_unlimited_value">無限 (已使用%1$.2f MB)</string>
     <string name="settings_swipe_settings_info">設定滑動手勢以存取最常用動作。</string>
     <string name="settings_swipe_left_to_right">由左至右</string>
-    <string name="settings_swipe_right_to_left">從右到左</string>
+    <string name="settings_swipe_right_to_left">由右至左</string>
     <string name="settings_swipe_saving">滑動操作儲存中…</string>
-    <string name="settings_swipe_generic_error">滑動操作儲存失敗</string>
+    <string name="settings_swipe_generic_error">無法儲存滑動操作</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">App 主題</string>
@@ -158,7 +158,7 @@
     <string name="existing_user_onboarding_new_features_headline">新功能</string>
     <string name="existing_user_onboarding_new_features_description">享受深色模式、改善後的通知、未讀郵件過濾器與子資料夾等新功能。</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton 再進化，保護更一統</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">介紹 Proton 煥然一新的外貌。多樣服務，使命如一。歡迎來到以隱私為預設的網際網路。<a href="https://proton.me/news/updated-proton">瞭解更多</a></string>
     <string name="onboarding_next">下一步</string>
     <string name="onboarding_get_started">入門指南</string>
     <string name="onboarding_got_it">知道</string>
@@ -185,7 +185,7 @@
     <string name="update_app_title">需要更新</string>
     <string name="update_app">Proton Mail 應用程式必須更新才可使用</string>
     <string name="you_are_offline">您現正離線</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail 目前處於離線狀態，請前往 https://protonstatus.com 或我們的 Twitter 查看目前的狀態：https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">聯絡人已儲存</string>
     <string name="contact_saved_offline">聯絡人已儲存，將在連線到網際網路時同步</string>
     <string name="contact_exist">聯絡人電郵位址已存在</string>
@@ -241,8 +241,8 @@
     <string name="email_subject">電郵主旨</string>
     <string name="define_message_password">郵件密碼</string>
     <string name="confirm_message_password">確認密碼</string>
-    <string name="define_password_hint">設定密碼提示（選擇性）</string>
-    <string name="eo_passwords_do_not_match">密碼不正確</string>
+    <string name="define_password_hint">設定密碼提示（可選）</string>
+    <string name="eo_passwords_do_not_match">密碼不一致</string>
     <string name="define_expiration_period">設定效期</string>
     <string name="set_message_expiration">設定郵件效期</string>
     <string name="days">天</string>
@@ -262,17 +262,17 @@
     <plurals name="attachments_number">
         <item quantity="other">%d 個附件</item>
     </plurals>
-    <string name="add_attachment">加入附件</string>
+    <string name="add_attachment">新增附件</string>
     <string name="select_file">選取檔案</string>
     <string name="attach_file">附加檔案</string>
     <string name="take_photo">拍照</string>
     <string name="problem_taking_photo">拍照時出現問題</string>
     <string name="problem_selecting_file">加入選定的檔案時出現問題</string>
-    <string name="add_contact">加入聯絡人</string>
+    <string name="add_contact">新增聯絡人</string>
     <string name="delete_contact">是否把 %s 從聯絡人中刪除？</string>
     <string name="confirm">確認</string>
     <string name="confirm_destructive_action">您確定要這麼做？此操作執行後即無法復原。</string>
-    <string name="create">建立</string>
+    <string name="create">創建</string>
     <string name="email">電郵</string>
     <string name="phone">手機號碼</string>
     <string name="save">儲存</string>
@@ -282,9 +282,9 @@
     <string name="okay">好</string>
     <string name="forward_prefix">轉寄：</string>
     <string name="original_message_divider">-------- 原始郵件 --------</string>
-    <string name="invalid_email_address">位址 ‘%s’ 是無效的</string>
+    <string name="invalid_email_address">位址 ‘%s’ 無效</string>
     <string name="invalid_email_address_removed">電郵位址 \'%s\' 無效，因此已被移除</string>
-    <string name="no_recipients_specified">請輸入最少一位收件者</string>
+    <string name="no_recipients_specified">請輸入至少一位收件者</string>
     <string name="no_password_specified">到期時間只能在完全加密的郵件上設定。請為您的非 Proton Mail 收件者設定密碼。</string>
     <string name="attachment_limit">附件限制為 %1$s。附件全部的大小為 %2$s。</string>
     <string name="sending_message">傳送郵件中……</string>
@@ -316,7 +316,7 @@
     <string name="label_deleted_error">刪除標籤時發生錯誤</string>
     <string name="message_deleted_error">刪除部分郵件時發生錯誤。一些選取的郵件在傳送過程?!</string>
     <string name="respond_inline">在內文回覆</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">無法連線到伺服器……（<u>疑難排解</u>）</string>
     <string name="connectivity_checking">正在檢查網際網路連線……</string>
     <string name="draft_label_attachments_uploading">正在上載附件……</string>
     <string name="draft_label_message_uploading">正在傳送郵件……</string>
@@ -330,7 +330,7 @@
     <string name="eo_password_not_completed">未完成郵件密碼設置。</string>
     <string name="delinquency_subtitle">此帳號因未付款，存取已被停用。請登入 protonmail.com 支付未付帳單。</string>
     <string name="downloading">正在下載……</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">無法下載附件</string>
     <string-array name="auto_logout_options_array">
         <item>立即</item>
         <item>5分鐘內沒有任何動作</item>
@@ -419,7 +419,7 @@
     <string name="contacts_import_contact">匯入聯絡人</string>
     <string name="contacts_import">匯入</string>
     <string name="upload_contacts">上載聯絡人</string>
-    <string name="uploading_contacts">Uploading contacts…</string>
+    <string name="uploading_contacts">正在上載聯絡人…</string>
     <string-array name="vcard_option_phone">
         <item>電話</item>
         <item>手機</item>
@@ -479,9 +479,9 @@
     <string name="spam_score_101">此電郵無法通過網域驗證。這可能是詐騙郵件或是轉發不當導致，請再三留意！</string>
     <string name="spam_score_102">此郵件可能有網路釣魚的企圖。請檢查寄件者和內容，以確保它們是正當的。<a href="https://protonmail.com/blog/prevent-phishing-attacks/">瞭解更多</a></string>
     <string name="print_from_template">寄件者：%s</string>
-    <string name="print_to_template">To: %s;  </string>
-    <string name="print_cc_template">CC: %s;  </string>
-    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="print_to_template">收件者：%s;  </string>
+    <string name="print_cc_template">副本：%s;  </string>
+    <string name="print_bcc_template">密件副本：%s;  </string>
     <string name="address">位址： </string>
     <string name="address_street">街道</string>
     <string name="address_extended_street">延伸街道名稱</string>
@@ -507,7 +507,7 @@
     <string name="protonmail_contacts">Proton Mail 聯絡人</string>
     <string name="device_contacts">裝置通訊錄</string>
     <string name="print_date_template">日期：%s</string>
-    <string name="print_attachment_template">Attachment: %s;  </string>
+    <string name="print_attachment_template">附件：%s;  </string>
     <string name="pm_me_changed">從 @pm.me 位址寄送郵件是付費功能，您的郵件將會從預設位址 %s 寄出</string>
     <string name="pm_me_can_not_be_default">升級至付費方案就能將您的 %s 位址設定為預設值</string>
     <string name="dont_remind_again">不要再提醒我</string>
