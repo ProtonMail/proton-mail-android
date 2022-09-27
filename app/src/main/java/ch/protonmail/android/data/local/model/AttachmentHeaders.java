@@ -106,8 +106,8 @@ public class AttachmentHeaders implements Serializable {
 
     public String toString() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            new ObjectOutputStream(out).writeObject(this);
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(out)) {
+            objectOutputStream.writeObject(this);
         } catch (IOException e) {
             Logger.doLogException(TAG_ATTACHMENT_HEADERS, "Serialization of att headers failed ", e);
         }
