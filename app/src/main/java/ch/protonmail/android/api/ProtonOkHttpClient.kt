@@ -48,7 +48,9 @@ const val TLS = "TLS"
  * permanent Cookie Store please use instance of [ProtonCookieStore].
  */
 sealed class ProtonOkHttpClient(
-    timeout: Long,
+    connectTimeout: Long,
+    readTimeout: Long,
+    writeTimeout: Long,
     interceptor: Interceptor,
     loggingLevel: HttpLoggingInterceptor.Level,
     connectionSpecs: List<ConnectionSpec>,
@@ -70,9 +72,9 @@ sealed class ProtonOkHttpClient(
             okClientBuilder.cookieJar(cookieStore)
         }
 
-        okClientBuilder.connectTimeout(timeout, TimeUnit.SECONDS)
-        okClientBuilder.readTimeout(timeout, TimeUnit.SECONDS)
-        okClientBuilder.writeTimeout(timeout, TimeUnit.SECONDS)
+        okClientBuilder.connectTimeout(connectTimeout, TimeUnit.SECONDS)
+        okClientBuilder.readTimeout(readTimeout, TimeUnit.SECONDS)
+        okClientBuilder.writeTimeout(writeTimeout, TimeUnit.SECONDS)
 
         okClientBuilder.addInterceptor(interceptor)
 
@@ -93,7 +95,9 @@ sealed class ProtonOkHttpClient(
  * This class defines and configures the OkHttpClient that is used by default.
  */
 class DefaultOkHttpClient(
-    timeout: Long,
+    connectTimeout: Long,
+    readTimeout: Long,
+    writeTimeout: Long,
     interceptor: Interceptor,
     loggingLevel: HttpLoggingInterceptor.Level,
     connectionSpecs: List<ConnectionSpec>,
@@ -102,7 +106,9 @@ class DefaultOkHttpClient(
     baseUrl: String,
     cookieStore: ProtonCookieStore?
 ) : ProtonOkHttpClient(
-    timeout,
+    connectTimeout,
+    readTimeout,
+    writeTimeout,
     interceptor,
     loggingLevel,
     connectionSpecs,
@@ -125,7 +131,9 @@ class DefaultOkHttpClient(
  * is not available (api not accessible or banned).
  */
 class ProxyOkHttpClient(
-    timeout: Long,
+    connectTimeout: Long,
+    readTimeout: Long,
+    writeTimeout: Long,
     interceptor: Interceptor,
     loggingLevel: HttpLoggingInterceptor.Level,
     connectionSpecs: List<ConnectionSpec>,
@@ -135,7 +143,9 @@ class ProxyOkHttpClient(
     pinnedKeyHashes: List<String>,
     cookieStore: ProtonCookieStore?
 ) : ProtonOkHttpClient(
-    timeout,
+    connectTimeout,
+    readTimeout,
+    writeTimeout,
     interceptor,
     loggingLevel,
     connectionSpecs,

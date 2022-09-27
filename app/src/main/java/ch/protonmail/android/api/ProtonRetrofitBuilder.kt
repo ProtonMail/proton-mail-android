@@ -24,6 +24,7 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.segments.ATTACH_PATH
 import ch.protonmail.android.api.segments.ONE_MINUTE
 import ch.protonmail.android.api.segments.THIRTY_SECONDS
+import ch.protonmail.android.api.segments.THREE_SECONDS
 import ch.protonmail.android.api.utils.StringConverterFactory
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
@@ -228,7 +229,9 @@ class ProtonRetrofitPublic(
         val okHttpClient = okHttpProvider.provideOkHttpClient(
             endpointUri,
             endpointUri,
-            THIRTY_SECONDS,
+            connectTimeout = THREE_SECONDS,
+            readTimeout = THIRTY_SECONDS,
+            writeTimeout = THIRTY_SECONDS,
             interceptor,
             HttpLoggingInterceptor.Level.HEADERS,
             spec,
@@ -259,7 +262,9 @@ class ProtonRetrofitPing(
         val okHttpClient = okHttpProvider.provideOkHttpClient(
             endpointUri,
             endpointUri,
-            THIRTY_SECONDS,
+            connectTimeout = THREE_SECONDS,
+            readTimeout = THIRTY_SECONDS,
+            writeTimeout = THIRTY_SECONDS,
             interceptor,
             HttpLoggingInterceptor.Level.HEADERS,
             spec,
@@ -290,7 +295,9 @@ class ProtonRetrofitExtended(
         val okHttpClient = okHttpProvider.provideOkHttpClient(
             endpointUri,
             endpointUri,
-            ONE_MINUTE,
+            connectTimeout = THREE_SECONDS,
+            readTimeout = ONE_MINUTE,
+            writeTimeout = ONE_MINUTE,
             interceptor,
             HttpLoggingInterceptor.Level.HEADERS,
             spec,
@@ -321,7 +328,9 @@ class ProtonRetrofitAttachments(
         val okHttpClient = okHttpProvider.provideOkHttpClient(
             endpointUri,
             endpointUri + ATTACH_PATH,
-            THIRTY_SECONDS,
+            connectTimeout = THREE_SECONDS,
+            readTimeout = THIRTY_SECONDS,
+            writeTimeout = THIRTY_SECONDS,
             interceptor,
             HttpLoggingInterceptor.Level.BASIC,
             spec,
@@ -352,7 +361,9 @@ class ProtonRetrofitSecure(
         val okHttpClient = okHttpProvider.provideOkHttpClient(
             endpointUri,
             endpointUri,
-            THIRTY_SECONDS,
+            connectTimeout = THREE_SECONDS,
+            readTimeout = THIRTY_SECONDS,
+            writeTimeout = THIRTY_SECONDS,
             interceptor,
             HttpLoggingInterceptor.Level.BASIC,
             spec,

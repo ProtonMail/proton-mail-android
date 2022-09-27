@@ -43,7 +43,9 @@ class OkHttpProvider @Inject constructor(
     fun provideOkHttpClient(
         endpointUri: String,
         id: String = endpointUri,
-        timeout: Long,
+        connectTimeout: Long,
+        readTimeout: Long,
+        writeTimeout: Long,
         interceptor: Interceptor,
         loggingLevel: HttpLoggingInterceptor.Level,
         connectionSpecs: List<ConnectionSpec>,
@@ -56,7 +58,9 @@ class OkHttpProvider @Inject constructor(
         }
         okHttpClients[id] = if (endpointUri == baseUrl) {
             DefaultOkHttpClient(
-                timeout,
+                connectTimeout,
+                readTimeout,
+                writeTimeout,
                 interceptor,
                 loggingLevel,
                 connectionSpecs,
@@ -67,7 +71,9 @@ class OkHttpProvider @Inject constructor(
             )
         } else {
             ProxyOkHttpClient(
-                timeout,
+                connectTimeout,
+                readTimeout,
+                writeTimeout,
                 interceptor,
                 loggingLevel,
                 connectionSpecs,
