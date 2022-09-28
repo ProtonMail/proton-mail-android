@@ -279,7 +279,7 @@
     <string name="no_subject">Kirim pesan tanpa subjek?</string>
     <string name="yes">Ya</string>
     <string name="no">Tidak</string>
-    <string name="okay">Baik</string>
+    <string name="ok">Baik</string>
     <string name="forward_prefix">Trs:</string>
     <string name="original_message_divider">-------- Pesan asli --------</string>
     <string name="invalid_email_address">Alamat \'%s\' tidak valid</string>

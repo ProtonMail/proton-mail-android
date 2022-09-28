@@ -21,12 +21,17 @@ package ch.protonmail.android.navigation.presentation
 
 import android.content.Context
 import app.cash.turbine.test
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.mailbox.domain.usecase.ObserveMessageCountByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveShowMovedEnabled
 import ch.protonmail.android.navigation.presentation.model.NavigationViewState
 import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
+import ch.protonmail.android.testdata.UserTestData
 import ch.protonmail.android.usecase.IsAppInDarkMode
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.report.presentation.entity.BugReportOutput
 import me.proton.core.test.android.ArchTest
@@ -39,10 +44,12 @@ class NavigationViewModelTest : ArchTest, CoroutinesTest {
 
     private val isAppInDarkMode: IsAppInDarkMode = mockk()
     private val observeShowMovedEnabled: ObserveShowMovedEnabled = mockk()
+    private val observeMessageCountByLocation: ObserveMessageCountByLocation = mockk()
 
     private val navigationViewModel = NavigationViewModel(
         isAppInDarkMode,
-        observeShowMovedEnabled
+        observeShowMovedEnabled,
+        observeMessageCountByLocation
     )
 
     @Test
@@ -81,6 +88,49 @@ class NavigationViewModelTest : ArchTest, CoroutinesTest {
 
             // then
             assertEquals(NavigationViewState.INITIAL, awaitItem())
+        }
+    }
+
+    @Test
+    fun `should show ALL_SENT and ALL_DRAFT locations instead of SENT and DRAFT `() = runBlockingTest {
+        // given
+        val contextMock = mockk<Context>()
+        every { isAppInDarkMode(contextMock) } returns true
+        coEvery { observeShowMovedEnabled.invoke(userId = UserTestData.userId) } returns flowOf(true)
+        coEvery {
+            observeMessageCountByLocation.invoke(
+                userId = UserTestData.userId, Constants.MessageLocationType.ALL_SCHEDULED.asLabelIdString()
+            )
+        } returns flowOf(0)
+
+        // when
+        navigationViewModel.shouldShowDynamicLocation(UserTestData.userId)
+
+        // then
+        navigationViewModel.showDynamicItemsOnSideMenuFlow.test {
+            assertEquals(SideMenuDynamicLocationData(showMoved = true, showScheduled = false), awaitItem())
+        }
+    }
+
+
+    @Test
+    fun `should show SCHEDULED location`() = runBlockingTest {
+        // given
+        val contextMock = mockk<Context>()
+        every { isAppInDarkMode(contextMock) } returns true
+        coEvery { observeShowMovedEnabled.invoke(userId = UserTestData.userId) } returns flowOf(false)
+        coEvery {
+            observeMessageCountByLocation.invoke(
+                userId = UserTestData.userId, Constants.MessageLocationType.ALL_SCHEDULED.asLabelIdString()
+            )
+        } returns flowOf(3)
+
+        // when
+        navigationViewModel.shouldShowDynamicLocation(UserTestData.userId)
+
+        // then
+        navigationViewModel.showDynamicItemsOnSideMenuFlow.test {
+            assertEquals(SideMenuDynamicLocationData(showMoved = false, showScheduled = true), awaitItem())
         }
     }
 

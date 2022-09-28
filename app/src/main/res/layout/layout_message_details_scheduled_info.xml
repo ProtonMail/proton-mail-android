@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2022 Proton AG
+  ~
+  ~ This file is part of Proton Mail.
+  ~
+  ~ Proton Mail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Mail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/message_details_info_banner_background">
+
+    <TextView
+        android:id="@+id/scheduledInfoTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/message_details_banner_drawable_padding"
+        android:drawablePadding="@dimen/message_details_banner_drawable_padding"
+        android:gravity="center_vertical"
+        android:textAppearance="@style/Proton.Text.DefaultSmall.Medium"
+        android:textColor="@color/text_inverted"
+        app:drawableStartCompat="@drawable/ic_proton_clock"
+        app:drawableTint="@color/icon_inverted"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/editButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="This message will be sent on 01 Sept 2022 at 09:00" />
+
+    <me.proton.core.presentation.ui.view.ProtonButton
+        android:id="@+id/editButton"
+        style="@style/ProtonButton.OutlinedButton"
+        android:layout_width="80dp"
+        android:layout_height="@dimen/message_details_banner_height"
+        android:layout_margin="@dimen/message_details_banner_drawable_padding"
+        android:text="@string/x_edit"
+        android:textColor="@color/text_inverted"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/scheduledInfoTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/icon_inverted" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

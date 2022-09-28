@@ -651,19 +651,25 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 getCurrentSubject(),
                 getMessagesFrom(message.sender?.name),
                 message.isStarred ?: false,
+                message.isScheduled,
                 viewModel.doesConversationHaveMoreThanOneMessage()
             )
                 .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
         }
 
         val hasMultipleRecipients = message.toList.size + message.ccList.size > 1
+
         val actionsUiModel = BottomActionsView.UiModel(
-            if (hasMultipleRecipients) R.drawable.ic_proton_arrows_up_and_left else R.drawable.ic_proton_arrow_up_and_left,
+            null,
             R.drawable.ic_proton_envelope_dot,
             if (viewModel.shouldShowDeleteActionInBottomActionBar()) R.drawable.ic_proton_trash_cross else R.drawable.ic_proton_trash,
             R.drawable.ic_proton_tag
         )
         messageDetailsActionsView.bind(actionsUiModel)
+        messageDetailsActionsView.setAction(
+            BottomActionsView.ActionPosition.ACTION_FIRST, !message.isScheduled,
+            if (hasMultipleRecipients) R.drawable.ic_proton_arrows_up_and_left else R.drawable.ic_proton_arrow_up_and_left
+        )
         messageDetailsActionsView.setOnFourthActionClickListener {
             showLabelsActionSheet(LabelType.MESSAGE_LABEL)
         }
@@ -681,8 +687,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     onBackPressed()
                 }
             } else {
-                viewModel.moveToTrash()
-                onBackPressed()
+                moveToTrash(message.isScheduled)
             }
         }
         messageDetailsActionsView.setOnSecondActionClickListener {
@@ -694,6 +699,23 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 if (hasMultipleRecipients) Constants.MessageActionType.REPLY_ALL else Constants.MessageActionType.REPLY,
                 messageOrConversationId
             )
+        }
+    }
+
+    private fun moveToTrash(isScheduled: Boolean) {
+        if (isScheduled) {
+            showTwoButtonInfoDialog(
+                titleStringId = R.string.scheduled_message_moved_to_trash_title,
+                messageStringId = R.string.scheduled_message_moved_to_trash_desc,
+                negativeStringId = R.string.cancel,
+                onPositiveButtonClicked = {
+                    viewModel.moveToTrash()
+                    onBackPressed()
+                }
+            )
+        } else {
+            viewModel.moveToTrash()
+            onBackPressed()
         }
     }
 
@@ -772,7 +794,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 this@MessageDetailsActivity.showTwoButtonInfoDialog(
                     title = getString(R.string.storage_limit_warning_title),
                     message = getString(R.string.storage_limit_reached_text),
-                    positiveStringId = R.string.okay,
+                    positiveStringId = R.string.ok,
                     negativeStringId = R.string.learn_more,
                     onNegativeButtonClicked = {
                         val browserIntent = Intent(
@@ -883,7 +905,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             openedFolderLabelId ?: message.location.toString(),
             getCurrentSubject(),
             getMessagesFrom(message.sender?.name),
-            message.isStarred ?: false
+            message.isStarred ?: false,
+            message.isScheduled
         ).show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
     }
 

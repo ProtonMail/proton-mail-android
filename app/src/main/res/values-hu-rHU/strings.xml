@@ -283,7 +283,7 @@
     <string name="no_subject">Elküldi az üzenetet tárgy nélkül?</string>
     <string name="yes">Igen</string>
     <string name="no">Nem</string>
-    <string name="okay">OK</string>
+    <string name="ok">OK</string>
     <string name="forward_prefix">Fwd:</string>
     <string name="original_message_divider">-------- Eredeti üzenet --------</string>
     <string name="invalid_email_address">A cím érvénytelen: %s</string>

@@ -73,7 +73,8 @@ class MessageBodyLoader @Inject constructor(
                 message = fetchedMessage,
                 messageBody = messageBody,
                 shouldShowDecryptionError = !messageDecrypted,
-                shouldShowLoadEmbeddedImagesButton = handleEmbeddedImagesLoading(fetchedMessage)
+                false,
+                shouldShowLoadEmbeddedImagesButton = handleEmbeddedImagesLoading(fetchedMessage),
             )
         } else {
             null

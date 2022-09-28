@@ -54,10 +54,14 @@ public class DateUtil {
         return DateUtils.formatDateTime(context, time, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_TIME);
     }
 
+    public static String formatDateMonthYearAtTime(Context context, long time) {
+        return DateUtils.formatDateTime(context, time, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH | DateUtils.FORMAT_SHOW_YEAR) + " at " + DateUtils.formatDateTime(context, time, DateUtils.FORMAT_SHOW_TIME);
+    }
+
     public static String formatDaysAndHours(Context context, long seconds) {
         int days = (int) (seconds / (24 * 60 * 60));
         seconds = (int) (seconds - days * (24 * 60 * 60));
-        int hours = (int)(seconds / (60 * 60));
+        int hours = (int) (seconds / (60 * 60));
         seconds = (int) (seconds - hours * (60 * 60));
         int minutes = (int) (seconds / 60);
         return formatDaysAndHours(context, days, hours, minutes);

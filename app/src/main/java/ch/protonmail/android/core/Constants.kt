@@ -174,7 +174,9 @@ object Constants {
         ARCHIVE(6),
         SENT(7),
         DRAFT(8),
+        OUTBOX(9),
         STARRED(10),
+        ALL_SCHEDULED(12),
         LABEL(77),
         SEARCH(99),
         LABEL_FOLDER(999);
@@ -214,6 +216,7 @@ object Constants {
         ALL_DRAFTS(MessageLocationType.ALL_DRAFT.messageLocationTypeValue),
         SENT(MessageLocationType.SENT.messageLocationTypeValue),
         ALL_SENT(MessageLocationType.ALL_SENT.messageLocationTypeValue),
+        SCHEDULED(MessageLocationType.ALL_SCHEDULED.messageLocationTypeValue),
         ARCHIVE(MessageLocationType.ARCHIVE.messageLocationTypeValue),
         TRASH(MessageLocationType.TRASH.messageLocationTypeValue),
         SPAM(MessageLocationType.SPAM.messageLocationTypeValue),

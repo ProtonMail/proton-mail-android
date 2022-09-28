@@ -359,7 +359,11 @@ class MessageRepository @Inject constructor(
             dao.searchMessages(params.keyword)
         } else {
             requireNotNull(params.labelId) { "Label Id is required" }
-            dao.observeMessages(params.labelId.id, unread = unreadFilter)
+            dao.observeMessages(
+                params.labelId.id,
+                unread = unreadFilter,
+                params.sortDirection == GetAllMessagesParameters.SortDirection.DESCENDANT
+            )
         }.combineTransform(contactDao.findAllContactsEmails()) { messages, contactEmails ->
             // Makes sure that the correct name of the contact is displayed when showing the messages, because
             //  the sender/recipient name in the message can be outdated if the name of the contact has been changed
@@ -518,7 +522,8 @@ class MessageRepository @Inject constructor(
         message.removeLabels(
             getLabelIdsToRemoveOnMoveToFolderAction(
                 labelIds = message.allLabelIDs,
-                isTrashAction = newLocation == MessageLocationType.TRASH
+                isTrashAction = newLocation == MessageLocationType.TRASH,
+                message.isScheduled
             )
         )
         message.addLabels(listOf(newLocationString))
@@ -536,7 +541,8 @@ class MessageRepository @Inject constructor(
      */
     private suspend fun getLabelIdsToRemoveOnMoveToFolderAction(
         labelIds: List<String>,
-        isTrashAction: Boolean
+        isTrashAction: Boolean,
+        isScheduled: Boolean
     ): List<String> {
         return labelIds.filter { labelId ->
             val isLabelExclusive = if (labelId.length > MAX_LABEL_ID_LENGTH) {
@@ -544,6 +550,11 @@ class MessageRepository @Inject constructor(
             } else {
                 labelId != MessageLocationType.STARRED.asLabelIdString()
             }
+
+            if (isScheduled) return@filter labelId !in arrayOf(
+                MessageLocationType.ALL_DRAFT.asLabelIdString(),
+                MessageLocationType.ALL_MAIL.asLabelIdString()
+            )
 
             if (isTrashAction) return@filter labelId !in arrayOf(
                 MessageLocationType.ALL_DRAFT.asLabelIdString(),
@@ -559,4 +570,9 @@ class MessageRepository @Inject constructor(
             )
         }
     }
+
+    fun observeMessagesCountByLocationFromDatabase(userId: UserId, location: String): Flow<Int> =
+        databaseProvider
+            .provideMessageDao(userId)
+            .observeMessagesCountByLocation(location)
 }

@@ -283,7 +283,7 @@
     <string name="no_subject">Enviar mensagem sem assunto?</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
-    <string name="okay">Ok</string>
+    <string name="ok">Ok</string>
     <string name="forward_prefix">En:</string>
     <string name="original_message_divider">-------- Mensagem Original --------</string>
     <string name="invalid_email_address">O endereço \'%s\' é inválido</string>

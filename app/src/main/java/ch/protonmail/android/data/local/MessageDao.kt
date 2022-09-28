@@ -85,9 +85,9 @@ abstract class MessageDao : BaseDao<Message>() {
     )
     abstract suspend fun getMessageIdsByLabelId(label: String): List<String>
 
-    fun observeMessages(label: String, unread: Boolean? = null): Flow<List<Message>> =
-        if (unread == null) observeMessages(label)
-        else observeMessagesWithUnreadStatus(label, unread)
+    fun observeMessages(label: String, unread: Boolean? = null, newestFirst: Boolean = true): Flow<List<Message>> =
+        if (unread == null) observeMessages(label, newestFirst)
+        else observeMessagesWithUnreadStatus(label, unread, newestFirst)
 
     /**
      * Since we have decided to use this query to also retrieve messages that are SENT now the query looks for the
@@ -105,11 +105,13 @@ abstract class MessageDao : BaseDao<Message>() {
           OR $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
           OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
           OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%')
-        ORDER BY $COLUMN_MESSAGE_TIME DESC
+        ORDER BY 
+          CASE WHEN :newestFirst THEN $COLUMN_MESSAGE_TIME END DESC,
+          CASE WHEN NOT :newestFirst THEN $COLUMN_MESSAGE_TIME END ASC
     """
     )
     @Transaction
-    protected abstract fun observeMessages(label: String): Flow<List<Message>>
+    protected abstract fun observeMessages(label: String, newestFirst: Boolean = true): Flow<List<Message>>
 
     /**
      * Since we have decided to use this query to also retrieve messages that are SENT now the query looks for the
@@ -129,11 +131,25 @@ abstract class MessageDao : BaseDao<Message>() {
           OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%')
         AND
           $COLUMN_MESSAGE_UNREAD = :unread
-        ORDER BY $COLUMN_MESSAGE_TIME DESC
+        ORDER BY 
+          CASE WHEN :newestFirst THEN $COLUMN_MESSAGE_TIME END DESC,
+          CASE WHEN NOT :newestFirst THEN $COLUMN_MESSAGE_TIME END ASC
     """
     )
     @Transaction
-    protected abstract fun observeMessagesWithUnreadStatus(label: String, unread: Boolean): Flow<List<Message>>
+    protected abstract fun observeMessagesWithUnreadStatus(
+        label: String, unread: Boolean, newestFirst: Boolean = true
+    ): Flow<List<Message>>
+
+    @Query(
+        """SELECT COUNT($COLUMN_MESSAGE_ID) 
+            FROM $TABLE_MESSAGES 
+            WHERE ($COLUMN_MESSAGE_LABELS LIKE :location
+              OR $COLUMN_MESSAGE_LABELS LIKE :location || ';%' 
+              OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :location
+              OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :location || ';%')"""
+    )
+    abstract fun observeMessagesCountByLocation(location: String): Flow<Int>
 
     fun findMessageById(messageId: String): Flow<Message?> = findMessageInfoById(messageId)
         .onEach { message ->

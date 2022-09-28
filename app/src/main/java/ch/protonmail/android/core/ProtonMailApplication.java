@@ -324,7 +324,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
                     tv.setMaxLines(4);
                     tv.setTextColor(getResources().getColor(R.color.icon_purple));
-                    apiOfflineSnackBar.setAction(getString(R.string.okay), v -> {
+                    apiOfflineSnackBar.setAction(getString(R.string.ok), v -> {
                         if (apiOfflineSnackBar != null) {
                             apiOfflineSnackBar.dismiss();
                         }

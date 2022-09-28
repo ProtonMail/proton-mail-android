@@ -283,7 +283,7 @@
     <string name="no_subject">İleti, konu olmadan gönderilsin mi?</string>
     <string name="yes">Evet</string>
     <string name="no">Hayır</string>
-    <string name="okay">Tamam</string>
+    <string name="ok">Tamam</string>
     <string name="forward_prefix">İlt:</string>
     <string name="original_message_divider">-------- Özgün ileti --------</string>
     <string name="invalid_email_address">\'%s\' adresi geçersiz</string>

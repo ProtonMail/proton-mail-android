@@ -119,6 +119,7 @@ internal sealed class DrawerItemUiModel {
                 ALL_DRAFTS(MessageLocationType.ALL_DRAFT.messageLocationTypeValue, DrawerOptionType.ALL_DRAFTS),
                 SENT(MessageLocationType.SENT.messageLocationTypeValue, DrawerOptionType.SENT),
                 ALL_SENT(MessageLocationType.ALL_SENT.messageLocationTypeValue, DrawerOptionType.ALL_SENT),
+                SCHEDULED(MessageLocationType.ALL_SCHEDULED.messageLocationTypeValue, DrawerOptionType.SCHEDULED),
                 ARCHIVE(MessageLocationType.ARCHIVE.messageLocationTypeValue, DrawerOptionType.ARCHIVE),
                 TRASH(MessageLocationType.TRASH.messageLocationTypeValue, DrawerOptionType.TRASH),
                 SPAM(MessageLocationType.SPAM.messageLocationTypeValue, DrawerOptionType.SPAM),

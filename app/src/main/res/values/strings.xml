@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">Folder with children icon</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">Scheduled</string>
     <string name="drawer_contacts">Contacts</string>
     <string name="drawer_lock_the_app">Lock the app</string>
     <string name="drawer_report_bug">Report bug</string>
@@ -71,6 +72,11 @@
     <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
+
+    <string name="scheduled_message_info">This message will be sent on %s</string>
+    <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
+    <string name="scheduled_message_moved_to_trash_title">Message will not be sent</string>
+    <string name="scheduled_message_moved_to_trash_desc">Moving this message to trash will cancel its schedule.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -284,7 +290,7 @@
     <string name="no_subject">Send message without subject?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="okay">Okay</string>
+    <string name="ok">OK</string>
     <string name="reply_prefix" translatable="false">Re:</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Original Message --------</string>

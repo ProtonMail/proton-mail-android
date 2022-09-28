@@ -55,6 +55,14 @@ class LaunchInitialDataFetch @Inject constructor(
             null,
             false
         )
+        MessagesService.startFetchFirstPage(
+            context,
+            userId,
+            Constants.MessageLocationType.ALL_SCHEDULED,
+            shouldRefreshDetails,
+            null,
+            false
+        )
         fetchMailSettingsWorker.enqueue()
 
         if (shouldRefreshContacts) {

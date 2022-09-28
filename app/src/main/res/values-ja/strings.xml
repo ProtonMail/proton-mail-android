@@ -279,7 +279,7 @@
     <string name="no_subject">件名なしでメッセージを送りますか？</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
-    <string name="okay">OK</string>
+    <string name="ok">OK</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">---元のメッセージ---</string>
     <string name="invalid_email_address">\'%s\' は無効です。</string>

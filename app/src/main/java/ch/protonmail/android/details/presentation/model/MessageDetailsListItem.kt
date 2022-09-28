@@ -41,6 +41,7 @@ sealed class MessageDetailsListItem(
         val showOpenInProtonCalendar: Boolean,
         val showLoadEmbeddedImagesButton: Boolean,
         val showDecryptionError: Boolean,
+        val showScheduledInfo: Boolean,
         val embeddedImageIds: List<String> = emptyList()
     ) : MessageDetailsListItem(TYPE_ITEM)
 }

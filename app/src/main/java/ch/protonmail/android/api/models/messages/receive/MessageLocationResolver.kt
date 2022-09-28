@@ -44,6 +44,11 @@ class MessageLocationResolver @Inject constructor(
             return Constants.MessageLocationType.ALL_MAIL
         }
 
+        if (labelIds.contains(Constants.MessageLocationType.ALL_SCHEDULED.messageLocationTypeValue.toString())
+        ) {
+            return Constants.MessageLocationType.ALL_SCHEDULED
+        }
+
         val validLocations: List<Int> = listOf(
             Constants.MessageLocationType.INBOX.messageLocationTypeValue,
             Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue,
@@ -52,7 +57,7 @@ class MessageLocationResolver @Inject constructor(
             Constants.MessageLocationType.SPAM.messageLocationTypeValue,
             Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue,
             Constants.MessageLocationType.SENT.messageLocationTypeValue,
-            Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
+            Constants.MessageLocationType.DRAFT.messageLocationTypeValue
         )
 
         val shortLabels = labelIds.filter { it.length <= 2 }

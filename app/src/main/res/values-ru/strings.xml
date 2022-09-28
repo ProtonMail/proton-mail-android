@@ -291,7 +291,7 @@
     <string name="no_subject">Отправить сообщение без темы?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-    <string name="okay">Хорошо</string>
+    <string name="ok">Хорошо</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Исходное сообщение --------</string>
     <string name="invalid_email_address">Адрес \'%s\' недействителен</string>

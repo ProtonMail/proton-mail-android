@@ -46,6 +46,7 @@ import ch.protonmail.android.mailbox.presentation.viewmodel.MailboxViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -84,11 +85,13 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         val doesConversationHaveMoreThanOneMessage =
             arguments?.getBoolean(EXTRA_ARG_CONVERSATION_HAS_MORE_THAN_ONE_MESSAGE) ?: true
 
+        val isScheduled = arguments?.getBoolean(EXTRA_ARG_IS_SCHEDULED) ?: false
+
         Timber.v("MessageActionSheet for location: $messageLocation")
         val binding = FragmentMessageActionSheetBinding.inflate(inflater)
 
         viewModel.stateFlow
-            .onEach { updateViewState(it, binding) }
+            .onEach { updateViewState(isScheduled, it, binding) }
             .launchIn(lifecycleScope)
 
         viewModel.setupViewState(
@@ -101,7 +104,11 @@ class MessageActionSheet : BottomSheetDialogFragment() {
 
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
         setupReplyActionsBindings(
-            binding.includeLayoutActionSheetButtons, actionsTarget, messageIds, doesConversationHaveMoreThanOneMessage
+            binding.includeLayoutActionSheetButtons,
+            actionsTarget,
+            messageIds,
+            isScheduled,
+            doesConversationHaveMoreThanOneMessage
         )
         setupMoreSectionBindings(binding, actionsTarget, messageIds)
         actionSheetHeader = binding.actionSheetHeaderDetailsActions
@@ -159,13 +166,14 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun updateViewState(
+        isScheduled: Boolean,
         state: MessageActionSheetState,
         binding: FragmentMessageActionSheetBinding
     ) {
         when (state) {
             is MessageActionSheetState.Data -> {
                 setupManageSectionBindings(binding, state.manageSectionState)
-                setupMoveSectionState(binding, state.moveSectionState)
+                setupMoveSectionState(isScheduled, binding, state.moveSectionState)
             }
             MessageActionSheetState.Initial -> {
             }
@@ -195,14 +203,17 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         binding: LayoutMessageDetailsActionsSheetButtonsBinding,
         actionsTarget: ActionSheetTarget,
         messageIds: List<String>,
+        isScheduled: Boolean,
         doesConversationHaveMoreThanOneMessage: Boolean
     ) {
         with(binding) {
-            layoutDetailsActions.isVisible = actionsTarget in listOf(
-                ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN,
-                ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
-            ) || actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN &&
-                !doesConversationHaveMoreThanOneMessage
+            layoutDetailsActions.isVisible = !isScheduled && (
+                actionsTarget in listOf(
+                    ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN,
+                    ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+                ) || actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN &&
+                    !doesConversationHaveMoreThanOneMessage
+                )
 
             textViewDetailsActionsReply.setOnClickListener {
                 (activity as? MessageDetailsActivity)?.executeMessageAction(
@@ -291,6 +302,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun setupMoveSectionState(
+        isScheduled: Boolean,
         binding: FragmentMessageActionSheetBinding,
         state: MessageActionSheetState.MoveSectionState
     ) {
@@ -311,7 +323,17 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         binding.textViewDetailsActionsTrash.apply {
             isVisible = state.showMoveToTrashAction
             setOnClickListener {
-                viewModel.moveToTrash(messageIds, currentLocation)
+                if (isScheduled) {
+                    context.showTwoButtonInfoDialog(
+                        titleStringId = R.string.scheduled_message_moved_to_trash_title,
+                        messageStringId = R.string.scheduled_message_moved_to_trash_desc,
+                        negativeStringId = R.string.cancel,
+                        onPositiveButtonClicked = {
+                            viewModel.moveToTrash(messageIds, currentLocation)
+                        }
+                    )
+                } else
+                    viewModel.moveToTrash(messageIds, currentLocation)
             }
         }
 
@@ -486,6 +508,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         private const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
         private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
         const val EXTRA_ARG_IS_STARRED = "arg_extra_is_stared"
+        const val EXTRA_ARG_IS_SCHEDULED = "arg_extra_is_scheduled"
         private const val EXTRA_ARG_CONVERSATION_HAS_MORE_THAN_ONE_MESSAGE =
             "arg_conversation_has_more_than_one_message"
         private const val HEADER_SLIDE_THRESHOLD = 0.8f
@@ -510,7 +533,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             title: CharSequence,
             subTitle: String? = null,
             isStarred: Boolean = false,
-            doesConversationHaveMoreThanOneMessage: Boolean = true
+            isScheduled: Boolean = false,
+            doesConversationHaveMoreThanOneMessage: Boolean = true,
         ): MessageActionSheet {
             return MessageActionSheet().apply {
                 arguments = bundleOf(
@@ -518,6 +542,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     EXTRA_ARG_TITLE to title,
                     EXTRA_ARG_SUBTITLE to subTitle,
                     EXTRA_ARG_IS_STARRED to isStarred,
+                    EXTRA_ARG_IS_SCHEDULED to isScheduled,
                     EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentFolderLocationId,
                     EXTRA_ARG_MAILBOX_LABEL_ID to mailboxLabelId,
                     EXTRA_ARG_ACTION_TARGET to actionSheetTarget,

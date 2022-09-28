@@ -451,7 +451,7 @@ internal class MailboxActivity :
                 showTwoButtonInfoDialog(
                     titleStringId = R.string.storage_limit_warning_title,
                     messageStringId = R.string.storage_limit_reached_text,
-                    positiveStringId = R.string.okay,
+                    positiveStringId = R.string.ok,
                     negativeStringId = R.string.learn_more,
                     onNegativeButtonClicked = {
                         val browserIntent = Intent(
@@ -737,7 +737,8 @@ internal class MailboxActivity :
     override fun onResume() {
         super.onResume()
         if (userManager.currentUserId != null &&
-            !defaultSharedPreferences.getBoolean(PREF_NEW_USER_ONBOARDING_SHOWN, false)) {
+            !defaultSharedPreferences.getBoolean(PREF_NEW_USER_ONBOARDING_SHOWN, false)
+        ) {
             startActivity(Intent(this, NewUserOnboardingActivity::class.java))
         }
 
@@ -782,13 +783,13 @@ internal class MailboxActivity :
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-                MessageLocationType.DRAFT,
-                MessageLocationType.ALL_DRAFT,
-                MessageLocationType.SPAM,
-                MessageLocationType.TRASH,
-                MessageLocationType.LABEL,
-                MessageLocationType.LABEL_FOLDER
-            )
+            MessageLocationType.DRAFT,
+            MessageLocationType.ALL_DRAFT,
+            MessageLocationType.SPAM,
+            MessageLocationType.TRASH,
+            MessageLocationType.LABEL,
+            MessageLocationType.LABEL_FOLDER
+        )
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -875,6 +876,7 @@ internal class MailboxActivity :
             MessageLocationType.TRASH -> R.string.trash_option
             MessageLocationType.SPAM -> R.string.spam_option
             MessageLocationType.ALL_MAIL -> R.string.allmail_option
+            MessageLocationType.ALL_SCHEDULED -> R.string.drawer_scheduled
             else -> R.string.app_name
         }
         supportActionBar?.setTitle(titleRes)
@@ -1059,22 +1061,18 @@ internal class MailboxActivity :
                     actionMode?.finish()
                 }
             } else {
-                undoSnack = showUndoSnackbar(
-                    this@MailboxActivity,
-                    findViewById(R.id.drawer_layout),
-                    resources.getQuantityString(R.plurals.action_move_to_trash, messageIds.size),
-                    { },
-                    false
-                ).apply { anchorView = mailboxActionsView }
-                undoSnack!!.show()
-                mailboxViewModel.moveToFolder(
-                    messageIds,
-                    UserId(userManager.requireCurrentUserId().id),
-                    currentMailboxLocation,
-                    MessageLocationType.TRASH.messageLocationTypeValue.toString()
-                )
-
-                if (currentMailboxLocation != MessageLocationType.ALL_MAIL) actionMode?.finish()
+                if (isScheduledMessageSelected()) {
+                    showTwoButtonInfoDialog(
+                        titleStringId = R.string.scheduled_message_moved_to_trash_title,
+                        messageStringId = R.string.scheduled_message_moved_to_trash_desc,
+                        negativeStringId = R.string.cancel,
+                        onPositiveButtonClicked = {
+                            moveMessagesToTrashFolder(messageIds)
+                        }
+                    )
+                } else {
+                    moveMessagesToTrashFolder(messageIds)
+                }
             }
         }
         mailboxActionsView.setOnThirdActionClickListener {
@@ -1091,6 +1089,7 @@ internal class MailboxActivity :
     }
 
     private fun getSelectedMessageIds(): List<String> = selectedMessages.map { it.messageId }
+    private fun isScheduledMessageSelected(): Boolean = selectedMessages.any { it.isScheduled }
 
     private fun showActionSheet(
         messagesIds: List<String>,
@@ -1111,7 +1110,8 @@ internal class MailboxActivity :
                 messagesStringRes,
                 messagesIds.size,
                 messagesIds.size
-            )
+            ),
+            isScheduled = isScheduledMessageSelected()
         )
             .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
     }
@@ -1135,6 +1135,25 @@ internal class MailboxActivity :
             actionSheetTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
         )
             .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
+    }
+
+    private fun moveMessagesToTrashFolder(messageIds: List<String>) {
+        undoSnack = showUndoSnackbar(
+            this@MailboxActivity,
+            findViewById(R.id.drawer_layout),
+            resources.getQuantityString(R.plurals.action_move_to_trash, messageIds.size),
+            { },
+            false
+        ).apply { anchorView = mailboxActionsView }
+        undoSnack!!.show()
+        mailboxViewModel.moveToFolder(
+            messageIds,
+            UserId(userManager.requireCurrentUserId().id),
+            currentMailboxLocation,
+            MessageLocationType.TRASH.messageLocationTypeValue.toString()
+        )
+
+        if (currentMailboxLocation != MessageLocationType.ALL_MAIL) actionMode?.finish()
     }
 
     /* SwipeRefreshLayout.OnRefreshListener */
@@ -1447,7 +1466,17 @@ internal class MailboxActivity :
                     currentLocationId
                 )
             } else {
-                mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, currentLocationId)
+                if (messageSwiped.isScheduled && swipeAction == SwipeAction.TRASH) {
+                    showTwoButtonInfoDialog(
+                        titleStringId = R.string.scheduled_message_moved_to_trash_title,
+                        messageStringId = R.string.scheduled_message_moved_to_trash_desc,
+                        negativeStringId = R.string.cancel,
+                        onPositiveButtonClicked = {
+                            mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, currentLocationId)
+                        }
+                    )
+                } else
+                    mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, currentLocationId)
             }
             if (undoSnack != null && undoSnack!!.isShownOrQueued) {
                 undoSnack!!.dismiss()
@@ -1466,7 +1495,7 @@ internal class MailboxActivity :
             ).apply { anchorView = mailboxActionsView }
             val isDraftLocation =
                 currentMailboxLocation in listOf(MessageLocationType.DRAFT, MessageLocationType.ALL_DRAFT)
-            if (!(swipeAction == SwipeAction.TRASH && isDraftLocation)) {
+            if (!(swipeAction == SwipeAction.TRASH && (isDraftLocation || messageSwiped.isScheduled))) {
                 undoSnack!!.show()
             }
             if (swipeCustomizeSnack != null && !customizeSwipeSnackShown) {

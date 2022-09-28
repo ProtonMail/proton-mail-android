@@ -283,7 +283,7 @@
     <string name="no_subject">Send besked uden emneindhold?</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
-    <string name="okay">OK</string>
+    <string name="ok">OK</string>
     <string name="forward_prefix">Vs:</string>
     <string name="original_message_divider">-------- Oprindelig besked --------</string>
     <string name="invalid_email_address">Adressen \'%s\' er ugyldig</string>

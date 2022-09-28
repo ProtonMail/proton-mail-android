@@ -102,6 +102,7 @@ const val COLUMN_MESSAGE_TIME = "Time"
 const val COLUMN_MESSAGE_TO_LIST = "ToList"
 const val COLUMN_MESSAGE_TYPE = "Type"
 const val COLUMN_MESSAGE_UNREAD = "Unread"
+const val COLUMN_MESSAGE_ORDER = "Order"
 
 @Entity(
     tableName = TABLE_MESSAGES,
@@ -211,7 +212,10 @@ data class Message @JvmOverloads constructor(
     var sender: MessageSender? = MessageSender(null, null),
 
     @ColumnInfo(name = COLUMN_MESSAGE_FLAGS, defaultValue = "0")
-    val flags: Long = 0
+    val flags: Long = 0,
+
+    @ColumnInfo(name = COLUMN_MESSAGE_ORDER, defaultValue = Long.MAX_VALUE.toString())
+    val order: Long = Long.MAX_VALUE
 
 ) : Serializable {
 
@@ -303,6 +307,11 @@ data class Message @JvmOverloads constructor(
             return user!!.addresses!!.any { it.email.equals(senderEmail, ignoreCase = true) }
         }
 
+    val isScheduled: Boolean
+        get() {
+            return allLabelIDs.contains(MessageLocationType.ALL_SCHEDULED.asLabelIdString())
+        }
+    
     fun locationFromLabel(labelRepository: LabelRepository? = null): Constants.MessageLocationType =
         MessageLocationResolver(labelRepository).resolveLocationFromLabels(allLabelIDs)
 

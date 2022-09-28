@@ -283,7 +283,7 @@
     <string name="no_subject">Skicka meddelande utan ämne?</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
-    <string name="okay">Okej</string>
+    <string name="ok">Okej</string>
     <string name="forward_prefix">Vb:</string>
     <string name="original_message_divider">-------- Originalmeddelande --------</string>
     <string name="invalid_email_address">Adressen \'%s\' är ogiltig</string>
