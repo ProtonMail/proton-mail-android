@@ -29,6 +29,10 @@ import ch.protonmail.android.domain.entity.user.UserKeys
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.crypto.TextDecryptionResult
 import com.proton.gopenpgp.armor.Armor
+import me.proton.core.crypto.common.keystore.EncryptedByteArray
+import me.proton.core.crypto.common.keystore.PlainByteArray
+import me.proton.core.crypto.common.keystore.decrypt
+import me.proton.core.crypto.common.keystore.encrypt
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -61,12 +65,13 @@ abstract class Crypto<K>(
 
     protected abstract val primaryKey: K?
 
-    protected val mailboxPassword get() = userManager.getUserPassphraseBlocking(userId)
+    protected val userPassphrase: EncryptedByteArray?
+        get() = userManager.getUserPassphraseBlocking(userId)
 
     /**
      * Return passphrase for decryption
      */
-    protected abstract val passphrase: ByteArray?
+    protected abstract val primaryPassphrase: EncryptedByteArray?
 
     /**
      * @return Non null [K]
@@ -76,21 +81,17 @@ abstract class Crypto<K>(
         checkNotNull(primaryKey) { "No primary key found" }
 
     @VisibleForTesting(otherwise = PROTECTED)
-    abstract fun passphraseFor(key: K): ByteArray?
+    abstract fun passphraseFor(key: K): EncryptedByteArray?
 
     protected abstract val K.privateKey: PgpField.PrivateKey
 
-    fun sign(data: ByteArray): String = openPgp.signBinDetached(
-        data,
-        requirePrimaryKey().privateKey.string,
-        passphrase
-    )
+    fun sign(data: ByteArray): String = primaryPassphrase.use {
+        openPgp.signBinDetached(data, requirePrimaryKey().privateKey.string, it)
+    }
 
-    fun sign(data: String): String = openPgp.signTextDetached(
-        data,
-        requirePrimaryKey().privateKey.string,
-        passphrase
-    )
+    fun sign(data: String): String = primaryPassphrase.use {
+        openPgp.signTextDetached(data, requirePrimaryKey().privateKey.string, it)
+    }
 
     /**
      * Encrypt for Message or Contact
@@ -98,15 +99,9 @@ abstract class Crypto<K>(
     fun encrypt(text: String, sign: Boolean): CipherText {
         val publicKey = buildArmoredPublicKey(requirePrimaryKey().privateKey)
         val privateKey = requirePrimaryKey().takeIf { sign }?.privateKey?.string
-        val keyPassphrase = passphraseFor(requirePrimaryKey())
-        val armored = openPgp.encryptMessage(
-            text,
-            publicKey,
-            privateKey,
-            keyPassphrase,
-            true
-        )
-        return CipherText(armored)
+        return passphraseFor(requirePrimaryKey()).use {
+            CipherText(openPgp.encryptMessage(text, publicKey, privateKey, it, true))
+        }
     }
 
     /**
@@ -119,14 +114,10 @@ abstract class Crypto<K>(
      */
     fun decrypt(message: CipherText, publicKeys: List<ByteArray>, time: Long): TextDecryptionResult {
         return withCurrentKeys("Error decrypting message") { key ->
-            val unarmored = Armor.unarmor(key.privateKey.string)
-            openPgp.decryptMessageVerifyBinKeyPrivbinkeys(
-                message.armored,
-                publicKeys,
-                listOf(unarmored),
-                passphraseFor(key),
-                time
-            )
+            val privateKeys = listOf(Armor.unarmor(key.privateKey.string))
+            passphraseFor(key).use {
+                openPgp.decryptMessageVerifyBinKeyPrivbinkeys(message.armored, publicKeys, privateKeys, it, time)
+            }
         }
     }
 
@@ -163,6 +154,20 @@ abstract class Crypto<K>(
             "${messagePrefix}There is no valid decryption key, currentKeys size: ${currentKeys.size}"
         )
     }
+
+    /**
+     * Decrypt the [EncryptedByteArray], executes the given block function on decrypted [PlainByteArray]
+     * and then clear it whether an exception is thrown or not.
+     */
+    protected fun <V> EncryptedByteArray?.use(block: (ByteArray?) -> V): V =
+        if (this == null) block.invoke(null)
+        else decrypt(userManager.keyStoreCrypto).use { decrypted -> block.invoke(decrypted.array) }
+
+    /**
+     * Encrypt the [ByteArray] and then clear it whether an exception is thrown or not.
+     */
+    protected fun ByteArray.encrypt(): EncryptedByteArray =
+        PlainByteArray(this).use { it.encrypt(userManager.keyStoreCrypto) }
 
     companion object {
 

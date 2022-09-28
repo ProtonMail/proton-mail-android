@@ -20,7 +20,6 @@ package ch.protonmail.android.crypto
 
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.PgpField
-import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.UserKey
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.utils.crypto.OpenPGP
@@ -28,6 +27,7 @@ import ch.protonmail.android.utils.crypto.TextDecryptionResult
 import com.proton.gopenpgp.armor.Armor
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import me.proton.core.crypto.common.keystore.EncryptedByteArray
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import java.util.Arrays
@@ -44,14 +44,14 @@ class UserCrypto @AssistedInject constructor(
     override val primaryKey: UserKey?
         get() = userKeys.primaryKey
 
-    override val passphrase: ByteArray?
-        get() = mailboxPassword
+    override val primaryPassphrase: EncryptedByteArray?
+        get() = userPassphrase
 
     @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
     override val UserKey.privateKey: PgpField.PrivateKey
         get() = privateKey
 
-    override fun passphraseFor(key: UserKey): ByteArray? = passphrase
+    override fun passphraseFor(key: UserKey): EncryptedByteArray? = primaryPassphrase
 
     fun verify(data: String, signature: String): TextDecryptionResult {
         val valid = openPgp.verifyTextSignDetachedBinKey(signature, data, getVerificationKeys(), openPgp.time)
@@ -69,13 +69,15 @@ class UserCrypto @AssistedInject constructor(
 
     fun decryptMessage(message: String): TextDecryptionResult {
         val errorMessage = "Error decrypting message, invalid passphrase"
-        checkNotNull(mailboxPassword) { errorMessage }
+        checkNotNull(userPassphrase) { errorMessage }
 
         return withCurrentKeys("Error decrypting message") { key ->
             val cipherText = CipherText(message)
             val unarmored = Armor.unarmor(key.privateKey.string)
-            val decrypted = openPgp.decryptMessageBinKey(cipherText.armored, unarmored, mailboxPassword)
-            TextDecryptionResult(decrypted, false, false)
+            userPassphrase.use {
+                val decrypted = openPgp.decryptMessageBinKey(cipherText.armored, unarmored, it)
+                TextDecryptionResult(decrypted, false, false)
+            }
         }
     }
 
@@ -91,9 +93,6 @@ class UserCrypto @AssistedInject constructor(
             KeyInformation.EMPTY()
         }
     }
-
-    fun isAllowedForSending(key: AddressKey): Boolean =
-        openPgp.checkPassphrase(key.privateKey.string, mailboxPassword)
 
     @AssistedInject.Factory
     interface AssistedFactory {

@@ -76,6 +76,7 @@ import ch.protonmail.android.feature.user.UserManagerKt;
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.usecase.LoadUser;
+import me.proton.core.crypto.common.keystore.EncryptedByteArray;
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto;
 import me.proton.core.domain.entity.UserId;
 import me.proton.core.network.domain.ApiException;
@@ -96,7 +97,7 @@ public class User {
     private int credit;
     private int isPrivate;
     private int services;
-    private byte[] passphrase;
+    private EncryptedByteArray passphrase;
 
     private List<Keys> keys;
     private List<Address> addresses;
@@ -184,7 +185,7 @@ public class User {
         user.defaultAddressEmail = primaryAddress.getEmail();
         user.addresses = addresses;
 
-        user.passphrase = UserManagerKt.getMailboxPassword(coreUser, keyStoreCrypto);
+        user.passphrase = UserManagerKt.getUserPassphrase(coreUser);
 
         loadLocalSettings(user, securePrefs);
 
@@ -412,7 +413,8 @@ public class User {
         return services;
     }
 
-    public byte[] getPassphrase() {
+    @Nullable
+    public EncryptedByteArray getPassphrase() {
         return passphrase;
     }
 

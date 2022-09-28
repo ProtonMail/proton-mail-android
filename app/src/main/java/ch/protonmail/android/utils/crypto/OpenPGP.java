@@ -19,6 +19,7 @@
 package ch.protonmail.android.utils.crypto;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.proton.gopenpgp.armor.Armor;
 import com.proton.gopenpgp.constants.Constants;
@@ -51,7 +52,12 @@ public class OpenPGP {
 
     public byte[] decryptAttachmentBinKey(byte[] keyPacket, byte[] dataPacket, List<byte[]> privateKeys, byte[] passphrase) throws Exception {
         KeyRing privateKeyRing = buildPrivateKeyRing(privateKeys, passphrase);
-        return Helper.decryptAttachment(keyPacket, dataPacket, privateKeyRing).getData();
+        try {
+            byte[] data = Helper.decryptAttachment(keyPacket, dataPacket, privateKeyRing).getData();
+            return data;
+        } finally {
+            privateKeyRing.clearPrivateParams();
+        }
     }
 
     public String decryptMessage(String encryptedText, String privateKey, byte[] passphrase) throws Exception {
@@ -82,9 +88,12 @@ public class OpenPGP {
         } catch (Exception e) {
             System.out.println("2 -> " + e.getMessage());
         }
-        ExplicitVerifyMessage verify = Helper.decryptExplicitVerify(new PGPMessage(encryptedText), privateKeyRing, verifierKeyRing, verifyTime);
-
-        return new TextDecryptionResult(verify.getMessage().getString(), verify.getSignatureVerificationError() != null ? verify.getSignatureVerificationError().getStatus() : Constants.SIGNATURE_OK);
+        try {
+            ExplicitVerifyMessage verify = Helper.decryptExplicitVerify(new PGPMessage(encryptedText), privateKeyRing, verifierKeyRing, verifyTime);
+            return new TextDecryptionResult(verify.getMessage().getString(), verify.getSignatureVerificationError() != null ? verify.getSignatureVerificationError().getStatus() : Constants.SIGNATURE_OK);
+        } finally {
+            if (privateKeyRing != null) privateKeyRing.clearPrivateParams();
+        }
     }
 
     public String encryptMessage(String plainText, String publicKey, String privateKey, byte[] passphrase, boolean trim) throws Exception {
@@ -117,12 +126,22 @@ public class OpenPGP {
 
     public String signBinDetached(byte[] plainData, String privateKey, byte[] passphrase) throws Exception {
         KeyRing privateKeyRing = buildPrivateKeyRingArmored(privateKey, passphrase);
-        return privateKeyRing.signDetached(new PlainMessage(plainData)).getArmored();
+        try {
+            String armored = privateKeyRing.signDetached(new PlainMessage(plainData)).getArmored();
+            return armored;
+        } finally {
+            privateKeyRing.clearPrivateParams();
+        }
     }
 
     public String signTextDetached(String plainText, String privateKey, byte[] passphrase) throws Exception {
         KeyRing privateKeyRing = buildPrivateKeyRingArmored(privateKey, passphrase);
-        return privateKeyRing.signDetached(new PlainMessage(plainText)).getArmored();
+        try {
+            String armored = privateKeyRing.signDetached(new PlainMessage(plainText)).getArmored();
+            return armored;
+        } finally {
+            privateKeyRing.clearPrivateParams();
+        }
     }
 
     public String updatePrivateKeyPassphrase(String privateKey, byte[] oldPassphrase, byte[] newPassphrase) throws Exception {
@@ -135,24 +154,42 @@ public class OpenPGP {
 
     public boolean verifyBinSignDetachedBinKey(String signature, byte[] plainData, List<byte[]> publicKeys, long verifyTime) throws Exception {
         KeyRing signingKeyRing = buildKeyRing(publicKeys);
-        signingKeyRing.verifyDetached(new PlainMessage(plainData), new PGPSignature(signature), verifyTime);
-        return true;
+        try {
+            signingKeyRing.verifyDetached(new PlainMessage(plainData), new PGPSignature(signature), verifyTime);
+            return true;
+        } finally {
+            signingKeyRing.clearPrivateParams();
+        }
     }
 
     public boolean verifyTextSignDetached(String signature, String plainText, String publicKey, long verifyTime) throws Exception {
         KeyRing signingKeyRing = buildKeyRingArmored(publicKey);
-        signingKeyRing.verifyDetached(new PlainMessage(plainText), new PGPSignature(signature), verifyTime);
-        return true;
+        try {
+            signingKeyRing.verifyDetached(new PlainMessage(plainText), new PGPSignature(signature), verifyTime);
+            return true;
+        } finally {
+            signingKeyRing.clearPrivateParams();
+        }
     }
 
     public boolean verifyTextSignDetachedBinKey(String signature, String plainText, List<byte[]> publicKeys, long verifyTime) throws Exception {
         KeyRing signingKeyRing = buildKeyRing(publicKeys);
-        signingKeyRing.verifyDetached(new PlainMessage(plainText), new PGPSignature(signature), verifyTime);
-        return true;
+        try {
+            signingKeyRing.verifyDetached(new PlainMessage(plainText), new PGPSignature(signature), verifyTime);
+            return true;
+        } finally {
+            signingKeyRing.clearPrivateParams();
+        }
     }
 
     public SessionKey getSessionFromKeyPacketBinkeys(byte[] keyPackage, byte[] privateKey, byte[] passphrase) throws Exception {
-        return buildPrivateKeyRing(privateKey, passphrase).decryptSessionKey(keyPackage);
+        KeyRing privateKeyRing = buildPrivateKeyRing(privateKey, passphrase);
+        try {
+            SessionKey sessionKey = privateKeyRing.decryptSessionKey(keyPackage);
+            return sessionKey;
+        } finally {
+            privateKeyRing.clearPrivateParams();
+        }
     }
 
     public byte[] keyPacketWithPublicKeyBin(SessionKey sessionSplit, byte[] publicKey) throws Exception {

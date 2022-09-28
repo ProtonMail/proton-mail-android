@@ -29,6 +29,8 @@ import ch.protonmail.android.utils.crypto.OpenPGP
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import me.proton.core.crypto.common.keystore.EncryptedByteArray
+import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
@@ -44,7 +46,7 @@ internal class CryptoTest {
     private val oneAddressKeyUserManagerMock: UserManager = mockk()
     private val manyAddressKeysUserManagerMock: UserManager = mockk()
     private val openPgp = OpenPGP()
-
+    private val keyStoreCrypto: KeyStoreCrypto = NoEncryptionKeyStoreCrypto
     private val openPgpMock: OpenPGP = mockk()
 
     //region One Address Key Setup
@@ -669,7 +671,7 @@ internal class CryptoTest {
 
     //region Token and Signature generation
     private val tokenAndSignatureUserId = UserId("token_and_sign")
-    private val passphrase = "7NgO4d0h72zt4XuFLOUbg352vhrn.tu".toByteArray()
+    private val passphrase = EncryptedByteArray("7NgO4d0h72zt4XuFLOUbg352vhrn.tu".toByteArray())
     private val randomTokenString = "9efb6173a8da137e7ead1a9d2b6ada0f707a19156dee0c84899761fee73e556a"
     private val randomToken =
         randomTokenString.chunked(2).map {
@@ -720,7 +722,9 @@ internal class CryptoTest {
         mockkStatic(TextUtils::class)
 
         every { oneAddressKeyUserManagerMock.openPgp } returns openPgp
+        every { oneAddressKeyUserManagerMock.keyStoreCrypto } returns keyStoreCrypto
         every { manyAddressKeysUserManagerMock.openPgp } returns openPgp
+        every { manyAddressKeysUserManagerMock.keyStoreCrypto } returns keyStoreCrypto
 
         // one address key
         /*
@@ -733,7 +737,7 @@ internal class CryptoTest {
             oneAddressKeyUserManagerMock.getUserPassphraseBlocking(
                 oneAddressKeyUserId
             )
-        } returns oneAddressKeyMailboxPassword.toByteArray()
+        } returns EncryptedByteArray(oneAddressKeyMailboxPassword.toByteArray())
 
         // many address keys
         /*
@@ -746,7 +750,7 @@ internal class CryptoTest {
             manyAddressKeysUserManagerMock.getUserPassphraseBlocking(
                 manyAddressKeysUserId
             )
-        } returns manyAddressKeysMailboxPassword.toByteArray()
+        } returns EncryptedByteArray(manyAddressKeysMailboxPassword.toByteArray())
 
         // token and signature generation
         every { oneAddressKeyUserManagerMock.currentUserId } returns tokenAndSignatureUserId
