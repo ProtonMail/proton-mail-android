@@ -77,8 +77,7 @@ public abstract class AbstractEmbeddedImagesThread extends AsyncTask<Void, Void,
                 int size = (int) file.length();
                 byte[] bytes = new byte[size];
                 boolean success = false;
-                try {
-                    BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+                try (FileInputStream in = new FileInputStream(file); BufferedInputStream buf = new BufferedInputStream(in)) {
                     buf.read(bytes, 0, bytes.length);
                     buf.close();
                     success = true;

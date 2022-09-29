@@ -93,16 +93,17 @@ public class AppUtil {
     public static byte[] getByteArray(@NonNull File file) throws IOException {
 
         final byte[] buffer = new byte[BUFFER_SIZE];
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try (InputStream in = new FileInputStream(file)) {
+        byte[] fileContent;
+        try (InputStream in = new FileInputStream(file); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             int read;
 
             while ((read = in.read(buffer)) != -1) {
                 out.write(buffer, 0, read);
             }
+            fileContent = out.toByteArray();
         }
 
-        return out.toByteArray();
+        return fileContent;
     }
 
     public static String buildUserAgent() {
@@ -130,10 +131,12 @@ public class AppUtil {
         File file;
         final byte[] buffer = new byte[BUFFER_SIZE];
         OutputStream out = null;
+        FileOutputStream fileOutputStream = null;
 
         try {
             file = File.createTempFile(DateUtil.generateTimestamp(), null, context.getCacheDir());
-            out = new BufferedOutputStream(new FileOutputStream(file));
+            fileOutputStream = new FileOutputStream(file);
+            out = new BufferedOutputStream(fileOutputStream);
             int read;
 
             while ((read = in.read(buffer)) != -1) {
@@ -144,6 +147,10 @@ public class AppUtil {
 
             if (out != null) {
                 out.close();
+            }
+
+            if (fileOutputStream != null) {
+                fileOutputStream.close();
             }
         }
 

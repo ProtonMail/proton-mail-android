@@ -42,8 +42,8 @@ public class FileUtils {
     @Deprecated(message = "Scheduled for deletion. Please use kolin serialization instead")
     public static String toString(Object value) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            new ObjectOutputStream(out).writeObject(value);
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(out)) {
+            objectOutputStream.writeObject(value);
         } catch (IOException e) {
             Timber.e(e, "Serialization of recipients failed ");
         }
