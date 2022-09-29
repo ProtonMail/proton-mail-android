@@ -37,14 +37,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.Formatter;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -742,8 +738,7 @@ public class ComposeMessageActivity
             addStringRecipientsToView(mailToData.getAddresses(), toRecipientView);
         } else {
             try {
-                ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
-                addStringRecipientsToView(emails, toRecipientView);
+                addRecipientsFromIntent(intent);
             } catch (Exception e) {
                 Timber.d(e, "Failed extracting recipients from the intent");
             }
@@ -778,16 +773,25 @@ public class ComposeMessageActivity
 
         } else {
             try {
-                ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
-                addStringRecipientsToView(emails, toRecipientView);
+                addRecipientsFromIntent(intent);
             } catch (Exception e) {
                 Timber.d(e, "Failed extracting recipients from the intent");
             }
         }
     }
 
+    private void addRecipientsFromIntent(Intent intent) {
+        String[] emails = intent.getStringArrayExtra(Intent.EXTRA_EMAIL);
+        addStringRecipientsToView(Arrays.asList(emails), toRecipientView);
+
+        String[] emailsCc = intent.getStringArrayExtra(Intent.EXTRA_CC);
+        addStringRecipientsToView(Arrays.asList(emailsCc), ccRecipientView);
+
+        String[] emailsBcc = intent.getStringArrayExtra(Intent.EXTRA_BCC);
+        addStringRecipientsToView(Arrays.asList(emailsBcc), bccRecipientView);
+    }
+
     private void handleSendSingleFile(Intent intent) {
-        SpannableStringBuilder contentToShareBuilder = new SpannableStringBuilder();
         Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 
         String sharedSubject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
@@ -799,16 +803,6 @@ public class ComposeMessageActivity
             String composerText = messageBodyEditText.getText().toString();
             String builder = sharedText + System.getProperty("line.separator") + composerText;
             messageBodyEditText.setText(builder);
-        }
-        String contentToShare = contentToShareBuilder.toString();
-        if (!TextUtils.isEmpty(contentToShare)) {
-            String composerText = messageBodyEditText.getText().toString();
-            String contentString = contentToShare + System.getProperty("line.separator") + composerText;
-            Spannable contentSpannable = new SpannableString(contentString);
-            Linkify.addLinks(contentSpannable, Linkify.ALL);
-            messageBodyEditText.setText(contentSpannable);
-            setRespondInlineVisibility(false);
-            composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
         }
         try {
             extractMailTo(intent);
