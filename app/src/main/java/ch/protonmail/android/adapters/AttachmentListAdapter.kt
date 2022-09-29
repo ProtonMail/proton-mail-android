@@ -33,8 +33,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.worker.DeleteAttachmentWorker
 import java.io.File
-import java.util.ArrayList
-import java.util.Comparator
 
 class AttachmentListAdapter(
     context: Context,
@@ -94,7 +92,9 @@ class AttachmentListAdapter(
 
         if (embeddedImageHeader != null && attachment.isEmbeddedImage) {
             embeddedImageHeader.visibility = View.VISIBLE
-            embeddedImageHeader.text = String.format(context.getString(R.string.inline_header), numberOfEmbeddedImages)
+            embeddedImageHeader.text = context.resources.getQuantityString(
+                R.plurals.inline_header, numberOfEmbeddedImages, numberOfEmbeddedImages
+            )
         } else if (embeddedImageHeader != null) {
             embeddedImageHeader.visibility = View.GONE
         }

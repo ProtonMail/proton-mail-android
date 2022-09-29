@@ -356,7 +356,6 @@
     <string name="pin_invalid">PIN is invalid, enter correct 4 digit PIN</string>
     <string name="pin_not_match">PIN does not match</string>
     <string name="new_pin_saved">New PIN saved</string>
-    <string name="new_emails">%d new emails</string>
     <string name="attachment_download_success">%s successfully downloaded to File Manager</string>
     <string name="attachment_download_failed">%s failed to download correctly</string>
     <string name="ringtone">Ringtone</string>
@@ -383,7 +382,10 @@
     <string name="upgrade">Upgrade</string>
     <string name="error">Error</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d Embedded Images</string>
+    <plurals name="inline_header">
+        <item quantity="one">%d Embedded Image</item>
+        <item quantity="other">%d Embedded Images</item>
+    </plurals>
     <string name="warning">Warning</string>
     <string name="available_addresses">Available Addresses</string>
     <string name="inactive_addresses">Inactive Addresses</string>
@@ -614,7 +616,10 @@
     <string name="tab_contact_groups">Groups (%d)</string>
     <string name="contact_group_saved">Group saved</string>
     <string name="no_recipients">No Recipients</string>
-    <string name="contact_group_selected">%d Selected</string>
+    <plurals name="contact_group_selected">
+        <item quantity="one">%d Selected</item>
+        <item quantity="other">%d Selected</item>
+    </plurals>
     <string name="paid_plan_needed">Please upgrade to a paid plan for these premium features</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Members)</string>
     <plurals name="are_you_sure_delete_group">

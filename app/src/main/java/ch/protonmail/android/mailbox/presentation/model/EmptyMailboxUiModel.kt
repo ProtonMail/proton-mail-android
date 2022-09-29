@@ -54,7 +54,7 @@ data class EmptyMailboxUiModel(
                 )
                 else -> EmptyMailboxUiModel(
                     titleRes = R.string.mailbox_no_messages,
-                    subtitleRes = R.string.empty_folder,
+                    subtitleRes = R.string.mailbox_empty_folder_subtitle,
                     imageRes = R.drawable.img_empty_folder
                 )
             }
