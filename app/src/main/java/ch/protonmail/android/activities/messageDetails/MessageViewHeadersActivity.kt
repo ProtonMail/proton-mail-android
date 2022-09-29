@@ -46,7 +46,7 @@ class MessageViewHeadersActivity : BaseActivity() {
         viewHeadersText.text = intent.getStringExtra(EXTRA_VIEW_HEADERS)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.share_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }

@@ -150,7 +150,7 @@ class ContactsListViewModel(
         private val androidContactsDetailsRepositoryFactory: AndroidContactDetailsRepository.AssistedFactory,
         private val contactsListMapper: ContactsListMapper,
         private val moveMessagesToFolder: MoveMessagesToFolder
-    ) : ViewModelProvider.Factory {
+    ) : ViewModelProvider.NewInstanceFactory() {
 
         lateinit var loaderManager: LoaderManager
 

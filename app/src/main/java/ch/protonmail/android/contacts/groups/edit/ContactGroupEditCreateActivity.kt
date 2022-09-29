@@ -48,8 +48,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.presentation.utils.onTextChange
 import me.proton.core.util.kotlin.EMPTY_STRING
-import java.util.ArrayList
-import java.util.HashSet
 import java.util.Random
 import javax.inject.Inject
 
@@ -125,7 +123,7 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         ProtonMailApplication.getApplication().bus.unregister(this)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.done_menu, menu)
         return true
     }
