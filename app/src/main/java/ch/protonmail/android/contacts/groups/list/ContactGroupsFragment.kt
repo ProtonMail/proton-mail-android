@@ -245,7 +245,8 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
             listener.setTitle(getString(R.string.contacts))
             actionMode?.finish()
         } else {
-            actionMode?.title = String.format(getString(R.string.contact_group_selected), checkedItemsCount)
+            actionMode?.title =
+                resources.getQuantityString(R.plurals.contact_group_selected, checkedItemsCount, checkedItemsCount)
         }
 
         contactGroupsAdapter.submitList(updatedItems) {

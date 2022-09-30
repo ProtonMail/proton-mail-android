@@ -451,7 +451,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
             actionMode?.finish()
         } else {
             actionMode?.title =
-                String.format(getString(R.string.contact_group_selected), checkedItemsCount)
+                resources.getQuantityString(R.plurals.contact_group_selected, checkedItemsCount, checkedItemsCount)
         }
 
         contactsAdapter.submitList(updatedItems) {
