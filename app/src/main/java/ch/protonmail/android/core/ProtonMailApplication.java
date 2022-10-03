@@ -105,8 +105,10 @@ import ch.protonmail.android.worker.FetchContactsDataWorker;
 import ch.protonmail.android.worker.FetchContactsEmailsWorker;
 import dagger.hilt.android.HiltAndroidApp;
 import me.proton.core.accountmanager.domain.AccountManager;
+import me.proton.core.auth.presentation.MissingScopeInitializer;
 import me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer;
 import me.proton.core.domain.entity.UserId;
+import me.proton.core.humanverification.presentation.HumanVerificationInitializer;
 import me.proton.core.util.kotlin.CoreLogger;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
@@ -226,6 +228,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
         appInitializer.initializeComponent(AccountStateHandlerInitializer.class);
         appInitializer.initializeComponent(CryptoValidatorInitializer.class);
         appInitializer.initializeComponent(SecurityManagerInitializer.class);
+        appInitializer.initializeComponent(HumanVerificationInitializer.class);
+        appInitializer.initializeComponent(MissingScopeInitializer.class);
 
         checkForUpdateAndClearCache();
     }
