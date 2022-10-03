@@ -369,10 +369,11 @@ public class SendPreferencesFactory {
                         MIMEType.HTML, pubKey, PackageType.PM,
                         false, false, false, isOwnAddress);
             } else {
-                MIMEType mimeType = MIMEType.MIME;
-                if(defaultPGPScheme == PackageType.PGP_INLINE){
-                    mimeType = MIMEType.PLAINTEXT;
-                }
+                MIMEType mimeType = getMimeType(
+                        null,
+                        defaultPGPScheme,
+                        globalSign
+                );
                 return new SendPreference(email, true, globalSign,
                         mimeType, pubKey, defaultPGPScheme,
                         false, false, false, isOwnAddress);
