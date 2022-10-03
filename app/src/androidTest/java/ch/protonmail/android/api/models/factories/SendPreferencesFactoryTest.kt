@@ -43,6 +43,9 @@ import ch.protonmail.android.utils.crypto.OpenPGP
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import me.proton.core.crypto.common.keystore.EncryptedByteArray
+import me.proton.core.crypto.common.keystore.KeyStoreCrypto
+import me.proton.core.crypto.common.keystore.PlainByteArray
 import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -139,11 +142,22 @@ public class SendPreferencesFactoryTest {
         active = true
     )
 
+    private val keyStoreCrypto = mockk<KeyStoreCrypto>{
+        every {
+            decrypt(
+                match<EncryptedByteArray> {
+                    it.array.contentEquals(MAILBOX_PASSWORD.toByteArray())
+                }
+            )
+        } answers { PlainByteArray(MAILBOX_PASSWORD.toByteArray()) }
+    }
+
     private val userManager = mockk<UserManager> {
-        every { getUserPassphraseBlocking(userId) } returns MAILBOX_PASSWORD.toByteArray()
+        every { this@mockk.keyStoreCrypto } returns this@SendPreferencesFactoryTest.keyStoreCrypto
+        every { getUserPassphraseBlocking(userId) } returns EncryptedByteArray(MAILBOX_PASSWORD.toByteArray())
         every { getMailSettingsBlocking(userId) } returns mailSettings
         every { openPgp } returns OpenPGP()
-        every { getUserBlocking(any()) } returns mockk<User> {
+        every { getUserBlocking(any()) } returns mockk {
             every { addresses } returns Addresses(emptyMap())
             every { keys }  returns UserKeys(
                 primaryUserKey,
