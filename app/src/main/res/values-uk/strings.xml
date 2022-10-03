@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">Піктограма теки з вкладеними теками</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">Заплановано</string>
     <string name="drawer_contacts">Контакти</string>
     <string name="drawer_lock_the_app">Заблокувати програму</string>
     <string name="drawer_report_bug">Звіт про ваду</string>
@@ -73,6 +74,10 @@
     <string name="details_hyperlink_phishing_dialog_content">Це посилання веде на вебсайт, який, можливо, намагається викрасти ваші дані, як-от паролі та дані кредитної картки.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;З міркувань безпеки не продовжуйте.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Повернутися (рекомендовано)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Знехтувати повідомлення й продовжити</string>
+    <string name="scheduled_message_info">Це повідомлення буде надіслано %s</string>
+    <string name="scheduled_message_edit_info">Наразі змінити заплановані повідомлення можна лише з програм для браузера та iOS.</string>
+    <string name="scheduled_message_moved_to_trash_title">Повідомлення не буде надіслано</string>
+    <string name="scheduled_message_moved_to_trash_desc">Переміщення цього повідомлення в кошик скасує час його надсилання.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Прихована копія:</string>
@@ -86,7 +91,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; пише:</string>
     <string name="set_msg_password_title">Встановити пароль</string>
-    <string name="set_msg_password_info">Встановіть пароль для шифрування цього повідомлення для користувачів інших постачальників пошти. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Докладніше</a></string>
+    <string name="set_msg_password_info">Налаштуйте пароль для шифрування цього повідомлення для користувачів інших постачальників пошти. <a href="https://proton.me/support/password-protected-emails">Докладніше</a></string>
     <string name="set_msg_password_info_icon_description">Відомості</string>
     <string name="set_msg_password_msg_password_title">Пароль повідомлення</string>
     <string name="set_msg_password_msg_password_hint">Довжина від 4 до 21 символу</string>
@@ -340,7 +345,7 @@
     <string name="saving_failed_no_conn">Не вдалося зберегти. Немає з\'єднання</string>
     <string name="attachment_exists">Вкладення вже прикріплено</string>
     <string name="eo_password_not_completed">Пароль повідомлення введено неповністю.</string>
-    <string name="delinquency_subtitle">Доступ до цього облікового запису призупинено через несплату. Будь ласка, увійдіть в систему, використовуючи protonmail.com, щоб оплатити рахунок.</string>
+    <string name="delinquency_subtitle">Доступ до цього облікового запису вимкнено через несплату. Увійдіть в систему, використовуючи proton.me, щоб оплатити несплачений рахунок.</string>
     <string name="downloading">Завантаження...</string>
     <string name="cant_download_attachment">Не вдається звантажити вкладення</string>
     <string-array name="auto_logout_options_array">
@@ -356,7 +361,6 @@
     <string name="pin_invalid">Неправильний ПІН. Введіть правильний ПІН з 4 цифр</string>
     <string name="pin_not_match">ПІН-коди відрізняються</string>
     <string name="new_pin_saved">Новий ПІН збережено</string>
-    <string name="new_emails">%d нових листів</string>
     <string name="attachment_download_success">%s успішно завантажено до файлового менеджера</string>
     <string name="attachment_download_failed">%s не вдалося завантажити належним чином</string>
     <string name="ringtone">Мелодія</string>
@@ -387,7 +391,12 @@
     <string name="upgrade">Покращити</string>
     <string name="error">Помилка</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d вбудованих зображень</string>
+    <plurals name="inline_header">
+        <item quantity="one">%d вбудоване зображення</item>
+        <item quantity="few">%d вбудовані зображення</item>
+        <item quantity="many">%d вбудованих зображень</item>
+        <item quantity="other">%d вбудованих зображень</item>
+    </plurals>
     <string name="warning">Попередження</string>
     <string name="available_addresses">Доступні адреси</string>
     <string name="inactive_addresses">Неактивні адреси</string>
@@ -495,7 +504,7 @@
     <string name="update_folder">Оновити теку</string>
     <string name="spam_score_100">Схоже, цей лист надіслано з адреси Proton Mail, але він надійшов з-за меж нашої системи та не відповідає нашим вимогам перевірки. Він може бути підроблений або неправильно пересланий!</string>
     <string name="spam_score_101">Цей лист не пройшов вимоги перевірки свого домену. Він міг бути підроблений або неправильно пересланий!</string>
-    <string name="spam_score_102">Це повідомлення може бути спробою шахрайства. Будь ласка, перевірте відправника і вміст, щоб упевнитися в його справжності. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ДОКЛАДНІШЕ</a></string>
+    <string name="spam_score_102">Це повідомлення може бути спробою шахрайства. Перевірте відправника і вміст, щоб переконатися в його справжності. <a href="https://proton.me/blog/prevent-phishing-attacks">ДОКЛАДНІШЕ</a></string>
     <string name="print_from_template">Від: %s</string>
     <string name="print_to_template">Кому: %s;  </string>
     <string name="print_cc_template">Копія: %s;  </string>
@@ -571,7 +580,7 @@
     <string name="expiration_error_add_msg_password">Додайте пароль повідомлення для таких отримувачів:</string>
     <string name="expiration_error_disable_pgp_sending">Вимкніть надсилання PGP, щоб увімкнути термін дії для таких отримувачів:</string>
     <string name="expiration_error_proceed">Торкніться Надіслати для надсилання без терміну дії цим отримувачам.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">ДОКЛАДНІШЕ</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">ДОКЛАДНІШЕ</a></string>
     <string name="channel_name_attachments">Вкладення</string>
     <string name="channel_description_attachments">Повідомляє про стан завантаження вкладення</string>
     <string name="channel_name_emails">Адреси е-пошти</string>
@@ -619,7 +628,12 @@
     <string name="tab_contact_groups">Групи (%d)</string>
     <string name="contact_group_saved">Групу збережено</string>
     <string name="no_recipients">Немає отримувачів</string>
-    <string name="contact_group_selected">%d вибрано</string>
+    <plurals name="contact_group_selected">
+        <item quantity="one">%d вибрано</item>
+        <item quantity="few">%d вибрано</item>
+        <item quantity="many">%d вибрано</item>
+        <item quantity="other">%d вибрано</item>
+    </plurals>
     <string name="paid_plan_needed">Для доступу до цих функцій необхідно передплатити тарифний план</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d учасників)</string>
     <plurals name="are_you_sure_delete_group">
@@ -800,7 +814,7 @@
     <string name="connections_via_third_parties">Альтернативна маршрутизація</string>
     <string name="allow_secure_connections_via_third_parties">Дозволити альтернативну маршрутизацію</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">У випадку блокування сайтів Proton, цей параметр дозволяє програмі спробувати альтернативний мережевий маршрут для доступу до Proton, що може бути корисним для обходу мережевих екранів чи мережевих проблем. Рекомендовано увімкнути цей параметр для більшої надійності.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">У випадку блокування сайтів Proton, цей параметр дозволяє програмі спробувати альтернативний мережевий маршрут для доступу до Proton, що може бути корисним для обходу мережевих екранів чи мережевих проблем. Радимо увімкнути цей параметр для більшої надійності. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Докладніше</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">У випадку блокування сайтів Proton, цей параметр дає змогу програмі спробувати альтернативний мережевий маршрут для доступу до Proton, що може бути корисним для обходу мережевих екранів чи мережевих проблем. Для підвищення надійності ми рекомендуємо залишити це налаштування ввімкненим. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Докладніше</a></string>
     <string name="app_language">Мова програми</string>
     <string name="custom_language_dialog_title">Вибір мови програми</string>
     <string name="auto_detect">Автовизначення</string>
@@ -830,7 +844,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Перешкоджання антивіруса&lt;/i&gt; — Тимчасово вимкніть або вилучіть антивірусне програмне забезпечення.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Перешкоджання проксі/брандмауера&lt;/i&gt; — Вимкніть будь-які проксі-сервери чи брандмауери або зверніться до адміністратора мережі.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton недоступний&lt;/i&gt; — Перегляньте &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt;, щоб дізнатися поточний стан служби.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблему досі не усунено&lt;/i&gt; — Зв\'яжіться з нами безпосередньо через нашу &lt;a href=\"https://protonmail.com/support-form\"&gt;форму підтримки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;електронну пошту&lt;/a&gt; (support@protonmail.zendesk.com), або &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблему досі не усунено&lt;/i&gt; — Зв\'яжіться з нами безпосередньо через нашу &lt;a href=\"https://protonmail.com/support-form\"&gt;форму підтримки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;електронну пошту&lt;/a&gt; (support@protonmail.zendesk.com), або &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

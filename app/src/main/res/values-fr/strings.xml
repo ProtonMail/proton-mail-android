@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">Dossier avec icône héritée</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">Programmé</string>
     <string name="drawer_contacts">Contacts</string>
     <string name="drawer_lock_the_app">Verrouiller l\'app</string>
     <string name="drawer_report_bug">Signaler un bug</string>
@@ -71,6 +72,10 @@
     <string name="details_hyperlink_phishing_dialog_content">Ce lien mène à un site web qui pourrait essayer de voler vos informations, comme des mots de passe et des informations de cartes bancaires.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Pour votre sécurité, ne continuez pas.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Revenir en arrière (recommandé)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorer l\'avertissement et continuer</string>
+    <string name="scheduled_message_info">Ce message sera envoyé le %s</string>
+    <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
+    <string name="scheduled_message_moved_to_trash_title">Le message ne sera pas envoyé</string>
+    <string name="scheduled_message_moved_to_trash_desc">Déplacer ce message vers la corbeille annulera sa programmation.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cci :</string>
@@ -84,7 +89,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Le %s, %s &lt; %s&gt; a écrit :</string>
     <string name="set_msg_password_title">Définir le mot de passe</string>
-    <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message à destination de personnes qui n\'utilisent pas Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">En savoir plus</a></string>
+    <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message à destination de personnes qui n\'utilisent pas Proton Mail. <a href="https://proton.me/support/password-protected-emails">En savoir plus</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Mot de passe du message</string>
     <string name="set_msg_password_msg_password_hint">4 à 21 caractères</string>
@@ -283,7 +288,7 @@
     <string name="no_subject">Envoyer le message sans objet ?</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="forward_prefix">Tr :</string>
     <string name="original_message_divider">-------- Message d\'origine --------</string>
     <string name="invalid_email_address">L’adresse « %s » n’est pas valide.</string>
@@ -332,7 +337,7 @@
     <string name="saving_failed_no_conn">Échec de la sauvegarde, aucune connexion</string>
     <string name="attachment_exists">Pièce jointe déjà ajoutée</string>
     <string name="eo_password_not_completed">Mot de passe du message non renseigné.</string>
-    <string name="delinquency_subtitle">L\'accès à ce compte est désactivé en raison d’un défaut de paiement. Nous vous invitons à vous connecter via protonmail.com pour régler votre facture impayée.</string>
+    <string name="delinquency_subtitle">L\'accès à ce compte est désactivé en raison d’un défaut de paiement. Nous vous invitons à vous connecter via proton.me pour régler votre facture impayée.</string>
     <string name="downloading">Téléchargement en cours...</string>
     <string name="cant_download_attachment">Impossible de télécharger la pièce jointe</string>
     <string-array name="auto_logout_options_array">
@@ -348,7 +353,6 @@
     <string name="pin_invalid">Code PIN non valide, entrez les 4 chiffres corrects</string>
     <string name="pin_not_match">Le code PIN ne correspond pas.</string>
     <string name="new_pin_saved">Nouveau code PIN enregistré</string>
-    <string name="new_emails">%d nouveaux messages</string>
     <string name="attachment_download_success">%s a été téléchargé correctement dans le gestionnaire de fichiers.</string>
     <string name="attachment_download_failed">%s n\'a pas pu être téléchargé correctement.</string>
     <string name="ringtone">Sonnerie</string>
@@ -375,7 +379,10 @@
     <string name="upgrade">Changer d\'abonnement</string>
     <string name="error">Erreur</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d images intégrées</string>
+    <plurals name="inline_header">
+        <item quantity="one">%d image intégrée</item>
+        <item quantity="other">%d images intégrées</item>
+    </plurals>
     <string name="warning">Attention</string>
     <string name="available_addresses">Adresses disponibles</string>
     <string name="inactive_addresses">Adresses inactives</string>
@@ -483,7 +490,7 @@
     <string name="update_folder">Mettre à jour le dossier</string>
     <string name="spam_score_100">Cet e-mail semble provenir d\'une adresse Proton Mail, mais il vient de l\'extérieur de notre système et à échoué aux tests d\'authentification. Il a peut-être été falsifié ou transféré incorrectement.</string>
     <string name="spam_score_101">Cet e-mail a échoué aux tests d\'authentification de son domaine. Il a peut-être été falsifié ou transféré incorrectement.</string>
-    <string name="spam_score_102">Ce message peut être une tentative d’hameçonnage. Vérifiez l’expéditeur et le contenu afin de vous assurer qu’ils sont légitimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">EN SAVOIR PLUS</a></string>
+    <string name="spam_score_102">Ce message pourrait être une tentative de phishing/hameçonnage. Vérifiez l’expéditeur et le contenu pour vous assurer qu’ils sont légitimes. <a href="https://proton.me/blog/prevent-phishing-attacks">En savoir plus</a></string>
     <string name="print_from_template">De : %s</string>
     <string name="print_to_template">À : %s; </string>
     <string name="print_cc_template">Cc : %s; </string>
@@ -559,7 +566,7 @@
     <string name="expiration_error_add_msg_password">Ajoutez un mot de passe de chiffrement pour les destinataires suivants :</string>
     <string name="expiration_error_disable_pgp_sending">Désactivez l\'envoi PGP pour activer le délai d\'expiration pour les destinataires suivants :</string>
     <string name="expiration_error_proceed">Tapotez sur Envoyer quand même pour envoyer à ces destinataires sans délai d’expiration.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">EN SAVOIR PLUS</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">En savoir plus</a></string>
     <string name="channel_name_attachments">Pièces jointes</string>
     <string name="channel_description_attachments">Informe sur l\'état du téléchargement des pièces jointes</string>
     <string name="channel_name_emails">E-mails</string>
@@ -602,7 +609,10 @@
     <string name="tab_contact_groups">Groupes (%d)</string>
     <string name="contact_group_saved">Groupe enregistré</string>
     <string name="no_recipients">Aucun destinataire</string>
-    <string name="contact_group_selected">%d sélectionné</string>
+    <plurals name="contact_group_selected">
+        <item quantity="one">%d sélectionné</item>
+        <item quantity="other">%d sélectionnés</item>
+    </plurals>
     <string name="paid_plan_needed">Nous vous invitons à passer à un abonnement payant pour ces fonctionnalités premium.</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d membres)</string>
     <plurals name="are_you_sure_delete_group">
@@ -767,7 +777,7 @@
     <string name="connections_via_third_parties">Routage alternatif</string>
     <string name="allow_secure_connections_via_third_parties">Autoriser le routage alternatif</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">En cas de blocage des sites Proton, ce paramètre permet à l\'application d\'essayer un routage réseau alternatif pour atteindre Proton, ce qui peut être utile pour contourner les pare-feu ou les problèmes de réseau. Nous vous recommandons de conserver ce paramètre activé pour une plus grande fiabilité.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">En cas de blocage des sites Proton, ce paramètre permet à l\'application d\'essayer un routage réseau alternatif pour atteindre Proton, ce qui peut être utile pour contourner les pare-feux ou les problèmes de réseau. Nous vous recommandons de conserver ce paramètre activé pour une plus grande fiabilité. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">En savoir plus</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Dans le cas où les sites Proton seraient bloqués, ce paramètre permet à l\'application d\'essayer un routage réseau alternatif pour accéder à Proton, ce qui peut être utile pour contourner les pare-feux ou les problèmes de réseau. Nous vous recommandons de laisser ce paramètre activé pour plus de fiabilité. <a href="https://proton.me/blog/anti-censorship-alternative-routing">En savoir plus</a></string>
     <string name="app_language">Langue de l\'application</string>
     <string name="custom_language_dialog_title">Sélectionner la langue de l\'application</string>
     <string name="auto_detect">Détection automatique</string>
@@ -793,11 +803,11 @@
     <string name="troubleshoot_dialog_title">Problèmes de connexion fréquents et solutions</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;Pas de connexion internet&lt;/i&gt; - Assurez-vous que votre connexion internet fonctionne.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problème de fournisseur d\'accès internet (FAI)&lt;/i&gt; - Essayez de vous connecter à Proton depuis un autre réseau (ou utilisez &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; ou &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blocage gouvernemental&lt;/i&gt; - Votre pays bloque peut-être l\'accès à Proton. Essayez &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (ou tout autre VPN) ou &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pour accéder à Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférence avec un antivirus&lt;/i&gt; - Désactivez ou supprimez temporairement votre logiciel antivirus.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférence avec un proxy ou un pare-feu&lt;/i&gt; - Désactivez tout proxy ou pare-feu, ou contactez votre administrateur réseau.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton est en panne&lt;/i&gt; - Consultez &lt;a href=\"http://protonstatus.com/\"&gt;le statut Proton&lt;/a&gt; pour l\'état de notre système.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez toujours pas de solution&lt;/i&gt; - Contactez-nous directement avec notre &lt;a href=\"https://protonmail.com/support-form\"&gt;formulaire de support&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;l\'envoi d\'un e-mail&lt;/a&gt; (support@protonmail.zendesk.com), ou sur notre compte &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloc gouvernemental&lt;/i&gt; - Votre pays bloque peut-être l\'accès à Proton. Essayez &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (ou tout autre VPN) ou &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pour accéder à Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférence avec l\'antivirus&lt;/i&gt; - Désactivez ou supprimez temporairement votre logiciel antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférence avec le proxy ou le pare-feu&lt;/i&gt; - Désactivez tout proxy ou pare-feu, ou contactez votre administrateur réseau.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton est en panne&lt;/i&gt; - Vérifiez &lt;a href=\"http://protonstatus.com/\"&gt;Le statut Proton&lt;/a&gt; pour l\'état de notre système.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez toujours pas de solution&lt;/i&gt; - Contactez-nous directement avec notre &lt;a href=\"https://proton.me/support/contact\"&gt;formulaire de support&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;par e-mail&lt;/a&gt; (support@protonmail.zendesk.com), ou &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;via Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

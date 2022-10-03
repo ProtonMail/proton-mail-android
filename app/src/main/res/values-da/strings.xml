@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">Ikon for mappe med underordnede mapper</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">Scheduled</string>
     <string name="drawer_contacts">Kontakter</string>
     <string name="drawer_lock_the_app">Lås appen</string>
     <string name="drawer_report_bug">Rapportér fejl</string>
@@ -71,6 +72,10 @@
     <string name="details_hyperlink_phishing_dialog_content">Dette link fører til et websted, som måske forsøger at stjæle dine oplysninger, f.eks. adgangskoder og kreditkortoplysninger.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For din egen sikkerheds skyld bør du ikke fortsætte.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Gå tilbage (anbefalet)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorer advarsel og fortsæt</string>
+    <string name="scheduled_message_info">This message will be sent on %s</string>
+    <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
+    <string name="scheduled_message_moved_to_trash_title">Message will not be sent</string>
+    <string name="scheduled_message_moved_to_trash_desc">Moving this message to trash will cancel its schedule.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -84,7 +89,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s skrev %s &lt; %s&gt;:</string>
     <string name="set_msg_password_title">Indstil adgangskode</string>
-    <string name="set_msg_password_info">Indstil en adgangskode til kryptering af denne besked for brugere, der ikke anvender Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Lær mere</a></string>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Beskedadgangskode</string>
     <string name="set_msg_password_msg_password_hint">4 til 21 tegn lang</string>
@@ -332,7 +337,7 @@
     <string name="saving_failed_no_conn">Mislykkedes at gemmer, ingen forbindelse</string>
     <string name="attachment_exists">Element allerede vedhæftet</string>
     <string name="eo_password_not_completed">Keypteringsadgangskode mangler.</string>
-    <string name="delinquency_subtitle">Adgang til denne konto er deaktiveret grundet manglende betaling. Log ind via protonmail.com for at betale din udestående faktura.</string>
+    <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through proton.me to pay your unpaid invoice.</string>
     <string name="downloading">Downloader...</string>
     <string name="cant_download_attachment">Kan ikke downloade vedhæftning</string>
     <string-array name="auto_logout_options_array">
@@ -348,7 +353,6 @@
     <string name="pin_invalid">Ugyldig PIN-kode. Angiv den korrekte 4-cifrede PIN-kode</string>
     <string name="pin_not_match">PIN-koder matcher ikke</string>
     <string name="new_pin_saved">Ny PIN-kode gemt</string>
-    <string name="new_emails">%d nye e-mails</string>
     <string name="attachment_download_success">%s blev downloadet til Filhåndtering</string>
     <string name="attachment_download_failed">Mislykkedes at downloade %s</string>
     <string name="ringtone">Ringetone</string>
@@ -375,7 +379,10 @@
     <string name="upgrade">Opgradér</string>
     <string name="error">Fejl</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d indlejrede billeder</string>
+    <plurals name="inline_header">
+        <item quantity="one">%d Embedded Image</item>
+        <item quantity="other">%d Embedded Images</item>
+    </plurals>
     <string name="warning">Advarsel</string>
     <string name="available_addresses">Tilgængelige adresser</string>
     <string name="inactive_addresses">Inaktive adresser</string>
@@ -483,7 +490,7 @@
     <string name="update_folder">Opdater mappe</string>
     <string name="spam_score_100">Denne e-mail ser ud til at være fra en Proton Mail-adresse, men den kom fra et sted uden for vores system og har ikke overholdt vores godkendelseskrav. Den kan være forfalsket eller ukorrekt videresendt!</string>
     <string name="spam_score_101">Denne e-mail bestod ikke sit domænes godkendelseskrav. Den kan være falsk eller ukorrekt videresendt!</string>
-    <string name="spam_score_102">Denne besked kan være et phishing-forsøg. Tjek afsenderen og indholdet for at sikre, at de er legitime. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">FÅ MERE AT VIDE</a></string>
+    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://proton.me/blog/prevent-phishing-attacks">LEARN MORE</a></string>
     <string name="print_from_template">Fra: %s</string>
     <string name="print_to_template">Til: %s; </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -559,7 +566,7 @@
     <string name="expiration_error_add_msg_password">Tilføj en beskedadgangskode for følgende modtagere:</string>
     <string name="expiration_error_disable_pgp_sending">Deaktivér PGP-afsendelse for følgende modtagere:</string>
     <string name="expiration_error_proceed">Tryk afsend alligevel for at snde uden udløb til disse modtagere.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">FÅ MERE AT VIDE</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">LEARN MORE</a></string>
     <string name="channel_name_attachments">Vedhæftninger</string>
     <string name="channel_description_attachments">Oplyser status for download af vedhæftning</string>
     <string name="channel_name_emails">E-mails</string>
@@ -605,7 +612,10 @@
     <string name="tab_contact_groups">Grupper (%d)</string>
     <string name="contact_group_saved">Gruppe gemt</string>
     <string name="no_recipients">Ingen modtagere</string>
-    <string name="contact_group_selected">%d valgte</string>
+    <plurals name="contact_group_selected">
+        <item quantity="one">%d Selected</item>
+        <item quantity="other">%d Selected</item>
+    </plurals>
     <string name="paid_plan_needed">Disse Premium-funktioner kræver opgradering til et abonnement</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d medlemmer)</string>
     <plurals name="are_you_sure_delete_group">
@@ -776,7 +786,7 @@
     <string name="connections_via_third_parties">Alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties">Tillad alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Hvis Proton-websteder er blokeret giver denne indstilling appen mulighed for at prøve alternativ netværksrouting for at nå Proton, hvilket kan være nyttige til at omgå firewalls eller ved netværksproblemer. Vi anbefaler at holde denne indstilling slået til for større pålidelighed.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Hvis Proton-websteder er blokeret giver denne indstilling appen mulighed for at prøve alternativ netværksrouting for at nå Proton, hvilket kan være nyttige til at omgå firewalls eller ved netværksproblemer. Vi anbefaler at holde denne indstilling slået til for større pålidelighed. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Få mere at vide</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
     <string name="app_language">App-sprog</string>
     <string name="custom_language_dialog_title">Vælg App-sprog</string>
     <string name="auto_detect">Autoregistrér</string>
@@ -806,7 +816,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://proton.me/support/contact\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
