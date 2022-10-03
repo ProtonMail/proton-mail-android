@@ -175,7 +175,7 @@ public class SendPreferencesFactory {
         return buildUsingDefaults(email, pubKeyResp);
     }
 
-    private SendPreference buildFromContact(String email, PublicKeyResponse pubKeyResp, FullContactDetails fullContactDetails) throws Exception {
+    protected SendPreference buildFromContact(String email, PublicKeyResponse pubKeyResp, FullContactDetails fullContactDetails) throws Exception {
         boolean isInternal = pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL;
         Triple<VCard, VCard, Boolean> triple = parseVCard(fullContactDetails);
         VCard clear = triple.getLeft();

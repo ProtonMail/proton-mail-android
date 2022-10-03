@@ -36,7 +36,6 @@ import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Addresses
-import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.domain.entity.user.UserKey
 import ch.protonmail.android.domain.entity.user.UserKeys
 import ch.protonmail.android.utils.crypto.OpenPGP
@@ -166,20 +165,18 @@ public class SendPreferencesFactoryTest {
         }
     }
 
+    lateinit var sendPreferencesFactory: SendPreferencesFactory
+
     @BeforeTest
     fun setup() {
         mockkObject(ContactDatabase.Companion)
         every {
             ContactDatabase.getInstance(context, userId)
         } returns mockk<ContactDatabase>(relaxed = true)
-    }
+        sendPreferencesFactory = SendPreferencesFactory(context, apiManager, userManager, userId)    }
 
     @Test
     fun testBuildFromContactWithPinnedKeyInternal() {
-        val sendPreferencesFactory = SendPreferencesFactory(context, apiManager, userManager, userId);
-        val buildFromContactMethod = sendPreferencesFactory.javaClass.getDeclaredMethod("buildFromContact", String::class.java, PublicKeyResponse::class.java, FullContactDetails::class.java);
-        buildFromContactMethod.isAccessible = true;
-
         val contactDataWithPinnedKey = INTERNAL_CONTACT_DATA_WITH_PINNED_KEY.trimIndent()
         val pinnedKey = INTERNAL_CONTACT_PINNED_KEY.trimIndent()
         val contactSignature = INTERNAL_CONTACT_SIGNATURE.trimIndent()
@@ -200,16 +197,12 @@ public class SendPreferencesFactoryTest {
             true, true, true, false
         )
 
-        val actual = buildFromContactMethod.invoke(sendPreferencesFactory, "free@proton.black", publicKeyResponse, signedContactDetails) as SendPreference
+        val actual = sendPreferencesFactory.buildFromContact("free@proton.black", publicKeyResponse, signedContactDetails) as SendPreference
         assertEqualSecurityPreferences(expected, actual)
     }
 
     @Test
     fun testBuildFromContactWithPinnedKeyExternal() {
-        val sendPreferencesFactory = SendPreferencesFactory(context, apiManager, userManager, userId);
-        val buildFromContactMethod = sendPreferencesFactory.javaClass.getDeclaredMethod("buildFromContact", String::class.java, PublicKeyResponse::class.java, FullContactDetails::class.java);
-        buildFromContactMethod.isAccessible = true;
-
         val externalPinnedKey = """
             -----BEGIN PGP PUBLIC KEY BLOCK-----
 
@@ -267,16 +260,12 @@ public class SendPreferencesFactoryTest {
             true, true, true, false
         )
 
-        val actual = buildFromContactMethod.invoke(sendPreferencesFactory, "external@proton.test", publicKeyResponse, signedContactDetails) as SendPreference
+        val actual = sendPreferencesFactory.buildFromContact("external@proton.test", publicKeyResponse, signedContactDetails) as SendPreference
         assertEqualSecurityPreferences(expected, actual)
     }
 
     @Test
     fun testBuildFromContactWithPinnedKeyButNoApiResponseInternal() {
-        val sendPreferencesFactory = SendPreferencesFactory(context, apiManager, userManager, userId);
-        val buildFromContactMethod = sendPreferencesFactory.javaClass.getDeclaredMethod("buildFromContact", String::class.java, PublicKeyResponse::class.java, FullContactDetails::class.java);
-        buildFromContactMethod.isAccessible = true;
-
         val contactDataWithPinnedKey = INTERNAL_CONTACT_DATA_WITH_PINNED_KEY.trimIndent()
         val contactSignature = INTERNAL_CONTACT_SIGNATURE.trimIndent()
         val signedContactDetails = mockk<FullContactDetails> {
@@ -310,16 +299,12 @@ public class SendPreferencesFactoryTest {
             false, true, true, false
         )
 
-        val actual = buildFromContactMethod.invoke(sendPreferencesFactory, "free@proton.black", publicKeyResponse, signedContactDetails) as SendPreference
+        val actual = sendPreferencesFactory.buildFromContact( "free@proton.black", publicKeyResponse, signedContactDetails) as SendPreference
         assertEqualSecurityPreferences(expected, actual)
     }
 
     @Test
     fun testBuildFromContactWithInvalidSignature() {
-        val sendPreferencesFactory = SendPreferencesFactory(context, apiManager, userManager, userId);
-        val buildFromContactMethod = sendPreferencesFactory.javaClass.getDeclaredMethod("buildFromContact", String::class.java, PublicKeyResponse::class.java, FullContactDetails::class.java);
-        buildFromContactMethod.isAccessible = true;
-
         val contactDataWithPinnedKey = INTERNAL_CONTACT_DATA_WITH_PINNED_KEY.trimIndent()
         val pinnedKey = INTERNAL_CONTACT_PINNED_KEY.trimIndent()
         val invalidContactSignature = """-----BEGIN PGP SIGNATURE-----
@@ -346,17 +331,12 @@ public class SendPreferencesFactoryTest {
             "free@proton.black", true, true, MIMEType.HTML, pinnedKey, PackageType.PM,
             true, true, false, false
         )
-
-        val actual = buildFromContactMethod.invoke(sendPreferencesFactory, "free@proton.black", publicKeyResponse, signedContactDetails) as SendPreference
+        val actual = sendPreferencesFactory.buildFromContact("free@proton.black", publicKeyResponse, signedContactDetails)
         assertEqualSecurityPreferences(expected, actual)
     }
 
     @Test
     fun testBuildFromContactWithoutPinnedKeyInternal() {
-        val sendPreferencesFactory = SendPreferencesFactory(context, apiManager, userManager, userId);
-        val buildFromContactMethod = sendPreferencesFactory.javaClass.getDeclaredMethod("buildFromContact", String::class.java, PublicKeyResponse::class.java, FullContactDetails::class.java);
-        buildFromContactMethod.isAccessible = true;
-
         val unsignedContactData = """BEGIN:VCARD
         VERSION:4.0
         PRODID:-//ProtonMail//ProtonMail vCard 1.0.0//EN
@@ -383,16 +363,12 @@ public class SendPreferencesFactoryTest {
             false, false, false, false
         )
 
-        val actual = buildFromContactMethod.invoke(sendPreferencesFactory, "free@proton.black", publicKeyResponse, signedContactDetails) as SendPreference
+        val actual = sendPreferencesFactory.buildFromContact("free@proton.black", publicKeyResponse, signedContactDetails) as SendPreference
         assertEqualSecurityPreferences(expected, actual)
     }
 
     @Test
     fun testBuildFromContactWithoutPinnedKeyExternal() {
-        val sendPreferencesFactory = SendPreferencesFactory(context, apiManager, userManager, userId);
-        val buildFromContactMethod = sendPreferencesFactory.javaClass.getDeclaredMethod("buildFromContact", String::class.java, PublicKeyResponse::class.java, FullContactDetails::class.java);
-        buildFromContactMethod.isAccessible = true;
-
         val unsignedContactData = """BEGIN:VCARD
         VERSION:4.0
         PRODID:-//ProtonMail//ProtonMail vCard 1.0.0//EN
@@ -414,7 +390,7 @@ public class SendPreferencesFactoryTest {
             false, false, false, false
         )
 
-        val actual = buildFromContactMethod.invoke(sendPreferencesFactory, "free@proton.black", publicKeyResponse, signedContactDetails) as SendPreference
+        val actual = sendPreferencesFactory.buildFromContact("free@proton.black", publicKeyResponse, signedContactDetails) as SendPreference
         assertEqualSecurityPreferences(expected, actual)
     }
 
