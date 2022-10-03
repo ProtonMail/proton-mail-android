@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">Папка с детским значком</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">Запланированные</string>
     <string name="drawer_contacts">Контакты</string>
     <string name="drawer_lock_the_app">Заблокировать приложение</string>
     <string name="drawer_report_bug">Сообщить об ошибке</string>
@@ -73,6 +74,10 @@
     <string name="details_hyperlink_phishing_dialog_content">Эта ссылка ведет на сайт, который может пытаться украсть вашу информацию, например, пароли и данные кредитной карты.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; В целях безопасности не продолжайте.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Вернуться (рекомендуется)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Игнорировать предупреждение и продолжить</string>
+    <string name="scheduled_message_info">Это сообщение будет отправлено %s</string>
+    <string name="scheduled_message_edit_info">Запланированные сообщения пока могут быть изменены только в веб- и iOS приложениях.</string>
+    <string name="scheduled_message_moved_to_trash_title">Сообщение не будет отправлено</string>
+    <string name="scheduled_message_moved_to_trash_desc">Перемещение этого сообщения в корзину отменит его расписание.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Скрытая копия:</string>
@@ -86,7 +91,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; написал:</string>
     <string name="set_msg_password_title">Установить пароль</string>
-    <string name="set_msg_password_info">Установите пароль для шифрования этого сообщения для не пользователей Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Подробнее</a></string>
+    <string name="set_msg_password_info">Установите пароль для шифрования этого сообщения для пользователей, не являющихся пользователями Proton Mail. <a href="https://proton.me/support/password-protected-emails">Подробнее</a></string>
     <string name="set_msg_password_info_icon_description">Информация</string>
     <string name="set_msg_password_msg_password_title">Пароль сообщения</string>
     <string name="set_msg_password_msg_password_hint">от 4 до 21 символа</string>
@@ -291,7 +296,7 @@
     <string name="no_subject">Отправить сообщение без темы?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-    <string name="ok">Хорошо</string>
+    <string name="ok">ОК</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Исходное сообщение --------</string>
     <string name="invalid_email_address">Адрес \'%s\' недействителен</string>
@@ -340,7 +345,7 @@
     <string name="saving_failed_no_conn">Сбой сохранения. Нет подключения</string>
     <string name="attachment_exists">Вложение уже прикреплено</string>
     <string name="eo_password_not_completed">Пароль сообщения введён не полностью.</string>
-    <string name="delinquency_subtitle">Доступ к этой учётной записи приостановлен из-за неуплаты. Пожалуйста, войдите в систему, используя protonmail.com, чтобы оплатить счёт.</string>
+    <string name="delinquency_subtitle">Доступ к этому аккаунту отключен из-за неуплаты. Пожалуйста, войдите через proton.me, чтобы оплатить неоплаченный счет.</string>
     <string name="downloading">Скачивание...</string>
     <string name="cant_download_attachment">Невозможно скачать вложение</string>
     <string-array name="auto_logout_options_array">
@@ -356,7 +361,6 @@
     <string name="pin_invalid">Неверный PIN-код, введите правильный 4-значный PIN-код</string>
     <string name="pin_not_match">PIN-коды не совпадают</string>
     <string name="new_pin_saved">Новый PIN-код сохранён</string>
-    <string name="new_emails">%d новых писем</string>
     <string name="attachment_download_success">%s успешно скачано в файловый менеджер</string>
     <string name="attachment_download_failed">Не удалось скачать %s надлежащим образом</string>
     <string name="ringtone">Мелодия вызова</string>
@@ -387,7 +391,12 @@
     <string name="upgrade">Повысить</string>
     <string name="error">Ошибка</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d встроенных изображений</string>
+    <plurals name="inline_header">
+        <item quantity="one">%d встроенное изображение</item>
+        <item quantity="few">%d встроенных изображения</item>
+        <item quantity="many">%d встроенных изображений</item>
+        <item quantity="other">%d встроенных изображения</item>
+    </plurals>
     <string name="warning">Предупреждение</string>
     <string name="available_addresses">Доступные адреса</string>
     <string name="inactive_addresses">Неактивные адреса</string>
@@ -495,7 +504,7 @@
     <string name="update_folder">Обновить папку</string>
     <string name="spam_score_100">Это письмо, по-видимому, пришло с адреса Proton Mail, но было получено не из нашей системы и не прошло проверку подлинности. Это может быть поддельное или неправильно пересланное письмо!</string>
     <string name="spam_score_101">Это письмо не соответствует требованиям подтверждения подлинности своего домена. Оно может быть поддельным, либо было переслано ненадлежащим образом!</string>
-    <string name="spam_score_102">Это сообщение может быть попыткой фишинга. Пожалуйста, проверьте отправителя и содержимое, чтобы оценить их подлинность. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ПОДРОБНЕЕ</a></string>
+    <string name="spam_score_102">Это сообщение может быть попыткой фишинга. Пожалуйста, проверьте отправителя и содержимое, чтобы убедиться в их подлинности. <a href="https://proton.me/blog/prevent-phishing-attacks">Подробнее</a></string>
     <string name="print_from_template">От: %s</string>
     <string name="print_to_template">Кому: %s;  </string>
     <string name="print_cc_template">Копия: %s;  </string>
@@ -571,7 +580,7 @@
     <string name="expiration_error_add_msg_password">Пожалуйста, добавьте пароль сообщения для следующих получателей:</string>
     <string name="expiration_error_disable_pgp_sending">Пожалуйста, отключите PGP-отправку для включения срока действия для следующих получателей:</string>
     <string name="expiration_error_proceed">Нажмите \"Всё равно отправить\", чтобы отправить без срока действия этим получателям.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">ПОДРОБНЕЕ</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">ПОДРОБНЕЕ</a></string>
     <string name="channel_name_attachments">Вложения</string>
     <string name="channel_description_attachments">Сообщает о состоянии скачивания вложения</string>
     <string name="channel_name_emails">Эл. письма</string>
@@ -619,7 +628,12 @@
     <string name="tab_contact_groups">Группы (%d)</string>
     <string name="contact_group_saved">Группа сохранена</string>
     <string name="no_recipients">Нет получателей</string>
-    <string name="contact_group_selected">Выбрано %d</string>
+    <plurals name="contact_group_selected">
+        <item quantity="one">%d выбрана</item>
+        <item quantity="few">%d выбраны</item>
+        <item quantity="many">%d выбраны</item>
+        <item quantity="other">%d выбраны</item>
+    </plurals>
     <string name="paid_plan_needed">Пожалуйста, перейдите на платный тариф для доступа к этим особым функциям</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d участников)</string>
     <plurals name="are_you_sure_delete_group">
@@ -800,7 +814,7 @@
     <string name="connections_via_third_parties">Альтернативная маршрутизация</string>
     <string name="allow_secure_connections_via_third_parties">Разрешить альтернативную маршрутизацию</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">В случае блокировки сайтов Proton эта настройка позволяет приложению попробовать альтернативную сетевую маршрутизацию, чтобы достигнуть Proton, что может быть полезно для обхода брандмауэров или сетевых проблем. Для большей надёжности мы рекомендуем оставить эту настройку включённой.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">В случае блокировки сайтов Proton эта настройка позволяет приложению попробовать альтернативную сетевую маршрутизацию, чтобы достигнуть Proton, что может быть полезно для обхода брандмауэров или сетевых проблем. Для большей надёжности мы рекомендуем оставить эту настройку включённой. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Подробнее</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">В случае если сайты Proton заблокированы, эта настройка позволяет приложению попробовать альтернативную сетевую маршрутизацию для соединения с Proton, что может быть полезно для обхода брандмауэров или сетевых проблем. Мы рекомендуем оставить эту настройку включенной для большей надежности. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Подробнее</a></string>
     <string name="app_language">Язык приложения</string>
     <string name="custom_language_dialog_title">Выберите язык приложения</string>
     <string name="auto_detect">Автоопределение</string>
@@ -824,13 +838,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Общие проблемы с подключением и их решения</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Нет подключения к Интернету&lt;/i&gt; - Пожалуйста, убедитесь, что ваше подключение к Интернету работает.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема с поставщиком интернет-услуг (ISP)&lt;/i&gt; - Попробуйте подключиться к Proton из другой сети (или используйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Правительственная блокировка&lt;/i&gt; - Возможно, что ваша страна блокирует доступ к Proton. Попробуйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (или любую другую VPN) или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; для доступа к Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Вмешательство антивируса&lt;/i&gt; - Временно утключите или удалите ваше антивирусное программное обеспечение.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Вмешательство прокси-сервера/брандмауэра&lt;/i&gt; - Отключите все прокси-серверы/брандмауэры или свяжитесь со своим администратором сети.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton не работает&lt;/i&gt; - Проверьте &lt;a href=\"http://protonstatus.com/\"&gt;состояние Proton&lt;/a&gt; для получения информации о состоянии нашей системы.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Все еще не удается найти решение&lt;/i&gt; - Свяжитесь с нами напрямую через нашу &lt;a href=\"https://protonmail.com/support-form\"&gt;форму поддержки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;электронную почту&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Нет подключения к Интернету&lt;/i&gt; - Убедитесь, что у вас есть подключение к Интернету.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема у интернет-провайдера (ISP)&lt;/i&gt; - Попробуйте подключиться к Proton из другой сети (или используйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Правительственная блокировка&lt;/i&gt; - Возможно, ваша страна блокирует доступ к Proton. Попробуйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (или любую другую VPN) или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; для доступа к Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Вмешательство антивируса&lt;/i&gt; - Временно отключте или удалите ваше антивирусное программное обеспечение.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Вмешательство прохси-сервера/брандмауэра;/i&gt; - Отключите все прокси-серверы или брандмауэры или свяжитесь со своим сетевым администратором.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton не работает&lt;/i&gt; - Проверьте &lt;a href=\"http://protonstatus.com/\"&gt;состояние Proton;/a&gt; для нашего системного состояния.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Еще невозможно найти решение&lt;/i&gt; - Свяжитесь с нами напрямую через нашу &lt;a href=\"https://proton.me/support/contact\"&gt;форму поддержки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;электронную почту&lt;/a&gt; (support@protonmail.zendesk.com), или &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

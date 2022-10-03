@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">Pictogramă folder părinte</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">Programat</string>
     <string name="drawer_contacts">Contacte</string>
     <string name="drawer_lock_the_app">Blocare aplicație</string>
     <string name="drawer_report_bug">Raportare eroare</string>
@@ -72,6 +73,10 @@
     <string name="details_hyperlink_phishing_dialog_content">Această legătură duce la un site web care ar putea încerca să vă fure informațiile, cum ar fi parolele și detaliile cardului de credit.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Pentru siguranță, nu continuați.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Revenire (recomandat)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorare avertisment și continuare</string>
+    <string name="scheduled_message_info">Acest mesaj va fi trimis %s</string>
+    <string name="scheduled_message_edit_info">Mesajele programate pot fi modificate doar de pe Web și din aplicația iOS.</string>
+    <string name="scheduled_message_moved_to_trash_title">Mesajul nu va fi trimis</string>
+    <string name="scheduled_message_moved_to_trash_desc">Mutând acest mesaj în gunoi se va anula programarea sa.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">CA:</string>
@@ -85,7 +90,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">La %s, %s &lt; %s&gt; a scris:</string>
     <string name="set_msg_password_title">Setare parolă</string>
-    <string name="set_msg_password_info">Setați o parolă pentru a cripta acest mesaj pentru cei care nu sunt utilizatori ai Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Detalii</a></string>
+    <string name="set_msg_password_info">Setați o parolă pentru a cripta acest mesaj pentru cei care nu sunt utilizatori ai Proton Mail. <a href="https://proton.me/support/password-protected-emails">Detalii</a></string>
     <string name="set_msg_password_info_icon_description">Informaţii</string>
     <string name="set_msg_password_msg_password_title">Parolă mesaj</string>
     <string name="set_msg_password_msg_password_hint">între 4 și 21 de caractere</string>
@@ -336,7 +341,7 @@
     <string name="saving_failed_no_conn">Salvare eșuată, nu există conexiune</string>
     <string name="attachment_exists">Fișier atașat deja prezent</string>
     <string name="eo_password_not_completed">Nu a fost introdusă parola mesajului.</string>
-    <string name="delinquency_subtitle">Accesul la acest cont este blocat datorită unei plăți restante. Autentificați-vă la protonmail.com și achitați factura restantă.</string>
+    <string name="delinquency_subtitle">Accesul la acest cont este blocat datorită unei plăți restante. Autentificați-vă la proton.me și achitați factura restantă.</string>
     <string name="downloading">Se descarcă...</string>
     <string name="cant_download_attachment">Nu se poate descărca fișierul atașat</string>
     <string-array name="auto_logout_options_array">
@@ -352,7 +357,6 @@
     <string name="pin_invalid">PIN nevalid. Introduceți un PIN corect din 4 cifre.</string>
     <string name="pin_not_match">Codul PIN nu se potrivește</string>
     <string name="new_pin_saved">PIN nou salvat</string>
-    <string name="new_emails">%d mesaje noi</string>
     <string name="attachment_download_success">%s s-a descărcat cu succes în managerul de fișiere</string>
     <string name="attachment_download_failed">%s nu s-a descărcat corect</string>
     <string name="ringtone">Ton de apel</string>
@@ -381,7 +385,11 @@
     <string name="upgrade">Upgrade</string>
     <string name="error">Eroare</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d imagini incluse</string>
+    <plurals name="inline_header">
+        <item quantity="one">O imagine inclusă</item>
+        <item quantity="few">%d imagini incluse</item>
+        <item quantity="other">%d de imagini incluse</item>
+    </plurals>
     <string name="warning">Avertizare</string>
     <string name="available_addresses">Adrese disponibile</string>
     <string name="inactive_addresses">Adrese inactive</string>
@@ -489,7 +497,7 @@
     <string name="update_folder">Actualizare folder</string>
     <string name="spam_score_100">Acest e-mail pare să fie de la o adresă Proton Mail, dar a venit din afara sistemului nostru și nu respectă cerințele de autenticitate. Ar putea fi falsificat sau redirecționat eronat!</string>
     <string name="spam_score_101">Acest e-mail nu respectă cerințele de autentificare ale domeniul său. Ar putea fi falsificat sau redirecționat eronat!</string>
-    <string name="spam_score_102">Acest mesaj poate fi o încercare de înșelăciune. Vă rugăm să verificați expeditorul și conținutul pentru a vă asigura că acestea sunt legitime. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">Aflați mai multe</a></string>
+    <string name="spam_score_102">Acest mesaj poate fi o încercare de înșelăciune. Verificați expeditorul și conținutul pentru a vă asigura că acestea sunt legitime. <a href="https://proton.me/blog/prevent-phishing-attacks">Detalii</a></string>
     <string name="print_from_template">De la: %s</string>
     <string name="print_to_template">Către: %s;  </string>
     <string name="print_cc_template">C: %s;  </string>
@@ -565,7 +573,7 @@
     <string name="expiration_error_add_msg_password">Adăugați o parolă pentru mesaj pentru următorii destinatari:</string>
     <string name="expiration_error_disable_pgp_sending">Dezactivați trimiterea cu PGP pentru a activa expirarea pentru următorii destinatari:</string>
     <string name="expiration_error_proceed">Atingeți «Trimite așa» pentru trimitere fără expirare acestor destinatari.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">MAI MULTE</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">DETALII</a></string>
     <string name="channel_name_attachments">Atașamente</string>
     <string name="channel_description_attachments">Informare despre starea de descărcare a atașamentelor</string>
     <string name="channel_name_emails">E-mailuri</string>
@@ -612,7 +620,11 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="tab_contact_groups">Grupuri (%d)</string>
     <string name="contact_group_saved">Grup salvat</string>
     <string name="no_recipients">Lipsă destinatari</string>
-    <string name="contact_group_selected">Selectate: %d</string>
+    <plurals name="contact_group_selected">
+        <item quantity="one">Unul selectat</item>
+        <item quantity="few">%d selectate</item>
+        <item quantity="other">%d selectate</item>
+    </plurals>
     <string name="paid_plan_needed">Vă rugăm să treceți la un abonament cu plată pentru aceste funcționalități plătite</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d membri)</string>
     <plurals name="are_you_sure_delete_group">
@@ -788,7 +800,7 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="connections_via_third_parties">Rută alternativă</string>
     <string name="allow_secure_connections_via_third_parties">Permitere rută alternativă</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">În cazul în care serverele Proton sunt blocate, această setare permite aplicației să încerce accesarea printr-o rețea alternativă pentru a ajunge la Proton, ceea ce poate fi util pentru ocolirea paravanelor de protecție sau a problemelor de rețea. Se recomandă păstrarea acestei setări pentru o fiabilitate mai mare.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">În cazul în care serverele Proton sunt blocate, această setare permite aplicației să încerce accesarea printr-o rețea alternativă pentru a ajunge la Proton, ceea ce poate fi util pentru ocolirea paravanelor de protecție sau a problemelor de rețea. Se recomandă păstrarea acestei setări pentru o fiabilitate mai mare.<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Detalii</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">În cazul în care serverele Proton sunt blocate, această setare permite aplicației să încerce accesarea printr-o rețea alternativă pentru a ajunge la Proton, ceea ce poate fi util pentru ocolirea paravanelor de protecție sau a problemelor de rețea. Se recomandă păstrarea acestei setări acitvată pentru o fiabilitate mai mare.<a href="https://proton.me/blog/anti-censorship-alternative-routing">Detalii</a></string>
     <string name="app_language">Limbă aplicație</string>
     <string name="custom_language_dialog_title">Selectare limbă</string>
     <string name="auto_detect">Autodetectare</string>
@@ -818,7 +830,7 @@ descărcarea în fundal a mesajelor noi</string>
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferență antivirus&lt;/i&gt; - Dezactivați temporar sau eliminați programul antivirus.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferențe Proxy/Paravan de protecție&lt;/i&gt; - Dezactivați orice paravan de protecție sau proxy sau contactați administratorul de rețea.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton este căzut&lt;/i&gt; - Accesați &lt;a href=\"http://protonstatus.com/\"&gt;Stare Proton&lt;/a&gt; pentru aflarea stării sistemului nostru.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Încă nu ați găsit soluția?&lt;/i&gt; - Contactați-ne direct prin &lt;a href=\"https://protonmail.com/support-form\"&gt;formularul de suport&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.com) sau &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Încă nu ați găsit soluția?&lt;/i&gt; - Contactați-ne direct prin &lt;a href=\"https://proton.me/support/contact\"&gt;formularul de suport&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.zendesk.com) sau &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

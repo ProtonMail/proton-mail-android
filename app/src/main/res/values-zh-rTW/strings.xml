@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">帶有兒童圖示的資料夾</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">Scheduled</string>
     <string name="drawer_contacts">聯絡人</string>
     <string name="drawer_lock_the_app">鎖定應用程式</string>
     <string name="drawer_report_bug">提報錯誤</string>
@@ -70,6 +71,10 @@
     <string name="details_hyperlink_phishing_dialog_content">此連結指向的網站可能試圖竊取您的資訊，如密碼與信用卡詳細資訊等。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;為了您的安全，請不要繼續。</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">返回 (建議)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">忽略警語並繼續</string>
+    <string name="scheduled_message_info">This message will be sent on %s</string>
+    <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
+    <string name="scheduled_message_moved_to_trash_title">Message will not be sent</string>
+    <string name="scheduled_message_moved_to_trash_desc">Moving this message to trash will cancel its schedule.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">密件副本：</string>
@@ -83,7 +88,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">在 %s，%s &lt; %s&gt; 寫道：</string>
     <string name="set_msg_password_title">設定密碼</string>
-    <string name="set_msg_password_info">設定密碼以加密此郵件給非 Proton Mail 使用者。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">瞭解更多</a></string>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">資訊</string>
     <string name="set_msg_password_msg_password_title">郵件密碼</string>
     <string name="set_msg_password_msg_password_hint">長度為 4 至 21 個字元</string>
@@ -279,7 +284,7 @@
     <string name="no_subject">是否傳送無主旨的郵件？</string>
     <string name="yes">是</string>
     <string name="no">否</string>
-    <string name="ok">好</string>
+    <string name="ok">OK</string>
     <string name="forward_prefix">轉寄：</string>
     <string name="original_message_divider">-------- 原始郵件 --------</string>
     <string name="invalid_email_address">位址 ‘%s’ 無效</string>
@@ -328,7 +333,7 @@
     <string name="saving_failed_no_conn">儲存失敗，無網際網路連線</string>
     <string name="attachment_exists">附件已附加</string>
     <string name="eo_password_not_completed">未完成郵件密碼設置。</string>
-    <string name="delinquency_subtitle">此帳號因未付款，存取已被停用。請登入 protonmail.com 支付未付帳單。</string>
+    <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through proton.me to pay your unpaid invoice.</string>
     <string name="downloading">正在下載……</string>
     <string name="cant_download_attachment">無法下載附件</string>
     <string-array name="auto_logout_options_array">
@@ -344,7 +349,6 @@
     <string name="pin_invalid">PIN 無效，輸入正確的 4 位數 PIN 碼</string>
     <string name="pin_not_match">PIN 碼不相符</string>
     <string name="new_pin_saved">已儲存新的 PIN</string>
-    <string name="new_emails">%d 封新郵件</string>
     <string name="attachment_download_success">%s 已成功下載到檔案管理員</string>
     <string name="attachment_download_failed">%s 無法正確下載</string>
     <string name="ringtone">鈴聲</string>
@@ -369,7 +373,9 @@
     <string name="upgrade">升級</string>
     <string name="error">錯誤</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d 嵌入圖像</string>
+    <plurals name="inline_header">
+        <item quantity="other">%d Embedded Images</item>
+    </plurals>
     <string name="warning">警告</string>
     <string name="available_addresses">可用位址</string>
     <string name="inactive_addresses">未啟用的位址</string>
@@ -477,7 +483,7 @@
     <string name="update_folder">更新資料夾</string>
     <string name="spam_score_100">此電郵似乎來自一個 Proton Mail 電郵位址，卻並非由我們的系統寄出，而且未能通過我們的認證需求。這可能是偽造或不當轉寄的郵件！</string>
     <string name="spam_score_101">此電郵無法通過網域驗證。這可能是詐騙郵件或是轉發不當導致，請再三留意！</string>
-    <string name="spam_score_102">此郵件可能有網路釣魚的企圖。請檢查寄件者和內容，以確保它們是正當的。<a href="https://protonmail.com/blog/prevent-phishing-attacks/">瞭解更多</a></string>
+    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://proton.me/blog/prevent-phishing-attacks">LEARN MORE</a></string>
     <string name="print_from_template">寄件者：%s</string>
     <string name="print_to_template">收件者：%s;  </string>
     <string name="print_cc_template">副本：%s;  </string>
@@ -553,7 +559,7 @@
     <string name="expiration_error_add_msg_password">請為以下收件者設定郵件密碼：</string>
     <string name="expiration_error_disable_pgp_sending">請對下列收件者停用 PGP 傳送，以啟用郵件時效：</string>
     <string name="expiration_error_proceed">點擊「仍然要寄送」，即使在沒有使用限時功能的情況下也直接寄給這些收件人。</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解更多</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">LEARN MORE</a></string>
     <string name="channel_name_attachments">附件</string>
     <string name="channel_description_attachments">通知附件下載狀態</string>
     <string name="channel_name_emails">電郵</string>
@@ -596,7 +602,9 @@
     <string name="tab_contact_groups">群組 (%d)</string>
     <string name="contact_group_saved">群組已儲存</string>
     <string name="no_recipients">沒有收件者</string>
-    <string name="contact_group_selected">已選取 %d 個</string>
+    <plurals name="contact_group_selected">
+        <item quantity="other">%d Selected</item>
+    </plurals>
     <string name="paid_plan_needed">請升級至付費方案以使用這些尊享功能</string>
     <string name="composer_group_count_of">%1$s（%2$d/%3$d 成員）</string>
     <plurals name="are_you_sure_delete_group">
@@ -762,7 +770,7 @@
     <string name="connections_via_third_parties">替代路由</string>
     <string name="allow_secure_connections_via_third_parties">允許替代路由</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">萬一 Proton 網站遭到封鎖，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">萬一 Proton 網站遭到封鎖，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">瞭解更多</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
     <string name="app_language">應用程式語言</string>
     <string name="custom_language_dialog_title">選擇應用程式語言</string>
     <string name="auto_detect">自動偵測</string>
@@ -792,7 +800,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://proton.me/support/contact\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

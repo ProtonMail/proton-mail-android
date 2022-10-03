@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">Mapp med underikon</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">Schemalagd</string>
     <string name="drawer_contacts">Kontakter</string>
     <string name="drawer_lock_the_app">Lås appen</string>
     <string name="drawer_report_bug">Rapportera fel</string>
@@ -71,6 +72,10 @@
     <string name="details_hyperlink_phishing_dialog_content">Denna länk leder till en webbplats som kanske försöker stjäla din information, såsom lösenord och kreditkortsuppgifter.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;För din säkerhet, fortsätt inte.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Gå tillbaka (rekommenderas)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorera varning och fortsätt</string>
+    <string name="scheduled_message_info">Detta meddelande kommer skickas den %s</string>
+    <string name="scheduled_message_edit_info">Schemalagda meddelanden kan för närvarande endast ändras från webb- och iOS-applikationer.</string>
+    <string name="scheduled_message_moved_to_trash_title">Meddelandet kommer inte att skickas</string>
+    <string name="scheduled_message_moved_to_trash_desc">Att flytta detta meddelande till papperskorgen kommer avbryta dess schema.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -84,7 +89,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Den %s, %s &lt; %s&gt; skrev:</string>
     <string name="set_msg_password_title">Ställ in lösenord</string>
-    <string name="set_msg_password_info">Ställ in ett lösenord för att kryptera detta meddelande för icke ProtonMail-användare. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Läs mer</a></string>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Meddelandelösenord</string>
     <string name="set_msg_password_msg_password_hint">4 till 21 tecken långt</string>
@@ -283,7 +288,7 @@
     <string name="no_subject">Skicka meddelande utan ämne?</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
-    <string name="ok">Okej</string>
+    <string name="ok">OK</string>
     <string name="forward_prefix">Vb:</string>
     <string name="original_message_divider">-------- Originalmeddelande --------</string>
     <string name="invalid_email_address">Adressen \'%s\' är ogiltig</string>
@@ -332,7 +337,7 @@
     <string name="saving_failed_no_conn">Misslyckades att spara, ingen anslutning</string>
     <string name="attachment_exists">Bilagan är redan bifogad</string>
     <string name="eo_password_not_completed">Lösenord för meddelandet har inte slutförts.</string>
-    <string name="delinquency_subtitle">Åtkomst till detta konto är inaktiverat på grund av utebliven betalning. Logga in via protonmail.com för att betala din obetalda faktura.</string>
+    <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through proton.me to pay your unpaid invoice.</string>
     <string name="downloading">Laddar ner...</string>
     <string name="cant_download_attachment">Kan inte ladda ner bilaga</string>
     <string-array name="auto_logout_options_array">
@@ -348,7 +353,6 @@
     <string name="pin_invalid">PIN-kod är ogiltig, ange korrekt 4-siffrig PIN-kod</string>
     <string name="pin_not_match">PIN-koder matchar inte</string>
     <string name="new_pin_saved">Ny PIN-kod sparad</string>
-    <string name="new_emails">%d nya e-postmeddelanden</string>
     <string name="attachment_download_success">%s laddades ner till filhanterare</string>
     <string name="attachment_download_failed">%s misslyckades att laddas ner korrekt</string>
     <string name="ringtone">Ringsignal</string>
@@ -375,7 +379,10 @@
     <string name="upgrade">Uppgradera</string>
     <string name="error">Fel</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d inbäddade bilder</string>
+    <plurals name="inline_header">
+        <item quantity="one">%d inbäddad bild</item>
+        <item quantity="other">%d inbäddade bilder</item>
+    </plurals>
     <string name="warning">Varning</string>
     <string name="available_addresses">Tillgängliga adresser</string>
     <string name="inactive_addresses">Inaktiva adresser</string>
@@ -483,7 +490,7 @@
     <string name="update_folder">Uppdatera mapp</string>
     <string name="spam_score_100">Denna e-post verkar komma från en Proton Mail-adress, men det kom utanför vårt system och misslyckades med våra autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefordrat!</string>
     <string name="spam_score_101">Denna e-post har misslyckats med domänens autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefordrat!</string>
-    <string name="spam_score_102">Detta meddelande kan vara ett nätfiskeförsök. Kontrollera avsändaren och innehållet för att säkerställa att de är legitima. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LÄR DIG MER</a></string>
+    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://proton.me/blog/prevent-phishing-attacks">LEARN MORE</a></string>
     <string name="print_from_template">Från: %s</string>
     <string name="print_to_template">Till: %s,  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -559,7 +566,7 @@
     <string name="expiration_error_add_msg_password">Lägg till ett lösenord för meddelandet för följande mottagare:</string>
     <string name="expiration_error_disable_pgp_sending">Avaktivera PGP-skickande för att kunna aktivera förfallotid för följande mottagare:</string>
     <string name="expiration_error_proceed">Tryck på skicka ändå för att skicka utan att löpa ut till dessa mottagare.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LÄR DIG MER</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">LÄR DIG MER</a></string>
     <string name="channel_name_attachments">Bilagor</string>
     <string name="channel_description_attachments">Informerar om bifogad nedladdningsstatus</string>
     <string name="channel_name_emails">E-postmeddelanden</string>
@@ -605,7 +612,10 @@
     <string name="tab_contact_groups">Grupper (%d)</string>
     <string name="contact_group_saved">Grupp sparad</string>
     <string name="no_recipients">Inga mottagare</string>
-    <string name="contact_group_selected">%d valda</string>
+    <plurals name="contact_group_selected">
+        <item quantity="one">%d vald</item>
+        <item quantity="other">%d valda</item>
+    </plurals>
     <string name="paid_plan_needed">Uppgradera till ett betalt paket för dessa premiumfunktioner</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Medlemmar)</string>
     <plurals name="are_you_sure_delete_group">
@@ -774,7 +784,7 @@
     <string name="connections_via_third_parties">Alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties">Tillåt alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Om Proton-webbplatser blockeras tillåter denna inställning appen att prova alternativ nätverksrouting för att nå Proton, vilket kan vara användbart för att kringgå brandväggar eller nätverksproblem. Vi rekommenderar att du behåller denna inställning på för större tillförlitlighet.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Om Proton-webbplatser blockeras tillåter denna inställning appen att prova alternativ nätverksrouting för att nå Proton, vilket kan vara användbart för att kringgå brandväggar eller nätverksproblem. Vi rekommenderar att du behåller denna inställning på för större tillförlitlighet.. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Lär dig mer</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
     <string name="app_language">App-språk</string>
     <string name="custom_language_dialog_title">Välj app-språk</string>
     <string name="auto_detect">Identifiera automatiskt</string>
@@ -804,7 +814,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://proton.me/support/contact\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

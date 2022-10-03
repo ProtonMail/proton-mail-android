@@ -72,7 +72,6 @@
     <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
-
     <string name="scheduled_message_info">This message will be sent on %s</string>
     <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
     <string name="scheduled_message_moved_to_trash_title">Message will not be sent</string>

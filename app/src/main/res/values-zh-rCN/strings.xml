@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">含子文件夹的文件夹图标</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">定时发送</string>
     <string name="drawer_contacts">通讯录</string>
     <string name="drawer_lock_the_app">锁定程序</string>
     <string name="drawer_report_bug">反馈问题</string>
@@ -70,6 +71,10 @@
     <string name="details_hyperlink_phishing_dialog_content">此链接指向的网站可能会窃取您的密码、信用卡等信息。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;出于安全考虑，请不要打开此链接。</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">返回（推荐）</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">忽视警告并继续</string>
+    <string name="scheduled_message_info">邮件将于 %s 发送</string>
+    <string name="scheduled_message_edit_info">目前您只能在网页端或 iOS 端中修改定时邮件。</string>
+    <string name="scheduled_message_moved_to_trash_title">邮件将不会发送</string>
+    <string name="scheduled_message_moved_to_trash_desc">将此邮件移入垃圾箱会取消其定时计划。</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">密送：</string>
@@ -83,7 +88,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s，%s &lt;%s&gt; 来信：</string>
     <string name="set_msg_password_title">设置密码</string>
-    <string name="set_msg_password_info">请为非 Proton Mail 用户设置密码将邮件加密。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解详情</a></string>
+    <string name="set_msg_password_info">请为非 Proton Mail 用户设置密码将邮件加密。<a href="https://proton.me/support/password-protected-emails">了解详情</a></string>
     <string name="set_msg_password_info_icon_description">信息</string>
     <string name="set_msg_password_msg_password_title">邮件密码</string>
     <string name="set_msg_password_msg_password_hint">4 - 21 个字符</string>
@@ -328,7 +333,7 @@
     <string name="saving_failed_no_conn">保存失败，网络已断开</string>
     <string name="attachment_exists">附件已存在</string>
     <string name="eo_password_not_completed">尚未输入邮件密码</string>
-    <string name="delinquency_subtitle">此账户因欠费已被停用。请登录 protonmail.com 续费。</string>
+    <string name="delinquency_subtitle">此账户因欠费已被停用。请登录 proton.me 续费。</string>
     <string name="downloading">下载中...</string>
     <string name="cant_download_attachment">未能下载附件</string>
     <string-array name="auto_logout_options_array">
@@ -344,7 +349,6 @@
     <string name="pin_invalid">口令无效，请输入四位数字</string>
     <string name="pin_not_match">口令错误</string>
     <string name="new_pin_saved">新口令已生效</string>
-    <string name="new_emails">%d 封新邮件</string>
     <string name="attachment_download_success">%s 已成功下载到文件管理器</string>
     <string name="attachment_download_failed">无法下载 %s</string>
     <string name="ringtone">铃声</string>
@@ -369,7 +373,9 @@
     <string name="upgrade">升级</string>
     <string name="error">错误</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d 张嵌入图像</string>
+    <plurals name="inline_header">
+        <item quantity="other">%d 张嵌入图像</item>
+    </plurals>
     <string name="warning">警告</string>
     <string name="available_addresses">可用地址</string>
     <string name="inactive_addresses">闲置地址</string>
@@ -477,7 +483,7 @@
     <string name="update_folder">更改文件夹</string>
     <string name="spam_score_100">这封邮件看似来自 Proton Mail 地址，但却是从我们的系统外部发来的，并且没能通过我们的验证。这可能是欺诈邮件，也可能是投递过程出现了问题。</string>
     <string name="spam_score_101">不能确定此邮件是否来自该域名，这可能是欺诈邮件，也可能是投递过程出现了问题。</string>
-    <string name="spam_score_102">此邮件可能具有欺诈性质，请检查发件人身份和邮件内容，确认信息真实性。<a href="https://protonmail.com/blog/prevent-phishing-attacks/">了解详情</a></string>
+    <string name="spam_score_102">此邮件可能具有欺诈性质，请检查发件人身份和邮件内容，确认信息真实性。<a href="https://proton.me/blog/prevent-phishing-attacks">了解详情</a></string>
     <string name="print_from_template">发件人：%s</string>
     <string name="print_to_template">收件人：%s;</string>
     <string name="print_cc_template">抄送：%s;</string>
@@ -553,7 +559,7 @@
     <string name="expiration_error_add_msg_password">请为下列收件人设置邮件密码：</string>
     <string name="expiration_error_disable_pgp_sending">关闭 PGP 方可为下列收件人设置邮件有效期：</string>
     <string name="expiration_error_proceed">若坚持发送，这些人收到的邮件将是永久有效的。</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解详情</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">了解详情</a></string>
     <string name="channel_name_attachments">附件</string>
     <string name="channel_description_attachments">附件下载状态提醒</string>
     <string name="channel_name_emails">电子邮件</string>
@@ -595,7 +601,9 @@
     <string name="tab_contact_groups">群组（%d）</string>
     <string name="contact_group_saved">群组已保存</string>
     <string name="no_recipients">无收件人</string>
-    <string name="contact_group_selected">已选择 %d 项</string>
+    <plurals name="contact_group_selected">
+        <item quantity="other">已选择 %d 项</item>
+    </plurals>
     <string name="paid_plan_needed">开通付费账户方可使用此功能</string>
     <string name="composer_group_count_of">%1$s（%2$d/%3$d 个邮箱）</string>
     <plurals name="are_you_sure_delete_group">
@@ -756,7 +764,7 @@
     <string name="connections_via_third_parties">备用线路</string>
     <string name="allow_secure_connections_via_third_parties">允许使用备用线路</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">当 Proton 网站遭到封禁时，此选项允许程序改用其他线路连接 Proton 以绕过防火墙或规避网络故障。推荐开启以增强连接稳定性。</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">当 Proton 网站遭到封禁时，此选项允许程序通过备用线路连接 Proton，从而绕过防火墙或规避网络故障。推荐开启以增强连接稳定性。<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">了解详情</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">当 Proton 网站遭到封禁时，此选项允许程序通过备用线路连接 Proton，从而绕过防火墙或规避网络故障。推荐开启以增强连接稳定性。<a href="https://proton.me/blog/anti-censorship-alternative-routing">了解详情</a></string>
     <string name="app_language">语言</string>
     <string name="custom_language_dialog_title">选择语言</string>
     <string name="auto_detect">自动检测</string>
@@ -786,7 +794,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;杀毒软件干扰&lt;/i&gt; - 暂时关闭或卸载杀毒软件。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;代理服务器或防火墙干扰&lt;/i&gt; - 关闭所有代理服务器和防火墙，或联系系统管理员。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton 运行故障&lt;/i&gt; - 查看 &lt;a href=\"http://protonstatus.com/\"&gt;Proton 运行状态&lt;/a&gt;。
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;问题仍未解决&lt;/i&gt; - 通过&lt;a href=\"https://protonmail.com/support-form\"&gt;客服表单&lt;/a&gt;、&lt;&lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;&gt;邮箱&lt;/a&gt;（support@protonmail.zendesk.com）或 &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt; 直接联系我们。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;问题仍未解决&lt;/i&gt; - 通过&lt;a href=\"https://proton.me/support/contact\"&gt;客服表单&lt;/a&gt;、&lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;邮箱&lt;/a&gt;（support@protonmail.zendesk.com）或 &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt; 直接联系我们。
     </string>
     <!-- endregion -->
     <!-- region errors -->

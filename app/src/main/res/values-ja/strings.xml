@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">サブフォルダを含むフォルダーのアイコン</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">Scheduled</string>
     <string name="drawer_contacts">連絡先</string>
     <string name="drawer_lock_the_app">アプリをロック</string>
     <string name="drawer_report_bug">バグを報告</string>
@@ -70,6 +71,10 @@
     <string name="details_hyperlink_phishing_dialog_content">このリンクはパスワードやクレジットカードなどの情報を盗もうとするウェブサイトに誘導している可能性があります。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;セキュリティのため、アクセスしないでください。</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">戻る (推奨)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">警告を無視して続行</string>
+    <string name="scheduled_message_info">This message will be sent on %s</string>
+    <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
+    <string name="scheduled_message_moved_to_trash_title">Message will not be sent</string>
+    <string name="scheduled_message_moved_to_trash_desc">Moving this message to trash will cancel its schedule.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">BCC:</string>
@@ -83,7 +88,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s に %s &lt; %s&gt; が送信:</string>
     <string name="set_msg_password_title">パスワードを設定</string>
-    <string name="set_msg_password_info">Proton Mail ユーザー以外への暗号化パスワードを設定してください。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a></string>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">情報</string>
     <string name="set_msg_password_msg_password_title">メッセージのパスワード</string>
     <string name="set_msg_password_msg_password_hint">4〜21 文字</string>
@@ -328,7 +333,7 @@
     <string name="saving_failed_no_conn">保存に失敗しました。接続が切れています。</string>
     <string name="attachment_exists">既に添付されている添付ファイル</string>
     <string name="eo_password_not_completed">メッセージのパスワードが不完全です。</string>
-    <string name="delinquency_subtitle">このアカウントへのアクセスは不払いのため無効化されています。未払い分を支払うには、 protonmail.com からサインインしてください。</string>
+    <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through proton.me to pay your unpaid invoice.</string>
     <string name="downloading">ダウンロード中...</string>
     <string name="cant_download_attachment">添付ファイルをダウンロードできません</string>
     <string-array name="auto_logout_options_array">
@@ -344,7 +349,6 @@
     <string name="pin_invalid">無効なPINコードです。4桁の正しいPINコードを入力してください。</string>
     <string name="pin_not_match">PINコードが一致しません。</string>
     <string name="new_pin_saved">新しいPINコードが保存されました。</string>
-    <string name="new_emails">%d 新しいメール</string>
     <string name="attachment_download_success">%s は正常にファイルマネージャーにダウンロードされました。</string>
     <string name="attachment_download_failed">%s のダウンロードに失敗しました。</string>
     <string name="ringtone">着信音</string>
@@ -369,7 +373,9 @@
     <string name="upgrade">アップグレード</string>
     <string name="error">エラー</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d 埋め込み画像</string>
+    <plurals name="inline_header">
+        <item quantity="other">%d Embedded Images</item>
+    </plurals>
     <string name="warning">警告</string>
     <string name="available_addresses">使用可能なアドレス</string>
     <string name="inactive_addresses">無効になっているアドレス</string>
@@ -477,7 +483,7 @@
     <string name="update_folder">フォルダーを更新</string>
     <string name="spam_score_100">このメールは Proton Mail のアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
-    <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。差出人と内容を疑い、正当なものかどうかを確認してください。 <a href="https://protonmail.com/blog/prevent-phishing-attacks/">詳細</a></string>
+    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://proton.me/blog/prevent-phishing-attacks">LEARN MORE</a></string>
     <string name="print_from_template">差出人: %s</string>
     <string name="print_to_template">宛先: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -553,7 +559,7 @@
     <string name="expiration_error_add_msg_password">次の宛先に対してのメッセージのパスワードを追加してください:</string>
     <string name="expiration_error_disable_pgp_sending">次の宛先に対して期限付きメッセージを送信するには、PGPを無効にしてください：</string>
     <string name="expiration_error_proceed">タップしてこれらの宛先には有効期限なしでそのまま送信する</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">LEARN MORE</a></string>
     <string name="channel_name_attachments">添付ファイル</string>
     <string name="channel_description_attachments">添付ファイルのダウンロード状態を知らせる</string>
     <string name="channel_name_emails">メール</string>
@@ -595,7 +601,9 @@
     <string name="tab_contact_groups">グループ (%d)</string>
     <string name="contact_group_saved">グループを保存しました</string>
     <string name="no_recipients">宛先がありません</string>
-    <string name="contact_group_selected">%d 件選択中</string>
+    <plurals name="contact_group_selected">
+        <item quantity="other">%d Selected</item>
+    </plurals>
     <string name="paid_plan_needed">これらの機能を使うためには有料プランにアップグレードしてください。</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d メンバー)</string>
     <plurals name="are_you_sure_delete_group">
@@ -756,7 +764,7 @@
     <string name="connections_via_third_parties">代替ルーティング</string>
     <string name="allow_secure_connections_via_third_parties">代替ルーティングを許可</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Proton のサイトがブロックされている場合、この設定により、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。サービスへの接続の信頼性向上の観点から、私たちはこの設定を有効にしておくことをお勧めします。</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Proton のサイトがブロックされている場合、この設定により、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。サービスへの接続の信頼性向上の観点から、私たちはこの設定を有効にしておくことをお勧めします。<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">詳細</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
     <string name="app_language">アプリ言語</string>
     <string name="custom_language_dialog_title">アプリの言語を選択してください</string>
     <string name="auto_detect">自動検出</string>
@@ -780,7 +788,14 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">一般的な接続の問題と解決策</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;インターネット接続がありません&lt;/i&gt; - インターネットに接続されているか確認してください。        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;ISP の問題&lt;/i&gt; - ほかのネットワークから Proton への接続を試してください。(または &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; や &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; を使用してください。)        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;政府によるブロック&lt;/i&gt; - あなたの国では Proton への接続がブロックされています。&lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; やその他の VPN、または &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; から Proton へのアクセスを試してください。        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;アンチウイルスとの干渉&lt;/i&gt; - 一時的にアンチウイルスソフトウェアを無効にするか削除してください。        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;プロキシーやファイアウォールとの干渉&lt;/i&gt; - プロキシーやファイアウォールを無効にするか、ネットワーク管理者に連絡します。        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton が落ちている&lt;/i&gt; - &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; からシステム状況を確認してください。        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;まだ解決方法が見つからない&lt;/i&gt; - &lt;a href=\"https://protonmail.com/support-form\"&gt;サポートフォーム&lt;/a&gt; や &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;メール&lt;/a&gt; (support@protonmail.zendesk.com)、および &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt; から直接お問い合わせできます。    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://proton.me/support/contact\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">画像が見つかりませんでした。</string>

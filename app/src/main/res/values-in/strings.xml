@@ -38,6 +38,7 @@
     <string name="x_parent_folder_icon_description">Folder dengan ikon sub-folder</string>
     <!-- endregion -->
     <!-- region Drawer -->
+    <string name="drawer_scheduled">Terjadwal</string>
     <string name="drawer_contacts">Kontak</string>
     <string name="drawer_lock_the_app">Kunci aplikasi</string>
     <string name="drawer_report_bug">Laporkan bug</string>
@@ -70,6 +71,10 @@
     <string name="details_hyperlink_phishing_dialog_content">Tautan ini tertuju pada situs web yang dapat mencuri informasi pribadi Anda, seperti kata sandi dan rincian kartu kredit yang Anda miliki.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Demi keamanan Anda, jangan buka tautan ini.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Kembali (disarankan)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Abaikan peringatan dan lanjut</string>
+    <string name="scheduled_message_info">Pesan ini akan terkirim pada %s</string>
+    <string name="scheduled_message_edit_info">Pesan yang terjadwal saat ini hanya dapat diubah melalui aplikasi Web dan iOS.</string>
+    <string name="scheduled_message_moved_to_trash_title">Pesan tidak akan terkirim</string>
+    <string name="scheduled_message_moved_to_trash_desc">Memindahkan pesan ini ke sampah akan membatalkan pengiriman terjadwal.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -83,7 +88,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Pada %s, %s &lt; %s&gt; menulis:</string>
     <string name="set_msg_password_title">Setel kata sandi</string>
-    <string name="set_msg_password_info">Tentukan kata sandi untuk mengenkripsi pesan ini bagi para pengguna non-Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Pelajari lebih lanjut</a></string>
+    <string name="set_msg_password_info">Tentukan kata sandi untuk mengenkripsi pesan ini bagi para pengguna non-Proton Mail. <a href="https://proton.me/support/password-protected-emails">Pelajari lebih lanjut</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Kata sandi pesan</string>
     <string name="set_msg_password_msg_password_hint">panjang 8 hingga 21 karakter</string>
@@ -279,7 +284,7 @@
     <string name="no_subject">Kirim pesan tanpa subjek?</string>
     <string name="yes">Ya</string>
     <string name="no">Tidak</string>
-    <string name="ok">Baik</string>
+    <string name="ok">OK</string>
     <string name="forward_prefix">Trs:</string>
     <string name="original_message_divider">-------- Pesan asli --------</string>
     <string name="invalid_email_address">Alamat \'%s\' tidak valid</string>
@@ -328,7 +333,7 @@
     <string name="saving_failed_no_conn">Gagal menyimpan, tidak ada koneksi</string>
     <string name="attachment_exists">Lampiran telah terlampir</string>
     <string name="eo_password_not_completed">Kata Sandi Pesan tidak lengkap.</string>
-    <string name="delinquency_subtitle">Akses ke akun ini telah dinonaktifkan karena adanya tagihan yang belum dibayar. Silakan masuk melalui protonmail.com untuk membayar tagihan Anda.</string>
+    <string name="delinquency_subtitle">Akses ke akun ini telah dinonaktifkan karena adanya tagihan yang belum dibayar. Silakan masuk melalui proton.me untuk membayar tagihan Anda.</string>
     <string name="downloading">Mengunduh...</string>
     <string name="cant_download_attachment">Lampiran tidak dapat diunduh</string>
     <string-array name="auto_logout_options_array">
@@ -344,7 +349,6 @@
     <string name="pin_invalid">PIN tidak valid, masukkan 4 digit PIN yang benar</string>
     <string name="pin_not_match">PIN tidak cocok</string>
     <string name="new_pin_saved">PIN baru disimpan</string>
-    <string name="new_emails">%d email baru</string>
     <string name="attachment_download_success">%s berhasil diunduh ke File Manager</string>
     <string name="attachment_download_failed">%s gagal diunduh dengan benar</string>
     <string name="ringtone">Nada dering</string>
@@ -370,7 +374,9 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="upgrade">Tingkatkan</string>
     <string name="error">Kesalahan</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d Gambar yang Tersemat</string>
+    <plurals name="inline_header">
+        <item quantity="other">%d Gambar yang Tersemat</item>
+    </plurals>
     <string name="warning">Peringatan</string>
     <string name="available_addresses">Alamat yang Tersedia</string>
     <string name="inactive_addresses">Alamat yang Tidak Aktif</string>
@@ -478,7 +484,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="update_folder">Perbarui Folder</string>
     <string name="spam_score_100">Walaupun email ini sekilas terlihat seperti dikirim dari alamat Proton Mail, email ini sepertinya berasal dari luar sistem kami dan tidak memenuhi persyaratan otentikasi yang kami miliki. Email ini mungkin palsu atau tidak diteruskan dengan benar!</string>
     <string name="spam_score_101">Email ini tidak memenuhi syarat otentikasi domainnya. Email ini mungkin telah dipalsukan atau tidak diteruskan dengan benar!</string>
-    <string name="spam_score_102">Pesan ini mungkin merupakan sebuah upaya phishing. Mohon periksa nama pengirim dan konten yang tertera secara seksama untuk memastikan keabsahan email ini. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">PELAJARI LEBIH LANJUT</a></string>
+    <string name="spam_score_102">Pesan ini mungkin merupakan sebuah upaya phishing. Mohon periksa nama pengirim dan konten yang tertera secara seksama untuk memastikan keabsahan email ini. <a href="https://proton.me/blog/prevent-phishing-attacks">PELAJARI LEBIH LANJUT</a></string>
     <string name="print_from_template">Dari: %s</string>
     <string name="print_to_template">Kepada: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -554,7 +560,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="expiration_error_add_msg_password">Silakan tambahkan kata sandi pesan untuk penerima berikut:</string>
     <string name="expiration_error_disable_pgp_sending">Mohon nonaktifkan pengiriman PGP untuk mengaktifkan fitur kedaluwarsa untuk penerima berikut:</string>
     <string name="expiration_error_proceed">Ketuk tetap kirim untuk mengirim tanpa kedaluwarsa ke penerima ini.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">PELAJARI LEBIH LANJUT</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">PELAJARI LEBIH LANJUT</a></string>
     <string name="channel_name_attachments">Lampiran</string>
     <string name="channel_description_attachments">Menginformasikan status unduhan lampiran</string>
     <string name="channel_name_emails">Email</string>
@@ -599,7 +605,9 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="tab_contact_groups">Grup (%d)</string>
     <string name="contact_group_saved">Grup disimpan</string>
     <string name="no_recipients">Tidak ada Penerima</string>
-    <string name="contact_group_selected">%d Dipilih</string>
+    <plurals name="contact_group_selected">
+        <item quantity="other">%d Terpilih</item>
+    </plurals>
     <string name="paid_plan_needed">Silakan tingkatkan ke paket berbayar untuk fitur premium ini</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Anggota)</string>
     <plurals name="are_you_sure_delete_group">
@@ -765,7 +773,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="connections_via_third_parties">Pengalihan lalu lintas alternatif</string>
     <string name="allow_secure_connections_via_third_parties">Izinkan pengalihan lalu lintas alternatif</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Jika situs Proton di blokir, pengaturan ini memungkinkan aplikasi untuk mencoba perutean jaringan alternatif untuk mencapai Proton, yang mana dapat berguna untuk melewati/mem-bypass firewall atau masalah jaringan. Kami sarankan untuk tetap mengaktifkan pengaturan ini untuk kendala yang lebih baik.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Apabila situs Proton diblokir, pengaturan ini akan memungkinkan aplikasi untuk dapat terhubung dengan Proton melalui lalu lintas jaringan alternatif, yang dapat berguna untuk melewati hadangan firewall atau masalah jaringan. Kami sarankan agar pengaturan ini diaktifkan sepanjang waktu untuk keterandalan koneksi yang lebih baik.<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Pelajari lebih lanjut</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Apabila situs Proton diblokir, pengaturan ini akan memungkinkan aplikasi kami untuk dapat terhubung dengan Proton melalui lalu lintas jaringan alternatif, yang dapat berguna untuk melewati hadangan firewall atau masalah jaringan. Kami sarankan agar pengaturan ini selalu aktif untuk koneksi yang lebih andal. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Pelajari lebih lanjut</a></string>
     <string name="app_language">Bahasa aplikasi</string>
     <string name="custom_language_dialog_title">Pilih Bahasa Aplikasi</string>
     <string name="auto_detect">Deteksi otomatis</string>
@@ -795,7 +803,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Gangguan Antivirus&lt;/i&gt; - Nonaktifkan sementara atau hapus perangkat antivirus Anda.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Gangguan Proxy/Firewall&lt;/i&gt; - Nonaktifkan proxy atau firewall yang sedang aktif, atau hubungi pengelola jaringan Anda.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton sedang offline/down&lt;/i&gt; - Cek &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; untuk mengetahui status sistem kami.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Masalah saya masih belum terselesaikan&lt;/i&gt; - Hubungi kami secara langsung melalui &lt;a href=\"https://protonmail.com/support-form\"&gt;formulir layanan dukungan&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), atau &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt; kami.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Masalah saya masih belum terselesaikan&lt;/i&gt; - Hubungi kami secara langsung melalui &lt;a href=\"https://proton.me/support/contact&gt;formulir layanan dukungan&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), atau &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt; kami.
     </string>
     <!-- endregion -->
     <!-- region errors -->
