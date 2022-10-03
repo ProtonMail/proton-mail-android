@@ -201,7 +201,11 @@ public class SendPreferencesFactory {
         String pinnedEncryptionKey = hasPinnedKeys ? findPinnedEncryptionKey(contactKeys, pubKeyResp) : null;
         boolean isEncryptionKeyPinned = pinnedEncryptionKey != null;
         String encryptionKey = pinnedEncryptionKey == null && pubKeyResp.getKeys().length > 0 ? pubKeyResp.getKeys()[0].getPublicKey() : pinnedEncryptionKey;
-        boolean encrypt = encryptFlag != null ? !encryptFlag.getValue().equalsIgnoreCase("false") : false;
+        boolean encrypt =
+                encryptFlag != null ?
+                        !encryptFlag.getValue().equalsIgnoreCase("false")
+                        // If not specified in the contact but we have an encryption key, we encrypt by default
+                        : encryptionKey != null;
         boolean sign = signFlag != null ? !signFlag.getValue().equalsIgnoreCase("false") : mailSettings.getDefaultSign();
         if (isInternal) {
             encrypt = true;
