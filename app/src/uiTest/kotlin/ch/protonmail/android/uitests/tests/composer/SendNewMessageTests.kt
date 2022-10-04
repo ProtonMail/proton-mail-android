@@ -109,7 +109,7 @@ class SendNewMessageTests : BaseTest() {
 
     @TestId("29720")
     @Test
-    fun sendMessageTOandCC() {
+    fun sendMessageTOCC() {
         val to = internalEmailTrustedKeys.email
         val cc = internalEmailNotTrustedKeys.email
         loginRobot
@@ -125,7 +125,7 @@ class SendNewMessageTests : BaseTest() {
     @TestId("29721")
     @Category(SmokeTest::class)
     @Test
-    fun sendMessageTOandCCandBCC() {
+    fun sendMessageTOCCBCC() {
         val to = externalGmailPGPEncrypted.email
         val cc = internalEmailTrustedKeys.email
         val bcc = internalEmailNotTrustedKeys.email

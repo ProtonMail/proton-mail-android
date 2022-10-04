@@ -21,6 +21,8 @@ package ch.protonmail.android.uitests.robots.mailbox.composer
 
 import android.widget.EditText
 import ch.protonmail.android.R
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.typeInProtonInputField
+import me.proton.core.presentation.ui.view.ProtonInput
 import me.proton.fusion.Fusion
 
 /**
@@ -38,21 +40,24 @@ class SetPasswordRobot : Fusion {
     private fun definePassword(password: String): SetPasswordRobot {
         view
             .withId(R.id.set_msg_password_msg_password_input)
-            .instanceOf(EditText::class.java)
-            .replaceText(password)
+            .instanceOf(ProtonInput::class.java)
+            .performCustomAction(typeInProtonInputField(password))
         return this
     }
 
     private fun confirmPassword(password: String): SetPasswordRobot {
         view
             .withId(R.id.set_msg_password_repeat_password_input)
-            .instanceOf(EditText::class.java)
-            .replaceText(password)
+            .instanceOf(ProtonInput::class.java)
+            .performCustomAction(typeInProtonInputField(password))
         return this
     }
 
     private fun defineHint(hint: String): SetPasswordRobot {
-        view.withId(R.id.set_msg_password_hint_input).instanceOf(EditText::class.java).replaceText(hint)
+        view
+            .withId(R.id.set_msg_password_hint_input)
+            .instanceOf(ProtonInput::class.java)
+            .performCustomAction(typeInProtonInputField(hint))
         return this
     }
 

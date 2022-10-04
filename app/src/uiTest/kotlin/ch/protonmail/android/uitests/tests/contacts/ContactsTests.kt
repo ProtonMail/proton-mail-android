@@ -94,8 +94,6 @@ class ContactsTests : BaseTest() {
         contactsRobot
             .addContact()
             .setNameEmailAndSave(name, email)
-            .openOptionsMenu()
-            .refreshContacts()
             .clickContactByEmail(email)
             .deleteContact()
             .verify { contactDoesNotExists(name, email) }

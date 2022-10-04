@@ -40,6 +40,7 @@ import me.proton.core.test.android.instrumented.utils.FileUtils.prepareArtifacts
 import me.proton.core.test.android.instrumented.utils.Shell.deleteDownloadArtifactsFolder
 import me.proton.core.test.android.plugins.data.User
 import me.proton.core.util.android.sharedpreferences.set
+import me.proton.fusion.Fusion
 import org.junit.After
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -48,7 +49,7 @@ import org.junit.runner.RunWith
 import kotlin.test.BeforeTest
 
 @RunWith(AndroidJUnit4::class)
-open class BaseTest {
+open class BaseTest: Fusion {
 
     private val activityRule = ActivityTestRule(MailboxActivity::class.java)
 
@@ -71,13 +72,13 @@ open class BaseTest {
 
     @After
     fun tearDown() {
-        device.removeWatcher("SystemDialogWatcher")
+        uiDevice.removeWatcher("SystemDialogWatcher")
     }
 
     companion object {
 
         private val automation = InstrumentationRegistry.getInstrumentation().uiAutomation!!
-        private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        private val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         var shouldReportToTestRail = false
         private val testExecutionWatcher = TestExecutionWatcher()
         private const val oneTimeRunFlag = "oneTimeRunFlag"

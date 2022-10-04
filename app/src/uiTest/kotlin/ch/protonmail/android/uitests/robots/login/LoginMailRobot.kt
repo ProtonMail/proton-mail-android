@@ -22,11 +22,9 @@ package ch.protonmail.android.uitests.robots.login
 import android.widget.EditText
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.robots.onboarding.OnboardingRobot
 import ch.protonmail.android.uitests.tests.BaseTest.Companion.users
 import me.proton.fusion.Fusion
 import me.proton.core.test.android.robots.auth.login.LoginRobot
-import me.proton.core.test.android.robots.auth.login.MailboxPasswordRobot
 import me.proton.core.test.android.robots.auth.login.TwoFaRobot
 
 class LoginMailRobot : Fusion {
@@ -44,13 +42,13 @@ class LoginMailRobot : Fusion {
     }
 
     fun loginTwoPassUser(): InboxRobot {
-        val twoPassUser = users.getUser { it.name == "twoPassUser" }
+        val twoPassUser = users.getUsers(false) { it.name == "twoPassAccount" }[0]
         view.withId(R.id.sign_in).click()
         loginRobot
             .username(twoPassUser.name)
             .password(twoPassUser.password)
-            .signIn<MailboxPasswordRobot>()
-            .unlockMailbox<InboxRobot>(twoPassUser)
+            .signIn<MailboxPasswordMailRobot>()
+            .unlockMailbox(twoPassUser.passphrase)
         return InboxRobot()
     }
 
@@ -60,8 +58,8 @@ class LoginMailRobot : Fusion {
         loginRobot
             .username(twoPassUser.name)
             .password(twoPassUser.password)
-            .signIn<MailboxPasswordRobot>()
-            .unlockMailbox<InboxRobot>(twoPassUser)
+            .signIn<MailboxPasswordMailRobot>()
+            .unlockMailbox(twoPassUser.passphrase)
         return InboxRobot()
     }
 
@@ -85,8 +83,8 @@ class LoginMailRobot : Fusion {
             .password(twoPassUserWith2FA.password)
             .signIn<TwoFaRobot>()
             .setSecondFactorInput(twoPassUserWith2FA.twoFa)
-            .authenticate<MailboxPasswordRobot>()
-            .unlockMailbox<InboxRobot>(twoPassUserWith2FA)
+            .authenticate<MailboxPasswordMailRobot>()
+            .unlockMailbox(twoPassUserWith2FA.passphrase)
         return InboxRobot()
     }
 
@@ -118,7 +116,6 @@ class LoginMailRobot : Fusion {
             .password(onePassUserWith2FA.password)
             .signIn<TwoFaRobot>()
             .switchTwoFactorMode()
-//            .clickCancelButton()
         /**
          * TODO Create cancel method in [TwoFaRobot]
          **/
@@ -140,8 +137,8 @@ class LoginMailRobot : Fusion {
         loginRobot
             .username(twoPassUser.name)
             .password(twoPassUser.password)
-            .signIn<MailboxPasswordRobot>()
-            .unlockMailbox<InboxRobot>(twoPassUser)
+            .signIn<MailboxPasswordMailRobot>()
+            .unlockMailbox(twoPassUser.passphrase)
         return InboxRobot()
     }
 
@@ -163,8 +160,8 @@ class LoginMailRobot : Fusion {
             .password(twoPassUserWith2FA.password)
             .signIn<TwoFaRobot>()
             .setSecondFactorInput(twoPassUserWith2FA.twoFa)
-            .authenticate<MailboxPasswordRobot>()
-            .unlockMailbox<InboxRobot>(twoPassUserWith2FA)
+            .authenticate<MailboxPasswordMailRobot>()
+            .unlockMailbox(twoPassUserWith2FA.passphrase)
         return InboxRobot()
     }
 

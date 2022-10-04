@@ -22,14 +22,10 @@ package ch.protonmail.android.uitests.robots.mailbox
 
 import android.widget.ImageView
 import androidx.annotation.IdRes
-import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -49,9 +45,7 @@ import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_30S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_60S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
 import ch.protonmail.android.uitests.testsHelper.waitForCondition
-import com.google.android.material.snackbar.SnackbarContentLayout
 import me.proton.fusion.Fusion
-import okhttp3.internal.wait
 
 interface MailboxRobotInterface : Fusion {
 
@@ -110,7 +104,6 @@ interface MailboxRobotInterface : Fusion {
         saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetSelectMessage)())
         recyclerView
             .withId(messagesRecyclerViewId)
-//            .waitUntilPopulated()
             .onItemAtPosition(position)
             .click()
         return MessageRobot()
@@ -125,18 +118,15 @@ interface MailboxRobotInterface : Fusion {
         view.instanceOf(ImageView::class.java).hasParent(view.withId(R.id.mailboxRecyclerView)).checkDoesNotExist()
         recyclerView
             .withId(messagesRecyclerViewId)
-//            .waitUntilPopulated()
             .onHolderItem(withFirstInstanceMessageSubject(subject))
             .click()
         return MessageRobot()
     }
 
     fun refreshMessageList(): Any {
-//        recyclerView.withId(messagesRecyclerViewId).waitUntilPopulated()
         view.withId(messagesRecyclerViewId).swipeDown()
         // Waits for loading icon to disappear
         view.instanceOf(ImageView::class.java).hasParent(view.withId(messagesRecyclerViewId)).checkDoesNotExist()
-//        recyclerView.withId(messagesRecyclerViewId).waitUntilPopulated()
         return Any()
     }
 

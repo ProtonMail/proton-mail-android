@@ -27,10 +27,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.contrib.RecyclerViewActions.PositionableRecyclerViewAction
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.R
+import me.proton.core.presentation.ui.view.ProtonInput
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matcher
 import org.jetbrains.annotations.Contract
@@ -96,6 +98,18 @@ object UICustomViewActions {
             val messageDate = layoutManager.getChildAt(position)
                 ?.findViewById<TextView>(R.id.time_date_text_view)?.text.toString()
             saveSubject.invoke(messageSubject, messageDate)
+        }
+    }
+
+    fun typeInProtonInputField(input: String): ViewAction {
+        return object : ViewAction {
+            override fun perform(uiController: UiController, view: View) {
+                (view as ProtonInput).text = input
+            }
+
+            override fun getDescription(): String = "Inputs given text value in ProtonInput field."
+
+            override fun getConstraints(): Matcher<View> = isAssignableFrom(ProtonInput::class.java)
         }
     }
 
