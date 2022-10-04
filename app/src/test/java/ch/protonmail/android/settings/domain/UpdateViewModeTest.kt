@@ -26,7 +26,7 @@ import io.mockk.coJustRun
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
@@ -44,14 +44,16 @@ class UpdateViewModeTest {
 
     private val userId = UserId("userId")
 
+    private val dispatchers = TestDispatcherProvider
+
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        updateViewMode = UpdateViewMode(featureFlagsManager, repository, TestDispatcherProvider)
+        updateViewMode = UpdateViewMode(featureFlagsManager, repository, dispatchers)
     }
 
     @Test
-    fun verifyThatUpdateViewModeIsExecutedIfChangeViewModeFeatureIsEnabled() = runBlockingTest {
+    fun verifyThatUpdateViewModeIsExecutedIfChangeViewModeFeatureIsEnabled() = runTest(dispatchers.Main) {
 
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
@@ -66,7 +68,7 @@ class UpdateViewModeTest {
     }
 
     @Test
-    fun verifyThatUpdateViewModeIsNotExecutedIfChangeViewModeFeatureIsDisabled() = runBlockingTest {
+    fun verifyThatUpdateViewModeIsNotExecutedIfChangeViewModeFeatureIsDisabled() = runTest(dispatchers.Main) {
 
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns false

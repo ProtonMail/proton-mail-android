@@ -24,7 +24,7 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.utils.buildFolders
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -35,10 +35,12 @@ private val TEST_USER_ID = UserId("user")
 
 class LabelOrFolderWithChildrenMapperTest {
 
-    private val mapper = LabelOrFolderWithChildrenMapper(TestDispatcherProvider)
+    private val dispatchers = TestDispatcherProvider
+
+    private val mapper = LabelOrFolderWithChildrenMapper(dispatchers)
 
     @Test
-    fun takesBothFoldersAndLabels() = runBlockingTest {
+    fun takesBothFoldersAndLabels() = runTest(dispatchers.Main) {
         // given
         val first = "first"
         val second = "second"
@@ -56,7 +58,7 @@ class LabelOrFolderWithChildrenMapperTest {
     }
 
     @Test
-    fun singleParentAndSingleChild() = runBlockingTest {
+    fun singleParentAndSingleChild() = runTest(dispatchers.Main) {
         // given
         val parent = "parent"
         val child = "child"
@@ -78,7 +80,7 @@ class LabelOrFolderWithChildrenMapperTest {
     }
 
     @Test
-    fun threeLevelSingleParentAndSingleChildAndSingleGrandchild() = runBlockingTest {
+    fun threeLevelSingleParentAndSingleChildAndSingleGrandchild() = runTest(dispatchers.Main) {
         // given
         val parent = "parent"
         val child = "child"
@@ -104,7 +106,7 @@ class LabelOrFolderWithChildrenMapperTest {
     }
 
     @Test
-    fun mapsComplexHierarchyOfFolders() = runBlockingTest {
+    fun mapsComplexHierarchyOfFolders() = runTest(dispatchers.Main) {
         // given
         val first = "first"
         val second = "second"
@@ -168,7 +170,7 @@ class LabelOrFolderWithChildrenMapperTest {
     }
 
     @Test
-    fun orphanFoldersAreIgnoredFromTheResult() = runBlockingTest {
+    fun orphanFoldersAreIgnoredFromTheResult() = runTest(dispatchers.Main) {
         // given
         val parent = "parent"
         val child = "child"

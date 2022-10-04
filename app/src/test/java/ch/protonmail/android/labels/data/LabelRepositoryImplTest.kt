@@ -47,7 +47,7 @@ import io.mockk.verify
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
 import me.proton.core.test.android.ArchTest
@@ -95,7 +95,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyThatObserveAllLabelsStartsWithFetchingDataFromRemoteApiAndSavingInDb() = runBlockingTest {
+    fun verifyThatObserveAllLabelsStartsWithFetchingDataFromRemoteApiAndSavingInDb() = runTest(dispatchers.Main) {
         // given
         coEvery { api.getLabels(testUserId) } returns ApiResult.Success(LabelsResponse(listOf(testLabel1)))
         coEvery { api.getContactGroups(testUserId) } returns ApiResult.Success(LabelsResponse(listOf(testLabel2)))
@@ -122,7 +122,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyThatFetchLabelsDoesNotRefreshTheDataWhenThereIsNoConnectivity() = runBlockingTest {
+    fun verifyThatFetchLabelsDoesNotRefreshTheDataWhenThereIsNoConnectivity() = runTest(dispatchers.Main) {
         // given
         coEvery { networkConnectivityManager.isInternetConnectionPossible() } returns false
         val dbReply = listOf(testLabelEntity1)
@@ -140,24 +140,25 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
 
 
     @Test
-    fun verifyThatFetchLabelsDoesNotRefreshTheDataWhenThereIsConnectivityButItWasNotRequested() = runBlockingTest {
-        // given
-        coEvery { networkConnectivityManager.isInternetConnectionPossible() } returns true
-        val dbReply = listOf(testLabelEntity1)
-        val shallRefresh = false
+    fun verifyThatFetchLabelsDoesNotRefreshTheDataWhenThereIsConnectivityButItWasNotRequested() =
+        runTest(dispatchers.Main) {
+            // given
+            coEvery { networkConnectivityManager.isInternetConnectionPossible() } returns true
+            val dbReply = listOf(testLabelEntity1)
+            val shallRefresh = false
 
-        // when
-        repository.observeAllLabels(testUserId, shallRefresh).test {
+            // when
+            repository.observeAllLabels(testUserId, shallRefresh).test {
 
-            // then
-            dbFlow.emit(dbReply)
+                // then
+                dbFlow.emit(dbReply)
             assertEquals(dbReply.map { labelDomainMapper.toLabel(it) }, awaitItem())
             coVerify(exactly = 0) { labelDao.insertOrUpdate(*anyVararg()) }
         }
     }
 
     @Test
-    fun verifyThatDeleteWithWorkerSchedulesAppropriateWorker() = runBlockingTest {
+    fun verifyThatDeleteWithWorkerSchedulesAppropriateWorker() = runTest(dispatchers.Main) {
         // given
         val labelId1 = LabelId("id1")
         val labelId2 = LabelId("id2")
@@ -181,7 +182,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyThatSaveWithWorkerSchedulesAppropriateWorker() = runBlockingTest {
+    fun verifyThatSaveWithWorkerSchedulesAppropriateWorker() = runTest(dispatchers.Main) {
         // given
         val isUpdate = false
         val labelType = LabelType.MESSAGE_LABEL
@@ -228,7 +229,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyThatObservingGivenLabelsReturnsLabelObject() = runBlockingTest {
+    fun verifyThatObservingGivenLabelsReturnsLabelObject() = runTest(dispatchers.Main) {
         // given
         val labelId1 = LabelId("id1")
         coEvery { labelDao.observeLabelById(labelId1) } returns flowOf(testLabelEntity1)

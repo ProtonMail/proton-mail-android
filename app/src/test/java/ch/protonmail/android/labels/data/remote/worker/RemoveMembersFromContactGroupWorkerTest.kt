@@ -32,7 +32,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
@@ -59,6 +59,8 @@ class RemoveMembersFromContactGroupWorkerTest {
 
     private val testUserId = UserId("TestUserId")
 
+    private val dispatchers = TestDispatcherProvider
+
     private lateinit var worker: RemoveMembersFromContactGroupWorker
 
     @BeforeTest
@@ -69,7 +71,7 @@ class RemoveMembersFromContactGroupWorkerTest {
             context,
             parameters,
             api,
-            TestDispatcherProvider,
+            dispatchers,
             labelRepository,
             accountManager
         )
@@ -77,7 +79,7 @@ class RemoveMembersFromContactGroupWorkerTest {
 
     @Test
     fun verifyWorkerFailsWithNoGroupIdProvided() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty contacts group id")
@@ -93,7 +95,7 @@ class RemoveMembersFromContactGroupWorkerTest {
 
     @Test
     fun verifyWorkerFailsWithNoMembersListProvided() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val groupId = "Id1"
             every { parameters.inputData } returns
@@ -112,7 +114,7 @@ class RemoveMembersFromContactGroupWorkerTest {
 
     @Test
     fun verifySuccessResultIsGeneratedWithRequiredParameters() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val groupId = "Id1"
             val member1 = "MemberId1"

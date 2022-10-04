@@ -26,7 +26,9 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.Attachment
+import ch.protonmail.android.data.local.model.AttachmentHeaders
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
@@ -41,7 +43,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.slot
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.user.domain.entity.AddressId
@@ -97,7 +99,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
     @Test
     fun uploadCallsUploadAttachmentInlineApiWhenAttachmentIsInline() {
-        runBlockingTest {
+        runTest {
             val messageId = "messageId"
             val contentId = "contentId"
             val mimeType = "image/jpeg"
@@ -147,7 +149,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
     @Test
     fun uploadCallsUploadAttachmentInlineApiPassingContentIdFormatted() {
-        runBlockingTest {
+        runTest {
             val messageId = "messageId"
             val contentId = "ignoreFirst<content>Id<split<last< "
             val mimeType = "image/jpeg"
@@ -192,7 +194,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
     @Test
     fun uploadCallsUploadAttachmentApiWhenAttachmentIsNotInline() {
-        runBlockingTest {
+        runTest {
             val messageId = "messageId"
             val mimeType = "image/jpeg"
             val fileContent = "attachment content".toByteArray()
@@ -231,7 +233,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
     @Test
     fun uploadSavesUpdatedAttachmentToMessageRepositoryAndReturnSuccessWhenRequestSucceeds() {
-        runBlockingTest {
+        runTest {
             val apiAttachmentId = "456"
             val apiKeyPackets = "apiKeyPackets"
             val apiSignature = "apiSignature"
@@ -267,7 +269,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
     @Test
     fun uploadReturnsFailureWhenUploadAttachmentToApiFails() {
-        runBlockingTest {
+        runTest {
             val errorMessage = "Attachment Upload Failed"
             val failureResponse = mockk<AttachmentUploadResponse> {
                 every { code } returns 400
@@ -287,7 +289,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
     @Test
     fun uploadPublicKeyCallsUploadAttachmentApiWithPublicKeyAttachment() {
-        runBlockingTest {
+        runTest {
             val userId = UserId("id")
             val addressId = AddressId("addressId")
             val message = Message(messageId = "messageId", addressID = addressId.id)
@@ -337,12 +339,14 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
     @Test
     fun uploadReturnsFailureWhenApiCallFailsBecauseOfTimeout() {
-        runBlockingTest {
+        runTest {
             val errorMessage = "Upload attachment request failed"
             val unarmoredSignedFileContent = byteArrayOf()
 
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
-            coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } throws SocketTimeoutException("Call timed out")
+            coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } throws SocketTimeoutException(
+                "Call timed out"
+            )
 
             val result = repository.upload(attachment, crypto)
 
@@ -354,7 +358,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
     @Test
     fun uploadLogsAndReThrowsCancellationExceptions() {
-        runBlockingTest {
+        runTest {
             val errorMessage = "Upload attachments work was cancelled"
             val unarmoredSignedFileContent = byteArrayOf()
 
@@ -375,7 +379,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
     @Test
     fun uploadReturnsFailureWhenAnyRequiredAttachmentFieldIsNull() {
-        runBlockingTest {
+        runTest {
             val fileContent = "file content".toByteArray()
             val attachment = mockk<Attachment>(relaxed = true) {
                 every { getFileContent() } returns fileContent
@@ -384,14 +388,15 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
             val result = repository.upload(attachment, crypto)
 
-            val expectedResult = AttachmentsRepository.Result.Failure("This attachment name / type is invalid. Please retry")
+            val expectedResult =
+                AttachmentsRepository.Result.Failure("This attachment name / type is invalid. Please retry")
             assertEquals(expectedResult, result)
         }
     }
 
 
     @Test
-    fun verifyThatAttachmentsBytesCanBeDownloadedSuccessfully() = runBlockingTest {
+    fun verifyThatAttachmentsBytesCanBeDownloadedSuccessfully() = runTest {
         // given
         val attachmentId = "Ida1"
         val key = "zeKey1"

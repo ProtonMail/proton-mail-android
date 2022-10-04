@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -59,7 +60,7 @@ class ProtonStoreTest : CoroutinesTest {
     )
 
     @Test
-    fun flowEmitsFromDatabase() = coroutinesTest {
+    fun flowEmitsFromDatabase() = runTest {
         // given
         database.save(item1, item2, item3)
         val expected = listOf(item1, item2, item3).local()
@@ -73,7 +74,7 @@ class ProtonStoreTest : CoroutinesTest {
     }
 
     @Test
-    fun flowEmitsFromDatabaseAndApi() = coroutinesTest {
+    fun flowEmitsFromDatabaseAndApi() = runTest {
         // given
         database.save(item1, item2, item3)
         val expectedFromDatabase = listOf(item1, item2, item3).local()
@@ -89,7 +90,7 @@ class ProtonStoreTest : CoroutinesTest {
     }
 
     @Test
-    fun flowEmitsFetcherErrorIfNoConnectivityManager() = coroutinesTest {
+    fun flowEmitsFetcherErrorIfNoConnectivityManager() = runTest {
         // given
         val connectivityManager: NetworkConnectivityManager = mockk {
             every { isInternetConnectionPossible() } returns true
@@ -99,6 +100,7 @@ class ProtonStoreTest : CoroutinesTest {
         fun throwException(): ApiResponse {
             throw expectedException
         }
+
         val store = ProtonStore(
             fetcher = { throwException() },
             reader = { database.findAll() },
@@ -122,7 +124,7 @@ class ProtonStoreTest : CoroutinesTest {
     }
 
     @Test
-    fun flowEmitsFetcherErrorIfOnline() = coroutinesTest {
+    fun flowEmitsFetcherErrorIfOnline() = runTest {
         // given
         val connectivityManager: NetworkConnectivityManager = mockk {
             every { isInternetConnectionPossible() } returns true
@@ -132,6 +134,7 @@ class ProtonStoreTest : CoroutinesTest {
         fun throwException(): ApiResponse {
             throw expectedException
         }
+
         val store = ProtonStore(
             fetcher = { throwException() },
             reader = { database.findAll() },
@@ -155,7 +158,7 @@ class ProtonStoreTest : CoroutinesTest {
     }
 
     @Test
-    fun flowEmitsFetcherOfflineDataResultIfOffline() = coroutinesTest {
+    fun flowEmitsFetcherOfflineDataResultIfOffline() = runTest {
         // given
         val connectivityManager: NetworkConnectivityManager = mockk {
             every { isInternetConnectionPossible() } returns false
@@ -165,6 +168,7 @@ class ProtonStoreTest : CoroutinesTest {
         fun throwException(): ApiResponse {
             throw expectedException
         }
+
         val store = ProtonStore(
             fetcher = { throwException() },
             reader = { database.findAll() },
@@ -186,7 +190,7 @@ class ProtonStoreTest : CoroutinesTest {
     }
 
     @Test
-    fun loadMoreFlowEmitsFromDatabase() = coroutinesTest {
+    fun loadMoreFlowEmitsFromDatabase() = runTest {
         // given
         database.save(item1, item2, item3)
         val expected = listOf(item1, item2, item3).local()
@@ -200,7 +204,7 @@ class ProtonStoreTest : CoroutinesTest {
     }
 
     @Test
-    fun loadMoreFlowEmitsFromDatabaseAndApi() = coroutinesTest {
+    fun loadMoreFlowEmitsFromDatabaseAndApi() = runTest {
         // given
         database.save(item1, item2, item3)
         val expectedFromDatabase = listOf(item1, item2, item3).local()
@@ -217,7 +221,7 @@ class ProtonStoreTest : CoroutinesTest {
     }
 
     @Test
-    fun loadMoreFlowEmitsFromDatabaseAndApiOnLoadMore() = coroutinesTest {
+    fun loadMoreFlowEmitsFromDatabaseAndApiOnLoadMore() = runTest {
         // given
         database.save(item1, item2, item3)
 
@@ -240,7 +244,7 @@ class ProtonStoreTest : CoroutinesTest {
     }
 
     @Test
-    fun loadMoreFlowEmitsFetcherErrorIfOnline() = coroutinesTest {
+    fun loadMoreFlowEmitsFetcherErrorIfOnline() = runTest {
         // given
         val connectivityManager: NetworkConnectivityManager = mockk {
             every { isInternetConnectionPossible() } returns true
@@ -250,6 +254,7 @@ class ProtonStoreTest : CoroutinesTest {
         fun throwException(): ApiResponse {
             throw expectedException
         }
+
         val store = ProtonStore(
             fetcher = { throwException() },
             reader = { database.findAll() },
@@ -274,15 +279,17 @@ class ProtonStoreTest : CoroutinesTest {
     }
 
     @Test
-    fun loadMoreFlowEmitsFromReaderIfFetcherThrowsError() = coroutinesTest {
+    fun loadMoreFlowEmitsFromReaderIfFetcherThrowsError() = runTest {
         // given
         val items = listOf(
             Item(14, "hello"),
             Item(17, "world"),
         )
+
         fun throwException(): ApiResponse {
             throw IllegalStateException("Ouch!")
         }
+
         val store = ProtonStore(
             fetcher = { throwException() },
             reader = { flowOf(items) },

@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
@@ -48,7 +48,7 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
     )
 
     @Test
-    fun verifyStandardCaseJustOneEmissionOfTwoValues() = runBlockingTest {
+    fun verifyStandardCaseJustOneEmissionOfTwoValues() = runTest(dispatchers.Main) {
 
         // given
         val contactId = "ContactId1"
@@ -85,7 +85,7 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyStandardCaseTwoEmissionsOfThreeValuesInTotal() = runBlockingTest {
+    fun verifyStandardCaseTwoEmissionsOfThreeValuesInTotal() = runTest(dispatchers.Main) {
 
         // given
         val contactId = "ContactId1"

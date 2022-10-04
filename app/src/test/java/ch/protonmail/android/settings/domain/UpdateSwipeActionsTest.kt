@@ -24,7 +24,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.SwipeAction
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
@@ -40,14 +40,16 @@ class UpdateSwipeActionsTest {
 
     private val userId = UserId("userId")
 
+    private val dispatchers = TestDispatcherProvider
+
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        updateSwipeActions = UpdateSwipeActions(repository, TestDispatcherProvider)
+        updateSwipeActions = UpdateSwipeActions(repository, dispatchers)
     }
 
     @Test
-    fun verifyThatUpdateSwipeLeftIsExecuted() = runBlockingTest {
+    fun verifyThatUpdateSwipeLeftIsExecuted() = runTest(dispatchers.Main) {
 
         // given
         val swipeLeft = SwipeAction.MarkRead
@@ -62,7 +64,7 @@ class UpdateSwipeActionsTest {
     }
 
     @Test
-    fun verifyThatUpdateSwipeRightIsExecuted() = runBlockingTest {
+    fun verifyThatUpdateSwipeRightIsExecuted() = runTest(dispatchers.Main) {
 
         // given
         val swipeRight = SwipeAction.Spam

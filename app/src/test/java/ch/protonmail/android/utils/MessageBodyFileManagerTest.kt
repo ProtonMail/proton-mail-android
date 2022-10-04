@@ -27,7 +27,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Before
 import org.junit.Test
@@ -46,6 +46,8 @@ class MessageBodyFileManagerTest {
     @MockK
     private lateinit var fileHelper: FileHelper
 
+    private val dispatchers = TestDispatcherProvider
+
     private lateinit var messageBodyFileManager: MessageBodyFileManager
 
     @Before
@@ -55,13 +57,13 @@ class MessageBodyFileManagerTest {
         messageBodyFileManager = MessageBodyFileManager(
             applicationContext,
             fileHelper,
-            TestDispatcherProvider
+            dispatchers
         )
     }
 
     @Test
     fun verifyNullIsReturnedIfMessageIdIsNullWhenReadMessageBodyFromFileIsCalled() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val mockMessage = mockk<Message> {
                 every { messageId } returns null
@@ -77,7 +79,7 @@ class MessageBodyFileManagerTest {
 
     @Test
     fun verifyNullIsReturnedIfReadingFromFileFailsWhenReadMessageBodyFromFileIsCalled() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val mockMessage = mockk<Message> {
                 every { messageId } returns "messageId"
@@ -95,7 +97,7 @@ class MessageBodyFileManagerTest {
 
     @Test
     fun verifyFileContentIsReturnedIfReadingFileIsSuccessfulWhenReadMessageBodyFromFileIsCalled() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val mockMessage = mockk<Message> {
                 every { messageId } returns "messageId"
@@ -114,7 +116,7 @@ class MessageBodyFileManagerTest {
 
     @Test
     fun verifyNullIsReturnedIfMessageBodyIsNullWhenSaveMessageBodyToFileIsCalled() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val mockMessage = mockk<Message> {
                 every { messageId } returns "messageId"
@@ -131,7 +133,7 @@ class MessageBodyFileManagerTest {
 
     @Test
     fun verifyNullIsReturnedIfWritingToFileFailsWhenSaveMessageBodyToFileIsCalled() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val mockMessage = mockk<Message> {
                 every { messageId } returns "messageId"
@@ -150,7 +152,7 @@ class MessageBodyFileManagerTest {
 
     @Test
     fun verifyFilePathIsReturnedIfWritingToFileIsSuccessfulWhenSaveMessageBodyToFileIsCalled() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val mockMessage = mockk<Message> {
                 every { messageId } returns "messageId"

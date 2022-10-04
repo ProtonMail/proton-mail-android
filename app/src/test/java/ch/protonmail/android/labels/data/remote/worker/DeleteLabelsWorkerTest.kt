@@ -31,7 +31,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
@@ -56,6 +56,8 @@ class DeleteLabelsWorkerTest {
 
     private lateinit var worker: DeleteLabelsWorker
 
+    private val dispatchers = TestDispatcherProvider
+
     private val testUserId = UserId("testUser")
 
     @BeforeTest
@@ -66,14 +68,14 @@ class DeleteLabelsWorkerTest {
             context,
             parameters,
             api,
-            TestDispatcherProvider,
+            dispatchers,
             accountManager
         )
     }
 
     @Test
     fun verifyWorkerFailsWithNoLabelIdProvided() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty label id")
@@ -89,7 +91,7 @@ class DeleteLabelsWorkerTest {
 
     @Test
     fun verifyWorkerSuccessesWithLabelIdProvided() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val labelId = "id1"
             val deleteResponse = ApiResult.Success(Unit)
@@ -108,7 +110,7 @@ class DeleteLabelsWorkerTest {
 
     @Test
     fun verifyWorkerFailureWithLabelIdProvidedButBadServerResponse() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val labelId = "id1"
             val errorCode = 12123

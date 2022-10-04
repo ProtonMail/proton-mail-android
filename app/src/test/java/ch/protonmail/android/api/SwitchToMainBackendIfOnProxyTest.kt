@@ -30,7 +30,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -62,7 +62,7 @@ internal class SwitchToMainBackendIfOnProxyTest {
     }
 
     @Test
-    fun `should return correct result without trying to switch to main BE when using the main BE`() = runBlockingTest {
+    fun `should return correct result without trying to switch to main BE when using the main BE`() = runTest {
         // given
         val expectedResult = SwitchToMainBackendIfOnProxy.AlreadyUsingMainBackend
         every { legacyUserMock.usingDefaultApi } returns true
@@ -76,7 +76,7 @@ internal class SwitchToMainBackendIfOnProxyTest {
     }
 
     @Test
-    fun `should assume main BE is used without trying to switch to main BE when user is null`() = runBlockingTest {
+    fun `should assume main BE is used without trying to switch to main BE when user is null`() = runTest {
         // given
         val expectedResult = SwitchToMainBackendIfOnProxy.AlreadyUsingMainBackend
         every { userManagerMock.currentLegacyUser } returns null
@@ -90,7 +90,7 @@ internal class SwitchToMainBackendIfOnProxyTest {
     }
 
     @Test
-    fun `should return failure result when not using main BE and switching to main BE failed`() = runBlockingTest {
+    fun `should return failure result when not using main BE and switching to main BE failed`() = runTest {
         // given
         val expectedResult = SwitchToMainBackendIfOnProxy.SwitchFailure
         every { legacyUserMock.usingDefaultApi } returns false
@@ -104,7 +104,7 @@ internal class SwitchToMainBackendIfOnProxyTest {
     }
 
     @Test
-    fun `should return success result when not using main BE and switching to main BE succeeded`() = runBlockingTest {
+    fun `should return success result when not using main BE and switching to main BE succeeded`() = runTest {
         // given
         val expectedResult = SwitchToMainBackendIfOnProxy.SwitchSuccess
         every { legacyUserMock.usingDefaultApi } returns false

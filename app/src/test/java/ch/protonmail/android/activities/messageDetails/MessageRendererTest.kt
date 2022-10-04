@@ -34,6 +34,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
 import org.jsoup.nodes.Document
@@ -89,7 +91,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun returnsResultForASingleImagesSetSent() = coroutinesTest {
+    fun returnsResultForASingleImagesSetSent() = runTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet = buildEmbeddedImages(idsRange = 1..3)
@@ -104,7 +106,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun returnsResultForEachMessageSequentially() = coroutinesTest {
+    fun returnsResultForEachMessageSequentially() = runTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
@@ -123,7 +125,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun returnsResultForEachMessageInParallel() = coroutinesTest {
+    fun returnsResultForEachMessageInParallel() = runTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
@@ -142,7 +144,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun returnsResultForEachMessageInParallelWithDifferentExecutionTimes() = coroutinesTest {
+    fun returnsResultForEachMessageInParallelWithDifferentExecutionTimes() = runTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
@@ -151,7 +153,7 @@ internal class MessageRendererTest : CoroutinesTest {
         messageRenderer.setMessageBody(TEST_MESSAGE_ID_1, TEST_MESSAGE_BODY_1)
         messageRenderer.setMessageBody(TEST_MESSAGE_ID_2, TEST_MESSAGE_BODY_2)
 
-        coEvery { mockDocumentParser(TEST_MESSAGE_BODY_1) } coAnswers  {
+        coEvery { mockDocumentParser(TEST_MESSAGE_BODY_1) } coAnswers {
             delay(500)
             buildMockDocument()
         }
@@ -170,7 +172,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun returnsResultForEachMessageWithReversedOrder() = coroutinesTest {
+    fun returnsResultForEachMessageWithReversedOrder() = runTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
@@ -189,7 +191,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun correctlyInlineImagesInTheMessage() = coroutinesTest {
+    fun correctlyInlineImagesInTheMessage() = runTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet = buildEmbeddedImages(idsRange = 1..2)
@@ -221,7 +223,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun correctlyCompressesTheImages() = coroutinesTest {
+    fun correctlyCompressesTheImages() = runTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet = buildEmbeddedImages(idsRange = 1..3)
@@ -238,7 +240,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun skipsImagesAlreadyProcessedForTheSameMessage() = coroutinesTest {
+    fun skipsImagesAlreadyProcessedForTheSameMessage() = runTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
@@ -258,7 +260,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun doesNotSkipImagesAlreadyProcessedForAnotherMessage() = coroutinesTest {
+    fun doesNotSkipImagesAlreadyProcessedForAnotherMessage() = runTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
@@ -281,7 +283,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun setImagesAndProcessThrowsExceptionIfNoMessageBodySetForGivenMessageId() = coroutinesTest {
+    fun setImagesAndProcessThrowsExceptionIfNoMessageBodySetForGivenMessageId() = runTest {
         // given
         val messageRenderer = buildRenderer()
 
@@ -291,7 +293,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun rendersImagesForDifferentMessages() = coroutinesTest {
+    fun rendersImagesForDifferentMessages() = runTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet = buildEmbeddedImages(idsRange = 1..10)

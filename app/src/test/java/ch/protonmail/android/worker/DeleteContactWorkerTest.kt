@@ -38,7 +38,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -67,6 +67,8 @@ class DeleteContactWorkerTest {
     @MockK
     private lateinit var api: ProtonMailApiManager
 
+    private val dispatchers = TestDispatcherProvider
+
     private lateinit var worker: DeleteContactWorker
 
     @BeforeTest
@@ -83,14 +85,14 @@ class DeleteContactWorkerTest {
             api,
             userManager,
             databaseProvider,
-            TestDispatcherProvider
+            dispatchers
         )
     }
 
 
     @Test
     fun verifyWorkerFailsWithNoContactIdsProvided() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty contacts list")
@@ -106,7 +108,7 @@ class DeleteContactWorkerTest {
 
     @Test
     fun verifySuccessResultIsGeneratedWithRequiredParameters() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val contactId = "id111"
             val deleteResponse = mockk<DeleteResponse> {
@@ -133,7 +135,7 @@ class DeleteContactWorkerTest {
 
     @Test
     fun verifyFailureResultIsGeneratedWithRequiredParametersButWrongBackendResponse() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val contactId = "id111"
             val randomErrorCode = 11212

@@ -86,7 +86,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.domain.type.IntEnum
 import me.proton.core.domain.type.StringEnum
@@ -280,7 +280,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyBasicInitFlowWithEmptyMessages() = runBlockingTest {
+    fun verifyBasicInitFlowWithEmptyMessages() = runTest(dispatchers.Main) {
         // Given
         val messages = emptyList<Message>()
         val expected = emptyList<MailboxItemUiModel>().toMailboxState()
@@ -295,7 +295,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyBasicInitFlowWithAnError() = runBlockingTest {
+    fun verifyBasicInitFlowWithAnError() = runTest(dispatchers.Main) {
         // given
         val errorMessage = "An error!"
         val exception = Exception(errorMessage)
@@ -313,7 +313,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun getMailboxItemsReturnsStateWithMailboxItemsMappedFromMessageDetailsRepositoryWhenFetchingFirstPage() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // Given
             val message = Message()
             val messages = listOf(message)
@@ -332,7 +332,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun getMailboxItemsReturnsMailboxItemsMappedFromConversationsWhenGetConversationsUseCaseSucceeds() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val location = ARCHIVE
             viewModel.setNewMailboxLocation(location)
             val conversations = listOf(buildConversation())
@@ -355,7 +355,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun getMailboxItemsReturnsMailboxStateWithErrorWhenGetConversationsUseCaseReturnsError() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // Given
             val location = LABEL
             val expected = MailboxListState.Error("Failed getting conversations", null)
@@ -373,7 +373,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         }
 
     @Test
-    fun isFreshDataIsFalseBeforeDataRefreshAndTrueAfter() = runBlockingTest {
+    fun isFreshDataIsFalseBeforeDataRefreshAndTrueAfter() = runTest(dispatchers.Main) {
         // given
         val firstExpected = MailboxListState.Data(emptyList(), isFreshData = false, shouldResetPosition = true)
         val secondExpected = MailboxListState.Data(emptyList(), isFreshData = true, shouldResetPosition = true)
@@ -399,7 +399,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun `verify conversation is unstarred`() = runBlockingTest {
+    fun `verify conversation is unstarred`() = runTest(dispatchers.Main) {
         // given
         val ids = listOf(mailboxItemId1)
         every { conversationModeEnabled(inboxLocation) } returns true
@@ -417,7 +417,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun `verify message is unstarred`() = runBlockingTest {
+    fun `verify message is unstarred`() = runTest(dispatchers.Main) {
         // given
         val ids = listOf(mailboxItemId1)
         every { conversationModeEnabled(inboxLocation) } returns false
@@ -436,7 +436,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun `verify the star action is called when doing an update star swipe action on unstarred mailbox item`() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val mailboxUiItem = buildMailboxUiItem(
                 itemId = mailboxItemId1,
@@ -470,7 +470,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun `verify the unstar action is called when doing an update star swipe action on starred mailbox item`() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val mailboxUiItem = buildMailboxUiItem(
                 itemId = mailboxItemId1,
@@ -504,7 +504,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun `when refreshed and the data has arrived, should fetch events and reschedule the event loop`() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // when
             viewModel.refreshMessages()
             messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
@@ -515,7 +515,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun `when refreshed and error emitted, should not fetch events nor reschedule the event loop`() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // when
             viewModel.refreshMessages()
             messagesResponseChannel.send(GetMessagesResult.Error())
@@ -526,7 +526,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun `when refreshed and s success state emitted, should not fetch events nor reschedule the event loop`() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // when
             viewModel.refreshMessages()
             messagesResponseChannel.send(GetMessagesResult.Success(emptyList()))
@@ -537,7 +537,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun `when refreshed and loading, should not fetch events nor reschedule the event loop`() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // when
             viewModel.refreshMessages()
             messagesResponseChannel.send(GetMessagesResult.Loading)
@@ -548,7 +548,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun `should fetch events and reschedule the event loop only once after the data has arrived following a refresh`() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // when
             viewModel.refreshMessages()
             messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
@@ -569,7 +569,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun `verify clear notifications use case is called`() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // when
             viewModel.clearNotifications(testUserId)
 
@@ -582,7 +582,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun `verify getmailsettings emits again after login`() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // Given
             val userIdFlow = MutableStateFlow<UserId?>(null)
             coEvery { userManager.primaryUserId } returns userIdFlow

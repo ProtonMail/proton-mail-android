@@ -31,7 +31,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Test
@@ -48,16 +48,18 @@ internal class FetchEventsAndRescheduleTest {
     private val alarmReceiverMock = mockk<AlarmReceiver> {
         every { setAlarm(contextMock) } just runs
     }
+    private val dispatchers = TestDispatcherProvider
+
     private val fetchEventsAndReschedule = FetchEventsAndReschedule(
         eventManagerMock,
         accountManagerMock,
         alarmReceiverMock,
         contextMock,
-        TestDispatcherProvider
+        dispatchers
     )
 
     @Test
-    fun `when primary id is null should do nothing`() = runBlockingTest {
+    fun `when primary id is null should do nothing`() = runTest(dispatchers.Main) {
         // given
         every { accountManagerMock.getPrimaryUserId() } returns flowOf(null)
 
@@ -70,7 +72,7 @@ internal class FetchEventsAndRescheduleTest {
     }
 
     @Test
-    fun `when primary id present should fetch the events and reschedule the event loop`() = runBlockingTest {
+    fun `when primary id present should fetch the events and reschedule the event loop`() = runTest(dispatchers.Main) {
         // given
         every { accountManagerMock.getPrimaryUserId() } returns flowOf(UserTestData.userId)
 
@@ -83,16 +85,17 @@ internal class FetchEventsAndRescheduleTest {
     }
 
     @Test
-    fun `when event manager throws a network error, should not propagate the error to the caller`() = runBlockingTest {
-        // given
-        every { accountManagerMock.getPrimaryUserId() } returns flowOf(UserTestData.userId)
-        coEvery {
-            eventManagerMock.consumeEventsFor(listOf(UserTestData.userId))
-        } throws IOException() andThenThrows mockk<ApiException>() andThenThrows mockk<HttpException>()
+    fun `when event manager throws a network error, should not propagate the error to the caller`() =
+        runTest(dispatchers.Main) {
+            // given
+            every { accountManagerMock.getPrimaryUserId() } returns flowOf(UserTestData.userId)
+            coEvery {
+                eventManagerMock.consumeEventsFor(listOf(UserTestData.userId))
+            } throws IOException() andThenThrows mockk<ApiException>() andThenThrows mockk<HttpException>()
 
-        // when/then
-        fetchEventsAndReschedule()
-        fetchEventsAndReschedule()
-        fetchEventsAndReschedule()
+            // when/then
+            fetchEventsAndReschedule()
+            fetchEventsAndReschedule()
+            fetchEventsAndReschedule()
     }
 }

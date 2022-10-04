@@ -32,7 +32,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -49,17 +49,19 @@ class DeleteMessageWorkerTest {
     @MockK
     private lateinit var api: ProtonMailApiManager
 
+    private val dispatchers = TestDispatcherProvider
+
     private lateinit var worker: DeleteMessageWorker
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        worker = DeleteMessageWorker(context, parameters, TestDispatcherProvider, api)
+        worker = DeleteMessageWorker(context, parameters, dispatchers, api)
     }
 
     @Test
     fun verifyErrorResultIsGeneratedWithoutRequiredParameters() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty valid messages list")
@@ -75,7 +77,7 @@ class DeleteMessageWorkerTest {
 
     @Test
     fun verifySuccessResultIsGeneratedWithRequiredParameters() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "Id1"
             val arrayOfMessagedIds = arrayOf(messageId)
@@ -99,7 +101,7 @@ class DeleteMessageWorkerTest {
 
     @Test
     fun verifyFailureResultIsGeneratedWithRequiredParametersButWrongBackendResponse() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "Id1"
             val arrayOfMessagedIds = arrayOf(messageId)

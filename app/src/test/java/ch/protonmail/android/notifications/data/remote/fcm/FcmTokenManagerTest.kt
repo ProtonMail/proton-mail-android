@@ -25,6 +25,7 @@ import assert4k.equals
 import assert4k.that
 import ch.protonmail.android.domain.entity.ValidationException
 import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.android.mocks.mockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
@@ -34,7 +35,7 @@ class FcmTokenManagerTest : CoroutinesTest {
     private val fcmTokenManager = FcmTokenManager(mockSharedPreferences, dispatchers)
 
     @Test
-    fun canStoreAndRetrieveProperFirebaseToken() = coroutinesTest {
+    fun canStoreAndRetrieveProperFirebaseToken() = runTest {
         // given
         fcmTokenManager.saveToken(FirebaseToken("a token"))
 
@@ -43,14 +44,14 @@ class FcmTokenManagerTest : CoroutinesTest {
     }
 
     @Test
-    fun cannotStoreAnInvalidToken() = coroutinesTest {
+    fun cannotStoreAnInvalidToken() = runTest {
         assert that coFails<ValidationException> {
             fcmTokenManager.saveToken(FirebaseToken(""))
         }
     }
 
     @Test
-    fun canStoreAndRetrieveWhenTheTokenHasBenSent() = coroutinesTest {
+    fun canStoreAndRetrieveWhenTheTokenHasBenSent() = runTest {
         // given
         fcmTokenManager.setTokenSent(true)
 
@@ -59,7 +60,7 @@ class FcmTokenManagerTest : CoroutinesTest {
     }
 
     @Test
-    fun canStoreAndRetrieveWhenTheTokenHasBenUnSent() = coroutinesTest {
+    fun canStoreAndRetrieveWhenTheTokenHasBenUnSent() = runTest {
         // given
         fcmTokenManager.setTokenSent(false)
 

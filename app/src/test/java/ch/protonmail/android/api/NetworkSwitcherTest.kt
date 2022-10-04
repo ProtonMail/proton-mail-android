@@ -29,7 +29,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 internal class NetworkSwitcherTest {
@@ -49,7 +49,7 @@ internal class NetworkSwitcherTest {
     )
 
     @Test
-    fun `should ping BE`() = runBlockingTest {
+    fun `should ping BE`() = runTest {
         // when
         networkSwitcher.tryRequest()
 

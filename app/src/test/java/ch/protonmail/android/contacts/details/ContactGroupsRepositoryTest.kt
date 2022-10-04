@@ -36,7 +36,7 @@ import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
@@ -53,12 +53,13 @@ class ContactGroupsRepositoryTest {
     private val labelRepository: LabelRepository = mockk()
     private val accountManager: AccountManager = mockk()
     private val contactRepository: ContactsRepository = mockk()
+    private val dispatchers = TestDispatcherProvider
 
     private val contactGroupsRepository = ContactGroupsRepository(
         labelRepository = labelRepository,
         accountsManager = accountManager,
         contactRepository = contactRepository,
-        dispatchers = TestDispatcherProvider
+        dispatchers = dispatchers
     )
 
     private val label1 = Label(
@@ -89,7 +90,7 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun verifyThatDbAndApiContactsAreEmittedInOrder() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
@@ -108,7 +109,7 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun verifyThatDbAndApiContactsAreEmittedIn() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
@@ -127,7 +128,7 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun verifyThatDbContactsAreEmitted() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val searchTerm = "search"
             val dbContactsList = listOf(label1)
@@ -145,7 +146,7 @@ class ContactGroupsRepositoryTest {
     }
 
     @Test
-    fun saveContactGroupStoresGivenContactGroupInDatabase() = runBlockingTest {
+    fun saveContactGroupStoresGivenContactGroupInDatabase() = runTest(dispatchers.Main) {
         val userId = UserId("testUserId")
         val contactGroup = Label(
             id = LabelId("Id"),

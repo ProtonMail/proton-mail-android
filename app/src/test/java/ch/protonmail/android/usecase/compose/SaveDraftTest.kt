@@ -55,7 +55,7 @@ import io.mockk.verify
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.user.domain.entity.AddressId
@@ -96,7 +96,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftEncryptsMessageAndSavesItToDbWhenTriggerIsUserRequestedSave() {
-        runBlockingTest {
+        runTest {
             // Given
             val message = Message().apply {
                 dbId = 123L
@@ -138,7 +138,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftEncryptsMessageAndSavesItToDbWhenTriggerIsAutoSave() {
-        runBlockingTest {
+        runTest {
             // Given
             val message = Message().apply {
                 dbId = 8923L
@@ -181,7 +181,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftDoesNotEncryptTheMessageAgainWhenTheTriggerIsSendingMessage() {
-        runBlockingTest {
+        runTest {
             // Given
             val encryptedBody = "message encrypted armored content, encrypted by SEND use case"
             val message = Message().apply {
@@ -221,7 +221,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftLogsAWarningAndSavesEncryptedDraftMessageToDbIfDecryptedMessageBodyIsNull() {
-        runBlockingTest {
+        runTest {
             // Given
             val message = Message().apply {
                 dbId = 7237L
@@ -262,7 +262,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftsSchedulesCreateDraftWorker() {
-        runBlockingTest {
+        runTest {
             // Given
             val message = Message().apply {
                 dbId = 123L
@@ -302,7 +302,7 @@ class SaveDraftTest : CoroutinesTest {
     fun saveDraftsIgnoresEmissionsFromCreateDraftWorkerWhenWorkInfoIsNull() {
         // This test is needed to ensure CreateDraftWorker is returning a flow of (Optional) WorkInfo?
         // as this is possible because of `getWorkInfoByIdLiveData` implementation
-        runBlockingTest {
+        runTest {
             // Given
             val message = Message().apply {
                 dbId = 123L
@@ -341,7 +341,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftsUpdatesPendingForSendingMessageIdWithNewApiDraftIdWhenWorkerSucceedsAndMessageIsPendingForSending() {
-        runBlockingTest {
+        runTest {
             // Given
             val localMessageId = "45623"
             val message = Message().apply {
@@ -395,7 +395,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftsCallsUploadAttachmentsUseCaseToUploadNewAttachmentsWhenSavingWasTriggeredByTheUser() {
-        runBlockingTest {
+        runTest {
             // Given
             val localDraftId = "8345"
             val message = Message().apply {
@@ -449,7 +449,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftsCallsUploadAttachmentsUseCaseToUploadNewAttachmentsWhenSavingWasTriggeredBySendingMessage() {
-        runBlockingTest {
+        runTest {
             // Given
             val localDraftId = "83432"
             val message = Message().apply {
@@ -504,7 +504,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftsDoesNotCallUploadAttachmentsUseCaseWhenSavingWasTriggeredByAutoSave() {
-        runBlockingTest {
+        runTest {
             // Given
             val localDraftId = "8345"
             val message = Message().apply {
@@ -556,7 +556,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftsReturnsFailureWhenWorkerFailsCreatingDraftOnAPI() {
-        runBlockingTest {
+        runTest {
             // Given
             val localDraftId = "8345"
             val message = Message().apply {
@@ -603,7 +603,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftsReturnsMessageAlreadySentFailureWhenWorkerFailsUpdatingADraftOnAPIWithMessageAlreadySentError() {
-        runBlockingTest {
+        runTest {
             // Given
             val localDraftId = "8346"
             val message = Message().apply {
@@ -650,7 +650,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun `save drafts returns InvalidSender sent failure when worker fails updating a draft on api with InvalidSender error`() {
-        runBlockingTest {
+        runTest {
             // Given
             val localDraftId = "8346"
             val message = Message().apply {
@@ -697,7 +697,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftsShowUploadAttachmentErrorAndReturnsErrorWhenUploadingNewAttachmentsFails() {
-        runBlockingTest {
+        runTest {
             // Given
             val localDraftId = "8345"
             val message = Message().apply {
@@ -759,7 +759,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun notifyUserWithUploadAttachmentErrorWhenAttachmentIsBroken() {
-        runBlockingTest {
+        runTest {
             // Given
             val localDraftId = "8345"
             val message = Message().apply {
@@ -833,7 +833,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftsReturnsErrorWhenBackgroundWorkToUploadNewAttachmentsIsCancelled() {
-        runBlockingTest {
+        runTest {
             // Given
             val localDraftId = "832834"
             val message = Message().apply {
@@ -887,7 +887,7 @@ class SaveDraftTest : CoroutinesTest {
 
     @Test
     fun saveDraftReturnsSuccessWhenBothDraftCreationAndAttachmentsUploadSucceeds() {
-        runBlockingTest {
+        runTest {
             // Given
             val localDraftId = "8345"
             val message = Message().apply {

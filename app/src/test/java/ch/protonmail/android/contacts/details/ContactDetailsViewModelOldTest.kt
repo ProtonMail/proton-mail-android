@@ -33,6 +33,8 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -58,7 +60,7 @@ internal class ContactDetailsViewModelOldTest :
     private val userManager = mockk<UserManager>()
 
     @Test
-    fun `getBitmapFromURL handles timeout`() = coroutinesTest {
+    fun `getBitmapFromURL handles timeout`() = runTest {
 
         // GIVEN
         val viewModel = ContactDetailsViewModelOld(
@@ -84,7 +86,7 @@ internal class ContactDetailsViewModelOldTest :
     }
 
     @Test
-    fun `getBitmapFromURL handles malformed url`() = coroutinesTest {
+    fun `getBitmapFromURL handles malformed url`() = runTest {
 
         // GIVEN
         val viewModel = ContactDetailsViewModelOld(
@@ -102,7 +104,7 @@ internal class ContactDetailsViewModelOldTest :
     }
 
     @Test
-    fun `getBitmapFromURL handles 404`() = coroutinesTest {
+    fun `getBitmapFromURL handles 404`() = runTest {
         // GIVEN
         val viewModel = ContactDetailsViewModelOld(
             dispatchers,
@@ -121,7 +123,7 @@ internal class ContactDetailsViewModelOldTest :
     }
 
     @Test
-    fun `getBitmapFromURL load image correctly`() = coroutinesTest {
+    fun `getBitmapFromURL load image correctly`() = runTest {
         mockkStatic(BitmapFactory::class)
         every { BitmapFactory.decodeStream(any()) } returns mockk()
 

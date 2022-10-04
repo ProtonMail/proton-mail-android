@@ -28,6 +28,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.android.sharedpreferences.isEmpty
@@ -85,7 +86,7 @@ class SecureSharedPreferencesTest {
         }
 
         @Test
-        fun `does remove old preferences`() = coroutinesTest {
+        fun `does remove old preferences`() = runTest {
 
             migration(listOf(user1, user2).map { it.first })
 
@@ -94,7 +95,7 @@ class SecureSharedPreferencesTest {
         }
 
         @Test
-        fun `new preferences have all the values`() = coroutinesTest {
+        fun `new preferences have all the values`() = runTest {
             // given
             val expectedUser1Preferences = mapOf(
                 PREF_USER_ID to user1.second.id,
@@ -116,7 +117,7 @@ class SecureSharedPreferencesTest {
         }
 
         @Test
-        fun `returns correct map of usernames to ids`() = coroutinesTest {
+        fun `returns correct map of usernames to ids`() = runTest {
             // given
             val expected = listOf(user1, user2).toMap()
 
@@ -128,7 +129,7 @@ class SecureSharedPreferencesTest {
         }
 
         @Test
-        fun `correctly skips preferences without an user id`() = coroutinesTest {
+        fun `correctly skips preferences without an user id`() = runTest {
             // given
             val expected = listOf(user1, user2).toMap()
 
@@ -140,7 +141,7 @@ class SecureSharedPreferencesTest {
         }
 
         @Test
-        fun `correctly skips preferences with mismatching user id`() = coroutinesTest {
+        fun `correctly skips preferences with mismatching user id`() = runTest {
             // given
             every { preferencesFactory._usernamePreferences(user1.first) } returns mockSecureSharedPreferences()
             val expected = listOf(user2).toMap()

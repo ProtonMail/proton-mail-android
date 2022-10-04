@@ -20,7 +20,7 @@
 package ch.protonmail.android.pinlock.domain.usecase
 
 import ch.protonmail.android.core.Constants.Prefs.PREF_USE_PIN
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.android.mocks.mockSharedPreferences
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.android.sharedpreferences.set
@@ -30,10 +30,11 @@ import kotlin.test.assertTrue
 
 class IsPinLockEnabledTest {
 
-    private val isPinLockEnabled = IsPinLockEnabled(mockSharedPreferences, TestDispatcherProvider)
+    private val dispatchers = TestDispatcherProvider
+    private val isPinLockEnabled = IsPinLockEnabled(mockSharedPreferences, dispatchers)
 
     @Test
-    fun `returns true if pin lock is enabled in preferences`() = runBlockingTest {
+    fun `returns true if pin lock is enabled in preferences`() = runTest(dispatchers.Main) {
         // given
         mockSharedPreferences[PREF_USE_PIN] = true
 
@@ -45,7 +46,7 @@ class IsPinLockEnabledTest {
     }
 
     @Test
-    fun `returns false if pin lock is not enabled in preferences`() = runBlockingTest {
+    fun `returns false if pin lock is not enabled in preferences`() = runTest(dispatchers.Main) {
         // given
         mockSharedPreferences[PREF_USE_PIN] = false
 

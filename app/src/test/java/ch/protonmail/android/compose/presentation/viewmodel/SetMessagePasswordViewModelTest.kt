@@ -24,6 +24,7 @@ import ch.protonmail.android.compose.presentation.model.SetMessagePasswordUiMode
 import ch.protonmail.android.compose.presentation.model.SetMessagePasswordUiModel.Error
 import ch.protonmail.android.compose.presentation.model.SetMessagePasswordUiModel.Input
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
 import kotlin.test.Test
@@ -38,7 +39,7 @@ class SetMessagePasswordViewModelTest : CoroutinesTest {
     private val testHint = "hint"
 
     @Test
-    fun emptyPasswordAndEmptyRepeat() = coroutinesTest {
+    fun emptyPasswordAndEmptyRepeat() = runTest {
 
         // given
         val password = EMPTY_STRING
@@ -63,7 +64,7 @@ class SetMessagePasswordViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun emptyPasswordAnd5CharsRepeat() = coroutinesTest {
+    fun emptyPasswordAnd5CharsRepeat() = runTest {
 
         // given
         val password = EMPTY_STRING
@@ -88,7 +89,7 @@ class SetMessagePasswordViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun shortPasswordAndEmptyRepeat() = coroutinesTest {
+    fun shortPasswordAndEmptyRepeat() = runTest {
 
         // given
         val password = "123"
@@ -113,7 +114,7 @@ class SetMessagePasswordViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun shortPasswordAndNotMatchRepeat() = coroutinesTest {
+    fun shortPasswordAndNotMatchRepeat() = runTest {
 
         // given
         val password = "123"
@@ -138,7 +139,7 @@ class SetMessagePasswordViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun shortPasswordAndMatchRepeat() = coroutinesTest {
+    fun shortPasswordAndMatchRepeat() = runTest {
 
         // given
         val password = "123"
@@ -162,7 +163,7 @@ class SetMessagePasswordViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun longPasswordAndNotMatchRepeat() = coroutinesTest {
+    fun longPasswordAndNotMatchRepeat() = runTest {
 
         // given
         val password = (0..50).joinToString { it.toString() }
@@ -187,7 +188,7 @@ class SetMessagePasswordViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun longPasswordAndMatchRepeat() = coroutinesTest {
+    fun longPasswordAndMatchRepeat() = runTest {
 
         // given
         val password = (0..50).joinToString { it.toString() }
@@ -211,7 +212,7 @@ class SetMessagePasswordViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun okPasswordAndNotMatchRepeat() = coroutinesTest {
+    fun okPasswordAndNotMatchRepeat() = runTest {
 
         // given
         val password = "12345"
@@ -236,7 +237,7 @@ class SetMessagePasswordViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun okPasswordAndMatchRepeat() = coroutinesTest {
+    fun okPasswordAndMatchRepeat() = runTest {
 
         // given
         val password = "12345"

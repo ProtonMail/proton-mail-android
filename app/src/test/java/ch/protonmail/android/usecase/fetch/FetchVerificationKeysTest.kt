@@ -34,7 +34,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
@@ -67,7 +67,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
     private val useCase = FetchVerificationKeys(api, userManager, userCryptoFactory, contactDao, dispatchers)
 
     @Test
-    fun verifyThatContactsAreFetchedCorrectlyFromRemoteApi() = runBlockingTest {
+    fun verifyThatContactsAreFetchedCorrectlyFromRemoteApi() = runTest {
         // given
         val testEmail = "testEmail"
         val testContactId = "contactId"
@@ -119,7 +119,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
     }
 
     @Test
-    fun verifyThatContactsAreDerivedLocally() = runBlockingTest {
+    fun verifyThatContactsAreDerivedLocally() = runTest {
         // given
         val testEmail = "testemail@asd.com"
         val testContactId = "contactId"
