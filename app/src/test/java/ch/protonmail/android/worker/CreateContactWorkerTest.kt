@@ -44,7 +44,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
 import kotlin.test.Test
@@ -62,12 +62,13 @@ class CreateContactWorkerTest {
     }
     private val parameters: WorkerParameters = mockk(relaxed = true)
     private val workManager: WorkManager = mockk(relaxed = true)
+    private val dispatchers = TestDispatcherProvider
 
     private val worker = CreateContactWorker(
         apiManager = apiManager,
         context = mockk(),
         cryptoFactory = cryptoFactory,
-        dispatcherProvider = TestDispatcherProvider,
+        dispatcherProvider = dispatchers,
         fileHelper = fileHelper,
         params = parameters
     )
@@ -93,7 +94,7 @@ class CreateContactWorkerTest {
 
     @Test
     fun workerInvokesCreateContactEndpointWithEncryptedContactData() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val encryptedContactData = "encrypted-data"
             val signedContactData = "signed-data"
             givenEncryptedContactDataParamsIsValid(encryptedContactData)
@@ -115,7 +116,7 @@ class CreateContactWorkerTest {
 
     @Test
     fun workerReturnsErrorWhenContactCreationOnApiFails() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             givenAllInputParametersAreValid()
             every { apiResponse.code } returns 500
             coEvery { apiManager.createContact(any()) } answers { apiResponse }
@@ -132,7 +133,7 @@ class CreateContactWorkerTest {
 
     @Test
     fun workerReturnsServerContactIdAndAllResponsesContactEmailsSerialisedWhenApiCallSucceedsRetuningNonEmptyContactId() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val contactId = "serverContactId"
             val serverContactEmails =
                 listOf(ContactEmail("emailId", "first@pm.me", "firstcontact", lastUsedTime = 111))
@@ -169,7 +170,7 @@ class CreateContactWorkerTest {
 
     @Test
     fun workerReturnsContactAlreadyExistsErrorWhenApiReturnsEmptyServerContactIdAndContactAlreadyExistsErrorCode() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             givenAllInputParametersAreValid()
             every { apiResponse.code } returns Constants.RESPONSE_CODE_MULTIPLE_OK
             every { apiResponse.responseErrorCode } returns RESPONSE_CODE_ERROR_EMAIL_EXIST
@@ -187,7 +188,7 @@ class CreateContactWorkerTest {
 
     @Test
     fun workerReturnsInvalidEmailErrorWhenApiReturnsEmptyServerContactIdAndInvalidEmailErrorCode() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             givenAllInputParametersAreValid()
             every { apiResponse.code } returns Constants.RESPONSE_CODE_MULTIPLE_OK
             every { apiResponse.responseErrorCode } returns RESPONSE_CODE_ERROR_INVALID_EMAIL
@@ -205,7 +206,7 @@ class CreateContactWorkerTest {
 
     @Test
     fun workerReturnsDuplicatedEmailErrorWhenApiReturnsEmptyServerContactIdAndDuplicatedEmailErrorCode() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             givenAllInputParametersAreValid()
             every { apiResponse.code } returns Constants.RESPONSE_CODE_MULTIPLE_OK
             every { apiResponse.responseErrorCode } returns RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED

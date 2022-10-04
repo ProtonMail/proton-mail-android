@@ -34,7 +34,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import retrofit2.HttpException
@@ -46,10 +46,12 @@ class FetchPublicKeysTest {
 
     private val api: ProtonMailApiManager = mockk()
 
-    private val fetchPublicKeys = FetchPublicKeys(api, TestDispatcherProvider)
+    private val dispatchers = TestDispatcherProvider
+
+    private val fetchPublicKeys = FetchPublicKeys(api, dispatchers)
 
     @Test
-    fun `email keys are fetched correctly with all keys having encryption flag set`() = runBlockingTest {
+    fun `email keys are fetched correctly with all keys having encryption flag set`() = runTest(dispatchers.Main) {
         // given
         val publicKeyResponse1 = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
         val publicKeyResponse2 = buildKeyResponse(PUBLIC_KEY_2, hasEncryptionFlag = true)
@@ -70,7 +72,7 @@ class FetchPublicKeysTest {
     }
 
     @Test
-    fun `email keys are fetched correctly with just one key having encryption flag set`() = runBlockingTest {
+    fun `email keys are fetched correctly with just one key having encryption flag set`() = runTest(dispatchers.Main) {
         // given
         val publicKeyResponse1 = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
         val publicKeyResponse2 = buildKeyResponse(PUBLIC_KEY_2, hasEncryptionFlag = false)
@@ -91,17 +93,18 @@ class FetchPublicKeysTest {
     }
 
     @Test
-    fun `return correct results with Success and Error when connection error occurs for some keys`() = runBlockingTest {
-        mockkStatic(Throwable::toPmResponseBodyOrNull) {
-            // given
-            val errorMessage = "An error occurred"
-            val publicKeyResponse1 = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
-            val publicKeyResponse3 = buildErrorResponse(message = errorMessage)
-            val key3Exception: Throwable = mockk(relaxed = true) {
-                every { toPmResponseBodyOrNull() } returns publicKeyResponse3
-            }
+    fun `return correct results with Success and Error when connection error occurs for some keys`() =
+        runTest(dispatchers.Main) {
+            mockkStatic(Throwable::toPmResponseBodyOrNull) {
+                // given
+                val errorMessage = "An error occurred"
+                val publicKeyResponse1 = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
+                val publicKeyResponse3 = buildErrorResponse(message = errorMessage)
+                val key3Exception: Throwable = mockk(relaxed = true) {
+                    every { toPmResponseBodyOrNull() } returns publicKeyResponse3
+                }
 
-            coEvery { api.getPublicKeys(EMAIL_1) } returns publicKeyResponse1
+                coEvery { api.getPublicKeys(EMAIL_1) } returns publicKeyResponse1
             coEvery { api.getPublicKeys(EMAIL_2) } throws Exception()
             coEvery { api.getPublicKeys(EMAIL_3) } throws key3Exception
 
@@ -120,7 +123,7 @@ class FetchPublicKeysTest {
     }
 
     @Test
-    fun `should log when the call fails and the error is not an http exception`() = runBlockingTest {
+    fun `should log when the call fails and the error is not an http exception`() = runTest(dispatchers.Main) {
         mockkStatic(Timber::class)
         mockkStatic(Throwable::toPmResponseBodyOrNull)
         // given
@@ -142,7 +145,7 @@ class FetchPublicKeysTest {
     }
 
     @Test
-    fun `should log when the call fails and the error is a non-422 http exception`() = runBlockingTest {
+    fun `should log when the call fails and the error is a non-422 http exception`() = runTest(dispatchers.Main) {
         mockkStatic(Timber::class)
         mockkStatic(Throwable::toPmResponseBodyOrNull)
         // given
@@ -165,7 +168,7 @@ class FetchPublicKeysTest {
     }
 
     @Test
-    fun `should not log when the call fails and the error is a 422 http exception`() = runBlockingTest {
+    fun `should not log when the call fails and the error is a 422 http exception`() = runTest(dispatchers.Main) {
         mockkStatic(Timber::class)
         mockkStatic(Throwable::toPmResponseBodyOrNull)
         // given

@@ -35,6 +35,7 @@ import ch.protonmail.android.utils.getStringList
 import ch.protonmail.android.utils.putStringList
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -69,16 +70,16 @@ class AccountManagerTest : CoroutinesTest {
         )
 
         @Test
-        fun doesRemoveOldPreferences() = coroutinesTest {
+        fun doesRemoveOldPreferences() = runTest {
 
             migration()
 
-            assert that defaultPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, null) `is`  Null
-            assert that defaultPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, null) `is`  Null
+            assert that defaultPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, null) `is` Null
+            assert that defaultPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, null) `is` Null
         }
 
         @Test
-        fun newPreferencesHaveAllTheValues() = coroutinesTest {
+        fun newPreferencesHaveAllTheValues() = runTest {
 
             migration()
 
@@ -95,7 +96,7 @@ class AccountManagerTest : CoroutinesTest {
         }
 
         @Test
-        fun correctlySkipsPreferencesWithoutAnUserId() = coroutinesTest {
+        fun correctlySkipsPreferencesWithoutAnUserId() = runTest {
             coEvery { secureSharedPreferencesMigration(any()) } returns mapOf(user1, user3)
 
             migration()

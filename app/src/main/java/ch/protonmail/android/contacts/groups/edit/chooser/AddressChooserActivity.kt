@@ -74,7 +74,7 @@ class AddressChooserActivity : BaseActivity() {
         addressChooserViewModel.getAllEmails(HashSet(selected))
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.done_menu, menu)
         return true
     }

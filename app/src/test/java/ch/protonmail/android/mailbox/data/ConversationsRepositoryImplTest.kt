@@ -86,6 +86,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -95,12 +96,12 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
+import me.proton.core.test.kotlin.TestCoroutineScopeProvider
 import java.io.IOException
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -266,6 +267,8 @@ class ConversationsRepositoryImplTest : ArchTest {
         coEvery { this@mockk.invoke(any(), any(), any()) } just runs
     }
 
+    private val globalTestScope = TestCoroutineScopeProvider.GlobalDefaultSupervisedScope
+
     private val conversationsRepository = ConversationsRepositoryImpl(
         userManager = userManager,
         databaseProvider = databaseProvider,
@@ -289,12 +292,12 @@ class ConversationsRepositoryImplTest : ArchTest {
         connectivityManager = connectivityManager,
         markUnreadLatestNonDraftMessageInLocation = markUnreadLatestNonDraftMessageInLocation,
         labelsRepository = labelsRepository,
-        externalScope = TestCoroutineScope()
+        externalScope = globalTestScope
     )
 
     @Test
     fun verifyConversationsAreFetchedFromLocalInitially() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val parameters = buildGetConversationsParameters()
             coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(listOf())
@@ -310,7 +313,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyConversationsAreRetrievedInCorrectOrder() =
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val parameters = buildGetConversationsParameters()
 
@@ -328,7 +331,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyGetConversationsFetchesDataFromRemoteApiAndStoresResultInTheLocalDatabaseWhenResponseIsSuccessful() =
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val parameters = buildGetConversationsParameters()
 
@@ -696,7 +699,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test(expected = ClosedReceiveChannelException::class)
     fun verifyGetConversationsReThrowsCancellationExceptionWithoutEmittingError() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val parameters = buildGetConversationsParameters(end = null)
             coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(emptyList())
@@ -716,7 +719,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyConversationsAndMessagesAreMarkedRead() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val message = Message()
@@ -742,7 +745,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyConversationsAndMessagesAreMarkedUnread() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val mailboxLocation = MessageLocationType.ARCHIVE
@@ -785,7 +788,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyErrorResultIsReturnedIfConversationIsNullWhenMarkUnreadIsCalled() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val locationId = MessageLocationType.ARCHIVE.asLabelIdString()
@@ -801,7 +804,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
-    fun verifyConversationsAreUpdatedWhenMessagesAreMarkedAsRead() = runBlockingTest {
+    fun verifyConversationsAreUpdatedWhenMessagesAreMarkedAsRead() = runTest(globalTestScope.coroutineContext) {
         // given
         val action = ChangeMessagesReadStatus.Action.ACTION_MARK_READ
         val message1 = Message(
@@ -838,7 +841,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyConversationsAndMessagesAreStarred() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val conversationLabels = listOf(
@@ -887,7 +890,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyErrorResultIsReturnedIfConversationIsNullWhenStarIsCalled() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val testMessageId = "messageId"
@@ -910,7 +913,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyConversationsAndMessagesAreUnstarred() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val conversationLabels = listOf(
@@ -960,7 +963,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyErrorResultIsReturnedIfConversationIsNullWhenUnstarIsCalled() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns mockk(relaxed = true)
@@ -976,7 +979,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
-    fun verifyConversationsAreUpdatedWhenMessagesAreStarred() = runBlockingTest {
+    fun verifyConversationsAreUpdatedWhenMessagesAreStarred() = runTest(globalTestScope.coroutineContext) {
         // given
         val action = ChangeMessagesStarredStatus.Action.ACTION_STAR
         val inboxLabel = buildLabelContextDatabaseModel(
@@ -1035,7 +1038,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyConversationsAndMessagesAreMovedToFolder() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val folderId = "folderId"
@@ -1086,7 +1089,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyErrorResultIsReturnedIfConversationIsNullWhenMoveToFolderIsCalled() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val folderId = "folderId"
@@ -1113,37 +1116,38 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
-    fun `verify conversations are updated when messages location changes`() = runBlockingTest {
-        // given
-        val message = Message(
-            messageId = messageId1,
-            conversationId = conversationId1,
-            Unread = false,
-            time = 0,
-            totalSize = 0,
-            numAttachments = 0
-        )
-        val conversation = buildConversationDatabaseModel(
-            id = conversationId1,
-            labels = listOf(
-                buildLabelContextDatabaseModel(
-                    id = inboxLabelId,
-                    contextNumMessages = 1
+    fun `verify conversations are updated when messages location changes`() =
+        runTest(globalTestScope.coroutineContext) {
+            // given
+            val message = Message(
+                messageId = messageId1,
+                conversationId = conversationId1,
+                Unread = false,
+                time = 0,
+                totalSize = 0,
+                numAttachments = 0
+            )
+            val conversation = buildConversationDatabaseModel(
+                id = conversationId1,
+                labels = listOf(
+                    buildLabelContextDatabaseModel(
+                        id = inboxLabelId,
+                        contextNumMessages = 1
+                    )
                 )
             )
-        )
-        val updatedConversation = buildConversationDatabaseModel(
-            id = conversationId1,
-            labels = listOf(
-                buildLabelContextDatabaseModel(
-                    id = folderId,
-                    contextNumMessages = 1
+            val updatedConversation = buildConversationDatabaseModel(
+                id = conversationId1,
+                labels = listOf(
+                    buildLabelContextDatabaseModel(
+                        id = folderId,
+                        contextNumMessages = 1
+                    )
                 )
             )
-        )
-        coEvery { messageDao.findMessageByIdOnce(messageId1) } returns message
-        coEvery { conversationDao.findConversation(testUserId.id, conversationId1) } returns conversation
-        coEvery { conversationDao.update(updatedConversation) } returns 123
+            coEvery { messageDao.findMessageByIdOnce(messageId1) } returns message
+            coEvery { conversationDao.findConversation(testUserId.id, conversationId1) } returns conversation
+            coEvery { conversationDao.update(updatedConversation) } returns 123
 
         // when
         conversationsRepository.updateConvosBasedOnMessagesLocation(
@@ -1161,7 +1165,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyConversationsAndMessagesAreDeleted() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val currentFolderId = "folderId"
@@ -1196,7 +1200,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
-    fun verifyConversationsAreUpdatedWhenMessagesAreDeleted() = runBlockingTest {
+    fun verifyConversationsAreUpdatedWhenMessagesAreDeleted() = runTest(globalTestScope.coroutineContext) {
         // given
         val messageIds = listOf(messageId1, messageId2)
         val inboxLabel = buildLabelContextDatabaseModel(
@@ -1263,7 +1267,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyMessagesAndConversationsAreLabeled() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val labelId = "labelId"
@@ -1306,7 +1310,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyErrorResultIsReturnedIfConversationIsNullWhenLabelIsCalled() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val labelId = "labelId"
@@ -1329,7 +1333,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyMessagesAndConversationsAreUnlabeled() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val labelId = "labelId"
@@ -1375,7 +1379,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun verifyErrorResultIsReturnedIfConversationIsNullWhenUnlabelIsCalled() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val labelId = "labelId"
@@ -1397,7 +1401,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     @Test
     fun `verify conversation is updated when labels are added and removed from a message`() {
-        runBlockingTest {
+        runTest(globalTestScope.coroutineContext) {
             // given
             val message = Message(
                 conversationId = conversationId1,
@@ -1445,7 +1449,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
-    fun correctlyFiltersConversationsByRequestedLocationFromDatabase() = runBlockingTest {
+    fun correctlyFiltersConversationsByRequestedLocationFromDatabase() = runTest(globalTestScope.coroutineContext) {
         // given
         val archivedConversation = buildConversationDatabaseModel(
             id = "conversation 1",
@@ -1473,7 +1477,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
-    fun correctlyFiltersConversationsByRequestedLabelFromDatabase() = runBlockingTest {
+    fun correctlyFiltersConversationsByRequestedLabelFromDatabase() = runTest(globalTestScope.coroutineContext) {
         // given
         val archivedConversation = buildConversationDatabaseModel(
             id = "conversation 1",
@@ -1502,7 +1506,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
-    fun unreadCountersAreCorrectlyFetchedFromDatabase() = runBlockingTest {
+    fun unreadCountersAreCorrectlyFetchedFromDatabase() = runTest(globalTestScope.coroutineContext) {
         // given
         val labelId = "inbox"
         val unreadCount = 15
@@ -1524,7 +1528,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
-    fun unreadCountersAreCorrectlyFetchedFromApi() = runBlockingTest {
+    fun unreadCountersAreCorrectlyFetchedFromApi() = runTest(globalTestScope.coroutineContext) {
         // given
         val labelId = "inbox"
         val unreadCount = 15
@@ -1550,7 +1554,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
-    fun unreadCountersAreRefreshedFromApi() = runBlockingTest {
+    fun unreadCountersAreRefreshedFromApi() = runTest(globalTestScope.coroutineContext) {
         // given
         val labelId = "inbox"
         val firstUnreadCount = 15
@@ -1600,7 +1604,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
-    fun handlesExceptionDuringUnreadCountersRefreshAndContinuesObserving() = runBlockingTest {
+    fun handlesExceptionDuringUnreadCountersRefreshAndContinuesObserving() = runTest(globalTestScope.coroutineContext) {
         // given
         val expectedMessage = "Invalid username!"
         coEvery { api.fetchConversationsCounts(testUserId) } answers {
@@ -1616,8 +1620,8 @@ class ConversationsRepositoryImplTest : ArchTest {
         }
     }
 
-    @Test(expected = ClosedReceiveChannelException::class)
-    fun getCountersIsCancellerWhenApiCallIsCancelled() = runBlockingTest {
+    @Test(expected = TimeoutCancellationException::class)
+    fun getCountersIsCancelledWhenApiCallIsCancelled() = runTest {
         // given
         coEvery { api.fetchConversationsCounts(testUserId) } answers {
             throw CancellationException("Cancelled")

@@ -36,7 +36,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
@@ -59,6 +59,8 @@ class UpdateMessageLabelsTest {
 
     private lateinit var useCase: UpdateMessageLabels
 
+    private val dispatchers = TestDispatcherProvider
+
     private val testUserId = UserId("testUserId")
 
     @BeforeTest
@@ -70,12 +72,12 @@ class UpdateMessageLabelsTest {
             conversationsRepository,
             accountManager,
             labelRepository,
-            TestDispatcherProvider
+            dispatchers
         )
     }
 
     @Test
-    fun verifyThatLabelsUpdateIsExecuted() = runBlockingTest {
+    fun verifyThatLabelsUpdateIsExecuted() = runTest(dispatchers.Main) {
 
         // given
         val testMessageId = "id123"

@@ -37,7 +37,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -57,17 +57,19 @@ class DeleteAttachmentWorkerTest {
     @MockK
     private lateinit var api: ProtonMailApiManager
 
+    private val dispatchers = TestDispatcherProvider
+
     private lateinit var worker: DeleteAttachmentWorker
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        worker = DeleteAttachmentWorker(context, parameters, api, messageDao, TestDispatcherProvider)
+        worker = DeleteAttachmentWorker(context, parameters, api, messageDao, dispatchers)
     }
 
     @Test
     fun verifyWorkerFailsWithNoAttachmentIdProvided() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot delete attachment with an empty id")
@@ -83,7 +85,7 @@ class DeleteAttachmentWorkerTest {
 
     @Test
     fun verifySuccessResultIsGeneratedWithRequiredParameters() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val attachmentId = "id232"
             val deleteResponse = mockk<ResponseBody> {
@@ -108,7 +110,7 @@ class DeleteAttachmentWorkerTest {
 
     @Test
     fun verifyFailureResultIsGeneratedWithRequiredParametersButWrongBackendResponse() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val attachmentId = "id232"
             val randomErrorCode = 11212
@@ -137,7 +139,7 @@ class DeleteAttachmentWorkerTest {
 
     @Test
     fun verifyThatServerErrorInvalidIdIsIgnoredAndMessageIsRemovedFromDbWithSuccess() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val attachmentId = "id232"
             val errorCode = RESPONSE_CODE_INVALID_ID

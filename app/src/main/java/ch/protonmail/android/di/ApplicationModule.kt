@@ -119,13 +119,6 @@ object ApplicationModule {
         PreferenceManager.getDefaultSharedPreferences(app)
 
     @Provides
-    fun dispatcherProvider() = object : DispatcherProvider {
-        override val Io = Dispatchers.IO
-        override val Comp = Dispatchers.Default
-        override val Main = Dispatchers.Main
-    }
-
-    @Provides
     @Singleton
     @DohProviders
     fun dohProviders() = arrayOf(
@@ -273,10 +266,11 @@ object ApplicationModule {
 
     @Provides
     fun userNotifier(
+        dispatcherProvider: DispatcherProvider,
         notificationServer: NotificationServer,
         userManager: UserManager,
         context: Context
-    ): UserNotifier = AndroidUserNotifier(notificationServer, userManager, context, dispatcherProvider())
+    ): UserNotifier = AndroidUserNotifier(notificationServer, userManager, context, dispatcherProvider)
 
     // Coroutine scope to use e.g. in EventHandler, something that has no access to viewModel, following ideas from:
     // https://medium.com/androiddevelopers/coroutines-patterns-for-work-that-shouldnt-be-cancelled-e26c40f142ad

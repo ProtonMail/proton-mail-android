@@ -23,14 +23,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.proton.core.network.data.ApiProvider
-import me.proton.core.plan.data.repository.PlansRepositoryImpl
 import me.proton.core.plan.domain.ClientPlanFilter
 import me.proton.core.plan.domain.ProductOnlyPaidPlans
 import me.proton.core.plan.domain.SupportSignupPaidPlans
 import me.proton.core.plan.domain.SupportUpgradePaidPlans
-import me.proton.core.plan.domain.repository.PlansRepository
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -39,11 +35,6 @@ object CorePlanModule {
     @Provides
     @SupportSignupPaidPlans
     fun provideSupportSignupPaidPlans() = true
-
-    @Provides
-    @Singleton
-    fun providePlansRepository(apiProvider: ApiProvider): PlansRepository =
-        PlansRepositoryImpl(apiProvider)
 
     @Provides
     @SupportUpgradePaidPlans

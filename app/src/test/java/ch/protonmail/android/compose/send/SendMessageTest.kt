@@ -42,7 +42,7 @@ import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.user.domain.entity.AddressId
@@ -79,7 +79,7 @@ class SendMessageTest : CoroutinesTest {
     )
 
     @Test
-    fun saveMessageEncryptsMessageBodyAndSavesItLocally() = runBlockingTest {
+    fun saveMessageEncryptsMessageBodyAndSavesItLocally() = runTest(dispatchers.Main) {
         // Given
         val senderAddressId = "addressId"
         val message = Message(messageId = "9823472", addressID = senderAddressId)
@@ -112,7 +112,7 @@ class SendMessageTest : CoroutinesTest {
     }
 
     @Test
-    fun saveMessageAsNotDownloadedWithAllDraftsLocationAndCurrentTime() = runBlockingTest {
+    fun saveMessageAsNotDownloadedWithAllDraftsLocationAndCurrentTime() = runTest(dispatchers.Main) {
         // Given
         val message = Message(messageId = "9823472", addressID = "addressId")
         val currentTimeMs = 23_847_233_000L
@@ -144,7 +144,7 @@ class SendMessageTest : CoroutinesTest {
     }
 
     @Test
-    fun insertMessageAsPendingForSending() = runBlockingTest {
+    fun insertMessageAsPendingForSending() = runTest(dispatchers.Main) {
         // Given
         val messageId = "82347"
         val messageDbId = 82_372L
@@ -173,7 +173,7 @@ class SendMessageTest : CoroutinesTest {
     }
 
     @Test
-    fun `should schedule a send and a pending send cleanup when message sent`() = runBlockingTest {
+    fun `should schedule a send and a pending send cleanup when message sent`() = runTest(dispatchers.Main) {
         // Given
         val decryptedMessageBody = "Message body in plain text"
         val message = Message().apply {

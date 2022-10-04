@@ -24,7 +24,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOCK_PIN_PERIOD
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.android.mocks.mockSharedPreferences
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.android.sharedpreferences.set
@@ -47,14 +47,16 @@ class GetPinLockTimerTest {
             86_400_000
         )
     }
+    private val dispatchers = TestDispatcherProvider
+
     private val getPinLockTimer = GetPinLockTimer(
         context = context,
         preferences = mockSharedPreferences,
-        dispatchers = TestDispatcherProvider
+        dispatchers = dispatchers
     )
 
     @Test
-    fun `correctly returns disabled timer`() = runBlockingTest {
+    fun `correctly returns disabled timer`() = runTest(dispatchers.Main) {
         // given
         mockSharedPreferences[PREF_AUTO_LOCK_PIN_PERIOD] = -1
         val expected = Duration.INFINITE
@@ -67,7 +69,7 @@ class GetPinLockTimerTest {
     }
 
     @Test
-    fun `correctly returns immediate lock timer`() = runBlockingTest {
+    fun `correctly returns immediate lock timer`() = runTest(dispatchers.Main) {
         // given
         mockSharedPreferences[PREF_AUTO_LOCK_PIN_PERIOD] = 0
         val expected = Duration.ZERO
@@ -80,7 +82,7 @@ class GetPinLockTimerTest {
     }
 
     @Test
-    fun `correctly returns timer for option 1`() = runBlockingTest {
+    fun `correctly returns timer for option 1`() = runTest(dispatchers.Main) {
         // given
         mockSharedPreferences[PREF_AUTO_LOCK_PIN_PERIOD] = 1
         val expected = 5.toDuration(MINUTES)
@@ -93,7 +95,7 @@ class GetPinLockTimerTest {
     }
 
     @Test
-    fun `correctly returns timer for option 2`() = runBlockingTest {
+    fun `correctly returns timer for option 2`() = runTest(dispatchers.Main) {
         // given
         mockSharedPreferences[PREF_AUTO_LOCK_PIN_PERIOD] = 2
         val expected = 15.toDuration(MINUTES)
@@ -106,7 +108,7 @@ class GetPinLockTimerTest {
     }
 
     @Test
-    fun `correctly returns timer for option 3`() = runBlockingTest {
+    fun `correctly returns timer for option 3`() = runTest(dispatchers.Main) {
         // given
         mockSharedPreferences[PREF_AUTO_LOCK_PIN_PERIOD] = 3
         val expected = 1.toDuration(HOURS)
@@ -119,7 +121,7 @@ class GetPinLockTimerTest {
     }
 
     @Test
-    fun `correctly returns timer for option 4`() = runBlockingTest {
+    fun `correctly returns timer for option 4`() = runTest(dispatchers.Main) {
         // given
         mockSharedPreferences[PREF_AUTO_LOCK_PIN_PERIOD] = 4
         val expected = 1.toDuration(DAYS)

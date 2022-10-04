@@ -33,7 +33,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
@@ -94,7 +94,7 @@ class AndroidUserNotifierTest : CoroutinesTest {
     }
 
     @Test
-    fun showMessageSentShowsAToastOnMainThread() = runBlockingTest {
+    fun showMessageSentShowsAToastOnMainThread() = runTest(dispatchers.Main) {
         mockkStatic("ch.protonmail.android.utils.extensions.TextExtensions")
         every { context.showToast(any<Int>()) } just Runs
 

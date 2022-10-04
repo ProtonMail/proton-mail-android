@@ -30,8 +30,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountState
 import me.proton.core.accountmanager.domain.AccountManager
@@ -73,6 +72,7 @@ class FetchMailSettingsWorkerTest {
             every { state } returns AccountState.Ready
         }
     )
+    private val dispatchers = TestDispatcherProvider
 
     @BeforeTest
     fun setUp() {
@@ -83,12 +83,12 @@ class FetchMailSettingsWorkerTest {
             parameters,
             fetchMailSettings,
             accountManager,
-            TestDispatcherProvider
+            dispatchers
         )
     }
 
     @Test
-    fun `should return success when API call is successful`() = runBlockingTest {
+    fun `should return success when API call is successful`() = runTest(dispatchers.Main) {
         // given
         coEvery { accountManager.getAccounts(AccountState.Ready) } returns flowOf(accounts)
         coEvery { fetchMailSettings.invoke(any()) } returns mockk(relaxed = true)
@@ -104,7 +104,7 @@ class FetchMailSettingsWorkerTest {
 
     @Test
     fun `should return retry when API call throws an exception`() {
-        runBlocking {
+        runTest(dispatchers.Main) {
             // given
             val mockException = IOException("exception")
 

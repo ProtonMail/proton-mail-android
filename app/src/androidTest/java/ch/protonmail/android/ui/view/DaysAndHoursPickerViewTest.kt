@@ -33,6 +33,7 @@ import ch.protonmail.android.util.withProtonInputEditTextId
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.runner.RunWith
 import kotlin.test.Test
@@ -149,7 +150,7 @@ class DaysAndHoursPickerViewTest : ViewTest<DaysAndHoursPickerView>(::DaysAndHou
 
     // Callback
     @Test
-    fun callbackIsNotCalledIfSetSameHourOrDay() = coroutinesTest {
+    fun callbackIsNotCalledIfSetSameHourOrDay() = runTest {
 
         // given
         val result = mutableListOf<DaysHoursPair>()
@@ -182,7 +183,7 @@ class DaysAndHoursPickerViewTest : ViewTest<DaysAndHoursPickerView>(::DaysAndHou
     }
 
     @Test
-    fun callbackIsNotCalledForInvalidValues() = coroutinesTest {
+    fun callbackIsNotCalledForInvalidValues() = runTest {
 
         // given
         val result = mutableListOf<DaysHoursPair>()

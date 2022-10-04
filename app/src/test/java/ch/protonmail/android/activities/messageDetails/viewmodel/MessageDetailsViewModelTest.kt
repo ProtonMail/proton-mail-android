@@ -88,7 +88,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
@@ -251,17 +251,18 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun loadMailboxItemGetsMessageFromServerWithMessageIdAndUserIdWhenWeDontHaveTheMessageInDb() = runBlockingTest {
-        // given
-        val messageOrConversationId = INPUT_ITEM_DETAIL_ID
-        val downLoadedMessage = buildMessage(isDownloaded = true)
-        coEvery { messageRepository.getMessage(testId1, messageOrConversationId, true) } returns downLoadedMessage
-        val expected = ConversationUiModel(
-            false,
-            SUBJECT,
-            listOf(downLoadedMessage),
-            null
-        )
+    fun loadMailboxItemGetsMessageFromServerWithMessageIdAndUserIdWhenWeDontHaveTheMessageInDb() =
+        runTest(dispatchers.Main) {
+            // given
+            val messageOrConversationId = INPUT_ITEM_DETAIL_ID
+            val downLoadedMessage = buildMessage(isDownloaded = true)
+            coEvery { messageRepository.getMessage(testId1, messageOrConversationId, true) } returns downLoadedMessage
+            val expected = ConversationUiModel(
+                false,
+                SUBJECT,
+                listOf(downLoadedMessage),
+                null
+            )
 
         // when
         observeMessageFlow.tryEmit(null)
@@ -330,7 +331,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun loadMailboxItemInvokesMessageRepositoryWithMessageIdAndUserId() = runBlockingTest {
+    fun loadMailboxItemInvokesMessageRepositoryWithMessageIdAndUserId() = runTest(dispatchers.Main) {
         // Given
         val message = buildMessage(messageId = INPUT_ITEM_DETAIL_ID, isDownloaded = false)
         val downLoadedMessage = buildMessage(messageId = INPUT_ITEM_DETAIL_ID, isDownloaded = true)
@@ -356,7 +357,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun shouldLoadMessageWithLabelsWhenLabelsPresent() = runBlockingTest {
+    fun shouldLoadMessageWithLabelsWhenLabelsPresent() = runTest(dispatchers.Main) {
         val labels = (1..2).map {
             Label(
                 id = LabelId("id$it"),
@@ -411,7 +412,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun shouldLoadMessageWithoutLabelsWhenLabelsNotPresent() = runBlockingTest {
+    fun shouldLoadMessageWithoutLabelsWhenLabelsNotPresent() = runTest(dispatchers.Main) {
         val message = buildMessage(isDownloaded = false, allLabelIds = emptyList())
         val downLoadedMessage = buildMessage(isDownloaded = true, allLabelIds = emptyList())
         coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns downLoadedMessage
@@ -425,7 +426,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun shouldNotEmitConversationIfItIsIncomplete() = runBlockingTest {
+    fun shouldNotEmitConversationIfItIsIncomplete() = runTest(dispatchers.Main) {
         every { conversationModeEnabled(location = any(), userId = any()) } returns true
         every { userManager.requireCurrentUserId() } returns testId2
         val conversation = buildConversation(CONVERSATION_ID).copy(messagesCount = 99)
@@ -442,7 +443,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun loadMailboxItemInvokesMessageRepositoryWithMessageIdAndUserIdForConversations() = runBlockingTest {
+    fun loadMailboxItemInvokesMessageRepositoryWithMessageIdAndUserIdForConversations() = runTest(dispatchers.Main) {
         // Given
         every { conversationModeEnabled(location = any(), userId = any()) } returns true
         every { userManager.requireCurrentUserId() } returns testId2
@@ -469,23 +470,24 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun loadMessageBodyMarksMessageAsReadAndEmitsItWhenTheMessageWasSuccessfullyDecrypted() = runBlockingTest {
-        // Given
-        val messageSpy = buildMessage(unread = true).toSpy()
-        coEvery { messageRepository.getMessage(any(), any(), any()) } returns messageSpy
-        coEvery { messageRepository.markRead(any()) } just Runs
+    fun loadMessageBodyMarksMessageAsReadAndEmitsItWhenTheMessageWasSuccessfullyDecrypted() =
+        runTest(dispatchers.Main) {
+            // Given
+            val messageSpy = buildMessage(unread = true).toSpy()
+            coEvery { messageRepository.getMessage(any(), any(), any()) } returns messageSpy
+            coEvery { messageRepository.markRead(any()) } just Runs
 
-        // When
-        val actual = viewModel.loadMessageBody(messageSpy).first()
-        val expected = MessageBodyState.Success(messageSpy)
+            // When
+            val actual = viewModel.loadMessageBody(messageSpy).first()
+            val expected = MessageBodyState.Success(messageSpy)
 
-        // Then
+            // Then
         verify { messageRepository.markRead(listOf(MESSAGE_ID_ONE)) }
         assertEquals(expected, actual)
     }
 
     @Test
-    fun loadMessageBodyDoesMarksMessageAsReadWhenTheMessageDecryptionFails() = runBlockingTest {
+    fun loadMessageBodyDoesMarksMessageAsReadWhenTheMessageDecryptionFails() = runTest(dispatchers.Main) {
         // Given
         val messageSpy = buildMessage(unread = true).toSpy()
         every { messageSpy.decrypt(any(), any(), any()) } throws Exception("Test - Decryption failed")
@@ -502,7 +504,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun loadMessageDoesNotMarkMessageAsReadWhenTheMessageIsAlreadyRead() = runBlockingTest {
+    fun loadMessageDoesNotMarkMessageAsReadWhenTheMessageIsAlreadyRead() = runTest(dispatchers.Main) {
         // Given
         val messageSpy = buildMessage(unread = false).toSpy()
         coEvery { messageRepository.getMessage(any(), any(), any()) } returns messageSpy
@@ -518,7 +520,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun loadMessageIsMarkedAsReadWhenTheMessageIsUnRead() = runBlockingTest {
+    fun loadMessageIsMarkedAsReadWhenTheMessageIsUnRead() = runTest(dispatchers.Main) {
         // Given
         val messageSpy = buildMessage(unread = true).toSpy()
         coEvery { messageRepository.getMessage(any(), any(), any()) } returns messageSpy
@@ -535,7 +537,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun loadMessageDoesNotEmitMessageToLiveDataWhenTheMessageWasNotFound() = runBlockingTest {
+    fun loadMessageDoesNotEmitMessageToLiveDataWhenTheMessageWasNotFound() = runTest(dispatchers.Main) {
         // Given
         val message = Message(
             messageId = INPUT_ITEM_DETAIL_ID,
@@ -552,7 +554,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun loadMailboxItemEmitsConversationUiItemWithOrderedConversationDataWhenRepositoryReturnsAConversationAndLastMessageDecryptionSucceeds() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // Given
             val conversationObserver = viewModel.decryptedConversationUiModel.testObserver()
             val conversationId = UUID.randomUUID().toString()
@@ -583,7 +585,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         }
 
     @Test
-    fun loadMessageBodyEmitsInputMessageWhenBodyIsAlreadyDecrypted() = runBlockingTest {
+    fun loadMessageBodyEmitsInputMessageWhenBodyIsAlreadyDecrypted() = runTest(dispatchers.Main) {
         val decryptedMessageHtml = "<html>Decrypted message body HTML</html>"
         val message = buildMessage().apply { decryptedHTML = decryptedMessageHtml }
 
@@ -593,7 +595,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun loadMessageBodyFetchesMessageFromMessageRepositoryWhenInputMessageIsNotDecrypted() = runBlockingTest {
+    fun loadMessageBodyFetchesMessageFromMessageRepositoryWhenInputMessageIsNotDecrypted() = runTest(dispatchers.Main) {
         // Given
         val message = buildMessage(unread = true)
         val fetchedMessage = buildMessage(unread = false)
@@ -611,7 +613,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyMarkUnReadOnInConversationModeWhenConversationHasMoreThanOneMessage() = runBlockingTest {
+    fun verifyMarkUnReadOnInConversationModeWhenConversationHasMoreThanOneMessage() = runTest(dispatchers.Main) {
         // given
         val inputMessageLocation = INBOX
         // messageId is defined as a field as it's needed at VM's instantiation time.
@@ -646,7 +648,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyMarkUnReadOnInConversationModeWhenConversationHasOneMessage() = runBlockingTest {
+    fun verifyMarkUnReadOnInConversationModeWhenConversationHasOneMessage() = runTest(dispatchers.Main) {
         // given
         val inputMessageLocation = INBOX
         // messageId is defined as a field as it's needed at VM's instantiation time.
@@ -682,7 +684,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyMarkUnReadInMessageMode() = runBlockingTest {
+    fun verifyMarkUnReadInMessageMode() = runTest(dispatchers.Main) {
         // given
         val inputMessageLocation = INBOX
         // messageId is defined as a field as it's needed at VM's instantiation time.
@@ -1085,7 +1087,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun whenLoadingMessageBodyAndPausedShouldNotMarkMessageAsRead() = runBlockingTest {
+    fun whenLoadingMessageBodyAndPausedShouldNotMarkMessageAsRead() = runTest(dispatchers.Main) {
         // Given
         val message = Message(messageId = INPUT_ITEM_DETAIL_ID, Unread = true).toSpy()
         coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns message
@@ -1104,7 +1106,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun whenLoadingMessageBodyAndResumedShouldMarkMessageAsRead() = runBlockingTest {
+    fun whenLoadingMessageBodyAndResumedShouldMarkMessageAsRead() = runTest(dispatchers.Main) {
         // Given
         val message = Message(messageId = INPUT_ITEM_DETAIL_ID, Unread = true).toSpy()
         coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns message

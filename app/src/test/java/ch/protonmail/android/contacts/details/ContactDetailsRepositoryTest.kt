@@ -42,7 +42,7 @@ import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.Test
 
@@ -65,14 +65,16 @@ class ContactDetailsRepositoryTest {
         coEvery { saveAllContactsEmails(any<List<ContactEmail>>()) } returns mockk()
     }
 
+    private val dispatchers = TestDispatcherProvider
+   
     private val repository = ContactDetailsRepository(
-        jobManager, apiManager, contactDao, TestDispatcherProvider, labelsRepository,
+        jobManager, apiManager, contactDao, dispatchers, labelsRepository,
         contactRepository
     )
 
     @Test
     fun saveContactEmailsSavesAllTheContactEmailsToContactsDb() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val emails = listOf(
                 ContactEmail("ID1", "email@proton.com", "Tom", lastUsedTime = 111),
                 ContactEmail("ID2", "secondary@proton.com", "Mike", lastUsedTime = 112)
@@ -86,7 +88,7 @@ class ContactDetailsRepositoryTest {
 
     @Test
     fun updateContactDataWithServerIdReadsContactFromDbAndSavesItBackWithServerId() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val contactDbId = 782L
             val contactData = ContactData("contactDataId", "name").apply { dbId = contactDbId }
             val contactServerId = "serverId"
@@ -102,7 +104,7 @@ class ContactDetailsRepositoryTest {
 
     @Test
     fun updateAllContactEmailsRemovesAllExistingEmailsFromDbAndSavesServerOnes() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val contactId = "contactId"
             val localContactEmails = listOf(
                 ContactEmail("ID1", "email@proton.com", "Tom", lastUsedTime = 111),
@@ -124,7 +126,7 @@ class ContactDetailsRepositoryTest {
 
     @Test
     fun deleteContactDataDeletesContactDataFromDb() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val contactData = ContactData("contactDataId", "name").apply { dbId = 2345L }
 
             repository.deleteContactData(contactData)
@@ -135,7 +137,7 @@ class ContactDetailsRepositoryTest {
 
     @Test
     fun saveContactDataSavesDataToDbReturningTheSavedContactDbId() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val contactData = ContactData("1243", "Tyler")
             val expectedDbId = 8945L
             every { contactDao.saveContactDataBlocking(contactData) } returns expectedDbId
@@ -148,7 +150,7 @@ class ContactDetailsRepositoryTest {
     }
 
     @Test
-    fun verifyObservedContactDetailsAreFetchedFromDbSuccessfullyWhenTheyArePresent() = runBlockingTest {
+    fun verifyObservedContactDetailsAreFetchedFromDbSuccessfullyWhenTheyArePresent() = runTest(dispatchers.Main) {
         // given
         val testContactId = "testContactId"
         val mockContact = mockk<FullContactDetails>()
@@ -163,27 +165,28 @@ class ContactDetailsRepositoryTest {
     }
 
     @Test
-    fun verifyObservedContactDetailsAreFetchedFromApiWhenTheyAreNotInTheDbAndThenEmittedFromDb() = runBlockingTest {
-        // given
-        val testContactId = "testContactId"
-        val mockContact = mockk<FullContactDetails>()
-        val apiResponse = mockk<FullContactDetailsResponse> {
-            every { contact } returns mockContact
-        }
-        val dbResponseFlow = Channel<FullContactDetails?>()
-        coEvery { contactDao.observeFullContactDetailsById(testContactId) } returns dbResponseFlow.receiveAsFlow()
-        coEvery { apiManager.fetchContactDetails(testContactId) } returns apiResponse
-        coEvery { contactDao.insertFullContactDetails(mockContact) } just Runs
+    fun verifyObservedContactDetailsAreFetchedFromApiWhenTheyAreNotInTheDbAndThenEmittedFromDb() =
+        runTest(dispatchers.Main) {
+            // given
+            val testContactId = "testContactId"
+            val mockContact = mockk<FullContactDetails>()
+            val apiResponse = mockk<FullContactDetailsResponse> {
+                every { contact } returns mockContact
+            }
+            val dbResponseFlow = Channel<FullContactDetails?>()
+            coEvery { contactDao.observeFullContactDetailsById(testContactId) } returns dbResponseFlow.receiveAsFlow()
+            coEvery { apiManager.fetchContactDetails(testContactId) } returns apiResponse
+            coEvery { contactDao.insertFullContactDetails(mockContact) } just Runs
 
-        // when
-        repository.observeFullContactDetails(testContactId).test {
-            dbResponseFlow.send(null)
+            // when
+            repository.observeFullContactDetails(testContactId).test {
+                dbResponseFlow.send(null)
 
-            // then
-            coVerify { contactDao.insertFullContactDetails(mockContact) }
-            dbResponseFlow.send(mockContact)
-            assertEquals(mockContact, awaitItem())
-        }
+                // then
+                coVerify { contactDao.insertFullContactDetails(mockContact) }
+                dbResponseFlow.send(mockContact)
+                assertEquals(mockContact, awaitItem())
+            }
     }
 
 }

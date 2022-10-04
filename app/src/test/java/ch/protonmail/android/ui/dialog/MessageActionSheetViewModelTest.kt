@@ -56,7 +56,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
@@ -143,7 +143,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyShowLabelsManagerActionIsExecutedForLabels() = runBlockingTest {
+    fun verifyShowLabelsManagerActionIsExecutedForLabels() = runTest {
         // given
         val messageId1 = "messageId1"
         val labelId1 = "labelId1"
@@ -181,7 +181,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyShowLabelsManagerActionIsExecutedForFolders() = runBlockingTest {
+    fun verifyShowLabelsManagerActionIsExecutedForFolders() = runTest {
         // given
         val messageId1 = "messageId1"
         val labelId1 = "labelId1"
@@ -634,33 +634,35 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun `verify the use case for saving message preference is called when view in light mode action is clicked`() = runBlockingTest {
-        // given
-        val messageId = "messageId"
-        val expectedActionsFlowValue = MessageActionSheetAction.ViewMessageInLightDarkMode(messageId)
-        coEvery { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false) } just runs
+    fun `verify the use case for saving message preference is called when view in light mode action is clicked`() =
+        runTest {
+            // given
+            val messageId = "messageId"
+            val expectedActionsFlowValue = MessageActionSheetAction.ViewMessageInLightDarkMode(messageId)
+            coEvery { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false) } just runs
 
-        // when
-        viewModel.viewInLightMode(messageId)
+            // when
+            viewModel.viewInLightMode(messageId)
 
-        // then
-        coVerify { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false) }
+            // then
+            coVerify { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false) }
         coVerify { sendMetricsForViewInDarkModePreference(testUserId, viewInDarkMode = false) }
         assertEquals(expectedActionsFlowValue, viewModel.actionsFlow.value)
     }
 
     @Test
-    fun `verify the use case for saving message preference is called when view in dark mode action is clicked`() = runBlockingTest {
-        // given
-        val messageId = "messageId"
-        val expectedActionsFlowValue = MessageActionSheetAction.ViewMessageInLightDarkMode(messageId)
-        coEvery { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true) } just runs
+    fun `verify the use case for saving message preference is called when view in dark mode action is clicked`() =
+        runTest {
+            // given
+            val messageId = "messageId"
+            val expectedActionsFlowValue = MessageActionSheetAction.ViewMessageInLightDarkMode(messageId)
+            coEvery { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true) } just runs
 
-        // when
-        viewModel.viewInDarkMode(messageId)
+            // when
+            viewModel.viewInDarkMode(messageId)
 
-        // then
-        coVerify { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true) }
+            // then
+            coVerify { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true) }
         coVerify { sendMetricsForViewInDarkModePreference(testUserId, viewInDarkMode = true) }
         assertEquals(expectedActionsFlowValue, viewModel.actionsFlow.value)
     }

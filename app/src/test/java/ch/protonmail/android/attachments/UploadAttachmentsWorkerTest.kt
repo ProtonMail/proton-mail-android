@@ -47,7 +47,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -113,7 +113,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun workerEnqueuerCreatesOneTimeRequestWorkerWhichIsUniqueForMessageId() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // Given
             val attachmentIds = listOf("attachmentId234", "238")
             val messageId = "2834"
@@ -160,7 +160,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsSetsMessageAsPendingToUploadWhenStartingToUpload() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachmentIds = listOf("1")
             val messageId = "message-id-238237"
             val message = Message(messageId = messageId, addressID = "senderAddress")
@@ -176,7 +176,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsReturnsFailureIfMessageIsNotFoundInLocalDB() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachmentIds = listOf("1")
             val messageId = "message-id-238723"
             givenFullValidInput(messageId, attachmentIds.toTypedArray())
@@ -198,7 +198,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsExecutesNormallyWhenUploadWasLeftOngoingForTheGivenMessage() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachment1 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
@@ -226,7 +226,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsCallsRepositoryWhenInputAttachmentsAreValid() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachment1 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
@@ -263,7 +263,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsRetriesIfAnyAttachmentFailsToBeUploadedAndMaxRetriesWasNotReached() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachment1 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
@@ -298,7 +298,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsReturnsFailureIfAnyAttachmentFailsToBeUploadedAndMaxRetriesWereReached() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachment1 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "1"
                 every { fileName } returns "Attachment_1.jpg"
@@ -342,7 +342,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsRetriesIfPublicKeyFailsToBeUploadedAndMaxRetriesWereNotReached() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachment1 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
@@ -374,7 +374,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsReturnsFailureIfPublicKeyFailsToBeUploadedAndMaxRetriesWereReached() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachment1 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
@@ -413,7 +413,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsSkipsUploadingIfAttachmentIsNotFoundInMessageRepository() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachment2 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "2"
                 every { filePath } returns "filePath2"
@@ -437,7 +437,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsFailsWorkerIfAttachmentFilePathIsNull() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachment1 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "1"
                 every { fileName } returns "Attachment_1.jpg"
@@ -484,7 +484,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsSkipsUploadingIfAttachmentWasAlreadyUploaded() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachment1 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
@@ -515,7 +515,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsSkipsUploadingIfAttachmentFileDoesNotExist() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachmentIds = listOf("1", "2")
             val messageId = "messageId83483"
             val message = Message(messageId = messageId, addressID = "senderAddress6")
@@ -546,7 +546,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsCallRepositoryUploadPublicKeyWhenMailSettingsGetAttachPublicKeyIsTrueAndMessageIsSending() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val userId = UserId("id")
             val messageId = "messageId823762"
             val message = Message(messageId = messageId, addressID = "senderAddress6")
@@ -568,7 +568,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsDeletesLocalFileAfterSuccessfulUpload() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachmentIds = listOf("1", "2")
             val messageId = "messageId126943"
             val message = Message(messageId = messageId, addressID = "senderAddress7")
@@ -605,7 +605,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsUpdatesLocalMessageWithUploadedAttachmentWhenUploadSucceeds() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachmentIds = listOf("1", "2")
             val messageId = "82342"
             val message = Message(messageId = messageId, addressID = "senderAddress8")
@@ -669,7 +669,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsDoesNotUpdateLocalMessageWithUploadedAttachmentWhenUploadFails() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachmentIds = listOf("1")
             val messageId = "82342"
             val message = Message(messageId = messageId, addressID = "senderAddress9")
@@ -698,7 +698,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsDoesNotAddUploadedAttachmentToLocalMessageIfAttachmentWasNotInTheMessageAttachments() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val attachmentIds = listOf("1", "2")
             val messageId = "82342"
             val message = Message(messageId = messageId, addressID = "senderAddress10")
@@ -746,7 +746,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsDoesNotAttachThePublicKeyIfTheMessageIsNotBeingSent() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val messageId = "message-id-123842"
             val message = Message(messageId, addressID = "addressId")
             val userId = UserId("id")
@@ -771,7 +771,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @Test
     fun uploadAttachmentsAttachesThePublicKeyOnlyWhenTheMessageIsBeingSent() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             val messageId = "message-id-123842"
             val message = Message(messageId, addressID = "addressId")
             val userId = UserId("id")

@@ -95,8 +95,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Inject
     protected AccountStateManager accountStateManager;
     @Inject
-    protected HumanVerificationOrchestrator humanVerificationOrchestrator;
-    @Inject
     protected JobManager mJobManager;
     @Inject
     protected QueueNetworkUtil mNetworkUtil;
@@ -183,16 +181,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
         }
-
-        humanVerificationOrchestrator.register(this, false);
-        accountStateManager.setHumanVerificationOrchestrator(humanVerificationOrchestrator);
-        accountStateManager.observeHVStateWithExternalLifecycle(getLifecycle());
-    }
-
-    @Override
-    protected void onDestroy() {
-        humanVerificationOrchestrator.unregister(this);
-        super.onDestroy();
     }
 
     @Override
@@ -217,8 +205,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
         app.setAppInBackground(false);
         networkConfigurator.setNetworkConfiguratorCallback(this);
-
-        accountStateManager.setHumanVerificationOrchestrator(humanVerificationOrchestrator);
     }
 
     @Override

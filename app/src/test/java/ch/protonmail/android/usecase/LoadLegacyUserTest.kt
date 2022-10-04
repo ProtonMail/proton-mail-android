@@ -21,9 +21,10 @@ package ch.protonmail.android.usecase
 
 import assert4k.assert
 import assert4k.that
-import me.proton.core.domain.entity.UserId
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
 
@@ -33,7 +34,7 @@ import kotlin.test.Test
 class LoadLegacyUserTest : CoroutinesTest {
 
     @Test
-    fun returnsLegacyUserIfNoError() = coroutinesTest {
+    fun returnsLegacyUserIfNoError() = runTest {
         // given
         val loadLegacyUser = LoadLegacyUser(
             loadLegacyUserDelegate = mockk {

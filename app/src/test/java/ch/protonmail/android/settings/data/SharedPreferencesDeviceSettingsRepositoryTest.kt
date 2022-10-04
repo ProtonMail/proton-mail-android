@@ -21,7 +21,7 @@ package ch.protonmail.android.settings.data
 
 import ch.protonmail.android.settings.domain.model.AppThemeSettings
 import io.mockk.every
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.android.sharedpreferences.get
@@ -43,20 +43,21 @@ class SharedPreferencesDeviceSettingsRepositoryTest {
     ) {
 
         private val preferences = newMockSharedPreferences
+        private val dispatchers = TestDispatcherProvider
         private val repository = SharedPreferencesDeviceSettingsRepository(
             preferences = preferences,
-            dispatchers = TestDispatcherProvider
+            dispatchers = dispatchers
         )
 
         @Test
-        fun get() = runBlockingTest {
+        fun get() = runTest(dispatchers.Main) {
             every { preferences.getInt(PREF_APP_THEME, any()) } returns preferencesValue
             assertEquals(domainValue, repository.getAppThemeSettings())
         }
 
         @Test()
-        fun save() = runBlockingTest {
-            if (shouldSave.not()) return@runBlockingTest
+        fun save() = runTest(dispatchers.Main) {
+            if (shouldSave.not()) return@runTest
 
             repository.saveAppThemeSettings(domainValue)
             assertEquals(preferencesValue, preferences[PREF_APP_THEME])
@@ -113,20 +114,21 @@ class SharedPreferencesDeviceSettingsRepositoryTest {
     ) {
 
         private val preferences = newMockSharedPreferences
+        private val dispatchers = TestDispatcherProvider
         private val repository = SharedPreferencesDeviceSettingsRepository(
             preferences = preferences,
-            dispatchers = TestDispatcherProvider
+            dispatchers = dispatchers
         )
 
         @Test
-        fun get() = runBlockingTest {
+        fun get() = runTest(dispatchers.Main) {
             every { preferences.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, any()) } returns preferencesValue
             assertEquals(domainValue, repository.getIsPreventTakingScreenshots())
         }
 
         @Test
-        fun save() = runBlockingTest {
-            if (shouldSave.not()) return@runBlockingTest
+        fun save() = runTest(dispatchers.Main) {
+            if (shouldSave.not()) return@runTest
 
             repository.savePreventTakingScreenshots(domainValue)
             assertEquals(preferencesValue, preferences[PREF_PREVENT_TAKING_SCREENSHOTS])

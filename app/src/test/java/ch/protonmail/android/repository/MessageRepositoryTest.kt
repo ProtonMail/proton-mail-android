@@ -62,14 +62,14 @@ import io.mockk.runs
 import io.mockk.slot
 import io.mockk.spyk
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
@@ -160,9 +160,10 @@ class MessageRepositoryTest {
     private val allSendLabelId = LabelId("2")
     private val customLabelId = LabelId("customLabelId")
     private val customFolderId = LabelId("customFolderId")
+    private val dispatchers = TestDispatcherProvider
 
     private val messageRepository = MessageRepository(
-        dispatcherProvider = TestDispatcherProvider,
+        dispatcherProvider = dispatchers,
         databaseProvider = databaseProvider,
         protonMailApiManager = protonMailApiManager,
         databaseToDomainUnreadCounterMapper = DatabaseToDomainUnreadCounterMapper(),
@@ -179,7 +180,7 @@ class MessageRepositoryTest {
 
     @Test
     fun verifyMessageIsFetchedAndSavedIfMessageDoesNotExistInDbWhenGetMessageIsCalledForUserWithAutoDownloadMessagesSettingTurnedOn() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "messageId"
             val messageInDb = Message(messageId)
@@ -204,7 +205,7 @@ class MessageRepositoryTest {
 
     @Test
     fun verifyMessageIsFetchedAndSavedIfMessageExistsInDbButMessageBodyIsNullWhenGetMessageIsCalledForUserWithAutoDownloadMessagesSettingTurnedOn() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "messageId"
             val messageInDb = Message(messageId)
@@ -231,7 +232,7 @@ class MessageRepositoryTest {
 
     @Test
     fun verifyMessageIsFetchedAndSavedIfMessageDoesNotExistInDbWhenGetMessageIsCalledForUserWithAutoDownloadMessagesSettingTurnedOff() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "messageId"
             val message = Message(messageId)
@@ -256,7 +257,7 @@ class MessageRepositoryTest {
 
     @Test
     fun verifyMessageFromDbIsReturnedIfMessageExistsInDbWhenGetMessageIsCalledForUserWithAutoDownloadMessagesSettingTurnedOn() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "messageId"
             val mockMessage = mockk<Message> {
@@ -278,7 +279,7 @@ class MessageRepositoryTest {
 
     @Test
     fun verifyMessageFromDbIsReturnedIfMessageExistsInDbWhenGetMessageIsCalledForUserWithAutoDownloadMessagesSettingTurnedOff() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "messageId"
             val mockMessage = mockk<Message> {
@@ -300,7 +301,7 @@ class MessageRepositoryTest {
 
     @Test
     fun verifyMessageBodyInMessageReturnedIfMessageExistsInDbAndMessageBodyIsReadFromFileWhenGetMessageIsCalledForUserWithAutoDownloadMessagesSettingTurnedOn() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "messageId"
             val mockMessage = spyk(Message(messageBody = "file://messageBody"))
@@ -320,7 +321,7 @@ class MessageRepositoryTest {
 
     @Test
     fun verifyMessageIsSavedIfMessageDoesNotExistInDbAndMessageBodyIsLargeWhenGetMessageIsCalledForUserWithAutoDownloadMessagesSettingTurnedOn() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "messageId"
             val mockMessage = spyk(Message(messageBody = nextBytes(MAX_BODY_SIZE_IN_DB + 1024).contentToString()))
@@ -348,7 +349,7 @@ class MessageRepositoryTest {
 
     @Test
     fun verifyNullIsReturnedIfMessageDoesNotExistInDbAndTheApiCallThrowsAnExceptionWhenGetMessageIsCalledForUserWithAutoDownloadMessagesSettingTurnedOn() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "messageId"
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
@@ -367,7 +368,7 @@ class MessageRepositoryTest {
 
     @Test
     fun verifyNullIsReturnedIfMessageDoesNotExistInDbAndTheApiCallThrowsAnExceptionWhenGetMessageIsCalledForUserWithAutoDownloadMessagesSettingTurnedOff() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "messageId"
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
@@ -386,7 +387,7 @@ class MessageRepositoryTest {
 
     @Test
     fun verifyMessageDetailsAreFetchedIfShouldFetchMessageDetailsIsTrueWhenGetMessageIsCalledForUserWithAutoDownloadMessagesSettingTurnedOff() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "messageId"
             val message = Message(messageId)
@@ -410,7 +411,7 @@ class MessageRepositoryTest {
 
     @Test
     fun verifyGetMessageSavesAndReturnMessageWithMessageBodyWhenMessageBodyIsNotTooBigToBeSavedInTheDatabase() {
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val messageId = "messageId1"
             val apiMessage = Message(messageId = messageId)
@@ -433,7 +434,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun verifyThatInboxMessagesFromNetAndDbAreFetched() = runBlockingTest {
+    fun verifyThatInboxMessagesFromNetAndDbAreFetched() = runTest(dispatchers.Main) {
         // given
         val mailboxLocation = Constants.MessageLocationType.INBOX
         val initialDatabaseMessages = allMessages.take(2)
@@ -472,7 +473,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun verifyThatInboxMessagesGetFromNetFailsAndOnlyDbDataIsReturned() = runBlockingTest {
+    fun verifyThatInboxMessagesGetFromNetFailsAndOnlyDbDataIsReturned() = runTest(dispatchers.Main) {
         // given
         val mailboxLocation = Constants.MessageLocationType.INBOX
         val dbMessages = allMessages.take(2)
@@ -500,7 +501,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun verifyThatLabeledMessagesFromDbAndNetAreFetched() = runBlockingTest {
+    fun verifyThatLabeledMessagesFromDbAndNetAreFetched() = runTest(dispatchers.Main) {
         // given
         val dbMessages = listOf(message1, message2)
         val netMessages = listOf(message1, message2, message3, message4)
@@ -528,7 +529,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun verifyThatLabeledMessagesGetFromNetFailsAndOnlyDbDataIsReturned() = runBlockingTest {
+    fun verifyThatLabeledMessagesGetFromNetFailsAndOnlyDbDataIsReturned() = runTest(dispatchers.Main) {
         // given
         val dbMessages = listOf(message1, message2)
         val netMessages = listOf(message1, message2, message3, message4)
@@ -551,7 +552,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun verifyThatAllMessagesFromDbAndNetworkAreFetched() = runBlockingTest {
+    fun verifyThatAllMessagesFromDbAndNetworkAreFetched() = runTest(dispatchers.Main) {
         // given
         val mailboxLocation = Constants.MessageLocationType.ALL_MAIL
         val databaseMessages = allMessages.take(2)
@@ -586,7 +587,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun verifyThatAllMessagesFromDbAndNetworkAreNotFetchedDueToLackOfConnectivity() = runBlockingTest {
+    fun verifyThatAllMessagesFromDbAndNetworkAreNotFetchedDueToLackOfConnectivity() = runTest(dispatchers.Main) {
         // given
         val mailboxLocation = Constants.MessageLocationType.ALL_MAIL
         val dbMessages = listOf(message1, message2)
@@ -610,7 +611,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun verifyThatAllStaredFromDbAndNetAreFetched() = runBlockingTest {
+    fun verifyThatAllStaredFromDbAndNetAreFetched() = runTest(dispatchers.Main) {
         // given
         val mailboxLocation = Constants.MessageLocationType.STARRED
         val initialDatabaseMessages = allMessages.take(2)
@@ -649,7 +650,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun unreadCountersAreCorrectlyFetchedFromDatabase() = runBlockingTest {
+    fun unreadCountersAreCorrectlyFetchedFromDatabase() = runTest(dispatchers.Main) {
         // given
         val labelId = "inbox"
         val unreadCount = 15
@@ -671,7 +672,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun unreadCountersAreCorrectlyFetchedFromApi() = runBlockingTest {
+    fun unreadCountersAreCorrectlyFetchedFromApi() = runTest(dispatchers.Main) {
         // given
         val labelId = "inbox"
         val unreadCount = 15
@@ -697,7 +698,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun unreadCountersAreRefreshedFromApi() = runBlockingTest {
+    fun unreadCountersAreRefreshedFromApi() = runTest(dispatchers.Main) {
         // given
         val labelId = "inbox"
         val firstUnreadCount = 15
@@ -747,7 +748,7 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun handlesExceptionDuringUnreadCountersRefreshAndContinuesObserving() = runBlockingTest {
+    fun handlesExceptionDuringUnreadCountersRefreshAndContinuesObserving() = runTest(dispatchers.Main) {
         // given
         val expectedMessage = "Invalid username!"
         coEvery { protonMailApiManager.fetchMessagesCounts(testUserId) } answers {
@@ -763,8 +764,8 @@ class MessageRepositoryTest {
         }
     }
 
-    @Test(expected = ClosedReceiveChannelException::class)
-    fun getCountersIsCancellerWhenApiCallIsCancelled() = runBlockingTest {
+    @Test(expected = TimeoutCancellationException::class)
+    fun getCountersIsCancelledWhenApiCallIsCancelled() = runTest {
         // given
         coEvery { protonMailApiManager.fetchMessagesCounts(testUserId) } answers {
             throw CancellationException("Cancelled")
@@ -777,46 +778,48 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun `verify worker is enqueued and messages are deleted locally when emptying folder`() = runBlockingTest {
-        // given
-        val labelId = LabelId("labelId")
+    fun `verify worker is enqueued and messages are deleted locally when emptying folder`() =
+        runTest(dispatchers.Main) {
+            // given
+            val labelId = LabelId("labelId")
 
-        // when
-        messageRepository.emptyFolder(testUserId, labelId)
+            // when
+            messageRepository.emptyFolder(testUserId, labelId)
 
-        // then
-        coVerify {
-            emptyFolderRemoteWorker.enqueue(testUserId, labelId)
-            messageDao.deleteMessagesByLabel(labelId.id)
+            // then
+            coVerify {
+                emptyFolderRemoteWorker.enqueue(testUserId, labelId)
+                messageDao.deleteMessagesByLabel(labelId.id)
+            }
         }
-    }
 
     @Test
-    fun `verify correct labels are added and removed when message is moved to custom location`() = runBlockingTest {
-        // given
-        val messageIds = listOf(messageId)
-        val labelIds = listOf(inboxLabelId, allMailLabelId, customLabelId)
-        val expectedLabelIds = listOf(allMailLabelId, customFolderId, customLabelId).ids()
-        val message = Message(
-            messageId = messageId,
-            allLabelIDs = labelIds.ids()
-        )
-        val customLabel = buildLabel(id = customLabelId)
-        coEvery { messageDao.findMessageByIdOnce(messageId) } returns message
-        coEvery { counterDao.findUnreadLocationById(any()) } returns mockk(relaxed = true)
-        coEvery { labelRepository.findLabel(customLabelId) } returns customLabel
+    fun `verify correct labels are added and removed when message is moved to custom location`() =
+        runTest(dispatchers.Main) {
+            // given
+            val messageIds = listOf(messageId)
+            val labelIds = listOf(inboxLabelId, allMailLabelId, customLabelId)
+            val expectedLabelIds = listOf(allMailLabelId, customFolderId, customLabelId).ids()
+            val message = Message(
+                messageId = messageId,
+                allLabelIDs = labelIds.ids()
+            )
+            val customLabel = buildLabel(id = customLabelId)
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns message
+            coEvery { counterDao.findUnreadLocationById(any()) } returns mockk(relaxed = true)
+            coEvery { labelRepository.findLabel(customLabelId) } returns customLabel
 
-        // when
-        messageRepository.moveToCustomFolderLocation(messageIds, customFolderId.id, testUserId)
+            // when
+            messageRepository.moveToCustomFolderLocation(messageIds, customFolderId.id, testUserId)
 
-        // then
-        val savedMessageCaptor = slot<Message>()
-        coVerify { messageDao.saveMessage(capture(savedMessageCaptor)) }
-        assertEquals(expectedLabelIds, savedMessageCaptor.captured.allLabelIDs)
-    }
+            // then
+            val savedMessageCaptor = slot<Message>()
+            coVerify { messageDao.saveMessage(capture(savedMessageCaptor)) }
+            assertEquals(expectedLabelIds, savedMessageCaptor.captured.allLabelIDs)
+        }
 
     @Test
-    fun `verify correct labels are added and removed when message is moved to trash`() = runBlockingTest {
+    fun `verify correct labels are added and removed when message is moved to trash`() = runTest(dispatchers.Main) {
         // given
         val messageIds = listOf(messageId)
         val labelIds = listOf(inboxLabelId, allMailLabelId, customLabelId)
@@ -840,32 +843,33 @@ class MessageRepositoryTest {
     }
 
     @Test
-    fun `verify correct labels are added and removed when scheduled message is moved to trash`() = runBlockingTest {
-        // given
-        val messageIds = listOf(messageId)
-        val labelIds = listOf(scheduledMailLabelId, allSendLabelId, allMailLabelId)
-        val expectedLabelIds = listOf(trashLabelId, allMailLabelId).ids()
-        val message = Message(
-            messageId = messageId,
-            allLabelIDs = labelIds.ids()
-        )
-        val customLabel = buildLabel(id = customLabelId)
-        coEvery { messageDao.findMessageByIdOnce(messageId) } returns message
-        coEvery { counterDao.findUnreadLocationById(any()) } returns mockk(relaxed = true)
-        coEvery { labelRepository.findLabel(customLabelId) } returns customLabel
+    fun `verify correct labels are added and removed when scheduled message is moved to trash`() =
+        runTest(dispatchers.Main) {
+            // given
+            val messageIds = listOf(messageId)
+            val labelIds = listOf(scheduledMailLabelId, allSendLabelId, allMailLabelId)
+            val expectedLabelIds = listOf(trashLabelId, allMailLabelId).ids()
+            val message = Message(
+                messageId = messageId,
+                allLabelIDs = labelIds.ids()
+            )
+            val customLabel = buildLabel(id = customLabelId)
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns message
+            coEvery { counterDao.findUnreadLocationById(any()) } returns mockk(relaxed = true)
+            coEvery { labelRepository.findLabel(customLabelId) } returns customLabel
 
-        // when
-        messageRepository.moveToTrash(messageIds, testUserId)
+            // when
+            messageRepository.moveToTrash(messageIds, testUserId)
 
-        // then
-        val savedMessageCaptor = slot<Message>()
-        coVerify { messageDao.saveMessage(capture(savedMessageCaptor)) }
-        assertEquals(expectedLabelIds, savedMessageCaptor.captured.allLabelIDs)
-    }
+            // then
+            val savedMessageCaptor = slot<Message>()
+            coVerify { messageDao.saveMessage(capture(savedMessageCaptor)) }
+            assertEquals(expectedLabelIds, savedMessageCaptor.captured.allLabelIDs)
+        }
 
     @Test
     fun `should save message preference if it does not exist in DB when saving view in dark mode preference`() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val expectedResult = buildMessagePreference(viewInDarkMode = true)
             coEvery { messagePreferenceDao.findMessagePreference(messageId) } returns null
@@ -874,30 +878,31 @@ class MessageRepositoryTest {
             messageRepository.saveViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true)
 
             // then
-        val result = slot<MessagePreferenceEntity>()
-        coVerify { messagePreferenceDao.saveMessagePreference(capture(result)) }
-        assertEquals(expectedResult, result.captured)
+            val result = slot<MessagePreferenceEntity>()
+            coVerify { messagePreferenceDao.saveMessagePreference(capture(result)) }
+            assertEquals(expectedResult, result.captured)
     }
 
     @Test
-    fun `should update message preference if it already exists in DB when saving view in dark mode preference`() = runBlockingTest {
-        // given
-        val messagePreference = buildMessagePreference(viewInDarkMode = true)
-        val expectedResult = buildMessagePreference(viewInDarkMode = false)
-        coEvery { messagePreferenceDao.findMessagePreference(messageId) } returns messagePreference
+    fun `should update message preference if it already exists in DB when saving view in dark mode preference`() =
+        runTest(dispatchers.Main) {
+            // given
+            val messagePreference = buildMessagePreference(viewInDarkMode = true)
+            val expectedResult = buildMessagePreference(viewInDarkMode = false)
+            coEvery { messagePreferenceDao.findMessagePreference(messageId) } returns messagePreference
 
-        // when
-        messageRepository.saveViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false)
+            // when
+            messageRepository.saveViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false)
 
-        // then
-        val result = slot<MessagePreferenceEntity>()
-        coVerify { messagePreferenceDao.saveMessagePreference(capture(result)) }
-        assertEquals(expectedResult, result.captured)
-    }
+            // then
+            val result = slot<MessagePreferenceEntity>()
+            coVerify { messagePreferenceDao.saveMessagePreference(capture(result)) }
+            assertEquals(expectedResult, result.captured)
+        }
 
     @Test
     fun `should return a count of messages withing the given location`() =
-        runBlockingTest {
+        runTest(dispatchers.Main) {
             // given
             val mailboxLocation = Constants.MessageLocationType.ALL_SCHEDULED.asLabelIdString()
             coEvery { messageDao.observeMessagesCountByLocation(mailboxLocation) } returns flowOf(1)

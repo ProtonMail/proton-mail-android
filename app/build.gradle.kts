@@ -296,7 +296,6 @@ dependencies {
         `Proton-domain`,
         `Proton-presentation`,
         `Proton-network`,
-        `Proton-network-dagger`,
         `Proton-kotlin-util`,
         `Proton-shared-preferences`,
         `Proton-work-manager`,
@@ -313,14 +312,15 @@ dependencies {
         `Proton-key`,
         `Proton-human-verification`,
         `Proton-payment`,
+        // `Proton-payment-iap`,
         `Proton-plan`,
         `Proton-contact`,
         `Proton-country`,
         `Proton-payment`,
         `Proton-plan`,
         `Proton-report`,
-        `Proton-report-dagger`,
         `Proton-feature-flag`,
+        `Proton-util-android-dagger`,
 
         // Modules
         project(Module.domain),
@@ -425,6 +425,7 @@ dependencies {
         `uiautomator`,
         `android-activation`,
         `Proton-android-instrumented-test`,
+        `Proton-payment-iap`,
         `junit-ext`,
         `mock-web-server`,
         `okhttp-tls`

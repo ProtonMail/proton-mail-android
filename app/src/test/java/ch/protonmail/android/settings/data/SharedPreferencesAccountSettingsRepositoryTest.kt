@@ -25,7 +25,7 @@ import ch.protonmail.android.testdata.UserTestData
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -41,13 +41,14 @@ internal class SharedPreferencesAccountSettingsRepositoryTest {
     private val secureSharedPreferencesFactoryMock = mockk<SecureSharedPreferences.Factory> {
         every { userPreferences(UserTestData.userId) } returns userPreferencesMock
     }
+    private val dispatchers = TestDispatcherProvider
     private val sharedPreferencesAccountSettingsRepository = SharedPreferencesAccountSettingsRepository(
         secureSharedPreferencesFactoryMock,
-        TestDispatcherProvider
+        dispatchers
     )
 
     @Test
-    fun `should get the show link confirmation setting`() = runBlockingTest {
+    fun `should get the show link confirmation setting`() = runTest(dispatchers.Main) {
         // given
         val expectedSettingValue = true
         every { userPreferencesMock.getBoolean(PREF_HYPERLINK_CONFIRM, true) } returns expectedSettingValue
@@ -61,7 +62,7 @@ internal class SharedPreferencesAccountSettingsRepositoryTest {
     }
 
     @Test
-    fun `should save the show link confirmation setting`() = runBlockingTest {
+    fun `should save the show link confirmation setting`() = runTest(dispatchers.Main) {
         // given
         val expectedSettingValue = false
 

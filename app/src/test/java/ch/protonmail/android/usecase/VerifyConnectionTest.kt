@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
@@ -67,7 +67,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun verifyThatConnectedIsReturnedWhenOperationSucceeds() = runBlockingTest {
+    fun verifyThatConnectedIsReturnedWhenOperationSucceeds() = runTest {
         // given
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
         val workInfo = mockk<WorkInfo> {
@@ -92,7 +92,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun verifyThatCantReachServerIsReturnedWhenOperationFails() = runBlockingTest {
+    fun verifyThatCantReachServerIsReturnedWhenOperationFails() = runTest {
         // given
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
         val workInfo = mockk<WorkInfo> {
@@ -118,7 +118,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun verifyThatOnlyInitialNetworkStatusIsReturnedWhenOperationIsOngoingAndNothingLater() = runBlockingTest {
+    fun verifyThatOnlyInitialNetworkStatusIsReturnedWhenOperationIsOngoingAndNothingLater() = runTest {
         // given
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
         val workInfo = mockk<WorkInfo> {
@@ -144,7 +144,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun verifyThatConnectedAndThanNoInternetIsReturnedWhenOperationSucceedsAndThenConnectionDrops() = runBlockingTest {
+    fun verifyThatConnectedAndThanNoInternetIsReturnedWhenOperationSucceedsAndThenConnectionDrops() = runTest {
         // given
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
         val workInfo = mockk<WorkInfo> {
@@ -170,7 +170,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun verifyThatCantReachServerAndThanNoInternetIsReturnedWhenOperationFailsAndThenConnectionDrops() = runBlockingTest {
+    fun verifyThatCantReachServerAndThanNoInternetIsReturnedWhenOperationFailsAndThenConnectionDrops() = runTest {
         // given
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
         val workInfo = mockk<WorkInfo> {
@@ -196,17 +196,18 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun verifyThatNoInternetAndThanConnectedIsReturnedWhenOperationSucceedsAfterInternetHasSuccessfullyReconnected() = runBlockingTest {
-        // given
-        val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
-        val workInfo = mockk<WorkInfo> {
-            every { state } returns WorkInfo.State.SUCCEEDED
-        }
-        workInfoLiveData.value = listOf(workInfo)
-        val connectionsFlow = flow<Constants.ConnectionState> {}
-        val backendConnectionsFlow = MutableStateFlow(Constants.ConnectionState.CONNECTED)
-        every { workEnqueuer.enqueue() } returns Unit
-        every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
+    fun verifyThatNoInternetAndThanConnectedIsReturnedWhenOperationSucceedsAfterInternetHasSuccessfullyReconnected() =
+        runTest {
+            // given
+            val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
+            val workInfo = mockk<WorkInfo> {
+                every { state } returns WorkInfo.State.SUCCEEDED
+            }
+            workInfoLiveData.value = listOf(workInfo)
+            val connectionsFlow = flow<Constants.ConnectionState> {}
+            val backendConnectionsFlow = MutableStateFlow(Constants.ConnectionState.CONNECTED)
+            every { workEnqueuer.enqueue() } returns Unit
+            every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns false
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
         every { queueNetworkUtil.connectionStateFlow } returns backendConnectionsFlow

@@ -26,7 +26,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -46,7 +46,7 @@ internal class SwitchToMainBackendIfAvailableTest {
     )
 
     @Test
-    fun `should switch to main BE, update the user and return true when main BE ping succeeds`() = runBlockingTest {
+    fun `should switch to main BE, update the user and return true when main BE ping succeeds`() = runTest {
         // given
         coEvery { apiManagerMock.pingMainBackend() } returns ResponseBody()
 
@@ -60,7 +60,7 @@ internal class SwitchToMainBackendIfAvailableTest {
     }
 
     @Test
-    fun `should not switch to main BE or update the user and return false when main BE ping fails`() = runBlockingTest {
+    fun `should not switch to main BE or update the user and return false when main BE ping fails`() = runTest {
         // given
         coEvery { apiManagerMock.pingMainBackend() } throws IllegalStateException("nope")
 

@@ -27,6 +27,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountState
 import me.proton.core.accountmanager.domain.AccountManager
@@ -94,7 +95,7 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
     )
 
     @Test
-    fun storesFirebaseTokenForAllTheLoggedInUsers() = coroutinesTest {
+    fun storesFirebaseTokenForAllTheLoggedInUsers() = runTest {
         // given
         val token = FirebaseToken("a token")
         multiUserTokenManager.saveToken(token)
@@ -111,7 +112,7 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
     }
 
     @Test
-    fun isTokenSentForAllLoggedUsersReturnsTrueIfTokenIsSentForEveryLoggedInUser() = coroutinesTest {
+    fun isTokenSentForAllLoggedUsersReturnsTrueIfTokenIsSentForEveryLoggedInUser() = runTest {
         // given
         coEvery { user1.userFcmTokenManager.isTokenSent() } returns true
         coEvery { user2.userFcmTokenManager.isTokenSent() } returns true
@@ -124,7 +125,7 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
     }
 
     @Test
-    fun isTokenSentForAllLoggedUsersReturnsTrueIfTokenIsSentForEveryLoggedInUserButForSavedUser() = coroutinesTest {
+    fun isTokenSentForAllLoggedUsersReturnsTrueIfTokenIsSentForEveryLoggedInUserButForSavedUser() = runTest {
         // given
         coEvery { user1.userFcmTokenManager.isTokenSent() } returns true
         coEvery { user2.userFcmTokenManager.isTokenSent() } returns true
@@ -138,7 +139,7 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
     }
 
     @Test
-    fun isTokenSentForAllLoggedUsersReturnsFalseIfTokenIsNotSentForOneLoggedInUser() = coroutinesTest {
+    fun isTokenSentForAllLoggedUsersReturnsFalseIfTokenIsNotSentForOneLoggedInUser() = runTest {
         // given
         coEvery { user1.userFcmTokenManager.isTokenSent() } returns true
         coEvery { user2.userFcmTokenManager.isTokenSent() } returns false
@@ -151,7 +152,7 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
     }
 
     @Test
-    fun isTokenSentForAllLoggedUsersReturnsFalseIfTokenIsNotSentForEveryLoggedInUser() = coroutinesTest {
+    fun isTokenSentForAllLoggedUsersReturnsFalseIfTokenIsNotSentForEveryLoggedInUser() = runTest {
         // given
         coEvery { user1.userFcmTokenManager.isTokenSent() } returns false
         coEvery { user2.userFcmTokenManager.isTokenSent() } returns false
@@ -164,7 +165,7 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
     }
 
     @Test
-    fun setTokenUnsentForAllLoggedInUsersWorksCorrectly() = coroutinesTest {
+    fun setTokenUnsentForAllLoggedInUsersWorksCorrectly() = runTest {
         // given - then
         multiUserTokenManager.setTokenUnsentForAllSavedUsers()
 

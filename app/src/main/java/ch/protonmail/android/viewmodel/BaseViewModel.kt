@@ -32,6 +32,4 @@ import studio.forface.viewstatestore.ViewStateStoreScope
  * @author Davide Farella
  */
 @Deprecated("Part of old ContactDetailsViewModel")
-abstract class BaseViewModel(
-    dispatchers: DispatcherProvider
-) : ViewModel(), ViewStateStoreScope, DispatcherProvider by dispatchers
+abstract class BaseViewModel : ViewModel(), ViewStateStoreScope

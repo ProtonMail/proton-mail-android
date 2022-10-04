@@ -48,7 +48,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import junit.framework.Assert.assertEquals
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Rule
 import java.io.File
@@ -103,7 +103,7 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactSavesContactEmailsWithContactIdToRepository() {
-        runBlockingTest {
+        runTest {
             every { contactIdGenerator.generateRandomId() } returns "contactDataId"
 
             createContact(userId, "Mike", contactEmails, encryptedData, signedData)
@@ -119,7 +119,7 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactScheduleWorkerToCreateContactsThroughNetwork() {
-        runBlockingTest {
+        runTest {
             createContact(userId, "Mark", contactEmails, encryptedData, signedData)
 
             verify { createContactScheduler.enqueue(userId, encryptedVCardFilePath, signedData) }
@@ -128,10 +128,14 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactReturnsErrorWhenContactCreationThroughNetworkFails() {
-        runBlockingTest {
+        runTest {
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED)
             coEvery { contactsRepository.saveContactData(any()) } returns 324L
-            every { createContactScheduler.enqueue(userId, encryptedVCardFilePath, signedData) } returns workerStatusLiveData
+            every {
+                createContactScheduler.enqueue(
+                    userId, encryptedVCardFilePath, signedData
+                )
+            } returns workerStatusLiveData
 
             val result = createContact(userId, "Name", contactEmails, encryptedData, signedData)
             result.observeForever { }
@@ -142,9 +146,13 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactReturnsOnlineContactCreationPendingWhenContactCreationThroughNetworkIsPending() {
-        runBlockingTest {
+        runTest {
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.ENQUEUED)
-            every { createContactScheduler.enqueue(userId, encryptedVCardFilePath, signedData) } returns workerStatusLiveData
+            every {
+                createContactScheduler.enqueue(
+                    userId, encryptedVCardFilePath, signedData
+                )
+            } returns workerStatusLiveData
 
             val result = createContact(userId, "Alex", contactEmails, encryptedData, signedData)
             result.observeForever { }
@@ -155,9 +163,13 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactDoesNothingWhenContactCreationThroughNetworkIsPendingButConnectivityIsAvailable() {
-        runBlockingTest {
+        runTest {
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.ENQUEUED)
-            every { createContactScheduler.enqueue(userId, encryptedVCardFilePath, signedData) } returns workerStatusLiveData
+            every {
+                createContactScheduler.enqueue(
+                    userId, encryptedVCardFilePath, signedData
+                )
+            } returns workerStatusLiveData
             every { networkConnectivityManager.isInternetConnectionPossible() } returns true
 
             val result = createContact(userId, "Alex", contactEmails, encryptedData, signedData)
@@ -169,14 +181,18 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactSavesContactDataWithServerIdWhenContactCreationThroughNetworkSucceeds() {
-        runBlockingTest {
+        runTest {
             val contactServerId = "contactServerId"
             val workOutputData = workDataOf(
                 KEY_OUT_CREATE_CONTACT_SERVER_ID to contactServerId,
                 KEY_OUT_CREATE_CONTACT_EMAILS_JSON to "[]"
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
-            every { createContactScheduler.enqueue(userId, encryptedVCardFilePath, signedData) } returns workerStatusLiveData
+            every {
+                createContactScheduler.enqueue(
+                    userId, encryptedVCardFilePath, signedData
+                )
+            } returns workerStatusLiveData
             every { contactIdGenerator.generateRandomId() } returns "723"
 
             val result = createContact(userId, "FooName", contactEmails, encryptedData, signedData)
@@ -190,7 +206,7 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactReplacesContactEmailsWithServerOnesWhenContactCreationThroughNetworkSucceeds() {
-        runBlockingTest {
+        runTest {
             val contactServerEmails = listOf(
                 ContactEmail(
                     "VyCrmhybZZ8A-I6w==",
@@ -270,12 +286,16 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactMapsWorkerErrorToCreateContactResultWhenWorkerFailsWithAnError() {
-        runBlockingTest {
+        runTest {
             val workOutputData = workDataOf(
                 KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM to "ContactAlreadyExistsError"
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
-            every { createContactScheduler.enqueue(userId, encryptedVCardFilePath, signedData) } returns workerStatusLiveData
+            every {
+                createContactScheduler.enqueue(
+                    userId, encryptedVCardFilePath, signedData
+                )
+            } returns workerStatusLiveData
             every { contactIdGenerator.generateRandomId() } returns "92394823"
 
             val result = createContact(userId, "Mino", contactEmails, encryptedData, signedData)
@@ -289,12 +309,16 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactMapsInvalidEmailWorkerErrorToCreateContactResultWhenWorkerFailsWithInvalidEmailError() {
-        runBlockingTest {
+        runTest {
             val workOutputData = workDataOf(
                 KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM to "InvalidEmailError"
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
-            every { createContactScheduler.enqueue(userId, encryptedVCardFilePath, signedData) } returns workerStatusLiveData
+            every {
+                createContactScheduler.enqueue(
+                    userId, encryptedVCardFilePath, signedData
+                )
+            } returns workerStatusLiveData
             every { contactIdGenerator.generateRandomId() } returns "92394823"
 
             val result = createContact(userId, "Dan", contactEmails, encryptedData, signedData)
@@ -308,12 +332,16 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactMapsDuplicatedEmailWorkerErrorToCreateContactResultWhenWorkerFailsWithDuplicatedEmailError() {
-        runBlockingTest {
+        runTest {
             val workOutputData = workDataOf(
                 KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM to "DuplicatedEmailError"
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
-            every { createContactScheduler.enqueue(userId, encryptedVCardFilePath, signedData) } returns workerStatusLiveData
+            every {
+                createContactScheduler.enqueue(
+                    userId, encryptedVCardFilePath, signedData
+                )
+            } returns workerStatusLiveData
             every { contactIdGenerator.generateRandomId() } returns "2398238"
 
             val result = createContact(userId, "Test Name", contactEmails, encryptedData, signedData)
@@ -327,12 +355,16 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactDoesNotDeleteLocalContactDataWhenApiRequestFailsWithServerError() {
-        runBlockingTest {
+        runTest {
             val workOutputData = workDataOf(
                 KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM to "ServerError"
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
-            every { createContactScheduler.enqueue(userId, encryptedVCardFilePath, signedData) } returns workerStatusLiveData
+            every {
+                createContactScheduler.enqueue(
+                    userId, encryptedVCardFilePath, signedData
+                )
+            } returns workerStatusLiveData
 
             val result = createContact(userId, "Bar", contactEmails, encryptedData, signedData)
             result.observeForever { }
@@ -344,7 +376,7 @@ class CreateContactTest : CoroutinesTest {
 
     @Test
     fun createContactSavesContactDataWithGivenContactNameToRepository() {
-        runBlockingTest {
+        runTest {
             val contactName = "Contact Name"
             every { contactIdGenerator.generateRandomId() } returns "1233"
 
@@ -359,7 +391,7 @@ class CreateContactTest : CoroutinesTest {
     fun createContactSetDbIdToCreatedContactAfterSavingItToRepository() {
         // In this test, we need to mock the worker to fail and verify the call to `deleteContactData` as
         // that was the first usage of `contactData` where we could verify that dbId had the right value
-        runBlockingTest {
+        runTest {
             val contactName = "Contact Name"
             val contactData = ContactData("8238", contactName)
             val dbId = 7347L
@@ -369,7 +401,11 @@ class CreateContactTest : CoroutinesTest {
                 KEY_OUT_CREATE_CONTACT_RESULT_ERROR_ENUM to "InvalidEmailError"
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
-            every { createContactScheduler.enqueue(userId, encryptedVCardFilePath, signedData) } returns workerStatusLiveData
+            every {
+                createContactScheduler.enqueue(
+                    userId, encryptedVCardFilePath, signedData
+                )
+            } returns workerStatusLiveData
 
             val result = createContact(userId, contactName, contactEmails, encryptedData, signedData)
             result.observeForever { }

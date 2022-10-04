@@ -23,7 +23,7 @@ import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -63,22 +63,22 @@ class LabelOrFolderWithChildrenMapperBenchmarks {
     }
 
     @Test
-    fun test1with50parents100children() = runBlockingTest {
+    fun test1with50parents100children() = runTest {
         runBenchmark("50-100", data50parents100children)
     }
 
     @Test
-    fun test2with200parents800children() = runBlockingTest {
+    fun test2with200parents800children() = runTest {
         runBenchmark("200-800", data200parents800children)
     }
 
     @Test
-    fun test3with1_000parents10_000children() = runBlockingTest {
+    fun test3with1_000parents10_000children() = runTest {
         runBenchmark("1.000-10.000", data1_000parents10_000children)
     }
 
     @Test
-    fun test4with2_000parents18_000children() = runBlockingTest {
+    fun test4with2_000parents18_000children() = runTest {
         runBenchmark("2.000-18.000", data2_000parents18_000children)
     }
 
