@@ -331,13 +331,12 @@ public class ComposeMessageActivity
         }
         try {
             if (Arrays.asList(Constants.MessageActionType.FORWARD, Constants.MessageActionType.REPLY, Constants.MessageActionType.REPLY_ALL)
-                    .contains(composeMessageViewModel.get_actionId()) || extras.getBoolean(EXTRA_MAIL_TO)) {
+                    .contains(composeMessageViewModel.get_actionId()) || (extras != null && extras.getBoolean(EXTRA_MAIL_TO))) {
                 // upload attachments if using pgp/mime
                 composeMessageViewModel.setBeforeSaveDraft(composeMessageViewModel.getMessageDataResult().isPGPMime(), messageBodyEditText.getText().toString());
             }
         } catch (Exception exc) {
-            Timber.tag("588").e(exc, "Exception on create (upload attachments)");
-
+            Timber.e(exc, "Exception on create (failed to save draft)");
         }
 
         fromAddressSpinner.getBackground().setColorFilter(getResources().getColor(R.color.icon_norm), PorterDuff.Mode.SRC_ATOP);
