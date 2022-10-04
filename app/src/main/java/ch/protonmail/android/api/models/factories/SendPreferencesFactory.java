@@ -202,9 +202,13 @@ public class SendPreferencesFactory {
         boolean isEncryptionKeyPinned = pinnedEncryptionKey != null;
         String encryptionKey = pinnedEncryptionKey == null && pubKeyResp.getKeys().length > 0 ? pubKeyResp.getKeys()[0].getPublicKey() : pinnedEncryptionKey;
         boolean encrypt =
+                /*
+                If not specified in the contact but we have an encryption key, we encrypt by default
+                This is needed for pinned wkd keys because of a bug in contact creation:
+                https://jira.protontech.ch/browse/MAILWEB-3305
+                 */
                 encryptFlag != null ?
                         !encryptFlag.getValue().equalsIgnoreCase("false")
-                        // If not specified in the contact but we have an encryption key, we encrypt by default
                         : encryptionKey != null;
         boolean sign = signFlag != null ? !signFlag.getValue().equalsIgnoreCase("false") : mailSettings.getDefaultSign();
         if (isInternal) {
