@@ -365,7 +365,6 @@ public class SendPreferencesFactory {
         boolean isInternal = pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL;
         boolean isOwnAddress = getAddress(email) != null;
         String pubKey = findPrimaryKey(pubKeyResp);
-        boolean globalSign = mailSettings.getDefaultSign();
         PackageType defaultPGPScheme = mailSettings.getPGPScheme();
         if (pubKey != null) {
             if(isInternal){
@@ -376,13 +375,14 @@ public class SendPreferencesFactory {
                 MIMEType mimeType = getMimeType(
                         null,
                         defaultPGPScheme,
-                        globalSign
+                        true
                 );
-                return new SendPreference(email, true, globalSign,
+                return new SendPreference(email, true, true,
                         mimeType, pubKey, defaultPGPScheme,
                         false, false, false, isOwnAddress);
             }
         }
+        boolean globalSign = mailSettings.getDefaultSign();
         defaultPGPScheme = defaultPGPScheme == PackageType.PGP_MIME ? PackageType.MIME : PackageType.CLEAR;
         MIMEType defaultPGPMime = defaultPGPScheme == PackageType.MIME ? MIMEType.MIME : MIMEType.PLAINTEXT;
         return new SendPreference(email, false, globalSign,
