@@ -38,10 +38,10 @@
     <string name="x_parent_folder_icon_description">Akaram s tignit taqrurt</string>
     <!-- endregion -->
     <!-- region Drawer -->
-    <string name="drawer_scheduled">Scheduled</string>
+    <string name="drawer_scheduled">Yettwasihel</string>
     <string name="drawer_contacts">Inermisen</string>
     <string name="drawer_lock_the_app">Sekkeṛ asnas</string>
-    <string name="drawer_report_bug">Azen abug</string>
+    <string name="drawer_report_bug">Azen aneqqis n wugur</string>
     <string name="drawer_settings">Iɣewwaṛen</string>
     <string name="drawer_sign_out">Ffeɣ</string>
     <string name="drawer_create_folder_description">Snulfu-d akaram amaynut</string>
@@ -288,7 +288,7 @@
     <string name="no_subject">Azen izen s war asentel?</string>
     <string name="yes">Ih</string>
     <string name="no">Ala</string>
-    <string name="ok">OK</string>
+    <string name="ok">IH</string>
     <string name="forward_prefix">Welleh:</string>
     <string name="original_message_divider">-------- Izen aneṣli --------</string>
     <string name="invalid_email_address">ThTansa \'%s\' mačči d tameɣtut</string>
@@ -337,7 +337,7 @@
     <string name="saving_failed_no_conn">Asekles yecceḍ, ulac tuqqna</string>
     <string name="attachment_exists">Afaylu yedda yakan</string>
     <string name="eo_password_not_completed">Awal uffir n yizen ur immid ara.</string>
-    <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through proton.me to pay your unpaid invoice.</string>
+    <string name="delinquency_subtitle">Anekcum ar umiḍan-agi yensa ɣef sebba n lexlas mazal. Ma ulac aɣilif qqen ar proton.me akken ad xelseḍ tafaturt mazal.</string>
     <string name="downloading">Asider...</string>
     <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">

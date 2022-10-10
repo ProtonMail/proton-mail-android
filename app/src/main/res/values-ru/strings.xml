@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Запланированные</string>
     <string name="drawer_contacts">Контакты</string>
     <string name="drawer_lock_the_app">Заблокировать приложение</string>
-    <string name="drawer_report_bug">Сообщить об ошибке</string>
+    <string name="drawer_report_bug">Сообщить о проблеме</string>
     <string name="drawer_settings">Настройки</string>
     <string name="drawer_sign_out">Выйти</string>
     <string name="drawer_create_folder_description">Создать новую папку</string>

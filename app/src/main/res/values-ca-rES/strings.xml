@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Scheduled</string>
     <string name="drawer_contacts">Contactes</string>
     <string name="drawer_lock_the_app">Bloquejar l\'aplicació</string>
-    <string name="drawer_report_bug">Informar d\'un error</string>
+    <string name="drawer_report_bug">Notifica un problema</string>
     <string name="drawer_settings">Preferències</string>
     <string name="drawer_sign_out">Tanca la sessió</string>
     <string name="drawer_create_folder_description">Crear carpeta nova</string>

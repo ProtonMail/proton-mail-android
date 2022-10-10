@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Заплановано</string>
     <string name="drawer_contacts">Контакти</string>
     <string name="drawer_lock_the_app">Заблокувати програму</string>
-    <string name="drawer_report_bug">Звіт про ваду</string>
+    <string name="drawer_report_bug">Повідомити про проблему</string>
     <string name="drawer_settings">Налаштування</string>
     <string name="drawer_sign_out">Вийти</string>
     <string name="drawer_create_folder_description">Створити нову теку</string>

@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Agendado</string>
     <string name="drawer_contacts">Contatos</string>
     <string name="drawer_lock_the_app">Bloquear o aplicativo</string>
-    <string name="drawer_report_bug">Reportar um problema</string>
+    <string name="drawer_report_bug">Relatar um problema</string>
     <string name="drawer_settings">Configurações</string>
     <string name="drawer_sign_out">Encerrar sessão</string>
     <string name="drawer_create_folder_description">Criar nova pasta</string>
@@ -613,8 +613,8 @@
     <string name="contact_group_saved">Grupo salvo</string>
     <string name="no_recipients">Nenhum destinatário</string>
     <plurals name="contact_group_selected">
-        <item quantity="one">%d Selecionado</item>
-        <item quantity="other">%d Selected</item>
+        <item quantity="one">%d selecionado</item>
+        <item quantity="other">%d selecionado</item>
     </plurals>
     <string name="paid_plan_needed">Por favor, faça o upgrade para um plano pago para ter estes recursos premium</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Membros)</string>
@@ -810,13 +810,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemas e soluções comuns de conexão</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://proton.me/support/contact\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Sem conexão à Internet&lt;/i&gt; - Certifique-se de que a sua conexão está funcionando.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema no Provedor de Internet (ISP)&lt;/i&gt; - tente conectar ao Proton por outra rede (ou utilize o &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; ou o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueio governamental&lt;/i&gt; - o seu país pode estar bloqueando o acesso ao Proton. Tente o &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (ou outra VPN) ou o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para acessar o Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferência do antivírus&lt;/i&gt; - desative temporariamente ou remova o seu antivírus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferência de proxy/firewall&lt;/i&gt; - desative os proxies ou firewalls, ou contate o seu administrador de rede.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está caído&lt;/i&gt; - veja &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; para conhecer o nosso status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Ainda sem solução&lt;/i&gt; - entre em contato diretamente através do nosso &lt;a href=\"https://protonmail.com/support-form\"&gt;formulário de suporte&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), ou a &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

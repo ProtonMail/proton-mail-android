@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Zamanlanmış</string>
     <string name="drawer_contacts">Kişiler</string>
     <string name="drawer_lock_the_app">Uygulamayı kilitle</string>
-    <string name="drawer_report_bug">Hata bildir</string>
+    <string name="drawer_report_bug">Bir sorun bildireceğim</string>
     <string name="drawer_settings">Ayarlar</string>
     <string name="drawer_sign_out">Oturumu kapat</string>
     <string name="drawer_create_folder_description">Yeni klasör ekle</string>

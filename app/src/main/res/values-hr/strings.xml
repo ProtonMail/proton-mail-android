@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Scheduled</string>
     <string name="drawer_contacts">Kontakti</string>
     <string name="drawer_lock_the_app">Zaključaj aplikaciju</string>
-    <string name="drawer_report_bug">Prijavi problem</string>
+    <string name="drawer_report_bug">Report a problem</string>
     <string name="drawer_settings">Postavke</string>
     <string name="drawer_sign_out">Odjava</string>
     <string name="drawer_create_folder_description">Stvori novu mapu</string>

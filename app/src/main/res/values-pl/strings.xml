@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Zaplanowane</string>
     <string name="drawer_contacts">Kontakty</string>
     <string name="drawer_lock_the_app">Zablokuj aplikację</string>
-    <string name="drawer_report_bug">Zgłoś błąd</string>
+    <string name="drawer_report_bug">Zgłoś problem</string>
     <string name="drawer_settings">Ustawienia</string>
     <string name="drawer_sign_out">Wyloguj</string>
     <string name="drawer_create_folder_description">Utwórz nowy folder</string>
@@ -308,7 +308,7 @@
     <string name="sending_message_offline">Brak połączenia z siecią. Wiadomość zostanie wysłana później...</string>
     <string name="message_sent">Wiadomość została wysłana</string>
     <string name="message_failed">Błąd wysyłania wiadomości</string>
-    <string name="storage_limit">Limit przestrzeni dyskowej</string>
+    <string name="storage_limit">Limit magazynu lokalnego</string>
     <string name="edit_settings">Edytuj ustawienia</string>
     <string name="share">Udostępnij</string>
     <string name="cancel">Anuluj</string>
@@ -662,7 +662,7 @@
     <string name="contacts_add_photo_select_camera">Zrób zdjęcie</string>
     <string name="save_group_validation_error">Wpisz nazwę grupy</string>
     <!-- region Storage Limit Reached -->
-    <string name="storage_limit_alert">Wykorzystano limit przestrzeni dyskowej. Nie można wysyłać ani odbierać wiadomości e-mail.
+    <string name="storage_limit_alert">Wykorzystano limit przestrzeni dyskowej. Nie możesz wysyłać ani odbierać wiadomości.
         Kliknij, aby dowiedzieć się więcej.</string>
     <string name="storage_limit_warning_title">Ostrzeżenie</string>
     <string name="storage_limit_reached_text">Wykorzystano 100% dostępnej przestrzeni dyskowej.
