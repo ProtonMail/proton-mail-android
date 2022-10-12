@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Naplánováno</string>
     <string name="drawer_contacts">Kontakty</string>
     <string name="drawer_lock_the_app">Zamknout aplikaci</string>
-    <string name="drawer_report_bug">Nahlásit chybu</string>
+    <string name="drawer_report_bug">Nahlásit problém</string>
     <string name="drawer_settings">Nastavení</string>
     <string name="drawer_sign_out">Odhlásit se</string>
     <string name="drawer_create_folder_description">Vytvořit novou složku</string>
@@ -77,7 +77,7 @@
     <string name="scheduled_message_info">Tato zpráva bude odeslána v %s</string>
     <string name="scheduled_message_edit_info">Naplánované zprávy lze v současné době upravovat pouze z webových aplikací a aplikací pro iOS.</string>
     <string name="scheduled_message_moved_to_trash_title">Zpráva nebude odeslána</string>
-    <string name="scheduled_message_moved_to_trash_desc">Přesunutím této zprávy do koše se zruší její plán.</string>
+    <string name="scheduled_message_moved_to_trash_desc">Přesunutím této zprávy do koše se zruší její naplánování.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Skrytá kopie:</string>

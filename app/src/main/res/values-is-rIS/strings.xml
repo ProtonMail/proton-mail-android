@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Scheduled</string>
     <string name="drawer_contacts">Tengiliðir</string>
     <string name="drawer_lock_the_app">Læsa forritinu</string>
-    <string name="drawer_report_bug">Tilkynna galla</string>
+    <string name="drawer_report_bug">Report a problem</string>
     <string name="drawer_settings">Stillingar</string>
     <string name="drawer_sign_out">Skrá út</string>
     <string name="drawer_create_folder_description">Búa til nýja möppu</string>

@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Scheduled</string>
     <string name="drawer_contacts">Επαφές</string>
     <string name="drawer_lock_the_app">Κλείδωμα εφαρμογής</string>
-    <string name="drawer_report_bug">Αναφορά σφάλματος</string>
+    <string name="drawer_report_bug">Report a problem</string>
     <string name="drawer_settings">Ρυθμίσεις</string>
     <string name="drawer_sign_out">Αποσύνδεση</string>
     <string name="drawer_create_folder_description">Δημιουργία νέου φακέλου</string>

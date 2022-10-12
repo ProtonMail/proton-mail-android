@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Programat</string>
     <string name="drawer_contacts">Contacte</string>
     <string name="drawer_lock_the_app">Blocare aplicație</string>
-    <string name="drawer_report_bug">Raportare eroare</string>
+    <string name="drawer_report_bug">Raportare problemă</string>
     <string name="drawer_settings">Setări</string>
     <string name="drawer_sign_out">Deconectare</string>
     <string name="drawer_create_folder_description">Creare folder</string>

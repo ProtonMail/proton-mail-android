@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Scheduled</string>
     <string name="drawer_contacts">連絡先</string>
     <string name="drawer_lock_the_app">アプリをロック</string>
-    <string name="drawer_report_bug">バグを報告</string>
+    <string name="drawer_report_bug">Report a problem</string>
     <string name="drawer_settings">設定</string>
     <string name="drawer_sign_out">サインアウト</string>
     <string name="drawer_create_folder_description">新しいフォルダーを作成</string>
@@ -763,8 +763,8 @@
     <string name="auto_lock_timer">自動ロックまでの時間</string>
     <string name="connections_via_third_parties">代替ルーティング</string>
     <string name="allow_secure_connections_via_third_parties">代替ルーティングを許可</string>
-    <string name="allow_secure_connections_via_third_parties_settings_description">Proton のサイトがブロックされている場合、この設定により、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。サービスへの接続の信頼性向上の観点から、私たちはこの設定を有効にしておくことをお勧めします。</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">Proton への接続がブロックされている場合、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。信頼性向上の観点から、この設定を有効にしておくことをおすすめします。</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Proton への接続がブロックされている場合、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。信頼性向上の観点から、この設定を有効にしておくことをおすすめします。 <a href="https://proton.me/blog/anti-censorship-alternative-routing">詳細</a></string>
     <string name="app_language">アプリ言語</string>
     <string name="custom_language_dialog_title">アプリの言語を選択してください</string>
     <string name="auto_detect">自動検出</string>

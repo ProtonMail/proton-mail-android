@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Schemalagd</string>
     <string name="drawer_contacts">Kontakter</string>
     <string name="drawer_lock_the_app">Lås appen</string>
-    <string name="drawer_report_bug">Rapportera fel</string>
+    <string name="drawer_report_bug">Rapportera ett problem</string>
     <string name="drawer_settings">Inställningar</string>
     <string name="drawer_sign_out">Logga ut</string>
     <string name="drawer_create_folder_description">Skapa ny mapp</string>
@@ -89,7 +89,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Den %s, %s &lt; %s&gt; skrev:</string>
     <string name="set_msg_password_title">Ställ in lösenord</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
+    <string name="set_msg_password_info">Ställ in ett lösenord för att kryptera detta meddelande för icke Proton Mail användare. <a href="https://proton.me/support/password-protected-emails">Lär dig mer</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Meddelandelösenord</string>
     <string name="set_msg_password_msg_password_hint">4 till 21 tecken långt</string>

@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Terjadwal</string>
     <string name="drawer_contacts">Kontak</string>
     <string name="drawer_lock_the_app">Kunci aplikasi</string>
-    <string name="drawer_report_bug">Laporkan bug</string>
+    <string name="drawer_report_bug">Laporkan masalah</string>
     <string name="drawer_settings">Pengaturan</string>
     <string name="drawer_sign_out">Keluar</string>
     <string name="drawer_create_folder_description">Buat folder baru</string>
@@ -137,7 +137,7 @@
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Folder induk</string>
-    <string name="parent_picker_header">Apabila Anda tidak menentukan folder induk, folder baru ini akan dibuat sebagai folder dengan level paling atas.</string>
+    <string name="parent_picker_header">Apabila Anda tidak menentukan folder induk, folder baru ini akan dibuat sebagai folder level teratas.</string>
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Pesan baru</string>

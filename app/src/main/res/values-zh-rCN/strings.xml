@@ -71,7 +71,7 @@
     <string name="details_hyperlink_phishing_dialog_content">此链接指向的网站可能会窃取您的密码、信用卡等信息。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;出于安全考虑，请不要打开此链接。</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">返回（推荐）</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">忽视警告并继续</string>
-    <string name="scheduled_message_info">邮件将于 %s 发送</string>
+    <string name="scheduled_message_info">邮件将于 %s 后发送</string>
     <string name="scheduled_message_edit_info">目前您只能在网页端或 iOS 端中修改定时邮件。</string>
     <string name="scheduled_message_moved_to_trash_title">邮件将不会发送</string>
     <string name="scheduled_message_moved_to_trash_desc">将此邮件移入垃圾箱会取消其定时计划。</string>

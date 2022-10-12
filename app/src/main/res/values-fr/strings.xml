@@ -73,9 +73,9 @@
     <string name="details_hyperlink_phishing_dialog_cancel_action">Revenir en arrière (recommandé)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorer l\'avertissement et continuer</string>
     <string name="scheduled_message_info">Ce message sera envoyé le %s</string>
-    <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
-    <string name="scheduled_message_moved_to_trash_title">Le message ne sera pas envoyé</string>
-    <string name="scheduled_message_moved_to_trash_desc">Déplacer ce message vers la corbeille annulera sa programmation.</string>
+    <string name="scheduled_message_edit_info">Actuellement, les messages programmés ne peuvent être modifiés qu\'à partir des applications web et iOS.</string>
+    <string name="scheduled_message_moved_to_trash_title">Le message ne sera pas envoyé.</string>
+    <string name="scheduled_message_moved_to_trash_desc">Déplacer ce message dans le dossier Corbeille annulera sa programmation.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cci :</string>
@@ -576,10 +576,10 @@
     <string name="channel_name_ongoing_operations">Opérations en cours</string>
     <string name="channel_description_ongoing_operations">Affiche toutes les opérations en cours comme le téléchargement d\'un nouveau message en arrière-plan</string>
     <string name="retrieving_notifications">Récupération des notifications</string>
-    <string name="report_phishing">Signaler un hameçonnage</string>
+    <string name="report_phishing">Signaler un phishing/hameçonnage</string>
     <string name="print">Imprimer</string>
-    <string name="phishing_dialog_title">Confirmer le signalement d’hameçonnage</string>
-    <string name="phishing_dialog_message">Signaler un message comme une tentative d\'hameçonnage nous enverra le message afin que nous puissions l\'analyser et améliorer nos filtres. Cela signifie que nous serons en mesure de voir le contenu du message dans son intégralité.</string>
+    <string name="phishing_dialog_title">Confirmer le signalement de phishing/hameçonnage</string>
+    <string name="phishing_dialog_message">Signaler un message comme une tentative de phishing/hameçonnage nous enverra le message afin que nous puissions l\'analyser et améliorer nos filtres. Cela signifie que nous serons en mesure de voir le contenu du message dans son intégralité.</string>
     <string name="phishing_report_send_message_moved_to_spam">Rapport envoyé. Message déplacé dans le dossier Indésirables/spam.</string>
     <string name="cannot_send_report_send">Impossible d\'envoyer le rapport</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
