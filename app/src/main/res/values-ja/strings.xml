@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Scheduled</string>
     <string name="drawer_contacts">連絡先</string>
     <string name="drawer_lock_the_app">アプリをロック</string>
-    <string name="drawer_report_bug">Report a problem</string>
+    <string name="drawer_report_bug">問題を報告</string>
     <string name="drawer_settings">設定</string>
     <string name="drawer_sign_out">サインアウト</string>
     <string name="drawer_create_folder_description">新しいフォルダーを作成</string>
@@ -109,7 +109,7 @@
     <string name="set_msg_expiration_1_week">1 週間</string>
     <string name="set_msg_expiration_custom">カスタム</string>
     <string name="set_msg_expiration_check_description">このアイテムはチェックされています</string>
-    <string name="composer_invalid_sender_saving_draft_failed">「宛先:」アドレスは無効です。有効なものに変更してください</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">テーマ</string>
@@ -322,7 +322,7 @@
     <string name="message_deleted_error">メッセージ削除中にエラーが起きました。選択したメッセージのうち何通かは送信作業中ですか。</string>
     <string name="respond_inline">インラインで返信</string>
     <string name="server_not_reachable_troubleshoot">サーバーに接続できません… (<u>トラブルシューティング</u>)</string>
-    <string name="connectivity_checking">接続を確認しています...</string>
+    <string name="connectivity_checking">接続を確認中…</string>
     <string name="draft_label_attachments_uploading">添付ファイルをアップロードしています…</string>
     <string name="draft_label_message_uploading">メッセージを送信しています…</string>
     <string name="attachment_failed">添付ファイルのアップロードに失敗しました。</string>
@@ -602,7 +602,7 @@
     <string name="contact_group_saved">グループを保存しました</string>
     <string name="no_recipients">宛先がありません</string>
     <plurals name="contact_group_selected">
-        <item quantity="other">%d Selected</item>
+        <item quantity="other">%d 件選択済み</item>
     </plurals>
     <string name="paid_plan_needed">これらの機能を使うためには有料プランにアップグレードしてください。</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d メンバー)</string>

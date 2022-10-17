@@ -111,7 +111,7 @@
     <string name="set_msg_expiration_1_week">o săptămână</string>
     <string name="set_msg_expiration_custom">Personalizat</string>
     <string name="set_msg_expiration_check_description">Acest articol este selectat</string>
-    <string name="composer_invalid_sender_saving_draft_failed">Adresa din câmpul „De la:” nu este validă. Modificați-o cu una validă.</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -864,7 +864,7 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="move_message">Mutare mesaj</string>
     <string name="manage">Gestionare</string>
     <string name="message_from">Mesaj de la %s</string>
-    <string name="not_spam_move_to_inbox">Nu este nedorit (mutare în «Primite»)</string>
+    <string name="not_spam_move_to_inbox">Acceptat (mutare în «Primite»)</string>
     <string name="action_sheet_view_in_light_mode">Afișare cu fundal alb</string>
     <string name="action_sheet_view_in_dark_mode">Afișare cu fundal negru</string>
     <plurals name="x_messages_count">

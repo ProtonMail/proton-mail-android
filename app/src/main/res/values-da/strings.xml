@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 uge</string>
     <string name="set_msg_expiration_custom">Tilpasset</string>
     <string name="set_msg_expiration_check_description">Dette emne er afmærket</string>
-    <string name="composer_invalid_sender_saving_draft_failed">\"Fra:\"-adressen er ugyldig. Ændr den venligst til en gyldig</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>

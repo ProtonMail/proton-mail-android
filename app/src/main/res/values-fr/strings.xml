@@ -72,7 +72,7 @@
     <string name="details_hyperlink_phishing_dialog_content">Ce lien mène à un site web qui pourrait essayer de voler vos informations, comme des mots de passe et des informations de cartes bancaires.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Pour votre sécurité, ne continuez pas.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Revenir en arrière (recommandé)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorer l\'avertissement et continuer</string>
-    <string name="scheduled_message_info">Ce message sera envoyé le %s</string>
+    <string name="scheduled_message_info">Ce message sera envoyé %s.</string>
     <string name="scheduled_message_edit_info">Actuellement, les messages programmés ne peuvent être modifiés qu\'à partir des applications web et iOS.</string>
     <string name="scheduled_message_moved_to_trash_title">Le message ne sera pas envoyé.</string>
     <string name="scheduled_message_moved_to_trash_desc">Déplacer ce message dans le dossier Corbeille annulera sa programmation.</string>
@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 semaine</string>
     <string name="set_msg_expiration_custom">Personnalisée</string>
     <string name="set_msg_expiration_check_description">Cet élément est coché.</string>
-    <string name="composer_invalid_sender_saving_draft_failed">L\'adresse dans le champ « De » n\'est pas valide. Remplacez-la par une adresse valide.</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Thème</string>
