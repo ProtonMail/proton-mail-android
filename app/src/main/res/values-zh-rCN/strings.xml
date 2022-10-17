@@ -71,7 +71,7 @@
     <string name="details_hyperlink_phishing_dialog_content">此链接指向的网站可能会窃取您的密码、信用卡等信息。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;出于安全考虑，请不要打开此链接。</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">返回（推荐）</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">忽视警告并继续</string>
-    <string name="scheduled_message_info">邮件将于 %s 后发送</string>
+    <string name="scheduled_message_info">邮件将于 %s 发送</string>
     <string name="scheduled_message_edit_info">目前您只能在网页端或 iOS 端中修改定时邮件。</string>
     <string name="scheduled_message_moved_to_trash_title">邮件将不会发送</string>
     <string name="scheduled_message_moved_to_trash_desc">将此邮件移入垃圾箱会取消其定时计划。</string>
@@ -109,7 +109,7 @@
     <string name="set_msg_expiration_1_week">1 周</string>
     <string name="set_msg_expiration_custom">自定义</string>
     <string name="set_msg_expiration_check_description">已勾选该项</string>
-    <string name="composer_invalid_sender_saving_draft_failed">“发件人：”的地址无效。请替换为有效的地址。</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">配色</string>

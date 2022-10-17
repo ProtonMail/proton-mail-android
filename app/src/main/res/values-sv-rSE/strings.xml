@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 vecka</string>
     <string name="set_msg_expiration_custom">Anpassad</string>
     <string name="set_msg_expiration_check_description">Detta objekt är markerat</string>
-    <string name="composer_invalid_sender_saving_draft_failed">Adressen ”Från:” är ogiltig. Ändra den till en giltig</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -164,7 +164,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nya funktioner</string>
     <string name="existing_user_onboarding_new_features_description">Njut av nya funktioner som mörkt läge, förbättrade aviseringar, ett filter för olästa meddelanden och undermappar.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Uppdaterat Proton, enhetligt skydd</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Vi introducerar Protons uppdaterade utseende. Många tjänster, ett uppdrag. Välkommen till ett internet där integritet är standard. <a href="https://proton.me/news/updated-proton">Lär dig mer</a></string>
     <string name="onboarding_next">Nästa</string>
     <string name="onboarding_get_started">Kom igång</string>
     <string name="onboarding_got_it">Jag förstår</string>
@@ -337,7 +337,7 @@
     <string name="saving_failed_no_conn">Misslyckades att spara, ingen anslutning</string>
     <string name="attachment_exists">Bilagan är redan bifogad</string>
     <string name="eo_password_not_completed">Lösenord för meddelandet har inte slutförts.</string>
-    <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through proton.me to pay your unpaid invoice.</string>
+    <string name="delinquency_subtitle">Åtkomst till detta konto är inaktiverat på grund av utebliven betalning. Logga in via proton.me för att betala din obetalda faktura.</string>
     <string name="downloading">Laddar ner...</string>
     <string name="cant_download_attachment">Kan inte ladda ner bilaga</string>
     <string-array name="auto_logout_options_array">
@@ -490,7 +490,7 @@
     <string name="update_folder">Uppdatera mapp</string>
     <string name="spam_score_100">Denna e-post verkar komma från en Proton Mail-adress, men det kom utanför vårt system och misslyckades med våra autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefordrat!</string>
     <string name="spam_score_101">Denna e-post har misslyckats med domänens autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefordrat!</string>
-    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://proton.me/blog/prevent-phishing-attacks">LEARN MORE</a></string>
+    <string name="spam_score_102">Detta meddelande kan vara ett nätfiskeförsök. Kontrollera avsändaren och innehållet för att säkerställa att de är legitima. <a href="https://proton.me/blog/prevent-phishing-attacks">Lär dig mer</a></string>
     <string name="print_from_template">Från: %s</string>
     <string name="print_to_template">Till: %s,  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -574,8 +574,8 @@
     <string name="channel_name_account">Konto</string>
     <string name="channel_description_account">Kontostatus</string>
     <string name="channel_name_ongoing_operations">Pågående aktiviteter</string>
-    <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
-		message download on background</string>
+    <string name="channel_description_ongoing_operations">Visar alla pågående aktiviteter som nedladdning
+av nya meddelanden i bakgrunden</string>
     <string name="retrieving_notifications">Hämtar aviseringar</string>
     <string name="report_phishing">Rapportera nätfiske</string>
     <string name="print">Skriv ut</string>
@@ -784,7 +784,7 @@
     <string name="connections_via_third_parties">Alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties">Tillåt alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Om Proton-webbplatser blockeras tillåter denna inställning appen att prova alternativ nätverksrouting för att nå Proton, vilket kan vara användbart för att kringgå brandväggar eller nätverksproblem. Vi rekommenderar att du behåller denna inställning på för större tillförlitlighet.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Om Proton-webbplatser blockeras tillåter denna inställning appen att prova alternativ nätverksrouting för att nå Proton, vilket kan vara användbart för att kringgå brandväggar eller nätverksproblem. Vi rekommenderar att du behåller denna inställning på för större tillförlitlighet.. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Lär dig mer</a></string>
     <string name="app_language">App-språk</string>
     <string name="custom_language_dialog_title">Välj app-språk</string>
     <string name="auto_detect">Identifiera automatiskt</string>
@@ -808,13 +808,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Vanliga anslutningsproblem och lösningar</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://proton.me/support/contact\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Ingen internetanslutning&lt;/i&gt; - Se till att din internetanslutning fungerar.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problem med Internet Service Provider (ISP)&lt;/i&gt; - Prova ansluta till Proton från ett annat nätverk (eller använd &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; eller &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Statlig blockering&lt;/i&gt; - Ditt land kanske blockerar åtkomst till Proton. Prova &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (eller något annat VPN) eller &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; för att komma åt Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirusstörningar&lt;/i&gt; - Inaktivera eller ta bort ditt antivirusprogram temporärt.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/brandväggsstörning&lt;/i&gt; - Inaktivera alla proxyservrar eller brandväggar eller kontakta din nätverksadministratör.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton är nere&lt;/i&gt; - Kontrollera &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; för vår systemstatus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Kan du fortfarande inte hitta en lösning?&lt;/i&gt; - Kontakta oss direkt genom vår  &lt;a href=\"https://proton.me/support/contact\"&gt;supportformulär&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-post&lt;/a&gt; (support@protonmail.zendesk.com), eller &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

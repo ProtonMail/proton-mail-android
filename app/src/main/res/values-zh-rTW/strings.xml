@@ -38,10 +38,10 @@
     <string name="x_parent_folder_icon_description">帶有兒童圖示的資料夾</string>
     <!-- endregion -->
     <!-- region Drawer -->
-    <string name="drawer_scheduled">Scheduled</string>
+    <string name="drawer_scheduled">已排程</string>
     <string name="drawer_contacts">聯絡人</string>
     <string name="drawer_lock_the_app">鎖定應用程式</string>
-    <string name="drawer_report_bug">Report a problem</string>
+    <string name="drawer_report_bug">回報問題</string>
     <string name="drawer_settings">設定</string>
     <string name="drawer_sign_out">登出</string>
     <string name="drawer_create_folder_description">建立新資料夾</string>
@@ -71,10 +71,10 @@
     <string name="details_hyperlink_phishing_dialog_content">此連結指向的網站可能試圖竊取您的資訊，如密碼與信用卡詳細資訊等。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;為了您的安全，請不要繼續。</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">返回 (建議)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">忽略警語並繼續</string>
-    <string name="scheduled_message_info">This message will be sent on %s</string>
-    <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
-    <string name="scheduled_message_moved_to_trash_title">Message will not be sent</string>
-    <string name="scheduled_message_moved_to_trash_desc">Moving this message to trash will cancel its schedule.</string>
+    <string name="scheduled_message_info">此信息將於 %s 內送出</string>
+    <string name="scheduled_message_edit_info">目前只能在網頁版和 iOS 應用程式中修改已排程的訊息。</string>
+    <string name="scheduled_message_moved_to_trash_title">郵件不會被送出</string>
+    <string name="scheduled_message_moved_to_trash_desc">丟進垃圾桶的信息將被取消排程。</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">密件副本：</string>
@@ -88,7 +88,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">在 %s，%s &lt; %s&gt; 寫道：</string>
     <string name="set_msg_password_title">設定密碼</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
+    <string name="set_msg_password_info">請設置一組密碼，讓非 Proton Mail 用戶也能讀取加密信息<a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">資訊</string>
     <string name="set_msg_password_msg_password_title">郵件密碼</string>
     <string name="set_msg_password_msg_password_hint">長度為 4 至 21 個字元</string>
@@ -109,7 +109,7 @@
     <string name="set_msg_expiration_1_week">1 週</string>
     <string name="set_msg_expiration_custom">自定義</string>
     <string name="set_msg_expiration_check_description">已勾選此項目</string>
-    <string name="composer_invalid_sender_saving_draft_failed">寄件者電郵位址無效。請更換為有效的位址。</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">佈景主題</string>
@@ -284,7 +284,7 @@
     <string name="no_subject">是否傳送無主旨的郵件？</string>
     <string name="yes">是</string>
     <string name="no">否</string>
-    <string name="ok">OK</string>
+    <string name="ok">確定</string>
     <string name="forward_prefix">轉寄：</string>
     <string name="original_message_divider">-------- 原始郵件 --------</string>
     <string name="invalid_email_address">位址 ‘%s’ 無效</string>
@@ -333,7 +333,7 @@
     <string name="saving_failed_no_conn">儲存失敗，無網際網路連線</string>
     <string name="attachment_exists">附件已附加</string>
     <string name="eo_password_not_completed">未完成郵件密碼設置。</string>
-    <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through proton.me to pay your unpaid invoice.</string>
+    <string name="delinquency_subtitle">本帳號因有未付款項而被停用，請登入 https://proton.me 進行付款。</string>
     <string name="downloading">正在下載……</string>
     <string name="cant_download_attachment">無法下載附件</string>
     <string-array name="auto_logout_options_array">
@@ -559,7 +559,7 @@
     <string name="expiration_error_add_msg_password">請為以下收件者設定郵件密碼：</string>
     <string name="expiration_error_disable_pgp_sending">請對下列收件者停用 PGP 傳送，以啟用郵件時效：</string>
     <string name="expiration_error_proceed">點擊「仍然要寄送」，即使在沒有使用限時功能的情況下也直接寄給這些收件人。</string>
-    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">LEARN MORE</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">了解更多</a></string>
     <string name="channel_name_attachments">附件</string>
     <string name="channel_description_attachments">通知附件下載狀態</string>
     <string name="channel_name_emails">電郵</string>
@@ -567,8 +567,8 @@
     <string name="channel_name_account">帳號</string>
     <string name="channel_description_account">帳號狀態</string>
     <string name="channel_name_ongoing_operations">正在進行的操作</string>
-    <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
-		message download on background</string>
+    <string name="channel_description_ongoing_operations">顯示所有進行中操作，例如
+		在背景中下載的新信息</string>
     <string name="retrieving_notifications">正在擷取通知</string>
     <string name="report_phishing">回報網路釣魚</string>
     <string name="print">列印</string>
@@ -770,7 +770,7 @@
     <string name="connections_via_third_parties">替代路由</string>
     <string name="allow_secure_connections_via_third_parties">允許替代路由</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">萬一 Proton 網站遭到封鎖，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">萬一 Proton 網站遭到封鎖，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。<a href="https://proton.me/blog/anti-censorship-alternative-routing">瞭解更多</a></string>
     <string name="app_language">應用程式語言</string>
     <string name="custom_language_dialog_title">選擇應用程式語言</string>
     <string name="auto_detect">自動偵測</string>
@@ -794,13 +794,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">常見連線問題及解決方案</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://proton.me/support/contact\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;未連線網路&lt;/i&gt; - 請檢查是否已正確連接網路。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;網絡供應商 (ISP) 故障&lt;/i&gt; - 嘗試其他網絡連接 Proton (或使用 &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; 或 &lt;a href=\"https://www.torproject.org/\"&gt;Tor 洋蔥&lt;/a&gt;)。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;政府實施封鎖&lt;/i&gt; - 您所在的國家可能封鎖連接 Proton 的通道。 嘗試透過 &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (或其他 VPN) 或r &lt;a href=\"https://www.torproject.org/\"&gt;Tor 洋蔥&lt;/a&gt; 以連接 Proton。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;防毒軟件發生衝突&lt;/i&gt; - 暫時禁用或移除您的防毒軟件。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;代理伺服器/防火牆發生衝突&lt;/i&gt; - 禁用任何代理伺服器或防火牆，或聯繫您的網絡管理員。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton 服務故障&lt;/i&gt; - 登入 &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; 了解系統最新狀態。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;未能解決疑難&lt;/i&gt; - 直接聯絡我們，透過 &lt;a href=\"https://proton.me/support/contact\"&gt;填寫表格&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;電郵&lt;/a&gt; (support@protonmail.zendesk.com), 或 &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;。
     </string>
     <!-- endregion -->
     <!-- region errors -->

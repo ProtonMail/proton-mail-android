@@ -68,7 +68,7 @@
     <string name="details_open_in_proton_calendar_subtitle">Calendario seguro y cifrado</string>
     <string name="details_open_in_proton_calendar_icon_desc">Icono de Proton Calendar</string>
     <string name="details_play_store_error">No se puede abrir la Play Store</string>
-    <string name="details_hyperlink_phishing_dialog_title">Advertencia: presunto sitio web falso</string>
+    <string name="details_hyperlink_phishing_dialog_title">Advertencia: el sitio web podría ser falso</string>
     <string name="details_hyperlink_phishing_dialog_content">Este enlace conduce a un sitio web que podría estar intentando robar su información, como contraseñas y datos de la tarjeta de crédito.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Por su seguridad, no continúe.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Volver (recomendado)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorar la advertencia y continuar</string>
@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 semana</string>
     <string name="set_msg_expiration_custom">Personalizado</string>
     <string name="set_msg_expiration_check_description">Este elemento está marcado</string>
-    <string name="composer_invalid_sender_saving_draft_failed">La dirección \"De:\" es inválida. Por favor, cámbiala por una válida</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -264,12 +264,12 @@
         <item quantity="other">%d archivos adjuntos</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 %d Archivo adjunto</item>
-        <item quantity="other">\u0020 %d Archivos adjuntos</item>
+        <item quantity="one">\u0020 %d Adjunto</item>
+        <item quantity="other">\u0020 %d Adjuntos</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">%d Archivo adjunto</item>
-        <item quantity="other">%d Archivos adjuntos</item>
+        <item quantity="one">%d Adjunto</item>
+        <item quantity="other">%d Adjuntos</item>
     </plurals>
     <string name="add_attachment">Agregar archivo adjunto</string>
     <string name="select_file">Seleccionar archivo</string>
@@ -520,7 +520,7 @@
     <string name="protonmail_contacts">Contactos de Proton Mail</string>
     <string name="device_contacts">Contactos del dispositivo</string>
     <string name="print_date_template">Fecha: %s</string>
-    <string name="print_attachment_template">Adjunto: %s;</string>
+    <string name="print_attachment_template">Adjunto: %s;  </string>
     <string name="pm_me_changed">El envío de mensajes desde la dirección @pm.me es una característica de pago. Su mensaje será enviado desde su dirección predeterminada %s</string>
     <string name="pm_me_can_not_be_default">Actualice a un plan de pago para poder establecer %s como dirección principal</string>
     <string name="dont_remind_again">No volver a recordarme</string>
@@ -557,7 +557,7 @@
     <!-- Composer locks -->
     <string name="composer_lock_internal">Cifrado de extremo a extremo</string>
     <string name="composer_lock_internal_pinned">Cifrado de extremo a extremo al destinatario verificado</string>
-    <string name="composer_lock_pgp_encrypted_pinned">Cifrado PGP al destinatario verificado</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Cifrado con PGP para destinatario verificado</string>
     <string name="composer_lock_pgp_signed">firmado con PGP</string>
     <string name="recipient_not_found_and_removed">No se encontró al destinatario: %s y se ha eliminado</string>
     <string name="recipient_error_and_removed">Ocurrió un error al recuperar la información del destinatario así que ha sido borrado: %s</string>
@@ -687,7 +687,7 @@ compre más
     <string name="edit_display_name">Editar el nombre a mostrar</string>
     <string name="signature">Firma</string>
     <string name="mobile_footer">Pie de página para móvil</string>
-    <string name="edit_mobile_footer">Activar pie de página en la aplicación móvil</string>
+    <string name="edit_mobile_footer">Habilitar pie de página para móvil</string>
     <string name="default_mobile_footer">Enviado desde Proton Mail móvil</string>
     <string name="mobile_footer_is_premium">Solamente los usuarios de pago pueden cambiar el pie de página en la aplicación móvil</string>
     <string name="mobile_footer_info">Este pie de página se añadirá después de su firma</string>
@@ -793,7 +793,7 @@ compre más
     <string name="combined_contacts">Contactos combinados</string>
     <string name="turn_combined_contacts_on">Active esta función para completar automáticamente las direcciones usando los contactos de todas sus cuentas conectadas.</string>
     <string name="local_cache_management">Caché local</string>
-    <string name="cache_cleared">La caché local ha sido actualizada</string>
+    <string name="cache_cleared">La caché local está actualizada</string>
     <string name="empty_data">Limpiar datos</string>
     <!-- endregion -->
     <string name="enabled">Habilitado</string>

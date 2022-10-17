@@ -89,7 +89,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">El %s, %s &lt; %s&gt; va escriure:</string>
     <string name="set_msg_password_title">Establir contrasenya</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
+    <string name="set_msg_password_info">Establiu una contrasenya per xifrar aquest missatge per a usuaris fora de Proton Mail. <a href="https://proton.me/support/password-protected-emails">Més informació</a></string>
     <string name="set_msg_password_info_icon_description">Informació</string>
     <string name="set_msg_password_msg_password_title">Contrasenya del missatge</string>
     <string name="set_msg_password_msg_password_hint">Longitud de 4 a 21 caràcters</string>
@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 setmana</string>
     <string name="set_msg_expiration_custom">Personalitzat</string>
     <string name="set_msg_expiration_check_description">S\'ha comprovat aquest element</string>
-    <string name="composer_invalid_sender_saving_draft_failed">L\'adreça \"De:\" no és vàlida. Canvieu-la per una de vàlida</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -164,7 +164,7 @@
     <string name="existing_user_onboarding_new_features_headline">Noves funcionalitats</string>
     <string name="existing_user_onboarding_new_features_description">Gaudiu de noves característiques com mode fosc, notificacions millorades, un filtre de missatges no llegits, i subcarpetes.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualitzat, protecció unificada</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Presentem el nou aspecte de Proton. Molts serveis, una missió. Benvingut/da a l\'internet on tenim la privacitat per defecte. <a href="https://proton.me/news/updated-proton">Més informació</a></string>
     <string name="onboarding_next">Següent</string>
     <string name="onboarding_get_started">Comença</string>
     <string name="onboarding_got_it">Entesos</string>
@@ -191,7 +191,7 @@
     <string name="update_app_title">Actualització requerida</string>
     <string name="update_app">L\'aplicació de Proton Mail no es pot utilitzar fins que no l\'actualitzes</string>
     <string name="you_are_offline">Esteu fora de línia</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail està fora de línia ara mateix, comproveu https://protonstatus.com o el nostre twitter per saber l\'estat actual: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Contacte desat</string>
     <string name="contact_saved_offline">Contacte desat, es sincronitzarà quan hi hagi una connexió disponible</string>
     <string name="contact_exist">L\'adreça electrònica del contacte ja existeix</string>
