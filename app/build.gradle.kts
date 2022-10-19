@@ -316,7 +316,6 @@ dependencies {
         `Proton-plan`,
         `Proton-contact`,
         `Proton-country`,
-        `Proton-payment`,
         `Proton-plan`,
         `Proton-report`,
         `Proton-feature-flag`,
