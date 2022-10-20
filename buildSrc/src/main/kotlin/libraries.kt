@@ -120,6 +120,7 @@ val DependencyHandler.`rxRelay` get() =                     jakeWharton("rxrelay
 val DependencyHandler.`apache-commons-lang` get() =         dependency("org.apache", "commons", moduleSuffix = "lang3") version `apache-commons-lang version`
 val DependencyHandler.`butterknife-runtime` get() =         jakeWharton(module = "butterknife") version `butterKnife version`
 val DependencyHandler.`butterknife-compiler` get() =        jakeWharton(module = "butterknife", moduleSuffix = "compiler") version `butterKnife version`
+val DependencyHandler.`desugaring` get() =                  android( "tools", module = "desugar_jdk_libs") version `desugaring version`
 val DependencyHandler.`firebase-messaging` get() =          google("firebase", moduleSuffix = "messaging") version `firebase-messaging version`
 val DependencyHandler.`gson` get() =                        google("code.gson", "gson") version `gson version`
 val DependencyHandler.`jsoup` get() =                       dependency("org.jsoup", module = "jsoup") version `jsoup version`

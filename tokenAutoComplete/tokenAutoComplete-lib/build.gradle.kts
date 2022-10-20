@@ -28,6 +28,9 @@ plugins {
 android()
 
 dependencies {
+    coreLibraryDesugaring(
+        `desugaring`
+    )
     implementation(
         `kotlin-jdk7`,
         `appcompat`,

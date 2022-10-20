@@ -78,7 +78,8 @@ fun org.gradle.api.Project.android(
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
+        isCoreLibraryDesugaringEnabled = true
+        sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = sourceCompatibility
     }
 

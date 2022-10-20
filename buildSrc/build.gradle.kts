@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    val android =       "7.0.4"
+    val android =       "7.2.2"
     val easyGradle =    "2.8"
 
     // Needed for setup Android config
@@ -44,9 +44,9 @@ dependencies {
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "11"
 }
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "11"
 }

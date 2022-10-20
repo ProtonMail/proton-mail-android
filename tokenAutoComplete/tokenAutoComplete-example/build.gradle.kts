@@ -28,6 +28,9 @@ plugins {
 android("tokenautocomplete.example")
 
 dependencies {
+    coreLibraryDesugaring(
+        `desugaring`
+    )
     implementation(
         project(Module.tokenAutoComplete),
 

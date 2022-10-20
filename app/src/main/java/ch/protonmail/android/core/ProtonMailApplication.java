@@ -109,6 +109,7 @@ import me.proton.core.auth.presentation.MissingScopeInitializer;
 import me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer;
 import me.proton.core.domain.entity.UserId;
 import me.proton.core.humanverification.presentation.HumanVerificationInitializer;
+import me.proton.core.plan.presentation.UnredeemedPurchaseInitializer;
 import me.proton.core.util.kotlin.CoreLogger;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
@@ -230,6 +231,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         appInitializer.initializeComponent(SecurityManagerInitializer.class);
         appInitializer.initializeComponent(HumanVerificationInitializer.class);
         appInitializer.initializeComponent(MissingScopeInitializer.class);
+        appInitializer.initializeComponent(UnredeemedPurchaseInitializer.class);
 
         checkForUpdateAndClearCache();
     }

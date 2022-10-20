@@ -53,10 +53,10 @@ fun initVersions() {
     `assistedInject version` =                  "0.6.0"         // Released: Sep 14, 2020
     `dagger version` =                          "2.40.5"        // Released: Dec 07, 2021
 
-    `mockK version` =                           "1.12.2"        // Released: Dec 31, 2021
+    `mockK version` =                           "1.13.2"
     `retrofit version` =                        "2.9.0"         // Released: May 20, 2020
     `retrofit-kotlin-serialization version` =   "0.8.0"         // Released: Oct 09, 2020
-    `robolectric version` =                     "4.3.1"         // Released: Oct 11, 2019
+    `robolectric version` =                     "4.8.2"         // Released: Oct 11, 2019
     `viewStateStore version` =                  "1.4-beta-4"    // Released: Mar 02, 2020
     // endregion
 }
@@ -95,6 +95,7 @@ const val `apache-commons-lang version` =       "3.4"           // Released: Apr
 const val `arrow version` =                     "0.11.0"        // Released: Sep 09, 2020
 const val `butterKnife version` =               "10.1.0"        // Released: Feb 14, 201
 const val `firebase-messaging version` =        "20.2.4"        // Released: Jul 30, 2020
+const val `desugaring version` =                "1.1.5"         // Released:
 const val `gson version` =                      "2.8.5"         // Released: May 22, 201
 const val `jackson version` =                   "2.10.2"        // Released: Jan 05, 2020
 const val `jsoup version` =                     "1.13.1"        // Released: Mar 01, 2020
