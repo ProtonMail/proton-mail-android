@@ -22,6 +22,7 @@ import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
 import ch.protonmail.android.api.interceptors.RetryRequestInterceptor
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.segments.ATTACH_PATH
+import ch.protonmail.android.api.segments.EXTEND_PATH
 import ch.protonmail.android.api.segments.ONE_MINUTE
 import ch.protonmail.android.api.segments.THIRTY_SECONDS
 import ch.protonmail.android.api.segments.THREE_SECONDS
@@ -294,7 +295,7 @@ class ProtonRetrofitExtended(
     ): OkHttpClient {
         val okHttpClient = okHttpProvider.provideOkHttpClient(
             endpointUri,
-            endpointUri,
+            endpointUri + EXTEND_PATH,
             connectTimeout = THREE_SECONDS,
             readTimeout = ONE_MINUTE,
             writeTimeout = ONE_MINUTE,

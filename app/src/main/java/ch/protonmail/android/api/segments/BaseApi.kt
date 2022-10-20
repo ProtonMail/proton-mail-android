@@ -28,6 +28,7 @@ import java.util.Collections
 import java.util.concurrent.ArrayBlockingQueue
 
 const val ATTACH_PATH = "attach"
+const val EXTEND_PATH = "extend"
 
 const val ONE_MINUTE = 60L
 const val THREE_SECONDS = 3L
