@@ -196,6 +196,7 @@ android(
     }
 
     packagingOptions {
+        exclude("MANIFEST.MF")
         exclude("LICENSE-2.0.txt")
         exclude("RELEASE.txt")
         exclude("META-INF/NOTICE.md")

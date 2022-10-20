@@ -92,6 +92,7 @@ fun org.gradle.api.Project.android(
     buildFeatures.viewBinding = true
 
     packagingOptions {
+        exclude("MANIFEST.MF")
         exclude("META-INF/*.kotlin_module")
         exclude("META-INF/AL2.0")
         exclude("META-INF/DEPENDENCIES")
