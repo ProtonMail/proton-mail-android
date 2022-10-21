@@ -62,6 +62,37 @@
 #
 ##############################################################################
 
+installPrivateConfig() {
+    local configBranch='config-files';
+    local outputDir='privateConfig';
+    local repository="$(git remote get-url origin)";
+    copyFiles() {
+        cp "$outputDir/sentry.properties" .
+        cp "$outputDir/google-services/google-services.json" "app/google-services.json"
+    }
+    copyDummyGoogleSevicesFiles() {
+        cp "config/google-services/dummy-google-services.json" "app/google-services.json"
+    }
+    # The branch does not exist for the public repository
+    if [[ "$repository" =~ github\.com ]]; then
+        copyDummyGoogleSevicesFiles
+        return 0
+    fi;
+    if [ -d "$outputDir" ]; then
+        echo '[run] update configuration'
+        cd "$outputDir";
+        git pull --quiet;
+        cd - > /dev/null
+        copyFiles
+        return 0
+    fi;
+    echo '[run] install configuration'
+    git clone "$repository" --quiet --depth 1 --branch "$configBranch"  "$outputDir"
+    copyFiles
+}
+
+installPrivateConfig
+
 # Attempt to set APP_HOME
 
 # Resolve links: $0 may be a link
