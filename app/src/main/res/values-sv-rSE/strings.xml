@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 vecka</string>
     <string name="set_msg_expiration_custom">Anpassad</string>
     <string name="set_msg_expiration_check_description">Detta objekt är markerat</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Adressen i fältet ”Från” är inte giltig. Byt ut den mot en giltig</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -644,8 +644,9 @@ av nya meddelanden i bakgrunden</string>
     <string name="storage_limit_alert">Gränsen uppnåtts. Det gick inte att skicka eller ta emot e-postmeddelanden.
         tryck för att läsa mer.</string>
     <string name="storage_limit_warning_title">Varning</string>
-    <string name="storage_limit_reached_text">Du har uppnåt 100 % av ditt lagringsutrymme. Du kommer inte kunna skicka eller ta emot e-post
-            om du inte permanent tar bort några e-postmeddelanden eller köper mer lagringsutrymme. {{learnMoreLink}}.</string>
+    <string name="storage_limit_reached_text">Du har uppnått 100% av ditt lagringsutrymme. Du
+        kommer inte att kunna skicka eller ta emot e-post om du inte permanent tar bort några e-postmeddelanden eller köper mer
+        utrymme.</string>
     <string name="storage_limit_approaching_text">Du har uppnåt 90 % av ditt lagringsutrymme. Du bör överväga att frigöra plats eller köpa mer lagringsutrymme innan den tar slut.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Behörigheter</string>

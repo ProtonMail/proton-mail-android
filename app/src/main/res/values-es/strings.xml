@@ -72,7 +72,7 @@
     <string name="details_hyperlink_phishing_dialog_content">Este enlace conduce a un sitio web que podría estar intentando robar su información, como contraseñas y datos de la tarjeta de crédito.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Por su seguridad, no continúe.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Volver (recomendado)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorar la advertencia y continuar</string>
-    <string name="scheduled_message_info">Este mensaje se enviará en %s</string>
+    <string name="scheduled_message_info">Este mensaje se enviará el %s</string>
     <string name="scheduled_message_edit_info">Los mensajes programados sólo se pueden modificar actualmente desde la Web y desde aplicaciones iOS.</string>
     <string name="scheduled_message_moved_to_trash_title">El mensaje no se enviará</string>
     <string name="scheduled_message_moved_to_trash_desc">Mover este mensaje a la papelera cancelará su programación.</string>
@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 semana</string>
     <string name="set_msg_expiration_custom">Personalizado</string>
     <string name="set_msg_expiration_check_description">Este elemento está marcado</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">La dirección \"De:\" es inválida. Por favor, cámbiala por una válida</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -164,7 +164,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nuevas características</string>
     <string name="existing_user_onboarding_new_features_description">Disfrute de nuevas funciones como modo oscuro, notificaciones mejoradas, filtro de mensajes no leídos y subcarpetas.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualizado, protección unificada</string>
-    <string name="existing_user_onboarding_updated_proton_description">Presentamos la imagen renovada de Proton. Muchos servicios, una misión. Bienvenido a una Internet basada en la privacidad. <a href="https://proton.me/news/updated-proton">Aprender más</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Presentamos el nuevo aspecto de Proton. Muchos servicios, una sola misión. Te damos la bienvenida a una Internet donde la privacidad es la norma. <a href="https://proton.me/news/updated-proton">Más información</a></string>
     <string name="onboarding_next">Siguiente</string>
     <string name="onboarding_get_started">Comenzar</string>
     <string name="onboarding_got_it">Entendido</string>
@@ -309,7 +309,7 @@
     <string name="eo_password_subtitle">Establezca una contraseña para cifrar este mensaje para usuarios que no sean de Proton Mail</string>
     <string name="eo_password_more_info">Obtener más información</string>
     <string name="no_attachments">0 archivos adjuntos</string>
-    <string name="display_name_banned_chars">Nombre inválido. \'&gt;\' y \'&lt;\' no están permitidos</string>
+    <string name="display_name_banned_chars">Nombre a mostrar no válido. \'&gt;\' y \'&lt;\' no están permitidos</string>
     <string name="cont">Continuar</string>
     <string name="reply_prefix_on">El</string>
     <string name="label_name">Nombre de la etiqueta</string>
@@ -380,8 +380,8 @@
     <string name="error">Error</string>
     <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
-        <item quantity="one">%d Imagen incrustada</item>
-        <item quantity="other">%d Imágenes incrustadas</item>
+        <item quantity="one">%d imagen incrustada</item>
+        <item quantity="other">%d imágenes incrustadas</item>
     </plurals>
     <string name="warning">Advertencia</string>
     <string name="available_addresses">Direcciones disponibles</string>
@@ -514,7 +514,7 @@
     <string name="email_empty">Falta la dirección de correo electrónico</string>
     <string name="encrypted_contact_details">Datos de contacto cifrados</string>
     <string name="convert_question">Cargar contactos locales</string>
-    <string name="convert_question_subtitle">Esto cargará los contactos locales de su dispositivo en su directorio de contactos de Proton Mail. Luego podrá acceder a estos contactos desde sus otros dispositivos a través de Proton Mail.</string>
+    <string name="convert_question_subtitle">Esto cargará los contactos locales del dispositivo en tu directorio de contactos de Proton Mail. Esto te permitirá acceder a estos contactos desde tus otros dispositivos a través de Proton Mail.</string>
     <string name="refresh_contacts">Actualizar</string>
     <string name="invalid_email_some_contacts">La dirección de correo electrónico no es válida para algunos de sus contactos</string>
     <string name="protonmail_contacts">Contactos de Proton Mail</string>
@@ -676,7 +676,7 @@ compre más
     <string name="password_manager">Gestión de contraseñas</string>
     <string name="password_changed">Contraseña cambiada.</string>
     <string name="recovery_email">Correo de recuperación</string>
-    <string name="recovery_email_changed">Correo electrónico de recuperación cambiado.</string>
+    <string name="recovery_email_changed">Correo de recuperación cambiado.</string>
     <string name="storage">Tamaño del buzón</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Direcciones</string>
@@ -833,7 +833,7 @@ compre más
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">La clave de la API de Firebase no es válida. Las notificaciones Push no funcionarán.</string>
     <string name="failed_saving_draft_online">Error al guardar el borrador en línea para el mensaje: \"%s\"</string>
-    <string name="failed_uploading_attachment_online">Error de archivo adjunto para el mensaje: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Error al adjuntar archivo para el mensaje: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">No se puede abrir este mensaje mientras está siendo enviado</string>
     <string name="enable_conversation_mode">Habilitar modo de conversación</string>
     <!-- endregion -->

@@ -111,7 +111,7 @@
     <string name="set_msg_expiration_1_week">o săptămână</string>
     <string name="set_msg_expiration_custom">Personalizat</string>
     <string name="set_msg_expiration_check_description">Acest articol este selectat</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Adresa din câmpul „De la:” nu este validă. Modificați-o cu una validă.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>

@@ -109,7 +109,7 @@
     <string name="set_msg_expiration_1_week">1 pekan</string>
     <string name="set_msg_expiration_custom">Sesuaikan</string>
     <string name="set_msg_expiration_check_description">Item ini sudah dicentang</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Alamat yang tertera pada kolom \"Dari\" tidak valid. Silakan ubah isi kolom yang bersangkutan dengan alamat yang valid</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>

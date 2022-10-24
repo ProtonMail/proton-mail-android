@@ -71,10 +71,10 @@
     <string name="details_hyperlink_phishing_dialog_content">このリンクはパスワードやクレジットカードなどの情報を盗もうとするウェブサイトに誘導している可能性があります。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;セキュリティのため、アクセスしないでください。</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">戻る (推奨)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">警告を無視して続行</string>
-    <string name="scheduled_message_info">This message will be sent on %s</string>
+    <string name="scheduled_message_info">このメッセージは %s に送信されます</string>
     <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
-    <string name="scheduled_message_moved_to_trash_title">Message will not be sent</string>
-    <string name="scheduled_message_moved_to_trash_desc">Moving this message to trash will cancel its schedule.</string>
+    <string name="scheduled_message_moved_to_trash_title">メッセージは送信されません</string>
+    <string name="scheduled_message_moved_to_trash_desc">ごみ箱へメッセージを移動するとスケジュールはキャンセルされます。</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">BCC:</string>
@@ -88,7 +88,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s に %s &lt; %s&gt; が送信:</string>
     <string name="set_msg_password_title">パスワードを設定</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
+    <string name="set_msg_password_info">Proton Mail ユーザー以外への暗号化パスワードを設定してください。<a href="https://proton.me/support/password-protected-emails">詳細</a></string>
     <string name="set_msg_password_info_icon_description">情報</string>
     <string name="set_msg_password_msg_password_title">メッセージのパスワード</string>
     <string name="set_msg_password_msg_password_hint">4〜21 文字</string>
@@ -109,7 +109,7 @@
     <string name="set_msg_expiration_1_week">1 週間</string>
     <string name="set_msg_expiration_custom">カスタム</string>
     <string name="set_msg_expiration_check_description">このアイテムはチェックされています</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">「宛先」アドレスは無効です。有効なものに変更してください</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">テーマ</string>
@@ -483,7 +483,7 @@
     <string name="update_folder">フォルダーを更新</string>
     <string name="spam_score_100">このメールは Proton Mail のアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
-    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://proton.me/blog/prevent-phishing-attacks">LEARN MORE</a></string>
+    <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。差出人と内容を疑い、正当なものかどうかを確認してください。 <a href="https://proton.me/blog/prevent-phishing-attacks">詳細</a></string>
     <string name="print_from_template">差出人: %s</string>
     <string name="print_to_template">宛先: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -559,7 +559,7 @@
     <string name="expiration_error_add_msg_password">次の宛先に対してのメッセージのパスワードを追加してください:</string>
     <string name="expiration_error_disable_pgp_sending">次の宛先に対して期限付きメッセージを送信するには、PGPを無効にしてください：</string>
     <string name="expiration_error_proceed">タップしてこれらの宛先には有効期限なしでそのまま送信する</string>
-    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">LEARN MORE</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">詳細</a></string>
     <string name="channel_name_attachments">添付ファイル</string>
     <string name="channel_description_attachments">添付ファイルのダウンロード状態を知らせる</string>
     <string name="channel_name_emails">メール</string>
