@@ -114,6 +114,7 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
             }
             LabelType.CONTACT_GROUP ->
                 throw IllegalArgumentException("Contact groups are not supported by the nav drawer")
+            LabelType.SYSTEM_FOLDER -> R.drawable.ic_proton_question_circle_filled
         }
 
         val colorInt =
