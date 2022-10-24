@@ -52,7 +52,7 @@
     <string name="mailbox_empty_inbox_subtitle">Du bist auf dem neusten Stand</string>
     <string name="mailbox_empty_spam_subtitle">Dein Spam-Ordner ist leer</string>
     <string name="mailbox_empty_trash_subtitle">Papierkorb ist leer</string>
-    <string name="mailbox_empty_state_no_results_found">Keine Ergebnisse</string>
+    <string name="mailbox_empty_state_no_results_found">Keine Ergebnisse gefunden</string>
     <string name="mailbox_empty_state_try_a_different_term">Versuche es mit einem anderen Suchbegriff</string>
     <string name="mailbox_no_messages">Keine Nachrichten</string>
     <plurals name="mailbox_unread_count">
@@ -78,8 +78,8 @@
     <string name="scheduled_message_moved_to_trash_desc">Wenn du diese Nachricht in den Papierkorb verschiebst, wird ihr geplanter Versand aufgehoben.</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">Bcc:</string>
-    <string name="composer_cc">Cc:</string>
+    <string name="composer_bcc">BCC:</string>
+    <string name="composer_cc">CC:</string>
     <string name="composer_compose_email">E-Mail verfassen</string>
     <string name="composer_from">Von:</string>
     <string name="composer_subject">Betreff:</string>
@@ -89,7 +89,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Am %s, schrieb %s &lt; %s&gt;:</string>
     <string name="set_msg_password_title">Passwort festlegen</string>
-    <string name="set_msg_password_info">Passwort zum Verschlüsseln dieser Nachricht für Nicht-Proton Mail-Benutzer festlegen <a href="https://proton.me/support/password-protected-emails">Mehr erfahren</a></string>
+    <string name="set_msg_password_info">Passwort zum Verschlüsseln dieser Nachricht für Benutzer festlegen, die Proton Mail nicht nutzen. <a href="https://proton.me/support/password-protected-emails">Mehr erfahren</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Passwort der Nachricht</string>
     <string name="set_msg_password_msg_password_hint">4-21 Zeichen lang</string>
@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 Woche</string>
     <string name="set_msg_expiration_custom">Benutzerdefiniert</string>
     <string name="set_msg_expiration_check_description">Dieser Eintrag wurde markiert</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Die „Von:“-E-Mail-Adresse ist ungültig. Bitte ändere sie in eine gültige Adresse.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Farbschema</string>
@@ -119,8 +119,8 @@
     <string name="settings_pins_dont_match">PINs stimmen nicht überein!</string>
     <string name="settings_enter_pin_code_title">PIN eingeben</string>
     <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB verwendet)</string>
-    <string name="settings_storage_limit_unlimited_value">Unlimitiert (%1$.2f MB verwendet)</string>
-    <string name="settings_swipe_settings_info">Richten Sie Wischgesten für den Zugriff auf die am häufigsten verwendeten Aktionen ein.</string>
+    <string name="settings_storage_limit_unlimited_value">Unbegrenzt (%1$.2f MB verwendet)</string>
+    <string name="settings_swipe_settings_info">Richte Wischgesten ein, um Zugriff auf die am häufigsten verwendeten Aktionen zu bekommen.</string>
     <string name="settings_swipe_left_to_right">Von links nach rechts</string>
     <string name="settings_swipe_right_to_left">Von rechts nach links</string>
     <string name="settings_swipe_saving">Wischgeste wird gespeichert…</string>
@@ -130,7 +130,7 @@
     <string name="app_theme_title">App-Farbschema</string>
     <string name="app_theme_light">Hell</string>
     <string name="app_theme_dark">Dunkel</string>
-    <string name="app_theme_system">Von System übernehmen</string>
+    <string name="app_theme_system">Systemstandard</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Übergeordneten Ordner auswählen (optional)</string>
@@ -149,7 +149,7 @@
     <string name="contacts_empty_state_no_groups">Keine Gruppen</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">Kontaktgruppen werden nicht importiert. Bitte wechsle zu einem kostenpflichtigen Plan, um Premium-Funktionen zu nutzen.</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">Kontaktgruppen werden nicht importiert. Bitte wechsle zu einem kostenpflichtigen Abonnement, um Premium-Funktionen zu nutzen.</string>
     <string name="contact_details_remote_content_dialog_title">Inhalt aus externer Quelle</string>
     <string name="contact_details_remote_content_dialog_message">Dieser Kontakt enthält Inhalte aus externen Quellen.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Inhalt laden</string>
@@ -179,7 +179,7 @@
     <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Abmelden</string>
     <string name="sign_out_question">Möchtest du dich wirklich abmelden?</string>
-    <string name="processing_request">Ihre Anfrage wird bearbeitet</string>
+    <string name="processing_request">Deine Anfrage wird bearbeitet</string>
     <!-- should check for html tag -->
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Inhalt konnte nicht geladen werden. Bitte Chrome aktivieren</string>
@@ -389,7 +389,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchtest 
     <string name="inactive_addresses">Deaktivierte E-Mail-Adressen</string>
     <string name="not_set">Nicht festgelegt</string>
     <string name="no_available_addresses">Du hast keine verfügbaren E-Mail-Adressen</string>
-    <string name="no_inactive_addresses">Du verfügst über keine inaktiven E-Mail-Adressen</string>
+    <string name="no_inactive_addresses">Du hast keine inaktiven E-Mail-Adressen</string>
     <string name="label_add_new">Neue Kategorie hinzufügen</string>
     <string name="available_labels">Verfügbare Kategorien</string>
     <string name="delete_selected">Auswahl löschen</string>
@@ -433,7 +433,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchtest 
     <string name="contacts_import_contact">Kontakt importieren</string>
     <string name="contacts_import">Importieren</string>
     <string name="upload_contacts">Kontakte hochladen</string>
-    <string name="uploading_contacts">Kontakte werden hochgeladen …</string>
+    <string name="uploading_contacts">Kontakte werden hochgeladen</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
         <item>Mobilgerät</item>
@@ -594,7 +594,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchtest 
     <string name="create_contact_group">Kontaktgruppe erstellen</string>
     <string name="edit_contact_group">Kontaktgruppe bearbeiten</string>
     <string name="contact_groups_manage_members">Mitglieder verwalten</string>
-    <string name="contact_group_display_name">Namen anzeigen</string>
+    <string name="contact_group_display_name">Anzeigename</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="title_activity_address_chooser">Mitglieder verwalten</string>
     <string name="default_error_message">Fehler aufgetreten</string>
@@ -668,7 +668,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchtest 
     <!-- region Acc Settings -->
     <string name="account">Konto</string>
     <string name="drawer_subscription">Abonnement</string>
-    <string name="password_manager">Passwörter verwalten</string>
+    <string name="password_manager">Passwortverwaltung</string>
     <string name="password_changed">Passwort wurde geändert.</string>
     <string name="recovery_email">Wiederherstellungs-E-Mail-Adresse</string>
     <string name="recovery_email_changed">Wiederherstellungs-E-Mail-Adresse wurde geändert.</string>
@@ -684,7 +684,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchtest 
     <string name="mobile_footer">Fußzeile auf Mobilgeräten</string>
     <string name="edit_mobile_footer">Fußzeile auf Mobilgeräten aktivieren</string>
     <string name="default_mobile_footer">Gesendet von Proton Mail für Mobilgeräte</string>
-    <string name="mobile_footer_is_premium">Das Ändern der Fußzeile auf Mobilgeräten ist nur zahlenden Benutzer erlaubt</string>
+    <string name="mobile_footer_is_premium">Das Ändern der Fußzeile auf Mobilgeräten ist nur zahlenden Benutzern erlaubt</string>
     <string name="mobile_footer_info">Diese Fußzeile wird nach deiner Signatur eingefügt</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Zurückstellen</string>
@@ -738,11 +738,11 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchtest 
     <string name="auto_download_messages_title">Nachrichten automatisch herunterladen</string>
     <string name="auto_download_messages_subtitle">Wenn diese Option aktiviert ist, werden die Nachrichtentexte jedes Mal automatisch heruntergeladen, wenn du eine neue E-Mail-Benachrichtigung erhältst (dies verbraucht mehr Daten). Wenn diese Option deaktiviert ist, werden die Nachrichtentexte nur dann heruntergeladen, wenn du eine E-Mail öffnest. (Hinweis: Wenn du mit einer der beiden Optionen den Zwischenspeicher leerst oder dich abmeldest, kannst du keine Nachrichtentexte lesen, wenn keine Verbindung zum Internet besteht).</string>
     <string name="settings_background_sync">Im Hintergrund synchronisieren</string>
-    <string name="settings_auto_show_images">Grafiken aus externen Quellen automatisch laden</string>
+    <string name="settings_auto_show_images">Bilder aus externen Quellen automatisch laden</string>
     <string name="settings_auto_show_embedded_images">Eingebettete Grafiken automatisch anzeigen</string>
     <string name="settings_prevent_taking_screenshots">Das Erstellen von Bildschirmfotos verhindern</string>
     <string name="hyperlink_confirmation">Link-Bestätigung anfordern</string>
-    <string name="labels_and_folders">Kategorien und Ordner </string>
+    <string name="labels_and_folders">Kategorien &amp; Ordner </string>
     <string name="folders">Ordner</string>
     <string name="labels">Kategorien</string>
     <string name="swipe_actions">Wischgesten</string>
@@ -756,7 +756,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchtest 
     <string name="swipe_action_star_short">Kennzeichnung aktualisieren</string>
     <string name="swipe_action_spam">Nachricht als Spam gekennzeichnet</string>
     <string name="swipe_action_spam_short">Spam</string>
-    <string name="swipe_action_archive">Archivieren</string>
+    <string name="swipe_action_archive">Nachricht archiviert</string>
     <string name="swipe_action_archive_short">Archivieren</string>
     <string name="swipe_action_mark_read">Nachricht als gelesen gekennzeichnet</string>
     <string name="swipe_action_mark_read_short">Gelesen</string>

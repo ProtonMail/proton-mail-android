@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 week</string>
     <string name="set_msg_expiration_custom">Aangepast</string>
     <string name="set_msg_expiration_check_description">Dit item is aangevinkt</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Het \"Van\" e-mailadres is ongeldig. Wijzig dit naar een geldig alsjeblieft</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Thema</string>
