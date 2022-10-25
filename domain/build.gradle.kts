@@ -52,5 +52,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         freeCompilerArgs = freeCompilerArgs +
             // Allow to use kotlin.Result as return type
             "-Xallow-result-return-type"
+        jvmTarget = ProtonMail.jvmTarget.toString()
     }
 }

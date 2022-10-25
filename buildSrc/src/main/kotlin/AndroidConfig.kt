@@ -32,6 +32,7 @@ import studio.forface.easygradle.dsl.android.*
 fun org.gradle.api.Project.android(
 
     appIdSuffix: String? = null,
+    compileSdk: Int = ProtonMail.compileSdk,
     minSdk: Int = ProtonMail.minSdk,
     targetSdk: Int = ProtonMail.targetSdk,
     version: Version? = null,
@@ -41,8 +42,7 @@ fun org.gradle.api.Project.android(
 
 ) = (this as ExtensionAware).extensions.configure<TestedExtension> {
 
-    compileSdkVersion(targetSdk)
-    buildToolsVersion("30.0.2") // Latest in Doker image
+    compileSdkVersion(compileSdk)
     ndkVersion = "21.3.6528147" // Same as Docker image
     defaultConfig {
 
@@ -79,7 +79,7 @@ fun org.gradle.api.Project.android(
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = ProtonMail.jvmTarget
         targetCompatibility = sourceCompatibility
     }
 

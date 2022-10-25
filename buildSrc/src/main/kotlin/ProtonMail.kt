@@ -1,3 +1,5 @@
+import org.gradle.api.JavaVersion
+
 /*
  * Copyright (c) 2022 Proton AG
  *
@@ -26,6 +28,9 @@ object ProtonMail {
     const val versionName = "3.0.7"
     const val versionCode = 919
 
+    const val compileSdk = 32
     const val targetSdk = 31
     const val minSdk = 23
+
+    val jvmTarget = JavaVersion.VERSION_11
 }

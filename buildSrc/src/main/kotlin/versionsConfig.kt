@@ -23,20 +23,20 @@ import studio.forface.easygradle.dsl.android.*
 fun initVersions() {
 
     // region Kotlin
-    `kotlin version` =                          "1.6.10"        // Released: Dec 14, 2021
+    `kotlin version` =                          "1.6.21"        // Released: Dec 14, 2021
     `coroutines version` =                      "1.5.2"         // Released: Sep 02, 2021
     `serialization version` =                   "1.3.2"         // Released: Dec 23, 2021
     // endregion
 
     // region Android
-    `android-gradle-plugin version` =           "7.2.2"
+    `android-gradle-plugin version` =           "7.3.1"
 
     `android-annotation version` =              "1.1.0"         // Released: Jun 05, 2019
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.4"         // Released: Oct 31, 2020
     `espresso version` =                        "3.4.0"         // Released: Jul 04, 2021
-    `hilt-android version` =                    "2.40.5"        // Released: Dec 07, 2021
+    `hilt-android version` =                    "2.44"          // Released: Dec 07, 2021
     `hilt-androidx version` =                   "1.0.0"         // Released: May 05, 2021
     `ktx version` =                             "1.6.0"         // Released: Jun 30, 2021
     `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
@@ -45,13 +45,13 @@ fun initVersions() {
     `android-room version` =                    "2.4.2"         // Released: Feb 23, 2022
     `android-work version` =                    "2.7.1"         // Released: Nov 17, 2021
 
-    `android-test version` =                    "1.4.0-beta01"  // Released: May 15, 2021
+    `android-test version` =                    "1.4.0"         // Released: Jun 06, 2021
     // endregion
 
     // region Others
     `assert4k version` =                        "0.7.1"         // Released: May 04, 2021
     `assistedInject version` =                  "0.6.0"         // Released: Sep 14, 2020
-    `dagger version` =                          "2.40.5"        // Released: Dec 07, 2021
+    `dagger version` =                          "2.44"          // Released: Dec 07, 2021
 
     `mockK version` =                           "1.13.2"
     `retrofit version` =                        "2.9.0"         // Released: May 20, 2020
@@ -62,11 +62,12 @@ fun initVersions() {
 }
 
 // Proton Core
-const val `Proton-core version` =               "9.1.2"
+const val `Proton-core version` =               "9.2.0"
 
 // Test
 const val `aerogear version` =                  "1.0.0"         // Released: Mar 23, 2013
 const val `android-test-ext version` =          "1.1.3-rc01"    // Released: Jun 22, 2021
+const val `android-test-orchestrator version` = "1.4.1"         // Released: Dec 13, 2021
 const val `assertJ version` =                   "3.13.2"        // Released: Aug 04, 2019
 const val `falcon version` =                    "2.1.1"         // Released: Sep 24, 2018
 const val `hamcrest version` =                  "1.3"           // Released:
@@ -80,7 +81,7 @@ const val `junit-ktx version` =                 "1.1.2"         // Released: Aug
 // Android
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020
 const val `android-core-splashscreen version` = "1.0.0-beta02"  // Released: Mar 23, 2022
-const val `android-fragment version` =          "1.3.6"         // Released: Jul 21, 2021
+const val `android-fragment version` =          "1.5.4"         // Released: Oct 10, 2022
 const val `android-media version` =             "1.1.0"         // Released: Sep 06, 2019
 const val `android-preference version` =        "1.1.1"         // Released: Apr 15, 2020
 const val `android-startup version` =           "1.1.0"         // Released: Aug 04, 2021

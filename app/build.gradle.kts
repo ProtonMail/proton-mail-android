@@ -267,6 +267,10 @@ tasks.withType<Test> {
     systemProperty("kotlinx.coroutines.debug", "on")
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions { jvmTarget = ProtonMail.jvmTarget.toString() }
+}
+
 dependencies {
 
     androidTestImplementation(files("libs/fusion-release.aar"))
