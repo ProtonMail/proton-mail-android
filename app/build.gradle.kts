@@ -196,6 +196,7 @@ android(
     }
 
     packagingOptions {
+        exclude("MANIFEST.MF")
         exclude("LICENSE-2.0.txt")
         exclude("RELEASE.txt")
         exclude("META-INF/NOTICE.md")
@@ -266,9 +267,16 @@ tasks.withType<Test> {
     systemProperty("kotlinx.coroutines.debug", "on")
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions { jvmTarget = ProtonMail.jvmTarget.toString() }
+}
+
 dependencies {
 
     androidTestImplementation(files("libs/fusion-release.aar"))
+    coreLibraryDesugaring(
+        `desugaring`
+    )
     // Hilt
     kapt(
         `assistedInject-processor-dagger`,
@@ -316,7 +324,6 @@ dependencies {
         `Proton-plan`,
         `Proton-contact`,
         `Proton-country`,
-        `Proton-payment`,
         `Proton-plan`,
         `Proton-report`,
         `Proton-feature-flag`,

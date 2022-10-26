@@ -32,6 +32,7 @@ import me.proton.core.humanverification.data.db.HumanVerificationDatabase
 import me.proton.core.key.data.db.KeySaltDatabase
 import me.proton.core.key.data.db.PublicAddressDatabase
 import me.proton.core.mailsettings.data.db.MailSettingsDatabase
+import me.proton.core.payment.data.local.db.PaymentDatabase
 import me.proton.core.user.data.db.AddressDatabase
 import me.proton.core.user.data.db.UserDatabase
 import me.proton.core.usersettings.data.db.OrganizationDatabase
@@ -76,4 +77,7 @@ internal abstract class CoreDatabaseBindsModule {
 
     @Binds
     abstract fun provideChallengeDatabase(appDatabase: AppDatabase): ChallengeDatabase
+
+    @Binds
+    abstract fun providePaymentDatabase(appDatabase: AppDatabase): PaymentDatabase
 }

@@ -120,6 +120,7 @@ val DependencyHandler.`rxRelay` get() =                     jakeWharton("rxrelay
 val DependencyHandler.`apache-commons-lang` get() =         dependency("org.apache", "commons", moduleSuffix = "lang3") version `apache-commons-lang version`
 val DependencyHandler.`butterknife-runtime` get() =         jakeWharton(module = "butterknife") version `butterKnife version`
 val DependencyHandler.`butterknife-compiler` get() =        jakeWharton(module = "butterknife", moduleSuffix = "compiler") version `butterKnife version`
+val DependencyHandler.`desugaring` get() =                  android( "tools", module = "desugar_jdk_libs") version `desugaring version`
 val DependencyHandler.`firebase-messaging` get() =          google("firebase", moduleSuffix = "messaging") version `firebase-messaging version`
 val DependencyHandler.`gson` get() =                        google("code.gson", "gson") version `gson version`
 val DependencyHandler.`jsoup` get() =                       dependency("org.jsoup", module = "jsoup") version `jsoup version`
@@ -150,7 +151,7 @@ val DependencyHandler.`espresso-contrib` get() =  androidx("test.espresso", modu
 val DependencyHandler.`espresso-intents` get() =  androidx("test.espresso", module = "espresso-intents") version `espresso version`
 val DependencyHandler.`espresso-web` get() =  androidx("test.espresso", module = "espresso-web") version `espresso version`
 val DependencyHandler.falcon get() = dependency("com.jraska", module = "falcon") version `falcon version`
-val DependencyHandler.`orchestrator` get() =  androidx("test", module = "orchestrator") version `android-test version`
+val DependencyHandler.`orchestrator` get() =  androidx("test", module = "orchestrator") version `android-test-orchestrator version`
 val DependencyHandler.`browserstack-gradle-plugin` get() =  dependency("gradle.plugin.com.browserstack.gradle", module = "browserstack-gradle-plugin") version `browserstack-plugin version`
 val DependencyHandler.`uiautomator` get() =  androidx("test.uiautomator", module = "uiautomator") version `uiautomator version`
 val DependencyHandler.`android-activation` get() =  dependency("com.sun.mail", module = "android-activation") version `sun-mail-android version`

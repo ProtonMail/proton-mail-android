@@ -205,7 +205,7 @@ firebase instrumentation tests:
       --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
       --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
       --type=instrumentation
-      --device model=Pixel2,version=28
+      --device model=Pixel2.arm,version=28
       --test-targets "notPackage ch.protonmail.android.uitests"
       --use-orchestrator
       --num-flaky-test-attempts=1

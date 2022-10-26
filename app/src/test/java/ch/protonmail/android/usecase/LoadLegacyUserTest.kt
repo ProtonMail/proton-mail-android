@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.usecase
 
+import arrow.core.Either
 import assert4k.assert
 import assert4k.that
 import io.mockk.every
@@ -38,9 +39,7 @@ class LoadLegacyUserTest : CoroutinesTest {
         // given
         val loadLegacyUser = LoadLegacyUser(
             loadLegacyUserDelegate = mockk {
-                every { this@mockk.invoke(any()) } returns mockk {
-                    every { isRight() } returns true
-                }
+                every { this@mockk.invoke(any()) } returns Either.Right(mockk())
             },
             dispatchers
         )
