@@ -150,7 +150,7 @@ firebase feature tests:
   dependencies:
     - build uiAutomation
   rules:
-    - if: '$TEST_TYPE == "feature" || $TEST_TYPE == "regression"'
+    - when: never
   tags:
     - medium
   variables:
