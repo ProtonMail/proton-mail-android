@@ -557,8 +557,8 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="recipient_error_and_removed">Kesalahan saat mengambil informasi penerima dan penerima telah dihapus: %s</string>
     <string name="send_anyway">Tetap kirim</string>
     <string name="expiration_error_title">Anda mengaktifkan pesan yang dapat kedaluwarsa, namun tidak semua penerima mendukung fitur ini.</string>
-    <string name="expiration_error_add_msg_password">Silakan tambahkan kata sandi pesan untuk penerima berikut:</string>
-    <string name="expiration_error_disable_pgp_sending">Mohon nonaktifkan pengiriman PGP untuk mengaktifkan fitur kedaluwarsa untuk penerima berikut:</string>
+    <string name="expiration_error_add_msg_password">Silakan tambahkan kata sandi pesan bagi para penerima berikut:</string>
+    <string name="expiration_error_disable_pgp_sending">Mohon nonaktifkan pengiriman PGP untuk dapat mengaktifkan waktu kedaluwarsa bagi para penerima berikut:</string>
     <string name="expiration_error_proceed">Ketuk tetap kirim untuk mengirim tanpa kedaluwarsa ke penerima ini.</string>
     <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">PELAJARI LEBIH LANJUT</a></string>
     <string name="channel_name_attachments">Lampiran</string>
