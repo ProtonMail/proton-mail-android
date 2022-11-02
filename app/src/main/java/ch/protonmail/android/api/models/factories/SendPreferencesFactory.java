@@ -217,7 +217,9 @@ public class SendPreferencesFactory {
                 https://jira.protontech.ch/browse/MAILWEB-3305
                  */
                 encrypt = encryptFlag == null || !encryptFlag.getValue().equalsIgnoreCase("false");
-                sign = signFlag == null || !signFlag.getValue().equalsIgnoreCase("false");
+                if (signFlag != null){
+                    sign = !signFlag.getValue().equalsIgnoreCase("false");
+                }
             } else if(encryptionKey != null) {
                 // WKD keys -> encrypt and sign by default
                 encrypt = true;
