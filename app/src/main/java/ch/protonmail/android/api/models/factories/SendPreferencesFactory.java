@@ -201,21 +201,28 @@ public class SendPreferencesFactory {
         String pinnedEncryptionKey = hasPinnedKeys ? findPinnedEncryptionKey(contactKeys, pubKeyResp) : null;
         boolean isEncryptionKeyPinned = pinnedEncryptionKey != null;
         String encryptionKey = pinnedEncryptionKey == null && pubKeyResp.getKeys().length > 0 ? pubKeyResp.getKeys()[0].getPublicKey() : pinnedEncryptionKey;
-        boolean encrypt =
+
+        boolean encrypt = false;
+        boolean sign = mailSettings.getDefaultSign();
+        if (isInternal) {
+            // Internal keys -> encrypt and sign by default
+            encrypt = true;
+            sign = true;
+        } else  {
+            if(isEncryptionKeyPinned){
+                // Pinned keys -> look at the flag
                 /*
-                If not specified in the contact but we have an encryption key, we encrypt by default
+                If flag is not specified in the contact, we encrypt and sign by default
                 This is needed for pinned wkd keys because of a bug in contact creation:
                 https://jira.protontech.ch/browse/MAILWEB-3305
                  */
-                encryptFlag != null ?
-                        !encryptFlag.getValue().equalsIgnoreCase("false")
-                        : encryptionKey != null;
-        boolean sign = signFlag != null ? !signFlag.getValue().equalsIgnoreCase("false") : mailSettings.getDefaultSign();
-        if (isInternal) {
-            encrypt = true;
-            sign = true;
-        } else if (encryptionKey == null) {
-            encrypt = false;
+                encrypt = encryptFlag == null || !encryptFlag.getValue().equalsIgnoreCase("false");
+                sign = signFlag == null || !signFlag.getValue().equalsIgnoreCase("false");
+            } else if(encryptionKey != null) {
+                // WKD keys -> encrypt and sign by default
+                encrypt = true;
+                sign = true;
+            }
         }
         // always sign when encrypting
         sign = sign || encrypt;
