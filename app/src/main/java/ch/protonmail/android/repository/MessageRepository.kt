@@ -196,7 +196,7 @@ class MessageRepository @Inject constructor(
         withContext(dispatcherProvider.Io) {
             val message = findMessage(userId, messageId)
 
-            if (message?.messageBody != null) {
+            if (message?.messageBody != null && message.isDownloaded) {
                 return@withContext message
             }
 

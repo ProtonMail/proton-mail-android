@@ -28,5 +28,6 @@ enum class CreateDraftWorkerErrors {
     ServerError,
     BadResponseCodeError,
     MessageAlreadySent,
-    InvalidSender
+    InvalidSender,
+    InvalidSubject
 }

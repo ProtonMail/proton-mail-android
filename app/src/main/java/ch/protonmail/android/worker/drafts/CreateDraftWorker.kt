@@ -158,9 +158,13 @@ class CreateDraftWorker @AssistedInject constructor(
                     if (responseBody?.code == RESPONSE_CODE_MESSAGE_ALREADY_SENT) {
                         return failureWithError(CreateDraftWorkerErrors.MessageAlreadySent)
                     }
-                    if (responseBody?.code == RESPONSE_CODE_INVALID_VALUE &&
-                        responseBody.error == "Invalid sender") {
-                        return failureWithError(CreateDraftWorkerErrors.InvalidSender)
+                    if (responseBody?.code == RESPONSE_CODE_INVALID_VALUE) {
+                        if (responseBody.error == "Invalid sender") {
+                            return failureWithError(CreateDraftWorkerErrors.InvalidSender)
+                        }
+                        if (responseBody.error.contains("Subject")) {
+                            return failureWithError(CreateDraftWorkerErrors.InvalidSubject)
+                        }
                     }
                 }
 

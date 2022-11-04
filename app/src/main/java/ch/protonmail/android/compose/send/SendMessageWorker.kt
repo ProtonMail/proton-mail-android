@@ -50,6 +50,7 @@ import ch.protonmail.android.compose.send.SendMessageWorkerError.ErrorPerforming
 import ch.protonmail.android.compose.send.SendMessageWorkerError.FailureBuildingApiRequest
 import ch.protonmail.android.compose.send.SendMessageWorkerError.FetchSendPreferencesFailed
 import ch.protonmail.android.compose.send.SendMessageWorkerError.InvalidSender
+import ch.protonmail.android.compose.send.SendMessageWorkerError.InvalidSubject
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageAlreadySent
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.SavedDraftMessageNotFound
@@ -183,6 +184,11 @@ class SendMessageWorker @AssistedInject constructor(
                 pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
                 showInvalidSenderSendMessageError(message.subject)
                 failureWithError(InvalidSender)
+            }
+            is SaveDraftResult.InvalidSubject -> {
+                pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
+                showInvalidSubjectSendMessageError(message.subject)
+                failureWithError(InvalidSubject)
             }
             is SaveDraftResult.UploadDraftAttachmentsFailed -> {
                 pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
@@ -327,6 +333,13 @@ class SendMessageWorker @AssistedInject constructor(
     private fun showInvalidSenderSendMessageError(messageSubject: String?) {
         userNotifier.showSendMessageError(
             context.getString(R.string.notification_invalid_sender_sending_failed),
+            messageSubject
+        )
+    }
+
+    private fun showInvalidSubjectSendMessageError(messageSubject: String?) {
+        userNotifier.showSendMessageError(
+            context.getString(R.string.notification_invalid_subject_sending_failed),
             messageSubject
         )
     }
