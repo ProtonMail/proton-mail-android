@@ -154,6 +154,7 @@ import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.crypto.TextDecryptionResult;
 import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
 import ch.protonmail.android.utils.extensions.SerializationUtils;
+import ch.protonmail.android.utils.extensions.StringExtensionsKt;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider;
@@ -1124,6 +1125,7 @@ public class ComposeMessageActivity
     private void fillMessageFromUserInputs(@NonNull Message message, boolean isDraft) {
         message.setMessageId(composeMessageViewModel.getDraftId());
         String subject = subjectEditText.getText().toString();
+        subject = StringExtensionsKt.normalizeString(subject);
         if (TextUtils.isEmpty(subject)) {
             subject = getString(R.string.empty_subject);
         } else {

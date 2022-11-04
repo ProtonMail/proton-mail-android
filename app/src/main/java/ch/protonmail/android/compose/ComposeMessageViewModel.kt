@@ -527,6 +527,10 @@ class ComposeMessageViewModel @Inject constructor(
                 val errorMessage = stringResourceResolver(R.string.composer_invalid_sender_saving_draft_failed)
                 _savingDraftError.postValue(SavingDraftError(errorMessage, true))
             }
+            SaveDraftResult.InvalidSubject -> {
+                val errorMessage = stringResourceResolver(R.string.composer_invalid_subject_saving_draft_failed)
+                _savingDraftError.postValue(SavingDraftError(errorMessage, false))
+            }
             SaveDraftResult.OnlineDraftCreationFailed -> {
                 val errorMessage = stringResourceResolver(
                     R.string.failed_saving_draft_online

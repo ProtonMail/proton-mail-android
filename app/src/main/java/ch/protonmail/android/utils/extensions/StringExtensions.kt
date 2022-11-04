@@ -201,3 +201,26 @@ fun String.substring(
 ) = (this as CharSequence)
     .subsequence(start, end, startIndex, endIndex, startInclusive, endInclusive, ignoreCase)
     .toString()
+
+
+private const val NORMALIZE_DEFAULT_REPLACEMENT = '�'
+
+/**
+ * Obfuscate a range from receiver **username or eMail** [String]
+ *
+ */
+fun String.normalizeString() = run {
+    val newString = StringBuilder(this.length)
+    this.forEach { character ->
+        val codePoint: Int = character.code
+        when (Character.getType(codePoint).toByte()) {
+            Character.CONTROL,
+            Character.FORMAT,
+            Character.PRIVATE_USE,
+            Character.SURROGATE,
+            Character.UNASSIGNED -> newString.append(NORMALIZE_DEFAULT_REPLACEMENT)
+            else -> newString.append(Character.toChars(codePoint))
+        }
+    }
+    String(newString)
+}
