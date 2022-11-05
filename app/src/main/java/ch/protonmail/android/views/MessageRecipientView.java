@@ -386,4 +386,13 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
             }
         }
     }
+
+    @Override
+    public void setShadowLayer(float radius, float dx, float dy, int color) {
+        try {
+            super.setShadowLayer(radius, dx, dy, color);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+    }
 }
