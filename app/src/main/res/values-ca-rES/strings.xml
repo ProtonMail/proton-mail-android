@@ -38,7 +38,7 @@
     <string name="x_parent_folder_icon_description">Icona de carpeta amb subcarpetes</string>
     <!-- endregion -->
     <!-- region Drawer -->
-    <string name="drawer_scheduled">Scheduled</string>
+    <string name="drawer_scheduled">Programat</string>
     <string name="drawer_contacts">Contactes</string>
     <string name="drawer_lock_the_app">Bloquejar l\'aplicació</string>
     <string name="drawer_report_bug">Notifica un problema</string>
@@ -72,10 +72,10 @@
     <string name="details_hyperlink_phishing_dialog_content">Aquest enllaç porta a un lloc web que podria intentar robar-vos la vostra informació, com contrasenyes i detalls de la targeta de crèdit.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Per a la vostra seguretat, no continueu.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Torna (recomanat)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorar l\'avís i continuar</string>
-    <string name="scheduled_message_info">This message will be sent on %s</string>
-    <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
-    <string name="scheduled_message_moved_to_trash_title">Message will not be sent</string>
-    <string name="scheduled_message_moved_to_trash_desc">Moving this message to trash will cancel its schedule.</string>
+    <string name="scheduled_message_info">Aquest missatge s\'enviarà el %s</string>
+    <string name="scheduled_message_edit_info">Els missatges programats només poden ser modificats des de la web i l\'aplicació iOS actualment.</string>
+    <string name="scheduled_message_moved_to_trash_title">El missatge no es pot enviar</string>
+    <string name="scheduled_message_moved_to_trash_desc">Movent aquest missatge a la brossa es cancel·larà la seva programació.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 setmana</string>
     <string name="set_msg_expiration_custom">Personalitzat</string>
     <string name="set_msg_expiration_check_description">S\'ha comprovat aquest element</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">L\'adreça \"De:\" no és vàlida. Canvieu-la per una de vàlida</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -288,7 +288,7 @@
     <string name="no_subject">Enviar missatge sense assumpte?</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
-    <string name="ok">OK</string>
+    <string name="ok">D\'acord</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Missatge Original --------</string>
     <string name="invalid_email_address">La direcció \'%s\' no és vàlida</string>
@@ -325,7 +325,7 @@
     <string name="label_deleted_error">S\'ha produït un error en eliminar l\'etiqueta</string>
     <string name="message_deleted_error">S\'ha produït un error en suprimir alguns missatges. Alguns dels missatges seleccionats estan en procés d’enviament?!</string>
     <string name="respond_inline">Respondre en línia</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Servidor inaccessible… (<u>Resolució de problemes</u>)</string>
     <string name="connectivity_checking">S\'està cercant la connexió...</string>
     <string name="draft_label_attachments_uploading">carregant fitxers adjunts…</string>
     <string name="draft_label_message_uploading">enviant missatge…</string>
@@ -337,7 +337,7 @@
     <string name="saving_failed_no_conn">Error al desar, sense connexió</string>
     <string name="attachment_exists">Fitxer adjunt ja adjuntat</string>
     <string name="eo_password_not_completed">La contrasenya del missatge no s\'ha completat.</string>
-    <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through proton.me to pay your unpaid invoice.</string>
+    <string name="delinquency_subtitle">L\'accés a aquest compte està desactivat per falta de pagament. Inicieu la sessió a proton.me per pagar la factura no pagada.</string>
     <string name="downloading">Descarregant...</string>
     <string name="cant_download_attachment">No es pot baixar l\'adjunt</string>
     <string-array name="auto_logout_options_array">
@@ -380,8 +380,8 @@
     <string name="error">Error</string>
     <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
-        <item quantity="one">%d Embedded Image</item>
-        <item quantity="other">%d Embedded Images</item>
+        <item quantity="one">%d Imatge incrustada</item>
+        <item quantity="other">%d Imatges incrustades</item>
     </plurals>
     <string name="warning">Advertència</string>
     <string name="available_addresses">Adreces disponibles</string>
@@ -490,7 +490,7 @@
     <string name="update_folder">Actualitza la carpeta</string>
     <string name="spam_score_100">Aquest correu sembla que sigui d\'una adreça de Proton Mail però ha arribat des de fora del nostre sistema i no ha passat els requisits d\'autenticació. És possible que es tracti d\'un correu falsejat o reenviat indegudament!</string>
     <string name="spam_score_101">Aquest correu no ha superat els requisits d\'autentificació del domini. Pot ser que estigui falsejat o reenviat indegudament!</string>
-    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://proton.me/blog/prevent-phishing-attacks">LEARN MORE</a></string>
+    <string name="spam_score_102">Aquest missatge pot ser un intent de pesca de credencials. Comproveu el remitent i el contingut per assegurar-vos que són legítims. <a href="https://proton.me/blog/prevent-phishing-attacks">MÉS INFORMACIÓ</a></string>
     <string name="print_from_template">Des de: %s</string>
     <string name="print_to_template">Per a: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -566,7 +566,7 @@
     <string name="expiration_error_add_msg_password">Afegiu una contrasenya de missatge per als destinataris següents:</string>
     <string name="expiration_error_disable_pgp_sending">Desactiva l\'enviament PGP per habilitar la caducitat dels següents destinataris:</string>
     <string name="expiration_error_proceed">Toca enviar de totes maneres per enviar sense venciment a aquests destinataris.</string>
-    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">LEARN MORE</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">MÉS INFORMACIÓ</a></string>
     <string name="channel_name_attachments">Adjunts</string>
     <string name="channel_description_attachments">Informa sobre l\'estat de la baixada de dades adjunts</string>
     <string name="channel_name_emails">Correus electrònics</string>
@@ -612,8 +612,8 @@
     <string name="contact_group_saved">Grup desat</string>
     <string name="no_recipients">Cap Destinatari</string>
     <plurals name="contact_group_selected">
-        <item quantity="one">%d Selected</item>
-        <item quantity="other">%d Selected</item>
+        <item quantity="one">%d Seleccionat</item>
+        <item quantity="other">%d Seleccionat</item>
     </plurals>
     <string name="paid_plan_needed">Si us plau, actualitzi a un pla de pagament per disposar d\'aquestes funcions prèmium</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Membres)</string>
@@ -785,7 +785,7 @@
     <string name="connections_via_third_parties">Encaminament alternatiu</string>
     <string name="allow_secure_connections_via_third_parties">Permetre encaminament alternatiu</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">En cas que es bloquegin els llocs de Proton, aquest paràmetre permet a l\'aplicació provar l\'encaminament de xarxa alternatiu per arribar a Proton, cosa que pot ser útil per evitar els tallafocs o problemes de xarxa. Recomanem mantenir aquesta configuració per a una major fiabilitat.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">En cas que es bloquegin els llocs de Proton, aquest paràmetre permet a l\'aplicació provar un encaminament de xarxa alternatiu per arribar a Proton, cosa que pot ser útil per evitar tallafocs o problemes de xarxa. Recomanem mantenir aquesta configuració per a una major fiabilitat. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Més informació</a></string>
     <string name="app_language">Idioma de l\'aplicació</string>
     <string name="custom_language_dialog_title">Trieu la llengua de l\'aplicació</string>
     <string name="auto_detect">Detectar automàticament</string>
@@ -809,14 +809,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemes de conexió comuns i solucions</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://proton.me/support/contact\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
-    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Sense conexió a Internet&lt;/i&gt; - Si us plau, revisi que la seva conexió funciona correctament.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema al seu Proveïdor de Servei d\'Internet (ISP)&lt;/i&gt; - Proveu de conectar-vos a Proton des d\'una altra xarxa (o utilitzi &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueig Guvernamental block&lt;/i&gt; - El seu país pot haber-hi bloquetjat d\'acces a Proton. Proveu &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o un altre servei VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; per accedir a Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia d\'Antivirus&lt;/i&gt; - Deshabiliti temporalment o esborri el seu software antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia Proxy/Firewall&lt;/i&gt; - Deshabiliti qualsevol proxy o firewall o contacti amb el seu administrador de xarxa. 
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton es caigut&lt;/i&gt; - Revisi &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; per saber el nostre estat del sistema.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Encara no hem trobat una solució&lt;/i&gt; - Contacti\'ns directament al nostre &lt;a href=\"https://protonmail.com/support-form\"&gt;Formulari de suport form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correu electrònic&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imatge no trobada</string>
