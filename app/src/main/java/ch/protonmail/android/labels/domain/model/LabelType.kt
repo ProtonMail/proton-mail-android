@@ -25,6 +25,7 @@ import kotlinx.serialization.Serializable
 const val LABEL_TYPE_ID_MESSAGE_LABEL = 1
 const val LABEL_TYPE_ID_CONTACT_GROUP = 2
 const val LABEL_TYPE_ID_FOLDER = 3
+const val LABEL_TYPE_ID_SYSTEM_FOLDER = 4
 
 @Serializable
 enum class LabelType(val typeInt: Int) {
@@ -36,7 +37,10 @@ enum class LabelType(val typeInt: Int) {
     CONTACT_GROUP(LABEL_TYPE_ID_CONTACT_GROUP),
 
     @SerialName(LABEL_TYPE_ID_FOLDER.toString())
-    FOLDER(LABEL_TYPE_ID_FOLDER);
+    FOLDER(LABEL_TYPE_ID_FOLDER),
+
+    @SerialName(LABEL_TYPE_ID_SYSTEM_FOLDER.toString())
+    SYSTEM_FOLDER(LABEL_TYPE_ID_SYSTEM_FOLDER);
 
     companion object {
 
