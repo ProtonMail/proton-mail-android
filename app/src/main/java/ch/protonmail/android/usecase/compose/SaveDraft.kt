@@ -20,6 +20,7 @@
 package ch.protonmail.android.usecase.compose
 
 import androidx.work.WorkInfo
+import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.attachments.KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR
@@ -31,6 +32,7 @@ import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.utils.notifier.UserNotifier
+import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM
@@ -54,7 +56,8 @@ class SaveDraft @Inject constructor(
     private val databaseProvider: DatabaseProvider,
     private val createDraftWorker: CreateDraftWorker.Enqueuer,
     private val uploadAttachmentsWorker: UploadAttachmentsWorker.Enqueuer,
-    private val userNotifier: UserNotifier
+    private val userNotifier: UserNotifier,
+    private val stringResourceResolver: StringResourceResolver,
 ) {
 
     suspend operator fun invoke(
@@ -143,9 +146,10 @@ class SaveDraft @Inject constructor(
             .filter { it?.state?.isFinished == true }
             .map {
                 if (it?.state == WorkInfo.State.FAILED) {
-                    val errorMessage = requireNotNull(
-                        it.outputData.getString(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR)
-                    )
+                    val errorMessage = it.outputData.getString(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR)
+                        ?: "${stringResourceResolver(R.string.attachment_failed)} ${localDraft.subject}"
+                    Timber.e("SaveDraft failed permanently for ${localDraft.messageId}. $errorMessage")
+
                     userNotifier.showAttachmentUploadError(errorMessage, localDraft.subject)
                     return@map SaveDraftResult.UploadDraftAttachmentsFailed
                 }

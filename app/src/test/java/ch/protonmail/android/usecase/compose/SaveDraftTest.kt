@@ -22,6 +22,7 @@ package ch.protonmail.android.usecase.compose
 import androidx.work.Data
 import androidx.work.WorkInfo
 import androidx.work.workDataOf
+import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.attachments.KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR
@@ -40,6 +41,7 @@ import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.usecase.compose.SaveDraft.SaveDraftParameters
 import ch.protonmail.android.utils.notifier.UserNotifier
+import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.worker.drafts.CreateDraftWorker.Enqueuer
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM
@@ -84,6 +86,10 @@ class SaveDraftTest : CoroutinesTest {
 
     private val userId = UserId("Id")
 
+    private val stringResourceResolver: StringResourceResolver = mockk {
+        every { this@mockk.invoke(R.string.attachment_failed) } returns "Error"
+    }
+
     private val saveDraft = SaveDraft(
         addressCryptoFactory = addressCryptoFactory,
         messageDetailsRepository = messageDetailsRepository,
@@ -91,7 +97,8 @@ class SaveDraftTest : CoroutinesTest {
         databaseProvider = databaseProcess,
         createDraftWorker = createDraftScheduler,
         uploadAttachmentsWorker = uploadAttachmentsWorkerEnqueuer,
-        userNotifier = userNotifier
+        userNotifier = userNotifier,
+        stringResourceResolver = stringResourceResolver
     )
 
     @Test
