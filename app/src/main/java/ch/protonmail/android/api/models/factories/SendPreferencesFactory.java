@@ -221,8 +221,14 @@ public class SendPreferencesFactory {
                 RawProperty encryptFlag = VCardUtil.findProperty(signed, "x-pm-encrypt", group);
                 encrypt = encryptFlag == null || !encryptFlag.getValue().equalsIgnoreCase("false");
             } else if(encryptionKey != null) {
-                // WKD keys -> encrypt by default
-                encrypt = true;
+                RawProperty useUntrustedKeyFlag =
+                        VCardUtil.findProperty(signed, "x-pm-encrypt-untrusted", group);
+                /*
+                WKD keys:
+                encrypt by default, except if the contact has a flag to disable untrusted keys
+                 */
+                encrypt = useUntrustedKeyFlag == null ||
+                        !useUntrustedKeyFlag.getValue().equalsIgnoreCase("false");
             }
         }
         // always sign when encrypting
