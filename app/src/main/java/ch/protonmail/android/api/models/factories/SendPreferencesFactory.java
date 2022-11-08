@@ -191,7 +191,6 @@ public class SendPreferencesFactory {
         if (group == null || group.length() == 0) {
             return buildUsingDefaults(email, pubKeyResp);
         }
-        RawProperty encryptFlag = VCardUtil.findProperty(signed, "x-pm-encrypt", group);
         RawProperty signFlag = VCardUtil.findProperty(signed, "x-pm-sign", group);
         RawProperty mimeProp = VCardUtil.findProperty(signed, "x-pm-mimetype", group);
 
@@ -204,6 +203,9 @@ public class SendPreferencesFactory {
 
         boolean encrypt = false;
         boolean sign = mailSettings.getDefaultSign();
+        if (signFlag != null){
+            sign = !signFlag.getValue().equalsIgnoreCase("false");
+        }
         if (isInternal) {
             // Internal keys -> encrypt and sign by default
             encrypt = true;
@@ -216,14 +218,11 @@ public class SendPreferencesFactory {
                 This is needed for pinned wkd keys because of a bug in contact creation:
                 https://jira.protontech.ch/browse/MAILWEB-3305
                  */
+                RawProperty encryptFlag = VCardUtil.findProperty(signed, "x-pm-encrypt", group);
                 encrypt = encryptFlag == null || !encryptFlag.getValue().equalsIgnoreCase("false");
-                if (signFlag != null){
-                    sign = !signFlag.getValue().equalsIgnoreCase("false");
-                }
             } else if(encryptionKey != null) {
-                // WKD keys -> encrypt and sign by default
+                // WKD keys -> encrypt by default
                 encrypt = true;
-                sign = true;
             }
         }
         // always sign when encrypting
