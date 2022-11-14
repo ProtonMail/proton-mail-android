@@ -110,6 +110,7 @@
     <string name="set_msg_expiration_custom">自定義</string>
     <string name="set_msg_expiration_check_description">已勾選此項目</string>
     <string name="composer_invalid_sender_saving_draft_failed">寄件者電郵位址無效。請更換為有效的位址。</string>
+    <string name="composer_invalid_subject_saving_draft_failed">主旨無效。</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">佈景主題</string>
@@ -142,6 +143,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">新郵件</string>
     <string name="notification_invalid_sender_sending_failed">您的電子郵件可於草稿中尋回。 請確認 「Form」欄位的電子郵件地址是啟用中的。</string>
+    <string name="notification_invalid_subject_sending_failed">主旨無效，您的訊息已存為草稿。</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">無聯絡人</string>

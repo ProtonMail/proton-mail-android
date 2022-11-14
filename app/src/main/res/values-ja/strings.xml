@@ -109,7 +109,8 @@
     <string name="set_msg_expiration_1_week">1 週間</string>
     <string name="set_msg_expiration_custom">カスタム</string>
     <string name="set_msg_expiration_check_description">このアイテムはチェックされています</string>
-    <string name="composer_invalid_sender_saving_draft_failed">「宛先」アドレスは無効です。有効なものに変更してください</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
+    <string name="composer_invalid_subject_saving_draft_failed">The subject is not valid.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">テーマ</string>
@@ -142,6 +143,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">新しいメッセージ</string>
     <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"From:\" email in the message is active.</string>
+    <string name="notification_invalid_subject_sending_failed">Your message can be found as a draft. The subject is not valid.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">連絡先がありません</string>
@@ -149,13 +151,13 @@
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">連絡先グループはインポートされません。有料プランにアップグレードしてプレミアム機能を利用できます。</string>
-    <string name="contact_details_remote_content_dialog_title">リモートコンテンツ</string>
-    <string name="contact_details_remote_content_dialog_message">この連絡先にはリモートコンテンツが含まれています。</string>
+    <string name="contact_details_remote_content_dialog_title">外部コンテンツ</string>
+    <string name="contact_details_remote_content_dialog_message">この連絡先には外部コンテンツが含まれています。</string>
     <string name="contact_details_remote_content_dialog_positive_button">コンテンツを読み込む</string>
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">すべての人にプライバシーを</string>
-    <string name="new_user_onboarding_privacy_for_all_description">連絡先を Proton Mail に招待するとエンドツーエンド暗号化をシームレスに利用でき、メッセージを送信する際にパスワード保護を追加できます。</string>
+    <string name="new_user_onboarding_privacy_for_all_description">連絡先をProton Mailに招待するとE2E暗号化を簡単に利用でき、メールを送信する際にパスワードを追加できます。</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">自分だけの外観</string>
     <string name="new_user_onboarding_neat_and_tidy_description">ファイルやラベルを使ったり、メッセージに色付けをしたりして、自分好みの受信トレイを作りましょう。</string>
     <string name="existing_user_onboarding_new_look_headline">新しい外観、変わらない保護</string>
@@ -737,7 +739,7 @@
     <string name="swipe_action_trash">メッセージをごみ箱に移動する</string>
     <string name="swipe_action_trash_short">ごみ箱に移動</string>
     <string name="swipe_action_star">メッセージへの星印の付け外し</string>
-    <string name="swipe_action_star_short">星印を更新</string>
+    <string name="swipe_action_star_short">星をつけました</string>
     <string name="swipe_action_spam">メッセージを迷惑メールとする</string>
     <string name="swipe_action_spam_short">迷惑メール</string>
     <string name="swipe_action_archive">メッセージをアーカイブする</string>
@@ -818,9 +820,9 @@
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="star">星印を付ける</string>
-    <string name="unstar">星印を外す</string>
-    <string name="star_unstar">星印を 付ける/外す</string>
+    <string name="star">星を付ける</string>
+    <string name="unstar">星を外す</string>
+    <string name="star_unstar">星を付ける/外す</string>
     <string name="send_to_archive">アーカイブに送る</string>
     <string name="label_as">ラベルを付ける</string>
     <string name="mark_as_unread">未読にする</string>

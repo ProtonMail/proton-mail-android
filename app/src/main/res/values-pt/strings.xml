@@ -110,7 +110,8 @@
     <string name="set_msg_expiration_1_week">1 semana</string>
     <string name="set_msg_expiration_custom">Personalizada</string>
     <string name="set_msg_expiration_check_description">Este item está verificado</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
+    <string name="composer_invalid_subject_saving_draft_failed">The subject is not valid.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -137,12 +138,13 @@
     <string name="labels_manager_parent_folder_selected"><b>Parent folder selected.</b> Tap to change</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
-    <string name="parent_picker_title">Parent folder</string>
+    <string name="parent_picker_title">Pasta-mãe</string>
     <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Novas mensagens</string>
     <string name="notification_invalid_sender_sending_failed">Your message can be found as a draft. Please verify that the \"From:\" email in the message is active.</string>
+    <string name="notification_invalid_subject_sending_failed">Your message can be found as a draft. The subject is not valid.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Nenhum contato</string>
@@ -821,7 +823,7 @@ como a transferência de novas mensagens em segundo plano.</string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagem não encontrada</string>
-    <string name="error_image_bad_url">Malformed image URL</string>
+    <string name="error_image_bad_url">URL de imagem mal formado</string>
     <string name="error_saving_try_again">Erro ao gravar a mensagem. Tente novamente.</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>

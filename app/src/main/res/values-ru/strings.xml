@@ -112,7 +112,8 @@
     <string name="set_msg_expiration_1_week">1 неделя</string>
     <string name="set_msg_expiration_custom">Настроить</string>
     <string name="set_msg_expiration_check_description">Этот элемент отмечен</string>
-    <string name="composer_invalid_sender_saving_draft_failed">Адрес в поле \"От\" недействителен. Измените его на действительный</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Неверный адрес отправителя. Пожалуйста, укажите правильный адрес</string>
+    <string name="composer_invalid_subject_saving_draft_failed">Тема недействительна.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Тема</string>
@@ -145,6 +146,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Новые сообщения</string>
     <string name="notification_invalid_sender_sending_failed">Ваше сообщение осталось в черновиках. Пожалуйста, проверьте, что эл. адрес отправителя в сообщении активен.</string>
+    <string name="notification_invalid_subject_sending_failed">Сообщение может быть расценено как черновик. Тема недействительна.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Нет контактов</string>

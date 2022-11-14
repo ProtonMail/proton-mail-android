@@ -111,6 +111,7 @@
     <string name="set_msg_expiration_custom">Personalizar</string>
     <string name="set_msg_expiration_check_description">Este item está selecionado</string>
     <string name="composer_invalid_sender_saving_draft_failed">O endereço \"De:\" é inválido. Por favor, altere-o para um válido</string>
+    <string name="composer_invalid_subject_saving_draft_failed">O assunto não é valido.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -143,6 +144,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Novas mensagens</string>
     <string name="notification_invalid_sender_sending_failed">Sua mensagem pode ser encontrada como rascunho. Verifique se o e-mail \"De:\" na mensagem está ativo.</string>
+    <string name="notification_invalid_subject_sending_failed">Sua mensagem pode ser encontrada como um rascunho. O assunto não é valido.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Nenhum contato</string>

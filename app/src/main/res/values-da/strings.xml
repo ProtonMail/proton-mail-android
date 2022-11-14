@@ -110,7 +110,8 @@
     <string name="set_msg_expiration_1_week">1 uge</string>
     <string name="set_msg_expiration_custom">Tilpasset</string>
     <string name="set_msg_expiration_check_description">Dette emne er afmærket</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">\"Fra:\"-adressen er ugyldig. Ændr den venligst til en gyldig</string>
+    <string name="composer_invalid_subject_saving_draft_failed">Emnet er ikke gyldigt.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -143,6 +144,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nye beskeder</string>
     <string name="notification_invalid_sender_sending_failed">Din besked gemmes som kladde. Bekræft venligst at \"Fra:\" emailen i beskeden er aktiv.</string>
+    <string name="notification_invalid_subject_sending_failed">Din besked er tilgængelig som en kladde. Emnet er ikke gyldigt.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Ingen kontakter</string>
