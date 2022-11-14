@@ -111,6 +111,7 @@
     <string name="set_msg_expiration_custom">Personnalisée</string>
     <string name="set_msg_expiration_check_description">Cet élément est coché.</string>
     <string name="composer_invalid_sender_saving_draft_failed">L\'adresse dans le champ « De » n\'est pas valide. Remplacez-la par une adresse valide.</string>
+    <string name="composer_invalid_subject_saving_draft_failed">L\'objet n\'est pas valide.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Thème</string>
@@ -143,6 +144,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nouveaux messages</string>
     <string name="notification_invalid_sender_sending_failed">Votre message se trouve dans vos brouillons. Vérifiez que l\'adresse électronique dans le champ « De » est active.</string>
+    <string name="notification_invalid_subject_sending_failed">Votre message peut être trouvé en tant que brouillon. Le sujet n\'est pas valide.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Aucun contact</string>

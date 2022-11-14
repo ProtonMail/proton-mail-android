@@ -110,7 +110,8 @@
     <string name="set_msg_expiration_1_week">1 week</string>
     <string name="set_msg_expiration_custom">Aangepast</string>
     <string name="set_msg_expiration_check_description">Dit item is aangevinkt</string>
-    <string name="composer_invalid_sender_saving_draft_failed">Het \"Van\"-e-mailadres is ongeldig. Wijzig dit naar een geldig adres</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Het \"Van:\"-e-mailadres is ongeldig. Wijzig dit naar een geldig</string>
+    <string name="composer_invalid_subject_saving_draft_failed">Het onderwerp is ongeldig.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Thema</string>
@@ -143,6 +144,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nieuwe berichten</string>
     <string name="notification_invalid_sender_sending_failed">Uw bericht kan als concept worden teruggevonden. Verifieer dat het \"Van:\" e-mailadres in het bericht actief is.</string>
+    <string name="notification_invalid_subject_sending_failed">Uw bericht kan teruggevonden worden als concept. Het onderwerp is ongeldig.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Geen contacten</string>

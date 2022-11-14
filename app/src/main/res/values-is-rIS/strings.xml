@@ -73,9 +73,9 @@
     <string name="details_hyperlink_phishing_dialog_cancel_action">Fara til baka (mælt með)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Hunsa viðvörun og halda áfram</string>
     <string name="scheduled_message_info">Þessi skilaboð verða send þann %s</string>
-    <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
+    <string name="scheduled_message_edit_info">Aðeins er hægt að breyta tímasettum skilaboðum frá vefnum og iOS forritum eins og er.</string>
     <string name="scheduled_message_moved_to_trash_title">Skilaboð verða ekki send</string>
-    <string name="scheduled_message_moved_to_trash_desc">Moving this message to trash will cancel its schedule.</string>
+    <string name="scheduled_message_moved_to_trash_desc">Ef þessi skilaboð eru færð í ruslið verður áætlun þess hætt.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Falið afrit:</string>
@@ -110,7 +110,8 @@
     <string name="set_msg_expiration_1_week">1 viku</string>
     <string name="set_msg_expiration_custom">Sérsniðið</string>
     <string name="set_msg_expiration_check_description">Þetta atriði er merkt</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The address in the \"From\" field is not valid. Please replace it with a valid one</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Netfangið „Frá:“ er ógilt. Vinsamlegast breyttu því í gilt</string>
+    <string name="composer_invalid_subject_saving_draft_failed">Efnið er ekki gilt.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Þema</string>
@@ -143,6 +144,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Ný skilaboð</string>
     <string name="notification_invalid_sender_sending_failed">Skilaboðin þín eru geymd sem drög. Vinsamlegast staðfestu að „Frá:“ tölvupósturinn í skilaboðunum sé virkur.</string>
+    <string name="notification_invalid_subject_sending_failed">Skilaboðin þín má finna sem drög. Efnið er ekki gilt.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Engir tengiliðir</string>
@@ -288,7 +290,7 @@
     <string name="no_subject">Senda skilaboðin án efnislínu?</string>
     <string name="yes">Já</string>
     <string name="no">Nei</string>
-    <string name="ok">OK</string>
+    <string name="ok">Í lagi</string>
     <string name="forward_prefix">Áfram:</string>
     <string name="original_message_divider">-------- Upprunaleg skilaboð --------</string>
     <string name="invalid_email_address">Tölvupóstfangið \'%s\' er ógilt</string>
@@ -380,8 +382,8 @@
     <string name="error">Villa</string>
     <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
-        <item quantity="one">%d Embedded Image</item>
-        <item quantity="other">%d Embedded Images</item>
+        <item quantity="one">%d Ívafin mynd</item>
+        <item quantity="other">%d Ívafnar myndir</item>
     </plurals>
     <string name="warning">Aðvörun</string>
     <string name="available_addresses">Tiltæk tölvupóstföng</string>
@@ -613,8 +615,8 @@
     <string name="contact_group_saved">Hópur vistaður</string>
     <string name="no_recipients">Engir viðtakendur</string>
     <plurals name="contact_group_selected">
-        <item quantity="one">%d Selected</item>
-        <item quantity="other">%d Selected</item>
+        <item quantity="one">%d Valið</item>
+        <item quantity="other">%d Valin</item>
     </plurals>
     <string name="paid_plan_needed">Uppfærðu í greidda áskrift til að nýta þér þessa ítarlegu eiginleika</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d meðlimir)</string>
@@ -810,13 +812,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Algeng tengivandamál og lausnir á þeim</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://proton.me/support/contact\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Engin nettenging&lt;/i&gt; - Gakktu úr skugga um að nettengingin þín virki.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet þjónustuveitanda (ISP) vandamál&lt;/i&gt; - Prófið að tengjast Proton frá öðru neti (eða notið &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; eða &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Hindrun stjórnvalda&lt;/i&gt; - Landið þitt er hugsanlega að hindra aðgang að Proton. Reyndu &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (eða eitthvað annað VPN) eða &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; til að tengjast Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Truflun vegna vírusvarna&lt;/i&gt; - Slökktu tímabundið á eða fjarlægðu vírusvarnarforritið þitt.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/eldveggstruflanir&lt;/i&gt; - Slökktu á umboðum eða eldveggjum eða hafðu samband við netkerfisstjórann þinn.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Athugaðu &lt;a href=\"http://protonstatus.com/\"&gt;Proton staða&lt;/a&gt; fyrir kerfisstöðu okkar.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Hafðu samband við okkur beint í gegnum okkar &lt;a href=\"https://proton.me/support/contact\"&gt;þjónustuform&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), epa &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

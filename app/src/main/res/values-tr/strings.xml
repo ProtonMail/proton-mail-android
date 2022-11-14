@@ -111,6 +111,7 @@
     <string name="set_msg_expiration_custom">Özel</string>
     <string name="set_msg_expiration_check_description">Bu seçenek işaretlendi</string>
     <string name="composer_invalid_sender_saving_draft_failed">\"Kimden:\" e-posta adresi geçersiz. Lütfen geçerli bir adres belirtin</string>
+    <string name="composer_invalid_subject_saving_draft_failed">Konu geçersiz.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -143,6 +144,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Yeni iletiler</string>
     <string name="notification_invalid_sender_sending_failed">İletinizi Taslaklar kutunuzda bulabilirsiniz. Lütfen \"Kimden:\" e-posta adresinin geçerli olduğunu doğrulayın.</string>
+    <string name="notification_invalid_subject_sending_failed">İletinizi Taslaklar kutunuzda bulabilirsiniz. Konu geçersiz.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Henüz bir kişi yok</string>

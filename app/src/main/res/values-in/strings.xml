@@ -49,7 +49,7 @@
     <!-- endregion -->
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Folder ini kosong</string>
-    <string name="mailbox_empty_inbox_subtitle">Anda sudah menggunakan pembaruan terakhir</string>
+    <string name="mailbox_empty_inbox_subtitle">Anda sudah terkini</string>
     <string name="mailbox_empty_spam_subtitle">Folder spam Anda kosong</string>
     <string name="mailbox_empty_trash_subtitle">Sampah kosong</string>
     <string name="mailbox_empty_state_no_results_found">Tidak ada hasil yang ditemukan</string>
@@ -68,7 +68,7 @@
     <string name="details_open_in_proton_calendar_icon_desc">Ikon Proton Calendar</string>
     <string name="details_play_store_error">Tidak dapat membuka Play Store</string>
     <string name="details_hyperlink_phishing_dialog_title">Peringatan: situs web ini terindikasi palsu</string>
-    <string name="details_hyperlink_phishing_dialog_content">Tautan ini tertuju pada situs web yang dapat mencuri informasi pribadi Anda, seperti kata sandi dan rincian kartu kredit yang Anda miliki.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Demi keamanan Anda, jangan buka tautan ini.</string>
+    <string name="details_hyperlink_phishing_dialog_content">Tautan ini tertuju pada situs web yang dapat mencuri informasi pribadi Anda, seperti kata sandi dan rincian kartu kredit yang Anda miliki.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Demi keamanan Anda, jangan lanjutkan.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Kembali (disarankan)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Abaikan peringatan dan lanjut</string>
     <string name="scheduled_message_info">Pesan ini akan terkirim pada %s</string>
@@ -109,7 +109,8 @@
     <string name="set_msg_expiration_1_week">1 pekan</string>
     <string name="set_msg_expiration_custom">Sesuaikan</string>
     <string name="set_msg_expiration_check_description">Item ini sudah dicentang</string>
-    <string name="composer_invalid_sender_saving_draft_failed">Alamat yang tertera pada kolom \"Dari\" tidak valid. Silakan ubah isi kolom yang bersangkutan dengan alamat yang valid</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Alamat yang tertera pada kolom \"Dari:\" tidak valid. Silakan ubah ke alamat yang valid</string>
+    <string name="composer_invalid_subject_saving_draft_failed">Subjek tidak valid.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -142,6 +143,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Pesan baru</string>
     <string name="notification_invalid_sender_sending_failed">Pesan Anda tersedia dalam bentuk draf. Mohon periksa apakah alamat yang tertera pada kolom \"Dari:\" merupakan alamat yang aktif.</string>
+    <string name="notification_invalid_subject_sending_failed">Pesan Anda dapat ditemukan dalam bentuk draf. Subjek pesan tidak valid.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Tidak ada kontak</string>
@@ -155,7 +157,7 @@
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Privasi untuk semua</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Undang rekan-rekan Anda ke Proton Mail agar mereka dapat turut terlindung oleh enkripsi end-to-end yang menyeluruh, atau bubuhkan kata sandi pada pesan yang Anda kirimkan kepada mereka.</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Undang rekan-rekan Anda ke Proton Mail agar mereka dapat turut terlindung oleh enkripsi ujung ke ujung yang menyeluruh, atau bubuhkan kata sandi pada pesan yang Anda kirimkan kepada mereka.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Rapi dan teratur</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Arsipkan, labeli, dan warnai pesan Anda agar kotak masuk Anda dapat terlihat sempurna sebagaimana yang Anda kehendaki.</string>
     <string name="existing_user_onboarding_new_look_headline">Tampilan baru, perlindungan yang sama</string>
@@ -189,8 +191,8 @@
     <string name="no_network_queued">Tidak ada jaringan, pesan diantrekan</string>
     <string name="update_app_title">Pembaruan dibutuhkan</string>
     <string name="update_app">Aplikasi Proton Mail Anda tidak dapat digunakan sebelum diperbarui</string>
-    <string name="you_are_offline">Anda sedang offline</string>
-    <string name="api_offline">Proton Mail sedang offline. Kunjungi https://protonstatus.com atau akun Twitter kami untuk mengetahui status kami saat ini: https://twitter.com/ProtonPrivacy</string>
+    <string name="you_are_offline">Anda sedang luring</string>
+    <string name="api_offline">Proton Mail sedang luring. Kunjungi https://protonstatus.com atau akun Twitter kami untuk mengetahui status kami saat ini: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontak telah tersimpan</string>
     <string name="contact_saved_offline">Kontak tersimpan, akan disinkronkan saat koneksi tersedia</string>
     <string name="contact_exist">Email kontak sudah ada</string>
@@ -293,7 +295,7 @@
     <string name="no_password_specified">Waktu kedaluwarsa hanya dapat diatur pada pesan yang terenkripsi penuh. Harap tentukan kata sandi untuk para penerima non-Proton Mail Anda.</string>
     <string name="attachment_limit">Lampiran dibatasi hingga %1$s. Total terlampir seharusnya menjadi %2$s.</string>
     <string name="sending_message">Mengirim pesan...</string>
-    <string name="sending_message_offline">Anda sedang offline. Pesan Anda telah diantrikan...</string>
+    <string name="sending_message_offline">Luring, diantrekan untuk pengiriman nanti...</string>
     <string name="message_sent">Pesan Terkirim</string>
     <string name="message_failed">Pengiriman Pesan Gagal</string>
     <string name="storage_limit">Batas penyimpanan</string>
@@ -538,7 +540,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- Sender locks -->
     <string name="sender_lock_zero_access">Disimpan dengan enkripsi zero access</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_end_to_end">Dikirim oleh Anda dengan enkripsi end-to-end</string>
+    <string name="sender_lock_sent_end_to_end">Dikirim oleh Anda dengan enkripsi ujung ke ujung</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_autoresponder">Dikirim oleh Proton Mail dengan teknologi enkripsi zero-access</string>
     <string name="sender_lock_verification_failed">Verifikasi pengirim gagal</string>
@@ -546,11 +548,11 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="sender_lock_pgp_encrypted_verified">Pesan terenkripsi PGP dari alamat terverifikasi</string>
     <string name="sender_lock_pgp_signed_verified_sender">Pesan yang ditandatangani PGP dari alamat yang terverifikasi</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Pesan bertanda dan terenkripsi dua arah</string>
-    <string name="sender_lock_internal_verified">Pesan terenkripsi end-to-end dari alamat terverifikasi</string>
+    <string name="sender_lock_internal">Pesan terenkripsi ujung ke ujung dan ditandatangani</string>
+    <string name="sender_lock_internal_verified">Pesan terenkripsi ujung ke ujung dari alamat terverifikasi</string>
     <!-- Composer locks -->
-    <string name="composer_lock_internal">Terenkripsi end-to-end</string>
-    <string name="composer_lock_internal_pinned">Terenkripsi end-to-end ke alamat terverifikasi</string>
+    <string name="composer_lock_internal">Terenkripsi ujung ke ujung</string>
+    <string name="composer_lock_internal_pinned">Terenkripsi ujung ke ujung ke alamat terverifikasi</string>
     <string name="composer_lock_pgp_encrypted_pinned">Terenkripsi PGP ke penerima terverifikasi</string>
     <string name="composer_lock_pgp_signed">Ditandatangani PGP</string>
     <string name="recipient_not_found_and_removed">Penerima tidak dapat ditemukan: %s dan telah dihapus</string>
@@ -729,7 +731,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="mailbox">Kotak Surat</string>
     <string name="privacy">Privasi</string>
     <string name="auto_download_messages_title">Unduh pesan secara otomatis</string>
-    <string name="auto_download_messages_subtitle">Ketika opsi ini diaktifkan, pesan akan diunduh secara otomatis setiap kali Anda menerima notifikasi email baru (yang akan menggunakan lebih banyak data). Apabila tidak, pesan hanya akan diunduh pada saat Anda membuka email. (Catatan: terlepas dari opsi manapun yang Anda pilih, apabila Anda menghapus cache atau keluar dari akun, Anda tidak akan dapat membaca pesan saat offline.)</string>
+    <string name="auto_download_messages_subtitle">Ketika opsi ini diaktifkan, pesan akan diunduh secara otomatis setiap kali Anda menerima notifikasi email baru (yang akan menggunakan lebih banyak data). Apabila tidak, pesan hanya akan diunduh pada saat Anda membuka email. (Catatan: terlepas dari opsi mana pun yang Anda pilih, apabila Anda menghapus cache atau keluar dari akun, Anda tidak akan dapat membaca pesan saat luring.)</string>
     <string name="settings_background_sync">Sinkronkan di Latar Belakang</string>
     <string name="settings_auto_show_images">Tampilkan Otomatis Gambar Jarak Jauh</string>
     <string name="settings_auto_show_embedded_images">Muat Gambar yang Tersemat Secara Otomatis</string>
@@ -801,7 +803,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Permasalahan Penyedia Layanan Internet (ISP)&lt;/i&gt; - Cobalah untuk terhubung ke Proton dengan jaringan internet yang berbeda (atau gunakan &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; atau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Pemblokiran Pemerintah&lt;/i&gt; - Otoritas negara Anda mungkin memblokir akses ke Proton. Cobalah untuk menggunakan &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (atau VPN lainnya) atau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; untuk mengakses Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Gangguan Antivirus&lt;/i&gt; - Nonaktifkan sementara atau hapus perangkat antivirus Anda.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Gangguan Proxy/Firewall&lt;/i&gt; - Nonaktifkan proxy atau firewall yang sedang aktif, atau hubungi pengelola jaringan Anda.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Gangguan Proxy/Firewall&lt;/i&gt; - Nonaktifkan proksi atau firewall yang sedang aktif, atau hubungi pengelola jaringan Anda.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton sedang offline/down&lt;/i&gt; - Cek &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; untuk mengetahui status sistem kami.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Masalah saya masih belum terselesaikan&lt;/i&gt; - Hubungi kami secara langsung melalui &lt;a href=\"https://proton.me/support/contact&gt;formulir layanan dukungan&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), atau &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt; kami.
     </string>
@@ -820,7 +822,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="go_to_settings">Ke pengaturan</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Kunci API Firebase tidak valid. Sistem notifikasi tidak akan dapat bekerja.</string>
-    <string name="failed_saving_draft_online">Gagal menyimpan draf online untuk pesan: \"%s\"</string>
+    <string name="failed_saving_draft_online">Gagal menyimpan draf daring untuk pesan: \"%s\"</string>
     <string name="failed_uploading_attachment_online">Terdapat kesalahan pada lampiran pesan berikut: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Pesan tidak dapat dibuka pada saat sedang dikirim</string>
     <string name="enable_conversation_mode">Aktifkan mode percakapan</string>

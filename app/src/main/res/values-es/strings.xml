@@ -110,7 +110,8 @@
     <string name="set_msg_expiration_1_week">1 semana</string>
     <string name="set_msg_expiration_custom">Personalizado</string>
     <string name="set_msg_expiration_check_description">Este elemento está marcado</string>
-    <string name="composer_invalid_sender_saving_draft_failed">La dirección \"De:\" es inválida. Por favor, cámbiala por una válida</string>
+    <string name="composer_invalid_sender_saving_draft_failed">La dirección \"De:\" es inválida. Cámbiala por una válida</string>
+    <string name="composer_invalid_subject_saving_draft_failed">El asunto no es válido.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -143,13 +144,14 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nuevos mensajes</string>
     <string name="notification_invalid_sender_sending_failed">Tu mensaje se ha hallado como borrador. Por favor, verifica que la dirección de correo \"De:\" en el mensaje está activa.</string>
+    <string name="notification_invalid_subject_sending_failed">Tu mensaje se ha guardado como borrador. El asunto no es válido.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">No hay contactos</string>
     <string name="contacts_empty_state_no_groups">No hay grupos</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">Los grupos de contactos no se importarán. Por favor actualice a un plan de pago para disfrutar de las funciones premium.</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">Los grupos de contactos no se importarán. Actualiza a un plan de pago para disfrutar de las funciones premium.</string>
     <string name="contact_details_remote_content_dialog_title">Contenido remoto</string>
     <string name="contact_details_remote_content_dialog_message">Este contacto contiene contenido remoto.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Cargar contenido</string>
@@ -349,7 +351,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">¿Eliminar etiquetas seleccionadas?</string>
     <string name="delete_folder_confirmation_title">¿Eliminar carpetas seleccionadas?</string>
-    <string name="delete_label_confirmation_message">Los correos contenidos aquí se encontrarán en <b>Todos los correos</b></string>
+    <string name="delete_label_confirmation_message">Los correos contenidos aquí se encontrarán en <b>Todo el correo</b></string>
     <string name="pin_invalid">PIN inválido, ingrese el PIN de 4 dígitos correcto</string>
     <string name="pin_not_match">El PIN no coincide</string>
     <string name="new_pin_saved">Nuevo PIN guardado</string>
@@ -863,8 +865,8 @@ compre más
     <string name="contacts_call">Llamar</string>
     <string name="contacts_send_group_message">Enviar mensaje grupal</string>
     <string name="inbox_this_folder_is_empty">Esta carpeta está vacía</string>
-    <string name="inbox_could_not_retrieve_messages">No se han podido recuperar sus mensajes</string>
-    <string name="inbox_pull_down_to_retry">Deslice hacia abajo para reintentar</string>
+    <string name="inbox_could_not_retrieve_messages">No se han podido recuperar tus mensajes</string>
+    <string name="inbox_pull_down_to_retry">Desliza hacia abajo para reintentar</string>
     <string name="edit_draft">Editar borrador</string>
     <string name="details_show_history">Mostrar historial</string>
     <string name="could_not_complete_action">No se pudo completar la acción</string>

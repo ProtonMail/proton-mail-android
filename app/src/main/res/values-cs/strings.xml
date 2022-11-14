@@ -113,6 +113,7 @@
     <string name="set_msg_expiration_custom">Vlastní</string>
     <string name="set_msg_expiration_check_description">Tato položka je zaškrtnuta</string>
     <string name="composer_invalid_sender_saving_draft_failed">Adresa \"Od:\" je neplatná. Změňte ji prosím na platnou</string>
+    <string name="composer_invalid_subject_saving_draft_failed">Předmět je neplatný.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Motiv</string>
@@ -145,6 +146,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nové zprávy</string>
     <string name="notification_invalid_sender_sending_failed">Vaše zpráva je k dispozici jako koncept. Ověřte, zda je e-mail \"Od:\" ve zprávě aktivní.</string>
+    <string name="notification_invalid_subject_sending_failed">Vaše zpráva je k dispozici jako koncept. Předmět je neplatný.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Žádné kontakty</string>
