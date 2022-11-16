@@ -64,7 +64,8 @@ class MailboxItemUiModelMapper @Inject constructor(
         messageLabels = message.buildLabelChipFromMessageLabels(allLabels),
         allLabelsIds = message.allLabelsIds(),
         isDraft = message.isDraft(),
-        isScheduled = message.isScheduled
+        isScheduled = message.isScheduled,
+        isProton = message.sender?.isProton ?: false
     )
 
     @JvmName("messagesToUiModels")
@@ -94,7 +95,8 @@ class MailboxItemUiModelMapper @Inject constructor(
         messageLabels = conversation.buildLabelChipFromMessageLabels(allLabels),
         allLabelsIds = conversation.allLabelsIds(),
         isDraft = conversation.containsSingleDraftMessage(),
-        isScheduled = conversation.labels.any { it.id == MessageLocationType.ALL_SCHEDULED.asLabelIdString() }
+        isScheduled = conversation.labels.any { it.id == MessageLocationType.ALL_SCHEDULED.asLabelIdString() },
+        isProton = conversation.messages?.any { it.sender.isProton } ?: false
     )
 
     @JvmName("conversationsToUiModels")

@@ -71,6 +71,7 @@ import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
 import me.proton.core.usersettings.domain.usecase.GetUserSettings
 import me.proton.core.util.kotlin.EMPTY_STRING
+import me.proton.core.util.kotlin.toBoolean
 import timber.log.Timber
 
 class EventHandler @AssistedInject constructor(
@@ -390,7 +391,7 @@ class EventHandler @AssistedInject constructor(
             }
             val sender = newMessage.Sender
             if (sender != null) {
-                message.sender = MessageSender(sender.name, sender.address)
+                message.sender = MessageSender(sender.name, sender.address, sender.isProton.toBoolean())
             }
             val toList = newMessage.ToList
             if (toList != null) {

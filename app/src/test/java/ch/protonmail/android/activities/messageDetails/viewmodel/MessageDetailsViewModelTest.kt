@@ -95,8 +95,8 @@ import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.test.kotlin.TestDispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.UUID
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest

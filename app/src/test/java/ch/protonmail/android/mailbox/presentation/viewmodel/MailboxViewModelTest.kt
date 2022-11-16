@@ -641,7 +641,8 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
             messageLabels = emptyList(),
             allLabelsIds = emptyList(),
             isDraft = false,
-            isScheduled = false
+            isScheduled = false,
+            isProton = false
         )
 
 

@@ -28,7 +28,10 @@ data class ServerMessageSender(
     val name: String? = null,
 
     @SerializedName(Fields.Message.Sender.ADDRESS)
-    val address: String
+    val address: String,
+
+    @SerializedName("IsProton")
+    val isProton: Int = 0
 
 ) : Serializable, Comparable<ServerMessageSender> {
 

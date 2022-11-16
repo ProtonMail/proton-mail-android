@@ -1,0 +1,557 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 20,
+    "identityHash": "06f71940b640092ab44e6d8578410899",
+    "entities": [
+      {
+        "tableName": "attachmentv3",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`attachment_id` TEXT, `file_name` TEXT NOT NULL, `mime_type` TEXT, `file_size` INTEGER NOT NULL, `key_packets` TEXT, `message_id` TEXT NOT NULL, `uploaded` INTEGER NOT NULL, `uploading` INTEGER NOT NULL, `signature` TEXT, `headers` TEXT, `is_inline` INTEGER NOT NULL, `file_path` TEXT, `mime_data` BLOB, `_id` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "fields": [
+          {
+            "fieldPath": "attachmentId",
+            "columnName": "attachment_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fileName",
+            "columnName": "file_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mimeType",
+            "columnName": "mime_type",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fileSize",
+            "columnName": "file_size",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "keyPackets",
+            "columnName": "key_packets",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "messageId",
+            "columnName": "message_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isUploaded",
+            "columnName": "uploaded",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isUploading",
+            "columnName": "uploading",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "signature",
+            "columnName": "signature",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "headers",
+            "columnName": "headers",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "inline",
+            "columnName": "is_inline",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "filePath",
+            "columnName": "file_path",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mimeData",
+            "columnName": "mime_data",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dbId",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_attachmentv3_attachment_id",
+            "unique": true,
+            "columnNames": [
+              "attachment_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_attachmentv3_attachment_id` ON `${TABLE_NAME}` (`attachment_id`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "conversations",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT NOT NULL, `Order` INTEGER NOT NULL, `UserID` TEXT NOT NULL, `Subject` TEXT NOT NULL, `Senders` TEXT NOT NULL, `Recipients` TEXT NOT NULL, `NumMessages` INTEGER NOT NULL, `NumUnread` INTEGER NOT NULL, `NumAttachments` INTEGER NOT NULL, `ExpirationTime` INTEGER NOT NULL, `Size` INTEGER NOT NULL, `Labels` TEXT NOT NULL, PRIMARY KEY(`ID`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "ID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "Order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "UserID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subject",
+            "columnName": "Subject",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "senders",
+            "columnName": "Senders",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recipients",
+            "columnName": "Recipients",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numMessages",
+            "columnName": "NumMessages",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numUnread",
+            "columnName": "NumUnread",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numAttachments",
+            "columnName": "NumAttachments",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expirationTime",
+            "columnName": "ExpirationTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "size",
+            "columnName": "Size",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "labels",
+            "columnName": "Labels",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_conversations_ID",
+            "unique": true,
+            "columnNames": [
+              "ID"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_conversations_ID` ON `${TABLE_NAME}` (`ID`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "messagev3",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT, `ConversationID` TEXT, `Subject` TEXT, `Unread` INTEGER NOT NULL, `Type` INTEGER NOT NULL, `Time` INTEGER NOT NULL, `Size` INTEGER NOT NULL, `Location` INTEGER NOT NULL, `FolderLocation` TEXT, `Starred` INTEGER, `NumAttachments` INTEGER NOT NULL, `IsEncrypted` INTEGER NOT NULL, `ExpirationTime` INTEGER NOT NULL, `IsReplied` INTEGER, `IsRepliedAll` INTEGER, `IsForwarded` INTEGER, `Body` TEXT, `IsDownloaded` INTEGER NOT NULL, `AddressID` TEXT, `InlineResponse` INTEGER NOT NULL, `NewServerId` TEXT, `MIMEType` TEXT, `SpamScore` INTEGER NOT NULL, `AccessTime` INTEGER NOT NULL, `Header` TEXT, `ParsedHeaders` TEXT, `LabelIDs` TEXT NOT NULL, `ToList` TEXT NOT NULL, `ReplyTos` TEXT NOT NULL, `CCList` TEXT NOT NULL, `BCCList` TEXT NOT NULL, `Flags` INTEGER NOT NULL DEFAULT 0, `Order` INTEGER NOT NULL DEFAULT 9223372036854775807, `_id` INTEGER PRIMARY KEY AUTOINCREMENT, `Sender_SenderName` TEXT, `Sender_SenderSerialized` TEXT, `Sender_IsProton` INTEGER DEFAULT 0)",
+        "fields": [
+          {
+            "fieldPath": "messageId",
+            "columnName": "ID",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "conversationId",
+            "columnName": "ConversationID",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "subject",
+            "columnName": "Subject",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "Unread",
+            "columnName": "Unread",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "Type",
+            "columnName": "Type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "Time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalSize",
+            "columnName": "Size",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "Location",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "folderLocation",
+            "columnName": "FolderLocation",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isStarred",
+            "columnName": "Starred",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "numAttachments",
+            "columnName": "NumAttachments",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageEncryption",
+            "columnName": "IsEncrypted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expirationTime",
+            "columnName": "ExpirationTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isReplied",
+            "columnName": "IsReplied",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isRepliedAll",
+            "columnName": "IsRepliedAll",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isForwarded",
+            "columnName": "IsForwarded",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "messageBody",
+            "columnName": "Body",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isDownloaded",
+            "columnName": "IsDownloaded",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addressID",
+            "columnName": "AddressID",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isInline",
+            "columnName": "InlineResponse",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localId",
+            "columnName": "NewServerId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mimeType",
+            "columnName": "MIMEType",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "spamScore",
+            "columnName": "SpamScore",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accessTime",
+            "columnName": "AccessTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "header",
+            "columnName": "Header",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "parsedHeaders",
+            "columnName": "ParsedHeaders",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "allLabelIDs",
+            "columnName": "LabelIDs",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "toList",
+            "columnName": "ToList",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "replyTos",
+            "columnName": "ReplyTos",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ccList",
+            "columnName": "CCList",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bccList",
+            "columnName": "BCCList",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flags",
+            "columnName": "Flags",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "Order",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "9223372036854775807"
+          },
+          {
+            "fieldPath": "dbId",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sender.name",
+            "columnName": "Sender_SenderName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sender.emailAddress",
+            "columnName": "Sender_SenderSerialized",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sender.isProton",
+            "columnName": "Sender_IsProton",
+            "affinity": "INTEGER",
+            "notNull": false,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_messagev3_ID",
+            "unique": true,
+            "columnNames": [
+              "ID"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_messagev3_ID` ON `${TABLE_NAME}` (`ID`)"
+          },
+          {
+            "name": "index_messagev3_Location",
+            "unique": false,
+            "columnNames": [
+              "Location"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_messagev3_Location` ON `${TABLE_NAME}` (`Location`)"
+          },
+          {
+            "name": "index_messagev3_ConversationID",
+            "unique": false,
+            "columnNames": [
+              "ConversationID"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_messagev3_ConversationID` ON `${TABLE_NAME}` (`ConversationID`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "message_preference",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `message_id` TEXT NOT NULL, `view_in_dark_mode` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "ID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageId",
+            "columnName": "message_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "viewInDarkMode",
+            "columnName": "view_in_dark_mode",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ID"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "UnreadCounter",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `type` TEXT NOT NULL, `label_id` TEXT NOT NULL, `unread_count` INTEGER NOT NULL, PRIMARY KEY(`user_id`, `label_id`, `type`))",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "labelId",
+            "columnName": "label_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unreadCount",
+            "columnName": "unread_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "label_id",
+            "type"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '06f71940b640092ab44e6d8578410899')"
+    ]
+  }
+}

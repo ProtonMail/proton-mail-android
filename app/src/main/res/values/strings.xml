@@ -62,6 +62,8 @@
     <string name="mailbox_updated_just_now">Updated just now</string>
     <string name="mailbox_updated_recently">Updated recently</string>
     <string name="mailbox_updating">Updating…</string>
+    <string name="is_proton">This is a Proton message</string>
+    <string name="is_proton_official_badge">Official</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>

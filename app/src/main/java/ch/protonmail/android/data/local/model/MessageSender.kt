@@ -29,9 +29,14 @@ data class MessageSender constructor(
 
     @ColumnInfo(name = COLUMN_MESSAGE_SENDER_EMAIL)
     @SerializedName("Address")
-    var emailAddress: String?
+    var emailAddress: String?,
+
+    @ColumnInfo(name = COLUMN_MESSAGE_SENDER_IS_PROTON, defaultValue = "0")
+    val isProton: Boolean = false
 
 ) : Serializable, Comparable<MessageSender> {
+
+    constructor(name: String?, emailAddress: String?) : this(name, emailAddress, false)
 
     override fun toString(): String =
         "$name $emailAddress"

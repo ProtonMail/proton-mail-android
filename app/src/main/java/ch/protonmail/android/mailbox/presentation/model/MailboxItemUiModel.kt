@@ -42,7 +42,8 @@ data class MailboxItemUiModel(
     val messageLabels: List<LabelChipUiModel>,
     val allLabelsIds: List<LabelId>,
     val isDraft: Boolean,
-    val isScheduled: Boolean
+    val isScheduled: Boolean,
+    val isProton: Boolean
 ) {
 
     class DiffCallback : DiffUtil.ItemCallback<MailboxItemUiModel>() {
