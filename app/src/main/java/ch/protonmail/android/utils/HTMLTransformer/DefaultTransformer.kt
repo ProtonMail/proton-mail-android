@@ -24,7 +24,7 @@ class DefaultTransformer : AbstractTransformer() {
 
     private val blacklist = arrayOf(
         "meta", "audio", "video", "iframe", "object",
-        "picture", "form", "map", "area", "button", "input", "embed", "script", "style"
+        "picture", "form", "map", "area", "input", "embed", "script", "style"
     )
 
     override fun transform(doc: Document): Document {
