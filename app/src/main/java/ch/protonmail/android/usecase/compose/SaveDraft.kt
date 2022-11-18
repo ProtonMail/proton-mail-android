@@ -128,6 +128,9 @@ class SaveDraft @Inject constructor(
                         if (error == CreateDraftWorkerErrors.InvalidSubject) {
                             return@map SaveDraftResult.InvalidSubject
                         }
+                        if (error == CreateDraftWorkerErrors.DraftDoesNotExist) {
+                            return@map SaveDraftResult.DraftDoesNotExist
+                        }
                     }
                     return@map SaveDraftResult.OnlineDraftCreationFailed
                 }
