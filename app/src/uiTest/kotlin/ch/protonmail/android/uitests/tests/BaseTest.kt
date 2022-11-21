@@ -34,12 +34,14 @@ import ch.protonmail.android.mailbox.presentation.ui.MailboxActivity
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
 import ch.protonmail.android.uitests.testsHelper.TestUser.populateUsers
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
+import me.proton.core.data.asset.readFromAssets
 import me.proton.core.test.android.instrumented.ProtonTest.Companion.testName
 import me.proton.core.test.android.instrumented.utils.FileUtils
 import me.proton.core.test.android.instrumented.utils.FileUtils.prepareArtifactsDir
 import me.proton.core.test.android.instrumented.utils.Shell.deleteDownloadArtifactsFolder
-import me.proton.core.test.android.plugins.data.User
+import me.proton.core.test.quark.data.User
 import me.proton.core.util.android.sharedpreferences.set
+import me.proton.core.util.kotlin.deserializeList
 import me.proton.fusion.Fusion
 import org.junit.After
 import org.junit.BeforeClass
@@ -86,7 +88,9 @@ open class BaseTest: Fusion {
         private const val password = 1
         private const val mailboxPassword = 2
         private const val twoFaKey = 3
-        val users = User.Users("users.json")
+        private val usersFromJson: List<User> =
+            InstrumentationRegistry.getInstrumentation().context.readFromAssets("users.json").deserializeList()
+        val users = User.Users(userData = usersFromJson)
         private val grantPermissionRule = GrantPermissionRule.grant(
             READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, READ_CONTACTS
         )

@@ -55,7 +55,8 @@ val DependencyHandler.`Proton-report` get() =                       proton("repo
 val DependencyHandler.`Proton-user` get() =                         proton("user") version `Proton-core version`
 val DependencyHandler.`Proton-user-domain` get() =                  proton("user-domain") version `Proton-core version`
 val DependencyHandler.`Proton-user-settings` get() =                proton("user-settings") version `Proton-core version`
-val DependencyHandler.`Proton-util-android-dagger` get() =          proton("util-android-dagger") version `Proton-core version`
+val DependencyHandler.`Proton-util-android-dagger` get() = proton("util-android-dagger") version `Proton-core version`
+val DependencyHandler.`Proton-test-quark` get() = proton("test-quark") version `Proton-core version`
 
 fun DependencyHandler.protonTest(moduleSuffix: String, version: String? = null) =
     proton("test", moduleSuffix, version)
