@@ -144,7 +144,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nouveaux messages</string>
     <string name="notification_invalid_sender_sending_failed">Votre message se trouve dans vos brouillons. Vérifiez que l\'adresse électronique dans le champ « De » est active.</string>
-    <string name="notification_invalid_subject_sending_failed">Votre message peut être trouvé en tant que brouillon. Le sujet n\'est pas valide.</string>
+    <string name="notification_invalid_subject_sending_failed">Votre message se trouve dans le dossier Brouillons. Le sujet n\'est pas valide.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Aucun contact</string>
@@ -775,7 +775,7 @@
     <string name="auto_lock_app">Verrouillage automatique de l\'application</string>
     <string name="auto_lock_description">Activez cette fonctionnalité pour verrouiller automatiquement votre application et utilisez un code PIN ou une empreinte digitale pour la déverrouiller.</string>
     <string name="change_pin_code">Modifier le code PIN</string>
-    <string name="auto_lock_timer">Délai de verrouillage automatique</string>
+    <string name="auto_lock_timer">Verrouillage automatique</string>
     <string name="connections_via_third_parties">Routage alternatif</string>
     <string name="allow_secure_connections_via_third_parties">Autoriser le routage alternatif</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">En cas de blocage des sites Proton, ce paramètre permet à l\'application d\'essayer un routage réseau alternatif pour atteindre Proton, ce qui peut être utile pour contourner les pare-feu ou les problèmes de réseau. Nous vous recommandons de conserver ce paramètre activé pour une plus grande fiabilité.</string>
