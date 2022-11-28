@@ -19,28 +19,6 @@
 
 rootProject.name = "ProtonMail"
 
-
-val (projects, modules) = rootDir.projectsAndModules()
-
-println("Projects: ${projects.sorted().joinToString()}")
-println("Modules: ${modules.sorted().joinToString()}")
-
-for (p in projects) includeBuild(p)
-for (m in modules) include(m)
-
-// Use core libs from maven artifacts or from git submodule using Gradle's included build:
-// - to enable/disable locally: gradle.properties > useCoreGitSubmodule
-// - to enable/disable on CI: .gitlab-ci.yml > ORG_GRADLE_PROJECT_useCoreGitSubmodule
-val coreSubmoduleDir = rootDir.resolve("proton-libs")
-extra.set("coreSubmoduleDir", coreSubmoduleDir)
-val includeCoreLibsHelper = File(coreSubmoduleDir, "gradle/include-core-libs.gradle.kts")
-if (includeCoreLibsHelper.exists()) {
-    apply(from = "${coreSubmoduleDir.path}/gradle/include-core-libs.gradle.kts")
-} else if (extensions.extraProperties["useCoreGitSubmodule"].toString().toBoolean()) {
-    includeBuild("proton-libs")
-    println("Core libs from git submodule `$coreSubmoduleDir`")
-}
-
 pluginManagement {
     repositories {
         mavenCentral()
@@ -50,6 +28,22 @@ pluginManagement {
     }
 }
 
+plugins {
+    id("me.proton.core.gradle-plugins.include-core-build") version "1.1.1"
+}
+
+includeCoreBuild {
+    branch.set("main")
+    includeBuild("gopenpgp")
+}
+
+val (projects, modules) = rootDir.projectsAndModules()
+
+println("Projects: ${projects.sorted().joinToString()}")
+println("Modules: ${modules.sorted().joinToString()}")
+
+for (p in projects) includeBuild(p)
+for (m in modules) include(m)
 
 fun File.projectsAndModules() : Pair<Set<String>, Set<String>> {
     val blacklist = setOf(
