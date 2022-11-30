@@ -110,9 +110,9 @@
     <string name="set_msg_expiration_1_day">1 день</string>
     <string name="set_msg_expiration_3_days">3 дня</string>
     <string name="set_msg_expiration_1_week">1 неделя</string>
-    <string name="set_msg_expiration_custom">Настроить</string>
+    <string name="set_msg_expiration_custom">Пользовательский</string>
     <string name="set_msg_expiration_check_description">Этот элемент отмечен</string>
-    <string name="composer_invalid_sender_saving_draft_failed">Неверный адрес отправителя. Пожалуйста, укажите правильный адрес</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Адрес \"От:\" недействителен. Пожалуйста, измените его на действительный</string>
     <string name="composer_invalid_subject_saving_draft_failed">Тема недействительна.</string>
     <!-- endregion -->
     <!-- region Settings -->
@@ -145,8 +145,8 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Новые сообщения</string>
-    <string name="notification_invalid_sender_sending_failed">Ваше сообщение осталось в черновиках. Пожалуйста, проверьте, что эл. адрес отправителя в сообщении активен.</string>
-    <string name="notification_invalid_subject_sending_failed">Сообщение может быть расценено как черновик. Тема недействительна.</string>
+    <string name="notification_invalid_sender_sending_failed">Ваше сообщение может быть найдено как черновик. Пожалуйста, проверьте, активена ли электронная почта \" От:\" в сообщении.</string>
+    <string name="notification_invalid_subject_sending_failed">Ваше сообщение может быть найдено как черновик. Тема не является действительной.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Нет контактов</string>
@@ -195,7 +195,7 @@
     <string name="update_app_title">Требуется обновление</string>
     <string name="update_app">Вашим приложением Proton Мail нельзя пользоваться, пока оно не будет обновлено</string>
     <string name="you_are_offline">Вы офлайн</string>
-    <string name="api_offline">Proton Mail в настоящее время не в сети, проверьте текущее состояние тут: https://protonstatus.com или в нашем Twitter: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail в настоящее время офлайн, проверьте текущее состояние тут: https://protonstatus.com или в нашем Twitter: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Контакт сохранён</string>
     <string name="contact_saved_offline">Контакт сохранён. Он будет синхронизирован, когда подключение станет доступно</string>
     <string name="contact_exist">Адрес эл. почты контакта уже существует</string>
@@ -448,7 +448,7 @@
     <string name="contacts_import_contact">Импортировать контакты</string>
     <string name="contacts_import">Импортировать</string>
     <string name="upload_contacts">Загрузить контакты</string>
-    <string name="uploading_contacts">Отправка контактов…</string>
+    <string name="uploading_contacts">Загрузка контактов…</string>
     <string-array name="vcard_option_phone">
         <item>Телефон</item>
         <item>Мобильный</item>
@@ -482,7 +482,7 @@
     <string name="logged_out_description">Вы вышли из системы. Пожалуйста, войдите заново.</string>
     <string name="print_error">Ошибка печати</string>
     <string name="download_complete">Скачивание завершено</string>
-    <string name="message_expires_in">Сообщение будет недействительно через %s</string>
+    <string name="message_expires_in">Срок действия сообщения истечет через %s</string>
     <string name="unsaved_changes_title">Несохранённые изменения</string>
     <string name="unsaved_changes_subtitle">В форме присутствуют несохранённые данные. Вы уверены, что хотите отказаться от них?</string>
     <string name="request_timeout">Истекло время ожидания запроса, пожалуйста, попробуйте ещё раз</string>
@@ -712,14 +712,14 @@
     <string name="display_name">Отображаемое имя</string>
     <string name="edit_display_name">Изменить отображаемое имя</string>
     <string name="signature">Подпись</string>
-    <string name="mobile_footer">Подпись мобильного клиента</string>
-    <string name="edit_mobile_footer">Включить подпись для мобильного клиента</string>
+    <string name="mobile_footer">Нижний колонтитул для мобильных устройств</string>
+    <string name="edit_mobile_footer">Включить нижний колонтитул для мобильных устройств</string>
     <string name="default_mobile_footer">Отправлено из мобильного приложения Proton Mail</string>
-    <string name="mobile_footer_is_premium">Изменение подписи для мобильного клиента возможно только для платных пользователей</string>
-    <string name="mobile_footer_info">Эта информация будет добавлена после вашей подписи</string>
+    <string name="mobile_footer_is_premium">Изменение нижнего колонтитула для мобильных устройств возможно только для пользователей платных тарифов</string>
+    <string name="mobile_footer_info">Этот нижний колонтитул будет добавлен после вашей подписи</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Приглушение</string>
-    <string name="notifications_snooze">Приглушение уведомлений</string>
+    <string name="notifications_snooze">Отсрочка уведомлений</string>
     <string-array name="quick_snooze_values">
         <item>30 минут</item>
         <item>1 час</item>
@@ -779,8 +779,8 @@
     <string name="folders">Папки</string>
     <string name="labels">Ярлыки</string>
     <string name="swipe_actions">Жесты пролистывания</string>
-    <string name="swipe_action_right">Свайп вправо</string>
-    <string name="swipe_action_left">Свайп влево</string>
+    <string name="swipe_action_right">Листать вправо</string>
+    <string name="swipe_action_left">Листать влево</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Выберите действие смахивания</string>
     <string name="swipe_action_trash">Сообщение перемещено в корзину</string>
@@ -870,7 +870,7 @@
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="star">Важное</string>
+    <string name="star">Отметить звездочкой</string>
     <string name="unstar">Снять звездочку</string>
     <string name="star_unstar">Отметить звездочкой / снять звездочку</string>
     <string name="send_to_archive">Отправить в архив?</string>
@@ -878,7 +878,7 @@
     <string name="mark_as_unread">Отметить как непрочитанное</string>
     <string name="mark_as_read">Отметить как прочитанное</string>
     <string name="move_message">Переместить сообщение</string>
-    <string name="manage">Управление</string>
+    <string name="manage">Управлять</string>
     <string name="message_from">Сообщение от %s</string>
     <string name="not_spam_move_to_inbox">Не спам (переместить во Входящие)</string>
     <string name="action_sheet_view_in_light_mode">Просмотр в светлом режиме</string>
@@ -891,9 +891,9 @@
     </plurals>
     <plurals name="x_conversations_count">
         <item quantity="one">%d цепочка писем</item>
-        <item quantity="few">%d цепочек писем</item>
-        <item quantity="many">%d бесед</item>
-        <item quantity="other">%d цепочка(и,ек) писем</item>
+        <item quantity="few">%d цепочки писем</item>
+        <item quantity="many">%d цепочек писем</item>
+        <item quantity="other">%d цепочек писем</item>
     </plurals>
     <string name="contacts_call">Позвонить</string>
     <string name="contacts_send_group_message">Отправить сообщение всей группе</string>

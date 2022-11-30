@@ -74,7 +74,7 @@
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorar l\'avís i continuar</string>
     <string name="scheduled_message_info">Aquest missatge s\'enviarà el %s</string>
     <string name="scheduled_message_edit_info">Els missatges programats només poden ser modificats des de la web i l\'aplicació iOS actualment.</string>
-    <string name="scheduled_message_moved_to_trash_title">El missatge no es pot enviar</string>
+    <string name="scheduled_message_moved_to_trash_title">El missatge no s\'enviarà</string>
     <string name="scheduled_message_moved_to_trash_desc">Movent aquest missatge a la brossa es cancel·larà la seva programació.</string>
     <!-- endregion -->
     <!-- region Composer -->
@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 setmana</string>
     <string name="set_msg_expiration_custom">Personalitzat</string>
     <string name="set_msg_expiration_check_description">S\'ha comprovat aquest element</string>
-    <string name="composer_invalid_sender_saving_draft_failed">L\'adreça \"De:\" no és vàlida. Canvieu-la per una de vàlida</string>
+    <string name="composer_invalid_sender_saving_draft_failed">L\'adreça \"De: \" no és vàlida. Canvieu-la per una de vàlida</string>
     <string name="composer_invalid_subject_saving_draft_failed">L\'assumpte no és vàlid.</string>
     <!-- endregion -->
     <!-- region Settings -->
@@ -277,7 +277,7 @@
     <string name="select_file">Seleccionar fitxer</string>
     <string name="attach_file">Adjuntar arxiu</string>
     <string name="take_photo">Fer foto</string>
-    <string name="problem_taking_photo">Ha hagut un problema en fer una foto</string>
+    <string name="problem_taking_photo">Hi ha hagut un problema en fer una foto</string>
     <string name="problem_selecting_file">Ha hagut un problema en afegir l\'arxiu seleccionat</string>
     <string name="add_contact">Afegeix contacte</string>
     <string name="delete_contact">Suprimir %s dels seus contactes?</string>
@@ -339,7 +339,7 @@
     <string name="saving_failed_no_conn">Error al desar, sense connexió</string>
     <string name="attachment_exists">Fitxer adjunt ja adjuntat</string>
     <string name="eo_password_not_completed">La contrasenya del missatge no s\'ha completat.</string>
-    <string name="delinquency_subtitle">L\'accés a aquest compte està desactivat per falta de pagament. Inicieu la sessió a proton.me per pagar la factura no pagada.</string>
+    <string name="delinquency_subtitle">L\'accés a aquest compte està desactivat per falta de pagament. Inicieu la sessió a proton.me per pagar la factura pendent.</string>
     <string name="downloading">Descarregant...</string>
     <string name="cant_download_attachment">No es pot baixar l\'adjunt</string>
     <string-array name="auto_logout_options_array">

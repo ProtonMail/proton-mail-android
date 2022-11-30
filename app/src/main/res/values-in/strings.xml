@@ -53,7 +53,7 @@
     <string name="mailbox_empty_spam_subtitle">Folder spam Anda kosong</string>
     <string name="mailbox_empty_trash_subtitle">Sampah kosong</string>
     <string name="mailbox_empty_state_no_results_found">Tidak ada hasil yang ditemukan</string>
-    <string name="mailbox_empty_state_try_a_different_term">Cobalah kriteria pencarian lainnya</string>
+    <string name="mailbox_empty_state_try_a_different_term">Coba kriteria pencarian lainnya</string>
     <string name="mailbox_no_messages">Tidak ada pesan</string>
     <plurals name="mailbox_unread_count">
         <item quantity="other">%d belum dibaca</item>
@@ -91,9 +91,9 @@
     <string name="set_msg_password_info">Tentukan kata sandi untuk mengenkripsi pesan ini bagi para pengguna non-Proton Mail. <a href="https://proton.me/support/password-protected-emails">Pelajari lebih lanjut</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Kata sandi pesan</string>
-    <string name="set_msg_password_msg_password_hint">panjang 8 hingga 21 karakter</string>
+    <string name="set_msg_password_msg_password_hint">panjang 4 hingga 21 karakter</string>
     <string name="set_msg_password_repeat_password_title">Ulangi kata sandi</string>
-    <string name="set_msg_password_repeat_password_hint">Sandi harus cocok</string>
+    <string name="set_msg_password_repeat_password_hint">Kata sandi harus cocok</string>
     <string name="set_msg_password_password_hint_title">Petunjuk kata sandi</string>
     <string name="set_msg_password_password_hint_hint">Tentukan petunjuk (Opsional)</string>
     <string name="set_msg_password_apply_password">Terapkan sandi</string>
@@ -191,8 +191,8 @@
     <string name="no_network_queued">Tidak ada jaringan, pesan diantrekan</string>
     <string name="update_app_title">Pembaruan dibutuhkan</string>
     <string name="update_app">Aplikasi Proton Mail Anda tidak dapat digunakan sebelum diperbarui</string>
-    <string name="you_are_offline">Anda sedang luring</string>
-    <string name="api_offline">Proton Mail sedang luring. Kunjungi https://protonstatus.com atau akun Twitter kami untuk mengetahui status kami saat ini: https://twitter.com/ProtonPrivacy</string>
+    <string name="you_are_offline">Anda sedang offline</string>
+    <string name="api_offline">Proton Mail sedang offline. Kunjungi https://protonstatus.com atau akun Twitter kami untuk mengetahui status kami saat ini: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontak telah tersimpan</string>
     <string name="contact_saved_offline">Kontak tersimpan, akan disinkronkan saat koneksi tersedia</string>
     <string name="contact_exist">Email kontak sudah ada</string>
@@ -572,8 +572,8 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="channel_name_ongoing_operations">Operasi yang sedang berlangsung</string>
     <string name="channel_description_ongoing_operations">Menampilkan seluruh operasi yang sedang berlangsung
 		seperti unduhan pesan baru di latar belakang</string>
-    <string name="retrieving_notifications">Mengembalikan notifikasi</string>
-    <string name="report_phishing">Laporkan phishing</string>
+    <string name="retrieving_notifications">Menerima notifikasi</string>
+    <string name="report_phishing">Laporkan upaya phishing</string>
     <string name="print">Cetak</string>
     <string name="phishing_dialog_title">Konfirmasi laporan phishing</string>
     <string name="phishing_dialog_message">Pesan phising yang dilaporkan kepada kami
@@ -585,7 +585,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- Contact Groups Strings -->
     <string name="add_photo">Tambah Foto</string>
     <string name="contact_display_name">Nama Tampilan</string>
-    <string name="add_new_email">Tambahkan Alamat Email</string>
+    <string name="add_new_email">Tambah Alamat Email</string>
     <string name="no_groups">Tidak ada grup</string>
     <string name="contact_vcard_note">Catatan</string>
     <string name="edit_contact">Ubah Kontak</string>

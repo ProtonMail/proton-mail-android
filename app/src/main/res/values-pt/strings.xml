@@ -87,7 +87,7 @@
     <string name="composer_removing_address_generic_error">Não foi possível verificar o endereço: %s. O envio poderá falhar.</string>
     <string name="composer_removing_address_server_error">Removing address: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
-    <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
+    <string name="composer_quote_sender_header">Em %s, %s &lt; %s&gt; escreveu:</string>
     <string name="set_msg_password_title">Definir senha</string>
     <string name="set_msg_password_info">Defina uma senha para encriptar esta mensagem para utilizadores que não estão no Proton Mail. <a href="https://proton.me/support/password-protected-emails"> Saiba mais </a></string>
     <string name="set_msg_password_info_icon_description">Informação</string>
@@ -111,7 +111,7 @@
     <string name="set_msg_expiration_custom">Personalizada</string>
     <string name="set_msg_expiration_check_description">Este item está verificado</string>
     <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
-    <string name="composer_invalid_subject_saving_draft_failed">The subject is not valid.</string>
+    <string name="composer_invalid_subject_saving_draft_failed">O assunto de envio não é válido.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
@@ -161,7 +161,7 @@
     <string name="new_user_onboarding_privacy_for_all_description">Convide os seus contactos para o Proton Mail para puder desfrutar de criptografia de ponta-a-ponta perfeita ou adicione uma senha de proteção às mensagens que envia.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Bonito e ordenado</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Arquive, etiquete ou dê cor às mensagens para criar a sua caixa de entrada perfeita.</string>
-    <string name="existing_user_onboarding_new_look_headline">New look, same protection</string>
+    <string name="existing_user_onboarding_new_look_headline">Novo visual, mesma proteção</string>
     <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
     <string name="existing_user_onboarding_new_features_headline">Novas funcionalidades</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
@@ -653,8 +653,8 @@ como a transferência de novas mensagens em segundo plano.</string>
         Considere libertar um pouco de espaço ou adquira mais armazenamento antes de atingir o limite.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permissões</string>
-    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
-        access to storage.</string>
+    <string name="need_storage_permissions_add_attachment_text">Para adicionar anexos tem de permitir
+        acesso ao armazenamento.</string>
     <string name="need_storage_permissions_download_attachment_text">Para transferir anexos tem de permitir
         acesso ao armazenamento.</string>
     <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
@@ -678,7 +678,7 @@ como a transferência de novas mensagens em segundo plano.</string>
     <string name="password_manager">Gestão de senhas</string>
     <string name="password_changed">Senha alterada.</string>
     <string name="recovery_email">Email de recuperação</string>
-    <string name="recovery_email_changed">Recovery email changed.</string>
+    <string name="recovery_email_changed">E-mail de recuperação alterado.</string>
     <string name="storage">Tamanho da caixa de correio</string>
     <string name="storage_used">%1$s/%2$s</string>
     <string name="addresses">Endereços</string>
@@ -695,7 +695,7 @@ como a transferência de novas mensagens em segundo plano.</string>
     <string name="mobile_footer_info">Este rodapé é adicionado após a assinatura</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Adiar</string>
-    <string name="notifications_snooze">Notifications snooze</string>
+    <string name="notifications_snooze">Suspensão de notificações</string>
     <string-array name="quick_snooze_values">
         <item>30 minutos</item>
         <item>1 hora</item>
@@ -749,7 +749,7 @@ como a transferência de novas mensagens em segundo plano.</string>
     <string name="settings_auto_show_embedded_images">Mostrar imagens incorporadas automaticamente</string>
     <string name="settings_prevent_taking_screenshots">Impedir capturas de ecrã</string>
     <string name="hyperlink_confirmation">Pedir confirmação da hiperligação</string>
-    <string name="labels_and_folders">Labels &amp; folders </string>
+    <string name="labels_and_folders">Etiquetas e pastas </string>
     <string name="folders">Pastas</string>
     <string name="labels">Etiquetas</string>
     <string name="swipe_actions">Acções ao deslizar</string>
@@ -776,7 +776,7 @@ como a transferência de novas mensagens em segundo plano.</string>
     <!-- endregion -->
     <string name="app_settings">Definições da aplicação</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push notifications</string>
+    <string name="push_notifications">Notificações forçadas</string>
     <string name="extended_notifications">Notificações estendidas</string>
     <string name="extended_notifications_description">Active esta funcionalidade para ver o remetente\ndos emails nas notificações forçadas.</string>
     <string name="notification_settings">Definições de notificações</string>
@@ -788,11 +788,11 @@ como a transferência de novas mensagens em segundo plano.</string>
     <string name="connections_via_third_parties">Redireccionamento alternativo</string>
     <string name="allow_secure_connections_via_third_parties">Permitir redireccionamento alternativo</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Caso as páginas do Proton estejam bloqueadas, esta definição permite à aplicação tentar redireccionar o tráfego para ligar ao Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos que mantenha esta definição para maior confiança.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Caso as páginas do Proton estejam bloqueadas, esta definição permite à aplicação tentar redireccionar o tráfego para ligar ao Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos que mantenha esta definição para maior confiança. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Saiba mais</a></string>
     <string name="app_language">Idioma da aplicação</string>
     <string name="custom_language_dialog_title">Seleccionar idioma da aplicação</string>
     <string name="auto_detect">Auto-detectar</string>
-    <string name="combined_contacts">Combined contacts</string>
+    <string name="combined_contacts">Contactos combinados</string>
     <string name="turn_combined_contacts_on">Active esta funcionalidade para preencher automaticamente endereços de email utilizando contactos de todas as suas contas ligadas.</string>
     <string name="local_cache_management">Memória cache local</string>
     <string name="cache_cleared">A memória cache local foi atualizada</string>
@@ -812,13 +812,13 @@ como a transferência de novas mensagens em segundo plano.</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemas e soluções comuns de ligação</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://proton.me/support/contact\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Sem ligação à Internet&lt;/i&gt; - por favor, certifique-se de que a sua ligação funciona.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema do Internet Service Provider (ISP)&lt;/i&gt; - tente ligar ao Proton de outra rede (ou utilize o &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; ou o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueio governamental&lt;/i&gt; - o seu país pode estar a bloquear o acesso ao Proton. Tente o &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (ou outra VPN) ou o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para aceder ao Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferência do antivírus&lt;/i&gt; - desactive temporariamente o seu antivírus, ou remova-o.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferência de proxy/firewall&lt;/i&gt; - desactive os proxies ou firewalls, ou contacte o seu administrador de rede.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está em baixo&lt;/i&gt; - veja &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; para conhecer o nosso estado.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Ainda sem solução&lt;/i&gt; - contacte-nos directamente através do nosso &lt;a href=\"https://proton.me/support/contact\"&gt;formulário de suporte&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), ou r &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
@@ -836,7 +836,7 @@ como a transferência de novas mensagens em segundo plano.</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Chave API do Firebase inválida. As notificações push não funcionarão.</string>
     <string name="failed_saving_draft_online">Falha ao gravar o rascunho online da mensagem: \"%s\"</string>
-    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Erro de anexo para mensagem: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Impossível abrir esta mensagem durante o envio</string>
     <string name="enable_conversation_mode">Activar modo de conversa</string>
     <!-- endregion -->
@@ -871,5 +871,5 @@ como a transferência de novas mensagens em segundo plano.</string>
     <string name="edit_draft">Editar rascunho</string>
     <string name="details_show_history">Mostrar histórico</string>
     <string name="could_not_complete_action">Não foi possível completar a ação</string>
-    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
+    <string name="decryption_of_message_failed">Erro de desencriptação: a desencriptação do conteúdo desta mensagem falhou.</string>
 </resources>
