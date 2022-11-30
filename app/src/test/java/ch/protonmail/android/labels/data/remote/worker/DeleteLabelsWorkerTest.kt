@@ -56,7 +56,7 @@ class DeleteLabelsWorkerTest {
 
     private lateinit var worker: DeleteLabelsWorker
 
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     private val testUserId = UserId("testUser")
 

@@ -28,7 +28,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Test
 
-class ClearNotificationsForUserTest : CoroutinesTest {
+class ClearNotificationsForUserTest : CoroutinesTest by CoroutinesTest() {
 
     private val testId = UserId("id")
 

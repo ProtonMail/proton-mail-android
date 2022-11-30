@@ -43,7 +43,7 @@ class SharedPreferencesDeviceSettingsRepositoryTest {
     ) {
 
         private val preferences = newMockSharedPreferences
-        private val dispatchers = TestDispatcherProvider
+        private val dispatchers = TestDispatcherProvider()
         private val repository = SharedPreferencesDeviceSettingsRepository(
             preferences = preferences,
             dispatchers = dispatchers
@@ -114,7 +114,7 @@ class SharedPreferencesDeviceSettingsRepositoryTest {
     ) {
 
         private val preferences = newMockSharedPreferences
-        private val dispatchers = TestDispatcherProvider
+        private val dispatchers = TestDispatcherProvider()
         private val repository = SharedPreferencesDeviceSettingsRepository(
             preferences = preferences,
             dispatchers = dispatchers

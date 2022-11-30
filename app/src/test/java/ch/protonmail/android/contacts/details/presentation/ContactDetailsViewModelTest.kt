@@ -44,16 +44,19 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
+class ContactDetailsViewModelTest : ArchTest by ArchTest(),
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     private val fetchContactDetails: FetchContactDetails = mockk()
     private val fetchContactGroups: FetchContactGroups = mockk()

@@ -64,9 +64,10 @@ import me.proton.core.user.domain.entity.AddressId
 import org.junit.Assert.assertEquals
 import timber.log.Timber
 import java.util.UUID
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class SaveDraftTest : CoroutinesTest {
+class SaveDraftTest : CoroutinesTest by CoroutinesTest() {
 
     private val userNotifier: UserNotifier = mockk(relaxed = true)
 
@@ -90,16 +91,21 @@ class SaveDraftTest : CoroutinesTest {
         every { this@mockk.invoke(R.string.attachment_failed) } returns "Error"
     }
 
-    private val saveDraft = SaveDraft(
-        addressCryptoFactory = addressCryptoFactory,
-        messageDetailsRepository = messageDetailsRepository,
-        dispatchers = dispatchers,
-        databaseProvider = databaseProcess,
-        createDraftWorker = createDraftScheduler,
-        uploadAttachmentsWorker = uploadAttachmentsWorkerEnqueuer,
-        userNotifier = userNotifier,
-        stringResourceResolver = stringResourceResolver
-    )
+    private lateinit var saveDraft: SaveDraft
+
+    @BeforeTest
+    fun setUp() {
+        saveDraft = SaveDraft(
+            addressCryptoFactory = addressCryptoFactory,
+            messageDetailsRepository = messageDetailsRepository,
+            dispatchers = dispatchers,
+            databaseProvider = databaseProcess,
+            createDraftWorker = createDraftScheduler,
+            uploadAttachmentsWorker = uploadAttachmentsWorkerEnqueuer,
+            userNotifier = userNotifier,
+            stringResourceResolver = stringResourceResolver
+        )
+    }
 
     @Test
     fun saveDraftEncryptsMessageAndSavesItToDbWhenTriggerIsUserRequestedSave() {

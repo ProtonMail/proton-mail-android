@@ -88,9 +88,7 @@ open class BaseTest: Fusion {
         private const val password = 1
         private const val mailboxPassword = 2
         private const val twoFaKey = 3
-        private val usersFromJson: List<User> =
-            InstrumentationRegistry.getInstrumentation().context.readFromAssets("users.json").deserializeList()
-        val users = User.Users(userData = usersFromJson)
+        val users = User.Users.fromJson(InstrumentationRegistry.getInstrumentation().context.readFromAssets("users.json"))
         private val grantPermissionRule = GrantPermissionRule.grant(
             READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, READ_CONTACTS
         )

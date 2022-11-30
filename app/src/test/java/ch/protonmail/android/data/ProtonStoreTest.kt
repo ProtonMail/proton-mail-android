@@ -39,7 +39,7 @@ import kotlin.test.assertEquals
 /**
  * Test suite for [ProtonStore]
  */
-class ProtonStoreTest : CoroutinesTest {
+class ProtonStoreTest : CoroutinesTest by CoroutinesTest() {
 
     private val api = FakePagedApi()
     private val database = FakeDatabase()

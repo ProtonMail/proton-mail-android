@@ -46,7 +46,7 @@ class FetchPublicKeysTest {
 
     private val api: ProtonMailApiManager = mockk()
 
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     private val fetchPublicKeys = FetchPublicKeys(api, dispatchers)
 

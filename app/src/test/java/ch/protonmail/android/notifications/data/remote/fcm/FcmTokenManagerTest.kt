@@ -25,14 +25,22 @@ import assert4k.equals
 import assert4k.that
 import ch.protonmail.android.domain.entity.ValidationException
 import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import me.proton.core.test.android.mocks.mockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class FcmTokenManagerTest : CoroutinesTest {
+class FcmTokenManagerTest : CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
-    private val fcmTokenManager = FcmTokenManager(mockSharedPreferences, dispatchers)
+    private lateinit var fcmTokenManager: FcmTokenManager
+
+    @BeforeTest
+    fun setUp() {
+        fcmTokenManager = FcmTokenManager(mockSharedPreferences, dispatchers)
+    }
 
     @Test
     fun canStoreAndRetrieveProperFirebaseToken() = runTest {

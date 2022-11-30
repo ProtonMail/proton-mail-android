@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.api
 
+import android.content.SharedPreferences
 import androidx.core.content.edit
 import assert4k.Null
 import assert4k.`is`
@@ -35,39 +36,52 @@ import ch.protonmail.android.utils.getStringList
 import ch.protonmail.android.utils.putStringList
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class AccountManagerTest : CoroutinesTest {
+class AccountManagerTest : CoroutinesTest by CoroutinesTest() {
 
-    class UsernameToIdMigrationTest : CoroutinesTest {
+    class UsernameToIdMigrationTest :
+        CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
         private val user1 = "username1" to UserId("id1")
         private val user2 = "username2" to UserId("id2")
         private val user3 = "username3" to UserId("id3")
         private val user4 = "username4" to UserId("id4")
 
-        private val defaultPreferences = newMockSharedPreferences
-        private val accountManager = AccountManager(defaultPreferences, dispatchers)
-        private val secureSharedPreferencesMigration: SecureSharedPreferences.UsernameToIdMigration = mockk {
-            coEvery { this@mockk(any()) } returns mapOf(user1, user2, user3, user4)
-        }
-        private val userManagerMigration: UserManager.UsernameToIdMigration = mockk(relaxed = true)
-        private val migration = AccountManager.UsernameToIdMigration(
-            dispatchers = dispatchers,
-            accountManager = accountManager,
-            secureSharedPreferencesMigration = secureSharedPreferencesMigration,
-            userManagerMigration = userManagerMigration,
-            defaultSharedPreferences = defaultPreferences.apply {
-                edit {
-                    putStringList(PREF_USERNAMES_LOGGED_IN, listOf(user1, user2).map { it.first })
-                    putStringList(PREF_USERNAMES_LOGGED_OUT, listOf(user3, user4).map { it.first })
-                }
+        private lateinit var defaultPreferences: SharedPreferences
+        private lateinit var accountManager: AccountManager
+        private lateinit var secureSharedPreferencesMigration: SecureSharedPreferences.UsernameToIdMigration
+        private lateinit var userManagerMigration: UserManager.UsernameToIdMigration
+        private lateinit var migration: AccountManager.UsernameToIdMigration
+
+        @BeforeTest
+        fun setUp() {
+            defaultPreferences = newMockSharedPreferences
+            accountManager = AccountManager(defaultPreferences, dispatchers)
+            secureSharedPreferencesMigration = mockk {
+                coEvery { this@mockk(any()) } returns mapOf(user1, user2, user3, user4)
             }
-        )
+            userManagerMigration = mockk(relaxed = true)
+            migration = AccountManager.UsernameToIdMigration(
+                dispatchers = dispatchers,
+                accountManager = accountManager,
+                secureSharedPreferencesMigration = secureSharedPreferencesMigration,
+                userManagerMigration = userManagerMigration,
+                defaultSharedPreferences = defaultPreferences.apply {
+                    edit {
+                        putStringList(PREF_USERNAMES_LOGGED_IN, listOf(user1, user2).map { it.first })
+                        putStringList(PREF_USERNAMES_LOGGED_OUT, listOf(user3, user4).map { it.first })
+                    }
+                }
+            )
+        }
 
         @Test
         fun doesRemoveOldPreferences() = runTest {

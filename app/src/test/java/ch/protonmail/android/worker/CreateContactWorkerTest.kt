@@ -62,7 +62,7 @@ class CreateContactWorkerTest {
     }
     private val parameters: WorkerParameters = mockk(relaxed = true)
     private val workManager: WorkManager = mockk(relaxed = true)
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     private val worker = CreateContactWorker(
         apiManager = apiManager,

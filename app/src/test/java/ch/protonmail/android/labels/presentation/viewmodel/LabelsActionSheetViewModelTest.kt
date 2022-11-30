@@ -55,11 +55,13 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -67,7 +69,8 @@ import kotlin.test.assertEquals
 
 private val TEST_USER_ID = UserId("userId")
 
-class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
+class LabelsActionSheetViewModelTest : ArchTest by ArchTest(),
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     @MockK
     private lateinit var moveMessagesToFolder: MoveMessagesToFolder

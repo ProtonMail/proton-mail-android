@@ -24,8 +24,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
-import me.proton.core.test.android.runBlockingWithTimeout
 import org.junit.runner.RunWith
 import kotlin.random.Random
 import kotlin.test.AfterTest
@@ -83,7 +83,7 @@ class UnreadCounterDaoTest {
     }
 
     @Test
-    fun canInsertAndRetrieveMessagesCounter() = runBlockingWithTimeout {
+    fun canInsertAndRetrieveMessagesCounter() = runTest {
         // given
         val input = oneMessagesInboxCounter
 
@@ -97,7 +97,7 @@ class UnreadCounterDaoTest {
     }
 
     @Test
-    fun canInsertAndRetrieveConversationsCounter() = runBlockingWithTimeout {
+    fun canInsertAndRetrieveConversationsCounter() = runTest {
         // given
         val input = oneConversationsInboxCounter
 
@@ -111,7 +111,7 @@ class UnreadCounterDaoTest {
     }
 
     @Test
-    fun insertIfDifferentUserId() = runBlockingWithTimeout {
+    fun insertIfDifferentUserId() = runTest {
         // given
         val first = oneMessagesInboxCounter
         val second = twoMessagesInboxCounter
@@ -129,7 +129,7 @@ class UnreadCounterDaoTest {
     }
 
     @Test
-    fun insertIfDifferentType() = runBlockingWithTimeout {
+    fun insertIfDifferentType() = runTest {
         // given
         val first = oneMessagesInboxCounter
         val second = oneConversationsInboxCounter
@@ -147,7 +147,7 @@ class UnreadCounterDaoTest {
     }
 
     @Test
-    fun insertIfDifferentLabelId() = runBlockingWithTimeout {
+    fun insertIfDifferentLabelId() = runTest {
         // given
         val first = oneMessagesInboxCounter
         val second = oneMessagesSendCounter
@@ -164,7 +164,7 @@ class UnreadCounterDaoTest {
     }
 
     @Test
-    fun updateIfSameUserIdTypeAndLabelId() = runBlockingWithTimeout {
+    fun updateIfSameUserIdTypeAndLabelId() = runTest {
         // given
         val first = oneMessagesInboxCounter
         val second = first.copy(unreadCount = 15)

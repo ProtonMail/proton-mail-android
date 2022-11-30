@@ -83,7 +83,7 @@ import java.net.SocketTimeoutException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
 
-class SendMessageWorkerTest : CoroutinesTest {
+class SendMessageWorkerTest : CoroutinesTest by CoroutinesTest() {
 
     private val context: Context = mockk(relaxed = true)
 

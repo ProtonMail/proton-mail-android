@@ -35,7 +35,7 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class FetchContactDetailsTest : ArchTest, CoroutinesTest {
+class FetchContactDetailsTest : ArchTest by ArchTest(), CoroutinesTest by CoroutinesTest() {
 
     private val repository: ContactDetailsRepository = mockk()
 

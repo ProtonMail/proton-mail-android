@@ -49,10 +49,12 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -61,7 +63,8 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
-class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
+class ComposeMessageViewModelTest : ArchTest by ArchTest(),
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     @get:Rule
     val trampolineSchedulerRule = TrampolineScheduler()
@@ -106,31 +109,32 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val getAddressIndexByAddressId: GetAddressIndexByAddressId = mockk()
 
-    private val viewModel = ComposeMessageViewModel(
-        isAppInDarkMode = isAppInDarkMode,
-        composeMessageRepository = composeMessageRepository,
-        userManager = userManager,
-        accountManager = accountManager,
-        messageDetailsRepository = messageDetailsRepository,
-        deleteMessage = deleteMessage,
-        fetchPublicKeys = fetchPublicKeys,
-        saveDraft = saveDraft,
-        dispatchers = dispatchers,
-        stringResourceResolver = stringResourceResolver,
-        sendMessage = sendMessage,
-        verifyConnection = verifyConnection,
-        networkConfigurator = networkConfigurator,
-        htmlToSpanned = htmlToSpanned,
-        addExpirationTimeToMessage = addExpirationTimeToMessage,
-        setUpWebViewDarkModeHandlingIfSupported = setUpWebViewDarkModeHandlingIfSupported,
-        getDecryptedMessageById = getDecryptedMessageById,
-        getAddressIndexByAddressId = getAddressIndexByAddressId
-    )
+    private lateinit var viewModel: ComposeMessageViewModel
 
     @BeforeTest
     fun setUp() {
         mockkStatic(UiUtil::class)
         every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
+        viewModel = ComposeMessageViewModel(
+            isAppInDarkMode = isAppInDarkMode,
+            composeMessageRepository = composeMessageRepository,
+            userManager = userManager,
+            accountManager = accountManager,
+            messageDetailsRepository = messageDetailsRepository,
+            deleteMessage = deleteMessage,
+            fetchPublicKeys = fetchPublicKeys,
+            saveDraft = saveDraft,
+            dispatchers = dispatchers,
+            stringResourceResolver = stringResourceResolver,
+            sendMessage = sendMessage,
+            verifyConnection = verifyConnection,
+            networkConfigurator = networkConfigurator,
+            htmlToSpanned = htmlToSpanned,
+            addExpirationTimeToMessage = addExpirationTimeToMessage,
+            setUpWebViewDarkModeHandlingIfSupported = setUpWebViewDarkModeHandlingIfSupported,
+            getDecryptedMessageById = getDecryptedMessageById,
+            getAddressIndexByAddressId = getAddressIndexByAddressId
+        )
     }
 
     @AfterTest

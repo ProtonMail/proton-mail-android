@@ -45,7 +45,7 @@ import kotlin.test.assertTrue
 class SecureSharedPreferencesTest {
 
     @Suppress("DEPRECATION")
-    class UsernameToIdMigrationTest : CoroutinesTest {
+    class UsernameToIdMigrationTest : CoroutinesTest by CoroutinesTest() {
 
         private val user1 = "username1" to UserId("id1")
         private val user2 = "username2" to UserId("id2")
@@ -71,13 +71,14 @@ class SecureSharedPreferencesTest {
             every { _usernamePreferences(user1.first) } returns user1Prefs
             every { _usernamePreferences(user2.first) } returns user2Prefs
         }
-        private val migration =
-            SecureSharedPreferences.UsernameToIdMigration(preferencesFactory, dispatchers)
+        private lateinit var migration: SecureSharedPreferences.UsernameToIdMigration
 
         @BeforeTest
         fun setup() {
             mockkStatic(Base64::class)
             every { Base64.encode(any(), any()) } answers { firstArg() }
+            migration =
+                SecureSharedPreferences.UsernameToIdMigration(preferencesFactory, dispatchers)
         }
 
         @AfterTest

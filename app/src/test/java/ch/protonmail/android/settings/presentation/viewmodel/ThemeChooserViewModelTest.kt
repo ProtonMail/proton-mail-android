@@ -27,12 +27,15 @@ import ch.protonmail.android.settings.domain.usecase.SaveAppThemeSettings
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ThemeChooserViewModelTest : CoroutinesTest {
+class ThemeChooserViewModelTest :
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     private val getAppThemeSettings: GetAppThemeSettings = mockk()
     private val saveAppThemeSettings: SaveAppThemeSettings = mockk(relaxUnitFun = true)
@@ -47,7 +50,7 @@ class ThemeChooserViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun `correct theme is emitted`() = runBlockingTest {
+    fun `correct theme is emitted`() = coroutinesTest {
         // given
         val theme = AppThemeSettings.DARK
         val expectedState = ThemeChooserViewModel.State.Data(theme)
@@ -62,7 +65,7 @@ class ThemeChooserViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun `saves correct theme`() = runBlockingTest {
+    fun `saves correct theme`() = coroutinesTest {
         // given
         val expectedTheme = AppThemeSettings.FOLLOW_SYSTEM
 
@@ -74,7 +77,7 @@ class ThemeChooserViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun `correctly requests to apply the theme`() = runBlockingTest {
+    fun `correctly requests to apply the theme`() = coroutinesTest {
         // when
         viewModel.process(ThemeChooserViewModel.Action.SetLightTheme)
 

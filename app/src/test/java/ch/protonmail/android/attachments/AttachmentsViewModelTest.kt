@@ -37,13 +37,16 @@ import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Before
 import org.junit.Rule
 import kotlin.test.Test
 
-class AttachmentsViewModelTest : CoroutinesTest {
+class AttachmentsViewModelTest :
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()

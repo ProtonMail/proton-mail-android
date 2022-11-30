@@ -49,7 +49,7 @@ class DeleteMessageWorkerTest {
     @MockK
     private lateinit var api: ProtonMailApiManager
 
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     private lateinit var worker: DeleteMessageWorker
 

@@ -30,7 +30,7 @@ import kotlin.test.assertTrue
 
 class IsPinLockEnabledTest {
 
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
     private val isPinLockEnabled = IsPinLockEnabled(mockSharedPreferences, dispatchers)
 
     @Test

@@ -23,14 +23,16 @@ import app.cash.turbine.test
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
  * Test suite for [LoadMoreFlow]
  */
-class LoadMoreFlowTest : CoroutinesTest {
+class LoadMoreFlowTest : CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher())}) {
 
     private val fakePagedApi = FakePagedApi()
     private val fakeDatabase = FakeDatabase()
@@ -193,6 +195,7 @@ class LoadMoreFlowTest : CoroutinesTest {
             assertEquals(allItems.take(4), awaitItem())
             flow.loadMore()
             assertEquals(allItems.take(6), awaitItem())
+            cancelAndIgnoreRemainingEvents()
         }
     }
 

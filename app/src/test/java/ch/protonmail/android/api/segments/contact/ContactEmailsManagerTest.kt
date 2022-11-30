@@ -49,7 +49,7 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
+class ContactEmailsManagerTest : CoroutinesTest by CoroutinesTest(), ArchTest by ArchTest() {
 
     private lateinit var manager: ContactEmailsManager
 

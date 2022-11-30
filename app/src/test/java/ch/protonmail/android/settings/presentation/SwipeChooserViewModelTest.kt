@@ -28,17 +28,20 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.SwipeAction
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Test
 
 private val TEST_USER_ID = UserId("userId")
 
-class SwipeChooserViewModelTest : ArchTest, CoroutinesTest {
+class SwipeChooserViewModelTest : ArchTest by ArchTest(),
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     private val savedStateHandle: SavedStateHandle = mockk()
 
@@ -57,7 +60,7 @@ class SwipeChooserViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun `invokes use case with correct parameters when updating Swipe Left`() = runBlockingTest {
+    fun `invokes use case with correct parameters when updating Swipe Left`() = coroutinesTest {
 
         // given
         val action = SwipeAction.Archive
@@ -74,7 +77,7 @@ class SwipeChooserViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun `invokes use case with correct parameters when updating Swipe Right`() =
-        runBlockingTest {
+        coroutinesTest {
 
             // given
             val action = SwipeAction.Spam

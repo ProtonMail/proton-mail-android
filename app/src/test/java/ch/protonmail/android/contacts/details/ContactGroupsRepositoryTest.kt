@@ -53,7 +53,7 @@ class ContactGroupsRepositoryTest {
     private val labelRepository: LabelRepository = mockk()
     private val accountManager: AccountManager = mockk()
     private val contactRepository: ContactsRepository = mockk()
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     private val contactGroupsRepository = ContactGroupsRepository(
         labelRepository = labelRepository,

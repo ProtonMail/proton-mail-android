@@ -35,7 +35,7 @@ private val TEST_USER_ID = UserId("user")
 
 class LabelOrFolderWithChildrenMapperTest {
 
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     private val mapper = LabelOrFolderWithChildrenMapper(dispatchers)
 

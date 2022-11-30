@@ -47,6 +47,7 @@ import io.mockk.verify
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
@@ -57,7 +58,8 @@ import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
-class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
+class LabelRepositoryImplTest : ArchTest by ArchTest(),
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     private val labelDao = mockk<LabelDao>()
     private val api = mockk<ProtonMailApi>()
@@ -69,19 +71,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
     private val deleteLabelWorker = mockk<DeleteLabelsWorker.Enqueuer>()
     private val postLabelWorker = mockk<PostLabelWorker.Enqueuer>()
 
-    private val repository =
-        LabelRepositoryImpl(
-            labelDao,
-            api,
-            labelMapper,
-            labelDomainMapper,
-            LabelOrFolderWithChildrenMapper(TestDispatcherProvider),
-            networkConnectivityManager,
-            applyMessageLabelWorker,
-            removeMessageLabelWorker,
-            deleteLabelWorker,
-            postLabelWorker
-        )
+    private lateinit var repository: LabelRepositoryImpl
 
     private val dbFlow = MutableSharedFlow<List<LabelEntity>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
 
@@ -92,6 +82,18 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
                 testUserId
             )
         } returns dbFlow
+        repository = LabelRepositoryImpl(
+            labelDao,
+            api,
+            labelMapper,
+            labelDomainMapper,
+            LabelOrFolderWithChildrenMapper(dispatchers),
+            networkConnectivityManager,
+            applyMessageLabelWorker,
+            removeMessageLabelWorker,
+            deleteLabelWorker,
+            postLabelWorker
+        )
     }
 
     @Test

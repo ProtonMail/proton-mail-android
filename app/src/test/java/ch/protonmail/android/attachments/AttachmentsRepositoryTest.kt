@@ -55,7 +55,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class AttachmentsRepositoryTest : CoroutinesTest {
+class AttachmentsRepositoryTest : CoroutinesTest by CoroutinesTest() {
 
     @MockK
     private lateinit var userManager: UserManager

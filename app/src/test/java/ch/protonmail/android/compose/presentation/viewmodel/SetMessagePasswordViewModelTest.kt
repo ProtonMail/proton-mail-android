@@ -24,19 +24,28 @@ import ch.protonmail.android.compose.presentation.model.SetMessagePasswordUiMode
 import ch.protonmail.android.compose.presentation.model.SetMessagePasswordUiModel.Error
 import ch.protonmail.android.compose.presentation.model.SetMessagePasswordUiModel.Input
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
  * Test suite for [SetMessagePasswordViewModel]
  */
-class SetMessagePasswordViewModelTest : CoroutinesTest {
+class SetMessagePasswordViewModelTest :
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
-    private val viewModel = SetMessagePasswordViewModel(dispatchers)
+    private lateinit var viewModel: SetMessagePasswordViewModel
     private val testHint = "hint"
+
+    @BeforeTest
+    fun setUp() {
+        viewModel = SetMessagePasswordViewModel(dispatchers)
+    }
 
     @Test
     fun emptyPasswordAndEmptyRepeat() = runTest {

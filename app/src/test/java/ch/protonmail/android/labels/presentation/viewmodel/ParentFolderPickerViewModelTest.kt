@@ -35,6 +35,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
@@ -46,7 +47,8 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ParentFolderPickerViewModelTest : CoroutinesTest {
+class ParentFolderPickerViewModelTest :
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     private val savedStateHandle: SavedStateHandle = mockk {
         every { get<String>(any()) } returns null
@@ -61,7 +63,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     private val viewModel by lazy {
         ParentFolderPickerViewModel(
             savedStateHandle = savedStateHandle,
-            dispatchers = TestDispatcherProvider,
+            dispatchers = dispatchers,
             accountManager = accountManager,
             observeFoldersEligibleAsParent = observeFoldersEligibleAsParent,
             mapper = mapper

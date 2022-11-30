@@ -34,7 +34,7 @@ import me.proton.core.test.android.ArchTest
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class ContactsListViewModelTest : ArchTest {
+class ContactsListViewModelTest : ArchTest by ArchTest() {
 
     private val contactDaoMock: ContactDao = mockk()
     private val workManagerMock: WorkManager = mockk()

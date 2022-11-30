@@ -43,7 +43,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class HandleSingleAttachmentTest : ArchTest {
+class HandleSingleAttachmentTest : ArchTest by ArchTest() {
 
     private val context: Context = mockk()
     private val userManager: UserManager = mockk()

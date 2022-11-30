@@ -42,14 +42,16 @@ import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.user.domain.entity.AddressId
+import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class SendMessageTest : CoroutinesTest {
+class SendMessageTest : CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     private val addressCryptoFactory = mockk<AddressCrypto.Factory>(relaxed = true)
     private val sendMessageScheduler = mockk<SendMessageWorker.Enqueuer> {
@@ -68,15 +70,20 @@ class SendMessageTest : CoroutinesTest {
     }
 
     private val pendingSendRepository = mockk<PendingSendRepository>(relaxUnitFun = true)
-    private val sendMessage = SendMessage(
-        messageDetailsRepository,
-        TestDispatcherProvider,
-        databaseProvider,
-        sendMessageScheduler,
-        pendingSendRepository,
-        addressCryptoFactory,
-        uuidProvider
-    )
+    private lateinit var sendMessage: SendMessage
+
+    @Before
+    fun setUp() {
+        sendMessage = SendMessage(
+            messageDetailsRepository,
+            dispatchers,
+            databaseProvider,
+            sendMessageScheduler,
+            pendingSendRepository,
+            addressCryptoFactory,
+            uuidProvider
+        )
+    }
 
     @Test
     fun saveMessageEncryptsMessageBodyAndSavesItLocally() = runTest(dispatchers.Main) {

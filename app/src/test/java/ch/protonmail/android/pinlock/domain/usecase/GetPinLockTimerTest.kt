@@ -47,7 +47,7 @@ class GetPinLockTimerTest {
             86_400_000
         )
     }
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     private val getPinLockTimer = GetPinLockTimer(
         context = context,

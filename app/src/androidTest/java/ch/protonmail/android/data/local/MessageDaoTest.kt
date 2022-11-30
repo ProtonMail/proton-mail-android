@@ -23,7 +23,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import ch.protonmail.android.data.local.model.Message
-import me.proton.core.test.android.runBlockingWithTimeout
+import kotlinx.coroutines.test.runTest
 import org.junit.runner.RunWith
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -48,7 +48,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun observe_messages_find_messages_with_only_one_label() = runBlockingWithTimeout {
+    fun observe_messages_find_messages_with_only_one_label() = runTest {
         // given
         val message = buildMessage(FIRST_MESSAGE_ID, labelsIds = listOf(INBOX_LABEL))
         dao.insertOrUpdate(message)
@@ -62,7 +62,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun observe_messages_find_messages_with_label_at_the_start_of_the_list() = runBlockingWithTimeout {
+    fun observe_messages_find_messages_with_label_at_the_start_of_the_list() = runTest {
         // given
         val message = buildMessage(FIRST_MESSAGE_ID, labelsIds = listOf(INBOX_LABEL, ARCHIVE_LABEL))
         dao.insertOrUpdate(message)
@@ -76,7 +76,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun observe_messages_find_messages_with_label_at_the_end_of_the_list() = runBlockingWithTimeout {
+    fun observe_messages_find_messages_with_label_at_the_end_of_the_list() = runTest {
         // given
         val message = buildMessage(FIRST_MESSAGE_ID, labelsIds = listOf(ARCHIVE_LABEL, INBOX_LABEL))
         dao.insertOrUpdate(message)
@@ -90,7 +90,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun observe_messages_find_messages_with_label_in_the_middle_of_the_list() = runBlockingWithTimeout {
+    fun observe_messages_find_messages_with_label_in_the_middle_of_the_list() = runTest {
         // given
         val message = buildMessage(FIRST_MESSAGE_ID, labelsIds = listOf(ARCHIVE_LABEL, INBOX_LABEL, SENT_LABEL))
         dao.insertOrUpdate(message)
@@ -104,7 +104,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun observe_messages_ignores_unread_if_null() = runBlockingWithTimeout {
+    fun observe_messages_ignores_unread_if_null() = runTest {
         // given
         dao.saveMessages(allMessages)
         val expected = allMessages
@@ -117,7 +117,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun observe_messages_filter_unread_only() = runBlockingWithTimeout {
+    fun observe_messages_filter_unread_only() = runTest {
         // given
         dao.saveMessages(allMessages)
         val expected = allMessages.filter { it.Unread }
@@ -130,7 +130,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun observe_messages_filter_read_only() = runBlockingWithTimeout {
+    fun observe_messages_filter_read_only() = runTest {
         // given
         dao.saveMessages(allMessages)
         val expected = allMessages.filterNot { it.Unread }

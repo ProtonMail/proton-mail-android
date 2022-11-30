@@ -59,7 +59,7 @@ class RemoveMembersFromContactGroupWorkerTest {
 
     private val testUserId = UserId("TestUserId")
 
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     private lateinit var worker: RemoveMembersFromContactGroupWorker
 

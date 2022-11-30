@@ -421,7 +421,10 @@ dependencies {
         `butterknife-compiler`
     )
 
-    testImplementation(project(Module.testAndroid))
+    testImplementation(
+        `Proton-kotlin-util`,
+        project(Module.testAndroid)
+    )
     androidTestUtil(`orchestrator`)
     androidTestImplementation(
         project(Module.testAndroidInstrumented),

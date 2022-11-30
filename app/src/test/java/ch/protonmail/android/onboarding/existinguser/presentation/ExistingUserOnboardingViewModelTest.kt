@@ -29,13 +29,15 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Test
 import kotlin.test.assertEquals
 
-internal class ExistingUserOnboardingViewModelTest : CoroutinesTest {
+internal class ExistingUserOnboardingViewModelTest :
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     private val prefsEditorMock = mockk<SharedPreferences.Editor>(relaxUnitFun = true) {
         every { putBoolean(any(), any()) } returns this@mockk
@@ -44,10 +46,10 @@ internal class ExistingUserOnboardingViewModelTest : CoroutinesTest {
         every { edit() } returns prefsEditorMock
     }
     private val existingUserOnboardingViewModel
-        get() = runBlocking(TestDispatcherProvider.Main) {
+        get() = runBlocking(dispatchers.Main) {
             ExistingUserOnboardingViewModel(
                 defaultSharedPreferencesMock,
-                TestDispatcherProvider
+                dispatchers
             )
         }
 

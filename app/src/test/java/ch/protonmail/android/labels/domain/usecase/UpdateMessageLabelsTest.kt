@@ -59,7 +59,7 @@ class UpdateMessageLabelsTest {
 
     private lateinit var useCase: UpdateMessageLabels
 
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     private val testUserId = UserId("testUserId")
 
