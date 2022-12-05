@@ -38,10 +38,10 @@
     <string name="x_parent_folder_icon_description">Ikona mape s podmapama</string>
     <!-- endregion -->
     <!-- region Drawer -->
-    <string name="drawer_scheduled">Scheduled</string>
+    <string name="drawer_scheduled">Zakazano</string>
     <string name="drawer_contacts">Kontakti</string>
     <string name="drawer_lock_the_app">Zaključaj aplikaciju</string>
-    <string name="drawer_report_bug">Report a problem</string>
+    <string name="drawer_report_bug">Prijavi problem</string>
     <string name="drawer_settings">Postavke</string>
     <string name="drawer_sign_out">Odjava</string>
     <string name="drawer_create_folder_description">Stvori novu mapu</string>
@@ -90,7 +90,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; napisao:</string>
     <string name="set_msg_password_title">Postavi lozinku</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
+    <string name="set_msg_password_info">Postavite lozinku za šifriranje ove poruke za korisnike koji nisu dio Proton Maila. <a href="https://proton.me/support/password-protected-emails">Saznajte više</a></string>
     <string name="set_msg_password_info_icon_description">Informacije</string>
     <string name="set_msg_password_msg_password_title">Lozinka poruke</string>
     <string name="set_msg_password_msg_password_hint">4 do 21 znakova dugo</string>
@@ -167,7 +167,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nove značajke</string>
     <string name="existing_user_onboarding_new_features_description">Uživajte u novim značajkama kao što su tamni način rada, poboljšane obavijesti, filter nepročitanih poruka i podmape.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Ažurirani Proton, jedinstvena zaštita</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Predstavljamo Protonov osvježeni izgled. Mnogo usluga, jedna misija. Dobrodošli na internet gdje je privatnost zadana vrijednost. <a href="https://proton.me/news/updated-proton">Saznajte više</a></string>
     <string name="onboarding_next">Sljedeće</string>
     <string name="onboarding_get_started">Započnite</string>
     <string name="onboarding_got_it">Shvaćam</string>
@@ -194,7 +194,7 @@
     <string name="update_app_title">Potrebno ažuriranje</string>
     <string name="update_app">Ne možete koristiti ProtonMail aplikaciju dok se ne ažurira</string>
     <string name="you_are_offline">Niste na mreži</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">ProtonMail je trenutno nedostupan, provjerite https://protonstatus.com ili naš twitter za trenutni status: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontakt je dodan</string>
     <string name="contact_saved_offline">Kontakt je spremljen, biti će sinkroniziran kada veza bude dostupna</string>
     <string name="contact_exist">E-pošta kontakta već postoji</string>
@@ -331,7 +331,7 @@
     <string name="label_deleted_error">Pogreška tijekom brisanja oznake</string>
     <string name="message_deleted_error">Pogreška tijekom brisanja nekih poruka. Neke od odabranih poruka su u procesu slanja?!</string>
     <string name="respond_inline">Odgovori u ravnini s ostalim tekstom</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Poslužitelj nije dostupan…(<u>Rješavanje problema</u>)</string>
     <string name="connectivity_checking">Provjera veze...</string>
     <string name="draft_label_attachments_uploading">učitavanje privitaka…</string>
     <string name="draft_label_message_uploading">slanje poruke…</string>
@@ -343,7 +343,7 @@
     <string name="saving_failed_no_conn">Neuspješno spremanje, nema internetske veze</string>
     <string name="attachment_exists">Privitak je već dodan</string>
     <string name="eo_password_not_completed">Lozinka poruke nije unešena.</string>
-    <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through proton.me to pay your unpaid invoice.</string>
+    <string name="delinquency_subtitle">Pristup ovom računu onemogućen je zbog neplaćanja. Prijavite se putem proton.me kako biste platili neplaćenu fakturu.</string>
     <string name="downloading">Preuzimanje...</string>
     <string name="cant_download_attachment">Can\'t download attachment</string>
     <string-array name="auto_logout_options_array">
@@ -499,7 +499,7 @@
     <string name="update_folder">Ažuriraj mapu</string>
     <string name="spam_score_100">Ova poruka e-pošte izgleda kao da je od ProtonMail adrese, ali je došla izvan našeg sustava i nije ispunila naše zahtjeve autentikacije. Može biti lažna ili nepropisno proslijeđena!</string>
     <string name="spam_score_101">Ova poruka e-pošte nije ispunila zahtjeve za provjeru autentičnosti svoje domene. Može biti lažna ili nepropisno proslijeđena!</string>
-    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://proton.me/blog/prevent-phishing-attacks">LEARN MORE</a></string>
+    <string name="spam_score_102">Ova poruka može biti pokušaj krađe identiteta. Provjerite pošiljatelja i sadržaj kako biste bili sigurni da su legitimni. <a href="https://proton.me/blog/prevent-phishing-attacks">SAZNAJTE VIŠE</a></string>
     <string name="print_from_template">Od: %s</string>
     <string name="print_to_template">To: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -802,7 +802,7 @@
     <string name="connections_via_third_parties">Alternativno usmjeravanje</string>
     <string name="allow_secure_connections_via_third_parties">Omogući alternativno usmjeravanje</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">U slučaju da su Protonove stranice blokirane, ova postavka omogućuje aplikaciji da isproba alternativno mrežno usmjeravanje do Protona, što može biti korisno u zaobilaženju vatrozida ili problema s mrežom. Preporučujemo da ovu postavku zadržite omogućenom radi veće pouzdanosti.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">U slučaju da su Protonove stranice blokirane, ova postavka omogućuje aplikaciji da isproba alternativno mrežno usmjeravanje do Protona, što može biti korisno u zaobilaženju vatrozida ili problema s mrežom. Preporučujemo da ovu postavku zadržite omogućenom radi veće pouzdanosti. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Saznajte više</a></string>
     <string name="app_language">Jezik aplikacije</string>
     <string name="custom_language_dialog_title">Odaberite jezik za aplikaciju</string>
     <string name="auto_detect">Automatsko otkrivanje</string>

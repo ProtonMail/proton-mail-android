@@ -176,7 +176,7 @@
     <!-- region Snackbars -->
     <string name="snackbar_message_draft_saved">Ciorna a fost salvată</string>
     <string name="snackbar_message_draft_moved_to_trash">Ciorna a fost mutată în «Gunoi»</string>
-    <string name="snackbar_action_discard">Renunțare</string>
+    <string name="snackbar_action_discard">Anulare</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">Proton Mail</string>

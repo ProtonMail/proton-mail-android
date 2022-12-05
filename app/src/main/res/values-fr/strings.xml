@@ -775,7 +775,7 @@
     <string name="auto_lock_app">Verrouillage automatique de l\'application</string>
     <string name="auto_lock_description">Activez cette fonctionnalité pour verrouiller automatiquement votre application et utilisez un code PIN ou une empreinte digitale pour la déverrouiller.</string>
     <string name="change_pin_code">Modifier le code PIN</string>
-    <string name="auto_lock_timer">Verrouillage automatique</string>
+    <string name="auto_lock_timer">Délai de verrouillage automatique</string>
     <string name="connections_via_third_parties">Routage alternatif</string>
     <string name="allow_secure_connections_via_third_parties">Autoriser le routage alternatif</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">En cas de blocage des sites Proton, ce paramètre permet à l\'application d\'essayer un routage réseau alternatif pour atteindre Proton, ce qui peut être utile pour contourner les pare-feu ou les problèmes de réseau. Nous vous recommandons de conserver ce paramètre activé pour une plus grande fiabilité.</string>
