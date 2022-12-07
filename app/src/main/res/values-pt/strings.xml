@@ -85,7 +85,7 @@
     <string name="composer_subject">Assunto:</string>
     <string name="composer_to">Para:</string>
     <string name="composer_removing_address_generic_error">Não foi possível verificar o endereço: %s. O envio poderá falhar.</string>
-    <string name="composer_removing_address_server_error">Removing address: %s. %s</string>
+    <string name="composer_removing_address_server_error">Removendo endereço: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Em %s, %s &lt; %s&gt; escreveu:</string>
     <string name="set_msg_password_title">Definir senha</string>
@@ -124,8 +124,8 @@
     <string name="settings_swipe_settings_info">Configure gestos de deslize para aceder às acções mais usadas.</string>
     <string name="settings_swipe_left_to_right">Da esquerda para a direita</string>
     <string name="settings_swipe_right_to_left">Da direita para a esquerda</string>
-    <string name="settings_swipe_saving">Saving Swipe action…</string>
-    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
+    <string name="settings_swipe_saving">Guardando a ação de deslizar…</string>
+    <string name="settings_swipe_generic_error">Não foi possível guardar a ação de deslizar</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Tema</string>
@@ -503,7 +503,7 @@
     <string name="address_city">Cidade</string>
     <string name="address_region">Região (distrito ou concelho)</string>
     <string name="address_postcode">Código postal</string>
-    <string name="address_po_box">PO Box</string>
+    <string name="address_po_box">Apartado</string>
     <string name="address_country">País</string>
     <string name="recheck_delinquency">Verifique novamente</string>
     <string name="close_app">Fechar aplicação</string>
