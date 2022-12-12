@@ -134,7 +134,7 @@
     <string name="app_theme_system">Predefinição do sistema</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
+    <string name="labels_manager_select_parent_folder">Seleccione pasta-mãe (opcional)</string>
     <string name="labels_manager_parent_folder_selected"><b>Parent folder selected.</b> Tap to change</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
@@ -193,7 +193,7 @@
     <string name="update_app_title">Actualização requerida</string>
     <string name="update_app">O aplicativo Proton Mail não pode ser usado até que seja atualizado</string>
     <string name="you_are_offline">Está offline</string>
-    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our Twitter for the current status: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">O Proton Mail está atualmente offline, aceda ahttps://protonstatus.com ou ao nosso Twitter: https://twitter.com/ProtonPrivacy para ver a situação atual</string>
     <string name="contact_saved">Contacto gravado</string>
     <string name="contact_saved_offline">Contacto gravado. Será sincronizado quando estiver disponível uma ligação</string>
     <string name="contact_exist">O e-mail de contacto já existe.</string>
@@ -341,7 +341,7 @@
     <string name="eo_password_not_completed">Senha da mensagem não concluída.</string>
     <string name="delinquency_subtitle">O acesso a esta conta foi desativado devido ao incumprimento do pagamento. Por favor, inicie sessão através de proton.me para pagar o montante em falta.</string>
     <string name="downloading">A transferir...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Impossível transferir o anexo</string>
     <string-array name="auto_logout_options_array">
         <item>Imediatamente</item>
         <item>5 min inactivo</item>
@@ -351,7 +351,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Eliminar etiquetas seleccionadas?</string>
     <string name="delete_folder_confirmation_title">Eliminar pastas seleccionadas?</string>
-    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b></string>
+    <string name="delete_label_confirmation_message">Os emails aqui contidos serão encontrados em <b>Todos os emails</b></string>
     <string name="pin_invalid">PIN inválido, insira o PIN de 4 algarismos correcto</string>
     <string name="pin_not_match">O PIN não coincide</string>
     <string name="new_pin_saved">Novo PIN gravado</string>

@@ -492,7 +492,7 @@
     <string name="update_folder">Uppdatera mapp</string>
     <string name="spam_score_100">Denna e-post verkar komma från en Proton Mail-adress, men det kom utanför vårt system och misslyckades med våra autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefordrat!</string>
     <string name="spam_score_101">Denna e-post har misslyckats med domänens autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefordrat!</string>
-    <string name="spam_score_102">Detta meddelande kan vara ett nätfiskeförsök. Kontrollera avsändaren och innehållet för att säkerställa att de är legitima. <a href="https://proton.me/blog/prevent-phishing-attacks">Lär dig mer</a></string>
+    <string name="spam_score_102">Detta meddelande kan vara ett nätfiskeförsök. Kontrollera avsändaren och innehållet för att säkerställa att de är legitima. <a href="https://proton.me/blog/prevent-phishing-attacks">LÄR DIG MERr</a></string>
     <string name="print_from_template">Från: %s</string>
     <string name="print_to_template">Till: %s,  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -663,7 +663,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="use_pin_instead">Använd PIN-kod istället</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">Inga biometriska data registrerade</string>
-    <string name="log_in_using_biometric_credential">Lås upp med dina biometriska inloggningsuppgifter</string>
+    <string name="log_in_using_biometric_credential">Lås upp med dina biometriska uppgifter</string>
     <string name="unlock_using_biometrics">Lås upp med biometri</string>
     <string name="biometric_error_hw_not_available">Biometrisk hårdvara inte tillgänglig.</string>
     <!-- end strings used for biometric enrollment -->
