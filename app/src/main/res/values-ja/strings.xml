@@ -50,7 +50,7 @@
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">フォルダーは空です</string>
     <string name="mailbox_empty_inbox_subtitle">最新です</string>
-    <string name="mailbox_empty_spam_subtitle">迷惑メールフォルダーは空です。</string>
+    <string name="mailbox_empty_spam_subtitle">迷惑メールフォルダーは空です</string>
     <string name="mailbox_empty_trash_subtitle">ごみ箱は空です</string>
     <string name="mailbox_empty_state_no_results_found">該当する結果が見つかりませんでした</string>
     <string name="mailbox_empty_state_try_a_different_term">違う単語で検索してみてください</string>
@@ -348,7 +348,7 @@
     <string name="delete_label_confirmation_title">選択したラベルを削除してよろしいですか？</string>
     <string name="delete_folder_confirmation_title">選択したフォルダーを削除してよろしいですか？</string>
     <string name="delete_label_confirmation_message">ここに含まれているメッセージは<b>すべてのメール</b>から閲覧できます。</string>
-    <string name="pin_invalid">無効なPINコードです。4桁の正しいPINコードを入力してください。</string>
+    <string name="pin_invalid">無効なPINコードです。4 桁の正しい PIN コードを入力してください。</string>
     <string name="pin_not_match">PINコードが一致しません。</string>
     <string name="new_pin_saved">新しいPINコードが保存されました。</string>
     <string name="attachment_download_success">%s は正常にファイルマネージャーにダウンロードされました。</string>
@@ -501,7 +501,7 @@
     <string name="recheck_delinquency">もう一度確認</string>
     <string name="close_app">アプリを終了</string>
     <string name="empty_subject">(件名なし)</string>
-    <string name="empty_recipients">(宛先がありません)</string>
+    <string name="empty_recipients">(宛先なし)</string>
     <string name="contacts_unknown">不明</string>
     <string name="learn_more"><u>詳細</u></string>
     <string name="info">情報</string>
@@ -521,7 +521,7 @@
     <string name="dont_remind_again">今後このメッセージを表示しない</string>
     <string name="load_embedded_images">埋め込み画像を読み込む</string>
     <string name="remove_password">パスワードを削除</string>
-    <string name="remove_password_question">パスワードを削除しますか？</string>
+    <string name="remove_password_question">パスワードを削除しますか?</string>
     <string name="attachment_storage_value_current">現在の選択: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">現在の選択: 無制限</string>
     <string name="attachment_offline_max_storage">モバイル端末で Proton Mail が使用できるストレージの最大容量を設定してください。</string>

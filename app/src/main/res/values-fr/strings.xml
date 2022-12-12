@@ -231,10 +231,10 @@
     <string name="message_headers">En-tête du message</string>
     <string name="delete_messages">Supprimer les messages</string>
     <string name="move_to_archive">Déplacer dans le dossier Archives</string>
-    <string name="move_to_trash">Déplacer dans Corbeille</string>
+    <string name="move_to_trash">Déplacer dans le dossier Corbeille</string>
     <string name="move_to_spam">Déplacer dans le dossier Indésirables/spam</string>
     <string name="move_to_inbox">Déplacer dans le dossier Boîte de réception</string>
-    <string name="move_to">Déplacer dans…</string>
+    <string name="move_to">Déplacer…</string>
     <string name="are_you_sure_empty">Voulez-vous vraiment supprimer tous les messages de ce dossier ?</string>
     <string name="send">Envoyer</string>
     <string name="selected">Sélectionné</string>
@@ -749,7 +749,7 @@
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Choisir une action de balayage</string>
     <string name="swipe_action_trash">Message déplacé dans le dossier Corbeille</string>
-    <string name="swipe_action_trash_short">Déplacer dans Corbeille</string>
+    <string name="swipe_action_trash_short">Déplacer dans le dossier Corbeille</string>
     <string name="swipe_action_star">Message favori mis à jour</string>
     <string name="swipe_action_star_short">Mettre à jour le favori</string>
     <string name="swipe_action_spam">Message marqué comme indésirable/spam</string>
@@ -837,7 +837,7 @@
     <string name="unstar">Retirer des favoris</string>
     <string name="star_unstar">Ajouter/Retirer des favoris</string>
     <string name="send_to_archive">Envoyer vers le dossier Archives ?</string>
-    <string name="label_as">Labelliser comme…</string>
+    <string name="label_as">Labelliser…</string>
     <string name="mark_as_unread">Marquer comme non lu</string>
     <string name="mark_as_read">Marquer comme lu</string>
     <string name="move_message">Déplacer le message</string>
