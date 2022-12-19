@@ -170,7 +170,7 @@
     <string name="onboarding_next">Seguinte</string>
     <string name="onboarding_get_started">Começar</string>
     <string name="onboarding_got_it">Entendi</string>
-    <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
+    <string name="onboarding_image_view_content_description">Ilustração do Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
     <string name="snackbar_message_draft_saved">Rascunho gravado</string>

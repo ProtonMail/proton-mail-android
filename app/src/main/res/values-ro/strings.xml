@@ -384,7 +384,7 @@
     </plurals>
     <string name="logout">Deconectare</string>
     <string name="logout_question_next_account">Veți fi comutat la %s.</string>
-    <string name="upgrade">Upgrade</string>
+    <string name="upgrade">Modernizare</string>
     <string name="error">Eroare</string>
     <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
@@ -519,7 +519,7 @@
     <string name="contacts_unknown">Necunoscut</string>
     <string name="learn_more"><u>Aflați mai multe</u></string>
     <string name="info">Informații</string>
-    <string name="error_can_not_send_from_this_address">Actualizați la un plan cu plată pentru a trimite de la adresa %s.</string>
+    <string name="error_can_not_send_from_this_address">Treceți la un plan cu plată pentru a trimite de la adresa %s.</string>
     <string name="email_empty">Adresa de e-mail lipsește</string>
     <string name="encrypted_contact_details">Detalii criptate contact</string>
     <string name="convert_question">Încărcare contacte din dispozitiv</string>
@@ -531,7 +531,7 @@
     <string name="print_date_template">Data: %s</string>
     <string name="print_attachment_template">Atașament: %s;  </string>
     <string name="pm_me_changed">Trimiterea de mesaje de la adrese @pm.me este o facilitate plătită. Mesajul vă va fi trimis de pe adresa implicită %s</string>
-    <string name="pm_me_can_not_be_default">Treceți la un plan cu plată pentru a vă putea seta adresa %s ca implicită</string>
+    <string name="pm_me_can_not_be_default">Trebuie să treceți la un plan cu plată pentru a vă putea seta adresa %s ca implicită</string>
     <string name="dont_remind_again">Nu-mi mai reaminti</string>
     <string name="load_embedded_images">Încărcare imagini incluse</string>
     <string name="remove_password">Eliminare parolă</string>
@@ -627,7 +627,7 @@ descărcarea în fundal a mesajelor noi</string>
         <item quantity="few">%d selectate</item>
         <item quantity="other">%d selectate</item>
     </plurals>
-    <string name="paid_plan_needed">Vă rugăm să treceți la un abonament cu plată pentru aceste funcționalități plătite</string>
+    <string name="paid_plan_needed">Trebuie să treceți la un plan cu plată pentru aceste funcții speciale</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d membri)</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">Sigur doriți să ștergeți acest grup?</item>
