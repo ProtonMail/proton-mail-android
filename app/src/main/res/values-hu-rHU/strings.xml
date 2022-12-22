@@ -812,13 +812,14 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Általános kapcsolódási problémák és megoldásuk</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://proton.me/support/contact\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Nincs internetkapcsolat&lt;/i&gt; - Ellenőrizze, hogy működik-e internetkapcsolat.
+
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet szolgáltató (ISP) probléma&lt;/i&gt; - Próbáljon meg egy másik hálózatból csatlakozni a Protonhoz (vagy használjon &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN-t&lt;/a&gt; vagy &lt;a href=\"https://www.torproject.org/\"&gt;Tor-t&lt;/a&gt;).
+       &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Kormányzati letiltás&lt;/i&gt; - Lehet, hogy az országa korlátozza a Proton használatát. Próbálja ki a &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN-t&lt;/a&gt; (vagy más VPN-t) vagy a &lt;a href=\"https://www.torproject.org/\"&gt;Tor-t&lt;/a&gt; a Proton eléréséhez.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivírus összeakadás&lt;/i&gt; - Ideiglenesen tiltsa le vagy távolítsa el a víruskereső szoftvert.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/tűzfal összeakadás&lt;/i&gt; -  Kapcsolja ki a proxykat vagy tűzfalakat, vagy vegye fel a kapcsolatot a hálózati rendszergazdával.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;A Proton nem működik&lt;/i&gt; - Nézze meg a &lt;a href=\"http://protonstatus.com/\"&gt;Proton Állapota&lt;/a&gt; oldalt az aktuális információkért.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Még mindig nem talál megoldást&lt;/i&gt; - Vegye fel velünk a kapcsolatot a  &lt;a href=\"https://proton.me/support/contact\"&gt;támogatási űrlapon&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;emailben&lt;/a&gt; (support@protonmail.zendesk.com), vagy a  &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitteren&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

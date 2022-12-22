@@ -34,8 +34,8 @@
     <!-- endregion -->
     <!-- region Content descriptions: accessibility description for icons -->
     <string name="x_label_icon_description">ラベルのアイコン</string>
-    <string name="x_folder_icon_description">フォルダーのアイコン</string>
-    <string name="x_parent_folder_icon_description">サブフォルダを含むフォルダーのアイコン</string>
+    <string name="x_folder_icon_description">フォルダのアイコン</string>
+    <string name="x_parent_folder_icon_description">サブフォルダを含むフォルダのアイコン</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_scheduled">送信予約済み</string>
@@ -77,13 +77,13 @@
     <string name="scheduled_message_moved_to_trash_desc">このメッセージをごみ箱へ移動すると、送信予約はキャンセルされます</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">BCC:</string>
-    <string name="composer_cc">CC:</string>
+    <string name="composer_bcc">Bcc：</string>
+    <string name="composer_cc">Cc:</string>
     <string name="composer_compose_email">Eメールの作成</string>
     <string name="composer_from">差出人:</string>
     <string name="composer_subject">件名:</string>
     <string name="composer_to">宛先:</string>
-    <string name="composer_removing_address_generic_error">アドレスを検証できません: %s。送信に失敗します。</string>
+    <string name="composer_removing_address_generic_error">アドレスを検証できません: %s。おそらく送信に失敗します。</string>
     <string name="composer_removing_address_server_error">アドレスを削除中: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s に %s &lt; %s&gt; が送信:</string>
@@ -95,7 +95,7 @@
     <string name="set_msg_password_repeat_password_title">パスワードを再度入力</string>
     <string name="set_msg_password_repeat_password_hint">パスワードが一致しません</string>
     <string name="set_msg_password_password_hint_title">パスワードのヒント</string>
-    <string name="set_msg_password_password_hint_hint">パスワードのヒント（任意）</string>
+    <string name="set_msg_password_password_hint_hint">パスワードのヒント(任意)</string>
     <string name="set_msg_password_apply_password">パスワードを適用</string>
     <string name="set_msg_password_remove_password">パスワードを削除</string>
     <string name="set_msg_password_error_too_short">パスワードが短すぎます</string>
@@ -120,7 +120,7 @@
     <string name="settings_enter_pin_code_title">PIN コードを入力</string>
     <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB 使用中)</string>
     <string name="settings_storage_limit_unlimited_value">無制限 (%1$.2f MB 使用中)</string>
-    <string name="settings_swipe_settings_info">スワイプ操作を登録するとよく使う機能に簡単にアクセスできます。</string>
+    <string name="settings_swipe_settings_info">スワイプ操作を設定してよく使う機能を簡単に利用しましょう。</string>
     <string name="settings_swipe_left_to_right">左から右</string>
     <string name="settings_swipe_right_to_left">右から左</string>
     <string name="settings_swipe_saving">スワイプアクションを保存しています…</string>
@@ -133,7 +133,7 @@
     <string name="app_theme_system">システム標準</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">親フォルダーを選択 (任意)</string>
+    <string name="labels_manager_select_parent_folder">親フォルダを選択 (任意)</string>
     <string name="labels_manager_parent_folder_selected"><b>親フォルダーが選択されました。</b> タップして変更</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
@@ -157,17 +157,17 @@
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">すべての人にプライバシーを</string>
-    <string name="new_user_onboarding_privacy_for_all_description">連絡先をProton Mailに招待するとE2E暗号化を簡単に利用でき、メールを送信する際にパスワードを追加できます。</string>
+    <string name="new_user_onboarding_privacy_for_all_description">連絡先を Proton Mail に招待するとエンドツーエンド暗号化をシームレスに利用でき、メッセージを送信する際にパスワード保護を追加できます。</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">自分だけの外観</string>
     <string name="new_user_onboarding_neat_and_tidy_description">ファイルやラベルを使ったり、メッセージに色付けをしたりして、自分好みの受信トレイを作りましょう。</string>
     <string name="existing_user_onboarding_new_look_headline">新しい外観、変わらない保護</string>
     <string name="existing_user_onboarding_new_look_description">暗号化されたメールは使いやさを追求するために、デザインを一新しました。</string>
     <string name="existing_user_onboarding_new_features_headline">新しい機能</string>
     <string name="existing_user_onboarding_new_features_description">ダークモード、アップデートされた通知、未読メッセージフィルター、サブフォルダーなどの新たな機能をお楽しみください。</string>
-    <string name="existing_user_onboarding_updated_proton_headline">統合された保護を新しくなった Proton で</string>
+    <string name="existing_user_onboarding_updated_proton_headline">統一された保護を新しくなった Proton で</string>
     <string name="existing_user_onboarding_updated_proton_description">新しい外観になった Proton をご紹介します。たくさんのサービス、1 つのミッション。どこでもプライベートなインターネットへようこそ。<a href="https://proton.me/news/updated-proton">詳細</a></string>
     <string name="onboarding_next">次へ</string>
-    <string name="onboarding_get_started">利用開始</string>
+    <string name="onboarding_get_started">はじめましょう</string>
     <string name="onboarding_got_it">はい</string>
     <string name="onboarding_image_view_content_description">Proton Mail イラストレーション</string>
     <!-- endregion -->
@@ -360,9 +360,9 @@
     <string name="select_tone">音を選択してください</string>
     <string name="copy_link">リンクをコピーする</string>
     <string name="share_link">リンクを共有する</string>
-    <string name="sync_attachments">添付ファイルを同期中</string>
+    <string name="sync_attachments">添付ファイルを同期しています...</string>
     <string name="processing_attachment">添付ファイルの処理中</string>
-    <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次の URL を開こうとしています:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
+    <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次のURLを開こうとしています：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
     <string name="dont_ask_again">今後表示しない</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PINコードが間違っています。 あと%d回試すことができます。</item>
@@ -371,7 +371,7 @@
         <item quantity="other">完全なデータ抹消まで残り%d回です。</item>
     </plurals>
     <string name="logout">ログアウト</string>
-    <string name="logout_question_next_account">現在のアカウントでログアウトして、％s を使用して続行してよろしいですか？</string>
+    <string name="logout_question_next_account">%s に切り替えます。</string>
     <string name="upgrade">アップグレード</string>
     <string name="error">エラー</string>
     <string name="inline_prefix">[Inline]</string>
@@ -623,7 +623,7 @@
     <string name="contact_group_change_color">色の変更</string>
     <string name="fab_add_contact">新しい連絡先を追加</string>
     <string name="fab_add_contact_group">新しい連絡先グループを追加</string>
-    <string name="contacts_add_photo_title">写真を追加</string>
+    <string name="contacts_add_photo_title">写真の追加</string>
     <string name="contacts_add_photo_select_gallery">ギャラリーから選択</string>
     <string name="contacts_add_photo_select_camera">カメラで撮影</string>
     <string name="save_group_validation_error">グループ名を入力してください</string>
@@ -767,7 +767,7 @@
     <string name="allow_secure_connections_via_third_parties">代替ルーティングを許可</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Proton への接続がブロックされている場合、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。信頼性向上の観点から、この設定を有効にしておくことをおすすめします。</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Proton への接続がブロックされている場合、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。信頼性向上の観点から、この設定を有効にしておくことをおすすめします。 <a href="https://proton.me/blog/anti-censorship-alternative-routing">詳細</a></string>
-    <string name="app_language">アプリ言語</string>
+    <string name="app_language">言語の設定</string>
     <string name="custom_language_dialog_title">アプリの言語を選択してください</string>
     <string name="auto_detect">自動検出</string>
     <string name="combined_contacts">連絡先の相互利用</string>

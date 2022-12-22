@@ -110,8 +110,8 @@
     <string name="set_msg_expiration_1_week">1 εβδομάδα</string>
     <string name="set_msg_expiration_custom">Προσαρμοσμένο</string>
     <string name="set_msg_expiration_check_description">Αυτό το στοιχείο είναι επιλεγμένο</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
-    <string name="composer_invalid_subject_saving_draft_failed">The subject is not valid.</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Η διεύθυνση του αποστολέα δεν είναι έγκυρη. Αλλάξτε την σε μία έγκυρη</string>
+    <string name="composer_invalid_subject_saving_draft_failed">Ο τίτλος δεν είναι έγκυρος.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Θέμα</string>
@@ -144,7 +144,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Νέα μηνύματα</string>
     <string name="notification_invalid_sender_sending_failed">Το μήνυμά σας μπορεί να χαρακτηριστεί σαν πρόχειρο. Βεβαιωθείτε ότι το ηλεκτρονικό ταχυδρομείο του αποστολέα στο μήνυμα είναι ενεργό.</string>
-    <string name="notification_invalid_subject_sending_failed">Your message can be found as a draft. The subject is not valid.</string>
+    <string name="notification_invalid_subject_sending_failed">Το μήνυμά σας υπάρχει στο πρόχειρο. Ο τίτλος δεν είναι έγκυρος.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Δεν υπάρχουν επαφές</string>
