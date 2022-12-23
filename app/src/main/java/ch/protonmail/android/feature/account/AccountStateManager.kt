@@ -197,6 +197,7 @@ internal class AccountStateManager @Inject constructor(
     fun addAccount() = scope.launch {
         authOrchestrator.startAddAccountWorkflow(
             requiredAccountType = requiredAccountType,
+            creatableAccountType = requiredAccountType,
             product = product
         )
     }
