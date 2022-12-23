@@ -26,7 +26,7 @@
     </style>
 
     <style name="Proton.Text.DefaultSmall.Interaction">
-        <item name="android:textColor">?attr/proton_interaction_norm</item>
+        <item name="android:textColor">?attr/proton_text_accent</item>
     </style>
 
     <style name="Proton.Text.Caption.Strong.Inverted">

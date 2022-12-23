@@ -702,6 +702,29 @@ public class ComposeMessageActivity
         }
     };
 
+    private int skipInitialForSubjectField;
+    private TextWatcher typingListenerForSubjectField = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence text, int start, int before, int count) {
+            if (skipInitialForSubjectField < 2) {
+                skipInitialForSubjectField++;
+                return;
+            }
+            skipInitialForSubjectField++;
+            composeMessageViewModel.autoSaveDraft(messageBodyEditText.getText().toString());
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
     @Override
     public void recipientsSelected(@NonNull ArrayList<MessageRecipient> recipients, @Nonnull Constants.RecipientLocationType location) {
         MessageRecipientView recipient = toRecipientView;
@@ -1814,7 +1837,7 @@ public class ComposeMessageActivity
             viewTreeObserver.removeOnGlobalLayoutListener(this);
             skipInitial = 0;
             messageBodyEditText.addTextChangedListener(typingListener);
-            subjectEditText.addTextChangedListener(typingListener);
+            subjectEditText.addTextChangedListener(typingListenerForSubjectField);
             fromAddressSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
