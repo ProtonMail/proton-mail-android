@@ -286,7 +286,7 @@ class UploadAttachmentsWorker @AssistedInject constructor(
 
             workManager.enqueueUniqueWork(
                 "$UPLOAD_ATTACHMENTS_WORK_NAME_PREFIX-$messageId",
-                ExistingWorkPolicy.REPLACE,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
                 uploadAttachmentsRequest
             )
             return workManager.getWorkInfoByIdLiveData(uploadAttachmentsRequest.id).asFlow()

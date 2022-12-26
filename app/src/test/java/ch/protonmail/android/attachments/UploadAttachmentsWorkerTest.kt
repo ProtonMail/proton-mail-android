@@ -138,7 +138,7 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
             verify {
                 workManager.enqueueUniqueWork(
                     "uploadAttachmentUniqueWorkName-$messageId",
-                    ExistingWorkPolicy.REPLACE,
+                    ExistingWorkPolicy.APPEND_OR_REPLACE,
                     capture(requestSlot)
                 )
             }

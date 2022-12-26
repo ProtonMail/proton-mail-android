@@ -64,7 +64,7 @@ const val FIELD_ATTACHMENT_HEADERS = "Headers"
 
 @Entity(
     tableName = TABLE_ATTACHMENTS,
-    indices = [Index(COLUMN_ATTACHMENT_ID, unique = true)]
+    indices = [Index(COLUMN_ATTACHMENT_ID, unique = true), Index(COLUMN_ATTACHMENT_FILE_NAME, unique = true)]
 )
 data class Attachment constructor(
 
@@ -225,7 +225,9 @@ data class Attachment constructor(
                 fileSize = localAttachment.size,
                 mimeType = localAttachment.mimeType,
                 keyPackets = localAttachment.keyPackets,
-                headers = localAttachment.headers
+                headers = localAttachment.headers,
+                isUploading = localAttachment.isUploading,
+                isUploaded = localAttachment.isUploaded
             )
         }
 

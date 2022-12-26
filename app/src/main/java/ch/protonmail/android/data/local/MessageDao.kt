@@ -305,7 +305,8 @@ abstract class MessageDao : BaseDao<Message>() {
             deleteAllAttachments(attachmentsToDelete)
         }
         if (preservedAttachments.isNotEmpty()) {
-            saveAllAttachments(preservedAttachments)
+            saveAllAttachments(
+                (preservedAttachments + localAttachments).sortedBy { it.dbId }.distinctBy { it.filePath })
         }
         message.attachments = preservedAttachments
     }
