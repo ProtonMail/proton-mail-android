@@ -61,7 +61,7 @@
         <item quantity="many">%d непрочитанных</item>
         <item quantity="other">%d непрочитанных</item>
     </plurals>
-    <string name="mailbox_updated_just_now">Только что обновлено</string>
+    <string name="mailbox_updated_just_now">Обновлено только что</string>
     <string name="mailbox_updated_recently">Недавно обновлено</string>
     <string name="mailbox_updating">Обновляется…</string>
     <!-- endregion -->
