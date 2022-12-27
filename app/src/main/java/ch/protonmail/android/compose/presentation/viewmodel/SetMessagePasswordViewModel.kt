@@ -20,7 +20,6 @@
 package ch.protonmail.android.compose.presentation.viewmodel
 
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
@@ -37,10 +36,10 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
 
-@VisibleForTesting(otherwise = PRIVATE)
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 const val MESSAGE_PASSWORD_MIN_LENGTH = 4
 
-@VisibleForTesting(otherwise = PRIVATE)
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 const val MESSAGE_PASSWORD_MAX_LENGTH = 21
 
 /**

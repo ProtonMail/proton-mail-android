@@ -402,7 +402,6 @@ internal class MessageDetailsAdapter(
         webSettings.setNeedInitialFocus(false)
         webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH)
         webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
-        webSettings.setAppCacheEnabled(false)
         webSettings.saveFormData = false
         webView.setOnLongClickListener {
             val messageBodyWebView = it as WebView

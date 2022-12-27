@@ -435,7 +435,8 @@ dependencies {
         `Proton-payment-iap`,
         `junit-ext`,
         `mock-web-server`,
-        `okhttp-tls`
+        `okhttp-tls`,
+        `Proton-test-quark`
     )
 }
 
