@@ -43,7 +43,7 @@ import kotlin.test.assertTrue
 class ProtonCalendarUtilTest {
 
     private val mockPackageManager: PackageManager = mockk {
-        every { resolveActivity(any(), any<PackageManager.ResolveInfoFlags>()) } returns null
+        every { resolveActivity(any(), any<Int>()) } returns null
     }
     private val mockContext: Context = mockk {
         every { packageManager } returns mockPackageManager
@@ -70,7 +70,7 @@ class ProtonCalendarUtilTest {
         withAndroidMocks {
             // given
             every { mockPackageManager.getLaunchIntentForPackage(any()) } returns mockk()
-            every { mockPackageManager.resolveActivity(any(), any<PackageManager.ResolveInfoFlags>()) } returns mockk()
+            every { mockPackageManager.resolveActivity(any(), any<Int>()) } returns mockk()
 
             // when
             val result = util.shouldShowProtonCalendarButton()
@@ -85,7 +85,7 @@ class ProtonCalendarUtilTest {
         withAndroidMocks {
             // given
             every { mockPackageManager.getLaunchIntentForPackage(any()) } returns mockk()
-            every { mockPackageManager.resolveActivity(any(), any<PackageManager.ResolveInfoFlags>()) } returns null
+            every { mockPackageManager.resolveActivity(any(), any<Int>()) } returns null
 
             // when
             val result = util.shouldShowProtonCalendarButton()
