@@ -32,10 +32,9 @@ import ch.protonmail.android.api.segments.device.DeviceApi
 import ch.protonmail.android.api.segments.device.DeviceApiSpec
 import ch.protonmail.android.api.segments.key.KeyApi
 import ch.protonmail.android.api.segments.key.KeyApiSpec
-import ch.protonmail.android.labels.data.remote.LabelApi
-import ch.protonmail.android.labels.data.remote.LabelApiSpec
 import ch.protonmail.android.api.segments.message.MessageApi
 import ch.protonmail.android.api.segments.message.MessageApiSpec
+import ch.protonmail.android.api.segments.message.MessageSendService
 import ch.protonmail.android.api.segments.organization.OrganizationApi
 import ch.protonmail.android.api.segments.organization.OrganizationApiSpec
 import ch.protonmail.android.api.segments.report.ReportApi
@@ -43,6 +42,8 @@ import ch.protonmail.android.api.segments.report.ReportApiSpec
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApi
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
 import ch.protonmail.android.di.ConfigurableProtonRetrofitBuilder
+import ch.protonmail.android.labels.data.remote.LabelApi
+import ch.protonmail.android.labels.data.remote.LabelApiSpec
 import ch.protonmail.android.mailbox.data.remote.ConversationApi
 import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import me.proton.core.network.data.ApiProvider
@@ -118,6 +119,8 @@ class ProtonMailApi private constructor(
             // region config
             val services = SecuredServices(protonRetrofitBuilder.provideRetrofit(RetrofitType.SECURE))
             val servicePing = protonRetrofitBuilder.provideRetrofit(RetrofitType.PING).create(PingService::class.java)
+            val messageSendService = protonRetrofitBuilder.provideRetrofit(RetrofitType.EXTENDED_TIMEOUT)
+                .create(MessageSendService::class.java)
             val mUploadService = protonRetrofitBuilder.provideRetrofit(RetrofitType.EXTENDED_TIMEOUT)
                 .create(AttachmentUploadService::class.java)
             val mAttachmentsService = protonRetrofitBuilder.provideRetrofit(RetrofitType.ATTACHMENTS)
@@ -128,7 +131,7 @@ class ProtonMailApi private constructor(
             val contactApi = ContactApi(services.contact)
             val deviceApi = DeviceApi(services.device)
             val keyApi = KeyApi(services.key)
-            val messageApi = MessageApi(services.message)
+            val messageApi = MessageApi(services.message, messageSendService)
             val conversationApi = ConversationApi(services.conversation)
             val labelApi = LabelApi(apiProvider)
             val organizationApi = OrganizationApi(apiProvider)

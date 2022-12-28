@@ -42,6 +42,7 @@ import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.messages.receive.ServerMessageSender
+import ch.protonmail.android.api.segments.RESPONSE_CODE_DRAFT_DOES_NOT_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_VALUE
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_ALREADY_SENT
 import ch.protonmail.android.api.segments.TEN_SECONDS
@@ -157,6 +158,10 @@ class CreateDraftWorker @AssistedInject constructor(
                     )
                     if (responseBody?.code == RESPONSE_CODE_MESSAGE_ALREADY_SENT) {
                         return failureWithError(CreateDraftWorkerErrors.MessageAlreadySent)
+                    }
+                    if (responseBody?.code == RESPONSE_CODE_DRAFT_DOES_NOT_EXIST) {
+                        Timber.e("Draft does not exist. error: ${responseBody.error}")
+                        return failureWithError(CreateDraftWorkerErrors.DraftDoesNotExist)
                     }
                     if (responseBody?.code == RESPONSE_CODE_INVALID_VALUE) {
                         if (responseBody.error == "Invalid sender") {

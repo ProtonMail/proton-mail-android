@@ -37,7 +37,10 @@ import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import java.io.IOException
 
-class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpec {
+class MessageApi(
+    private val service: MessageService,
+    private val sendService: MessageSendService
+) : BaseApi(), MessageApiSpec {
 
     override suspend fun fetchMessagesCounts(userId: UserId): CountsResponse =
         service.fetchMessagesCounts(UserIdTag(userId))
@@ -107,7 +110,7 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         messageId: String,
         message: MessageSendBody,
         userIdTag: UserIdTag
-    ): MessageSendResponse = service.sendMessage(messageId, message, userIdTag)
+    ): MessageSendResponse = sendService.sendMessage(messageId, message, userIdTag)
 
     @Throws(IOException::class)
     override fun unlabelMessages(idList: IDList) {

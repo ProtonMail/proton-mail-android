@@ -26,8 +26,6 @@ import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
-import ch.protonmail.android.api.models.messages.send.MessageSendBody
-import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
@@ -99,14 +97,6 @@ interface MessageService {
         @Body draftBody: DraftBody,
         @Tag userIdTag: UserIdTag
     ): MessageResponse
-
-    @POST("mail/v4/messages/{messageId}")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun sendMessage(
-        @Path("messageId") messageId: String,
-        @Body message: MessageSendBody,
-        @Tag userIdTag: UserIdTag
-    ): MessageSendResponse
 
     @GET("mail/v4/messages/{messageId}")
     @Headers(ACCEPT_HEADER_V1)
