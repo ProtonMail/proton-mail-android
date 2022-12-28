@@ -403,25 +403,28 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    private fun filterUploadedAttachments(
+    private suspend fun filterUploadedAttachments(
         attachments: List<Attachment>,
         uploadAttachments: Boolean
     ): List<String> {
         val result = ArrayList<String>()
-        for (i in attachments.indices) {
-            val attachment = attachments[i]
-            if (attachment.isUploaded || attachment.isUploading || !attachment.isNew) {
-                continue
+        return withContext(dispatchers.Io) {
+            for (i in attachments.indices) {
+                val attachment = attachments[i]
+                if (attachment.isUploaded || attachment.isUploading || !attachment.isNew) {
+                    continue
+                }
+                if (uploadAttachments) {
+                    attachment.isUploading = true
+                }
+                messageDetailsRepository.saveAttachment(attachment)
+                val attachmentId: String? = attachment.attachmentId
+                attachmentId?.let {
+                    result.add(attachmentId)
+                }
             }
-            if (uploadAttachments) {
-                attachment.isUploading = true
-            }
-            val attachmentId: String? = attachment.attachmentId
-            attachmentId?.let {
-                result.add(attachmentId)
-            }
+            result
         }
-        return result
     }
 
     @Subscribe
@@ -556,7 +559,7 @@ class ComposeMessageViewModel @Inject constructor(
         _messageDataResult.attachmentList.map { it.doSaveInDB = false }
     }
 
-    private fun calculateNewAttachments(message: Message, uploadAttachments: Boolean): List<String> {
+    private suspend fun calculateNewAttachments(message: Message, uploadAttachments: Boolean): List<String> {
         var newAttachmentIds: List<String> = ArrayList()
         val listOfAttachments = message.attachments
         if (uploadAttachments && listOfAttachments.isNotEmpty()) {
