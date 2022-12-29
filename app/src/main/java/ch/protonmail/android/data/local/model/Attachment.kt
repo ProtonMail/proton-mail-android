@@ -26,7 +26,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
-import androidx.room.PrimaryKey
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.MessageUtils.isLocalAttachmentId
@@ -64,7 +63,8 @@ const val FIELD_ATTACHMENT_HEADERS = "Headers"
 
 @Entity(
     tableName = TABLE_ATTACHMENTS,
-    indices = [Index(COLUMN_ATTACHMENT_ID, unique = true), Index(COLUMN_ATTACHMENT_FILE_NAME, unique = true)]
+    indices = [Index(COLUMN_ATTACHMENT_ID, unique = true)],
+    primaryKeys = [COLUMN_ATTACHMENT_MESSAGE_ID, COLUMN_ATTACHMENT_FILE_NAME]
 )
 data class Attachment constructor(
 
@@ -72,7 +72,7 @@ data class Attachment constructor(
     var attachmentId: String? = null,
 
     @ColumnInfo(name = COLUMN_ATTACHMENT_FILE_NAME)
-    var fileName: String? = null,
+    var fileName: String = "",
 
     @ColumnInfo(name = COLUMN_ATTACHMENT_MIME_TYPE)
     var mimeType: String? = null,
@@ -119,7 +119,6 @@ data class Attachment constructor(
 
 ) : Serializable {
 
-    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = BaseColumns._ID)
     var dbId: Long? = null
 
