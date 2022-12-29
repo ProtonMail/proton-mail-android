@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 18,
-    "identityHash": "8cfaa5f682ba5039a2eb1e8a82c35227",
+    "identityHash": "f5c05668def35d1f56506387bc4e541a",
     "entities": [
       {
         "tableName": "attachmentv3",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`attachment_id` TEXT, `file_name` TEXT, `mime_type` TEXT, `file_size` INTEGER NOT NULL, `key_packets` TEXT, `message_id` TEXT NOT NULL, `uploaded` INTEGER NOT NULL, `uploading` INTEGER NOT NULL, `signature` TEXT, `headers` TEXT, `is_inline` INTEGER NOT NULL, `file_path` TEXT, `mime_data` BLOB, `_id` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`attachment_id` TEXT, `file_name` TEXT NOT NULL, `mime_type` TEXT, `file_size` INTEGER NOT NULL, `key_packets` TEXT, `message_id` TEXT NOT NULL, `uploaded` INTEGER NOT NULL, `uploading` INTEGER NOT NULL, `signature` TEXT, `headers` TEXT, `is_inline` INTEGER NOT NULL, `file_path` TEXT, `mime_data` BLOB, `_id` INTEGER, PRIMARY KEY(`message_id`, `file_name`))",
         "fields": [
           {
             "fieldPath": "attachmentId",
@@ -18,7 +18,7 @@
             "fieldPath": "fileName",
             "columnName": "file_name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "mimeType",
@@ -95,9 +95,10 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "_id"
+            "message_id",
+            "file_name"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [
           {
@@ -108,15 +109,6 @@
             ],
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_attachmentv3_attachment_id` ON `${TABLE_NAME}` (`attachment_id`)"
-          },
-          {
-            "name": "index_attachmentv3_file_name",
-            "unique": true,
-            "columnNames": [
-              "file_name"
-            ],
-            "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_attachmentv3_file_name` ON `${TABLE_NAME}` (`file_name`)"
           }
         ],
         "foreignKeys": []
@@ -553,7 +545,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8cfaa5f682ba5039a2eb1e8a82c35227')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f5c05668def35d1f56506387bc4e541a')"
     ]
   }
 }
