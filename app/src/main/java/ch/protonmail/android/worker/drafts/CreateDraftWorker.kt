@@ -251,7 +251,7 @@ class CreateDraftWorker @AssistedInject constructor(
         MessageUtils.isLocalMessageId(message.messageId)
 
     private suspend fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
-        val localAttachments = localDraft.attachments.filterNot { it.isUploaded }
+        val localAttachments = localDraft.attachments.filterNot { it.isUploaded || it.isUploading }
         apiDraft.apply {
             dbId = localDraft.dbId
             toList = localDraft.toList
