@@ -305,8 +305,12 @@ abstract class MessageDao : BaseDao<Message>() {
             deleteAllAttachments(attachmentsToDelete)
         }
         if (preservedAttachments.isNotEmpty()) {
-            saveAllAttachments(
-                (preservedAttachments + localAttachments).distinctBy { it.fileName })
+            val attachmentsToSave = (
+                preservedAttachments +
+                    localAttachments.filter { !it.isUploaded }
+                ).filter { (!it.isUploaded && it.filePath == null).not() } //don't save local attachments without a path
+
+            saveAllAttachments(attachmentsToSave)
         }
         message.attachments = preservedAttachments
     }
