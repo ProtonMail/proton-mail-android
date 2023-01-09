@@ -78,12 +78,14 @@ class BottomActionsView @JvmOverloads constructor(
     fun setAction(
         actionPosition: ActionPosition,
         isVisible: Boolean,
-        @DrawableRes actionIcon: Int? = null
+        @DrawableRes actionIcon: Int? = null,
+        contentDescription: String = ""
     ) {
         val actionButton = getButtonForPosition(actionPosition)
         if (isVisible && actionIcon != null) {
             actionButton.visibility = View.VISIBLE
             actionButton.setImageDrawable(ContextCompat.getDrawable(context, actionIcon))
+            actionButton.contentDescription = contentDescription.ifEmpty { actionButton.contentDescription }
         } else {
             actionButton.visibility = View.GONE
         }

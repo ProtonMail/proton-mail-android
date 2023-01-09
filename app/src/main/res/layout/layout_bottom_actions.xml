@@ -41,7 +41,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/secondActionImageButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/reply" />
 
     <ImageButton
         android:id="@+id/secondActionImageButton"
@@ -52,7 +53,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/thirdActionImageButton"
         app:layout_constraintStart_toEndOf="@id/firstActionImageButton"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/mark_as_unread" />
 
     <ImageButton
         android:id="@+id/thirdActionImageButton"
@@ -74,7 +76,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/moreActionImageButton"
         app:layout_constraintStart_toEndOf="@id/thirdActionImageButton"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/label_as" />
 
     <ImageButton
         android:id="@+id/moreActionImageButton"
@@ -85,6 +88,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/fourthActionImageButton"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/more" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
