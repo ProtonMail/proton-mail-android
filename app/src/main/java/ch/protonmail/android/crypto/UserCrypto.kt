@@ -24,6 +24,7 @@ import ch.protonmail.android.domain.entity.user.UserKey
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.crypto.TextDecryptionResult
+import ch.protonmail.android.utils.crypto.TextVerificationResult
 import com.proton.gopenpgp.armor.Armor
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
@@ -53,9 +54,13 @@ class UserCrypto @AssistedInject constructor(
 
     override fun passphraseFor(key: UserKey): EncryptedByteArray? = primaryPassphrase
 
-    fun verify(data: String, signature: String): TextDecryptionResult {
-        val valid = openPgp.verifyTextSignDetachedBinKey(signature, data, getVerificationKeys(), openPgp.time)
-        return TextDecryptionResult(data, true, valid)
+    fun verify(data: String, signature: String): TextVerificationResult {
+        return try {
+            val verifiedTimestamp = openPgp.getVerifiedSignatureTimestamp(signature, data, getVerificationKeys(), openPgp.time)
+            TextVerificationResult(data, true, verifiedTimestamp)
+        } catch(signatureVerificationError: Exception) {
+            TextVerificationResult(data, false, null)
+        }
     }
 
     /**

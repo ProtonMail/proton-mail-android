@@ -1326,43 +1326,41 @@ public class ComposeMessageActivity
                     recipientsView.removeObjectForKey(entry.getKey());
                     return;
                 }
-                if (!sendPreference.isPrimaryPinned() && sendPreference.hasPinnedKeys()) {
-                    // send with untrusted key popup
-                    DialogUtils.Companion.showInfoDialog(
-                            ComposeMessageActivity.this,
-                            getString(R.string.send_with_untrusted_key_title),
-                            String.format(getString(R.string.send_with_untrusted_key_message), entry.getKey()),
-                            unit -> unit);
+                boolean arePinnedKeysVerified = sendPreference.isVerified();
+                if(sendPreference.hasPinnedKeys()){
+                    if(!arePinnedKeysVerified){
+                        DialogUtils.Companion.showInfoDialogWithTwoButtons(
+                                ComposeMessageActivity.this,
+                                getString(R.string.resign_contact_title),
+                                String.format(getString(R.string.resign_contact_message), entry.getKey()),
+                                getString(R.string.cancel),
+                                getString(R.string.yes),
+                                unit -> {
+                                    recipientsView.removeToken(entry.getKey());
+                                    recipientsView.removeObjectForKey(entry.getKey());
+                                    return unit;
+                                },
+                                unit -> {
+                                    GetSendPreferenceJob.Destination destination = GetSendPreferenceJob.Destination.TO;
+                                    if (recipientsView.equals(ccRecipientView)) {
+                                        destination = GetSendPreferenceJob.Destination.CC;
+                                    } else if (recipientsView.equals(bccRecipientView)) {
+                                        destination = GetSendPreferenceJob.Destination.BCC;
+                                    }
+                                    composeMessageViewModel.startResignContactJobJob(entry.getKey(), entry.getValue(), destination);
+                                    return unit;
+                                },
+                                false);
+                    }else if(!sendPreference.isPublicKeyPinned()){
+                        // send with untrusted key popup
+                        DialogUtils.Companion.showInfoDialog(
+                                ComposeMessageActivity.this,
+                                getString(R.string.send_with_untrusted_key_title),
+                                String.format(getString(R.string.send_with_untrusted_key_message), entry.getKey()),
+                                unit -> unit);
+                    }
                 }
-                boolean isVerified = sendPreference.isVerified();
-                if (!isVerified) {
-                    // send
-                    DialogUtils.Companion.showInfoDialogWithTwoButtons(
-                            ComposeMessageActivity.this,
-                            getString(R.string.resign_contact_title),
-                            String.format(getString(R.string.resign_contact_message), entry.getKey()),
-                            getString(R.string.cancel),
-                            getString(R.string.yes),
-                            unit -> {
-                                recipientsView.removeToken(entry.getKey());
-                                recipientsView.removeObjectForKey(entry.getKey());
-                                return unit;
-                            },
-                            unit -> {
-                                GetSendPreferenceJob.Destination destination = GetSendPreferenceJob.Destination.TO;
-                                if (recipientsView.equals(ccRecipientView)) {
-                                    destination = GetSendPreferenceJob.Destination.CC;
-                                } else if (recipientsView.equals(bccRecipientView)) {
-                                    destination = GetSendPreferenceJob.Destination.BCC;
-                                }
-                                composeMessageViewModel.startResignContactJobJob(entry.getKey(), entry.getValue(), destination);
-                                return unit;
-                            },
-                            false);
-                }
-                if (isVerified) {
-                    setRecipientIconAndDescription(sendPreference, recipientsView);
-                }
+                setRecipientIconAndDescription(sendPreference, recipientsView);
             }
             recipientsView.setSendPreferenceMap(composeMessageViewModel.getMessageDataResult().getSendPreferences(), bottomAppBar.hasPassword());
         }

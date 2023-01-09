@@ -31,23 +31,26 @@ public class SendPreference implements Serializable {
     private MIMEType mimeType;
     private String publicKey;
     private PackageType scheme;
-    private boolean primaryPinned;
-    private boolean isVerified;
-    private boolean hasPinned;
+    private boolean isContactSignatureVerified;
+    // NB: pinned key information can only be trusted if `isContactSignatureVerified` is true.
+    // After a password reset, it can happen that `isContactSignatureVerified` will be false, but we still have
+    // pinned key information.
+    private boolean isPublicKeyPinned;
+    private boolean hasPinnedKeys;
     private boolean isOwnAddress;
 
     public SendPreference(String email, boolean encrypt, boolean sign,
-                          MIMEType mimeType, String publicKey, PackageType scheme, boolean primaryPinned,
-                          boolean hasPinned, boolean isVerified, boolean isOwnAddress) {
+                          MIMEType mimeType, String publicKey, PackageType scheme, boolean isPublicKeyPinned,
+                          boolean hasPinnedKeys, boolean isContactSignatureVerified, boolean isOwnAddress) {
         this.email = email;
         this.encrypt = encrypt;
         this.sign = sign;
         this.mimeType = mimeType;
         this.publicKey = publicKey;
         this.scheme = scheme;
-        this.primaryPinned = primaryPinned;
-        this.hasPinned = hasPinned;
-        this.isVerified = isVerified;
+        this.isPublicKeyPinned = isPublicKeyPinned;
+        this.hasPinnedKeys = hasPinnedKeys;
+        this.isContactSignatureVerified = isContactSignatureVerified;
         this.isOwnAddress = isOwnAddress;
     }
 
@@ -71,20 +74,31 @@ public class SendPreference implements Serializable {
         return mimeType;
     }
 
-    public boolean isPrimaryPinned() {
-        return primaryPinned;
+    /**
+     * @return whether `publicKey` comes from the user's pinned keys.
+     * NB: this info can only be trusted if `this.isVerified()` is also true.
+     */
+    public boolean isPublicKeyPinned() {
+        return isPublicKeyPinned;
     }
 
+    /**
+     * @return whether the user has pinned keys for the given contact's address.
+     * NB: this info can only be trusted if `this.isVerified()` is true.
+     */
     public boolean hasPinnedKeys() {
-        return hasPinned;
+        return hasPinnedKeys;
     }
 
     public boolean isOwnAddress() {
         return isOwnAddress;
     }
 
+    /**
+     * @return whether the send preference information is trusted, as it could be cryptographically verified.
+     */
     public boolean isVerified() {
-        return isVerified;
+        return isContactSignatureVerified;
     }
 
     public String getEmailAddress() {

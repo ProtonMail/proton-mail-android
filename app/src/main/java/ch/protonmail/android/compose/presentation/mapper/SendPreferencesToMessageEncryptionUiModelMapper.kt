@@ -40,7 +40,7 @@ class SendPreferencesToMessageEncryptionUiModelMapper @Inject constructor() :
 
     private fun getIcon(sendPreference: SendPreference, isMessagePasswordEncrypted: Boolean): Int {
         if (sendPreference.isEncryptionEnabled) {
-            return if (sendPreference.hasPinnedKeys()) {
+            return if (sendPreference.isVerified && sendPreference.isPublicKeyPinned) {
                 R.string.pgp_lock_check
             } else {
                 R.string.lock_default
@@ -71,7 +71,7 @@ class SendPreferencesToMessageEncryptionUiModelMapper @Inject constructor() :
 
     private fun getTooltip(sendPreference: SendPreference, isMessagePasswordEncrypted: Boolean): Int {
         if (sendPreference.encryptionScheme == PackageType.PM) {
-            return if (sendPreference.hasPinnedKeys()) {
+            return if (sendPreference.isVerified && sendPreference.isPublicKeyPinned) {
                 R.string.composer_lock_internal_pinned
             } else {
                 R.string.composer_lock_internal
@@ -81,7 +81,7 @@ class SendPreferencesToMessageEncryptionUiModelMapper @Inject constructor() :
             return R.string.composer_lock_internal
         }
         return if (sendPreference.isPGP) {
-            if (sendPreference.isEncryptionEnabled) {
+            if (sendPreference.isVerified && sendPreference.isEncryptionEnabled) {
                 R.string.composer_lock_pgp_encrypted_pinned
             } else {
                 R.string.composer_lock_pgp_signed

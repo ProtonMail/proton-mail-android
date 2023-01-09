@@ -25,7 +25,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import me.proton.core.domain.entity.UserId
-import ch.protonmail.android.utils.crypto.TextDecryptionResult
+import ch.protonmail.android.utils.crypto.TextVerificationResult
 import ezvcard.parameter.VCardParameters
 import ezvcard.property.Address
 import ezvcard.property.Birthday
@@ -168,8 +168,8 @@ class FetchContactsMapperTest {
                 every { data } returns testCardType2
                 every { signature } returns type2Signature
             }
-            every { crypto.verify(testCardType2, type2Signature) } returns TextDecryptionResult(
-                testCardType2, true, true
+            every { crypto.verify(testCardType2, type2Signature) } returns TextVerificationResult(
+                testCardType2, true, 0
             )
 
             val email1 = Email(
@@ -234,7 +234,7 @@ class FetchContactsMapperTest {
                 every { signature } returns type3Signature
             }
             every { crypto.verify(testCardType3, type3Signature) } returns
-                TextDecryptionResult(testCardType3, true, true)
+                TextVerificationResult(testCardType3, true, 0)
 
             val email1 = Email(
                 "tomek9@abc.com"
