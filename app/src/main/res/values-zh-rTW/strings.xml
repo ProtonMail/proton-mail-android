@@ -820,6 +820,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">無效的 Firebase API 金鑰。推送通知將無法運作。</string>
     <string name="failed_saving_draft_online">無法儲存郵件的線上草稿：「%s」</string>
+    <string name="failed_draft_does_not_exist">不存在訊息「%s」。</string>
     <string name="failed_uploading_attachment_online">郵件的附件錯誤：「%s」</string>
     <string name="cannot_open_message_while_being_sent">傳送時無法開啟此郵件</string>
     <string name="enable_conversation_mode">啟用交談模式</string>

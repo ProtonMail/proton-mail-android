@@ -836,6 +836,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ugyldig Firebase API-nøgle. Push-meddelelser vil ikke fungere.</string>
     <string name="failed_saving_draft_online">Kunne ikke gemme online kladde til besked: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">Beskeden \"%s\" findes ikke.</string>
     <string name="failed_uploading_attachment_online">Vedhæftningsfejl for besked: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Kan ikke åbne denne besked, mens den bliver sendt</string>
     <string name="enable_conversation_mode">Aktivér samtaletilstand</string>

@@ -173,7 +173,7 @@
     <!-- endregion -->
     <!-- region Snackbars -->
     <string name="snackbar_message_draft_saved">Draf tersimpan</string>
-    <string name="snackbar_message_draft_moved_to_trash">Draf dipindah ke sampah</string>
+    <string name="snackbar_message_draft_moved_to_trash">Draf dipindahkan ke sampah</string>
     <string name="snackbar_action_discard">Hapus</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
@@ -484,8 +484,8 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="details_copied">Rincian disalin ke clipboard</string>
     <string name="saving">Menyimpan...</string>
     <string name="update_folder">Perbarui Folder</string>
-    <string name="spam_score_100">Walaupun email ini sekilas terlihat seperti dikirim dari alamat Proton Mail, email ini sepertinya berasal dari luar sistem kami dan tidak memenuhi persyaratan otentikasi yang kami miliki. Email ini mungkin palsu atau tidak diteruskan dengan benar!</string>
-    <string name="spam_score_101">Email ini tidak memenuhi syarat otentikasi domainnya. Email ini mungkin telah dipalsukan atau tidak diteruskan dengan benar!</string>
+    <string name="spam_score_100">Walaupun email ini sekilas terlihat seperti dikirim dari alamat Proton Mail, email ini sepertinya berasal dari luar sistem kami dan tidak memenuhi persyaratan autentikasi yang kami miliki. Email ini mungkin palsu atau tidak diteruskan dengan benar!</string>
+    <string name="spam_score_101">Email ini tidak memenuhi syarat autentikasi domainnya. Email ini mungkin telah dipalsukan atau tidak diteruskan dengan benar!</string>
     <string name="spam_score_102">Pesan ini mungkin merupakan sebuah upaya phishing. Mohon periksa nama pengirim dan konten yang tertera secara seksama untuk memastikan keabsahan email ini. <a href="https://proton.me/blog/prevent-phishing-attacks">PELAJARI LEBIH LANJUT</a></string>
     <string name="print_from_template">Dari: %s</string>
     <string name="print_to_template">Kepada: %s;  </string>
@@ -542,7 +542,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Dikirim oleh Anda dengan enkripsi ujung ke ujung</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Dikirim oleh Proton Mail dengan teknologi enkripsi zero-access</string>
+    <string name="sender_lock_sent_autoresponder">Dikirim oleh Proton Mail dengan teknologi enkripsi nol akses</string>
     <string name="sender_lock_verification_failed">Verifikasi pengirim gagal</string>
     <string name="sender_lock_pgp_encrypted">Pesan terenkripsi PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Pesan terenkripsi PGP dari alamat terverifikasi</string>
@@ -823,6 +823,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Kunci API Firebase tidak valid. Sistem notifikasi tidak akan dapat bekerja.</string>
     <string name="failed_saving_draft_online">Gagal menyimpan draf daring untuk pesan: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">Pesan \"%s\" tidak ada.</string>
     <string name="failed_uploading_attachment_online">Terdapat kesalahan pada lampiran pesan berikut: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Pesan tidak dapat dibuka pada saat sedang dikirim</string>
     <string name="enable_conversation_mode">Aktifkan mode percakapan</string>

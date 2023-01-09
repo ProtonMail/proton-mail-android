@@ -814,6 +814,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">无效的 Firebase API 密钥。推送通知将无法使用。</string>
     <string name="failed_saving_draft_online">未能在线保存邮件“%s”的草稿</string>
+    <string name="failed_draft_does_not_exist">Message \"%s\" does not exist.</string>
     <string name="failed_uploading_attachment_online">此邮件的附件出现错误：“%s”</string>
     <string name="cannot_open_message_while_being_sent">此邮件正在发送中，不能打开</string>
     <string name="enable_conversation_mode">启用对话模式</string>

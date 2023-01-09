@@ -68,7 +68,7 @@
     <string name="details_open_in_proton_calendar_subtitle">Güvenli şifrelenmiş takvim</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar simgesi</string>
     <string name="details_play_store_error">Play Store açılamadı</string>
-    <string name="details_hyperlink_phishing_dialog_title">Uyarı: Şüpheli sahte web sitesi</string>
+    <string name="details_hyperlink_phishing_dialog_title">Uyarı: Kimlik avı girişimi şüphesi olan web sitesi</string>
     <string name="details_hyperlink_phishing_dialog_content">Bu bağlantı, parola ve kredi kartı gibi bilgilerinizi çalmayı deneyen bir web sitesine gidiyor olabilir.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Güvenliğiniz için daha ileri gitmeyin.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Geri dön (önerilir)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Uyarıyı yok sayıp ilerle</string>
@@ -157,7 +157,7 @@
     <string name="contact_details_remote_content_dialog_positive_button">İçeriği yükle</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">Herkes için kişisel gizlilik</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Herkes için gizlilik</string>
     <string name="new_user_onboarding_privacy_for_all_description">Sorunsuz uçtan uca şifrelemenin tadını çıkarmak için tanıdıklarınızı Proton Mail kullanmaya çağırın ya da gönderdiğiniz iletilere parola koruması ekleyin.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Temiz ve düzenli</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Gelen kutunuzu mükemmelleştirmek için iletileri dosyalayın, etiketleyin ve renklendirin.</string>
@@ -166,7 +166,7 @@
     <string name="existing_user_onboarding_new_features_headline">Yeni özellikler</string>
     <string name="existing_user_onboarding_new_features_description">Karanlık kip, geliştirilmiş bildirimler, okunmamış iletiler süzgeci ve alt klasörler gibi yeni özelliklerin tadını çıkarın.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Güncellenmiş Proton, birleşik koruma</string>
-    <string name="existing_user_onboarding_updated_proton_description">Yenilenmiş Proton böyle görünüyor. Birçok hizmet, tek amaç. Kişisel gizliliğin doğal sayıldığı internet fikrine hoş geldiniz. <a href="https://proton.me/news/updated-proton">Ayrıntılı bilgi alın</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Yenilenmiş Proton böyle görünüyor. Birçok hizmet, tek amaç. Gizliliğin doğal sayıldığı internet fikrine hoş geldiniz. <a href="https://proton.me/news/updated-proton">Ayrıntılı bilgi alın</a></string>
     <string name="onboarding_next">Sonraki</string>
     <string name="onboarding_get_started">Başlayalım</string>
     <string name="onboarding_got_it">Anladım</string>
@@ -579,9 +579,9 @@
     <string name="channel_description_ongoing_operations">Yeni iletilerin arka planda indirilmesi gibi
 		süren tüm işlemleri gösterir</string>
     <string name="retrieving_notifications">Bildirimler alınıyor</string>
-    <string name="report_phishing">Kimlik avı bildir</string>
+    <string name="report_phishing">Kimlik avı girişimi bildir</string>
     <string name="print">Yazdır</string>
-    <string name="phishing_dialog_title">Kimlik avı bildirimini onayla</string>
+    <string name="phishing_dialog_title">Kimlik avı girişimi bildirimini onayla</string>
     <string name="phishing_dialog_message">Bir iletiyi kimlik avı girişimi olarak bildirdiğinizde, ileti bize gönderilir.
 		Böylece onu inceleyebilir ve süzgeçlerimizi geliştirebiliriz. Bu durum iletinin tüm içeriğini görebileceğimi anlamına gelir.</string>
     <string name="phishing_report_send_message_moved_to_spam">Bildirim gönderildi. İleti istenmeyen kutusuna taşındı.</string>
@@ -835,6 +835,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Firebase API anahtarı geçersiz. Anlık bildirimler çalışmayacak.</string>
     <string name="failed_saving_draft_online">Çevrimiçi ileti taslağı kaydedilemedi: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">\"%s\" iletisi bulunamadı.</string>
     <string name="failed_uploading_attachment_online">İletide ek dosya hatası: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Bu ileti gönderilirken açılamaz</string>
     <string name="enable_conversation_mode">Yazışma kipini etkinleştir</string>

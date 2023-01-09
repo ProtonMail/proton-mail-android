@@ -850,6 +850,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Nevažeći API ključ za Firebase. Push obavijesti neće raditi.</string>
     <string name="failed_saving_draft_online">Spremanje online skice za poruku nije uspjelo: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">Message \"%s\" does not exist.</string>
     <string name="failed_uploading_attachment_online">Pogreška u privitku poruke: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Nije moguće otvoriti ovu poruku dok se šalje</string>
     <string name="enable_conversation_mode">Omogući način razgovora</string>

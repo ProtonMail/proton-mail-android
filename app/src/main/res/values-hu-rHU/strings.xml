@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_week">1 hét</string>
     <string name="set_msg_expiration_custom">Egyedi</string>
     <string name="set_msg_expiration_check_description">Ez az elem ki van választva</string>
-    <string name="composer_invalid_sender_saving_draft_failed">A \"From:\" cím nem érvényes. Kérjük, javítsa ki egy érvényesre</string>
+    <string name="composer_invalid_sender_saving_draft_failed">A \"Feladó:\" címe nem érvényes. Kérjük, javítsa ki egy érvényesre</string>
     <string name="composer_invalid_subject_saving_draft_failed">A címzett nem érvényes.</string>
     <!-- endregion -->
     <!-- region Settings -->
@@ -837,6 +837,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Helytelen Firebase API kulcs. A Push értesítések nem fognak működni.</string>
     <string name="failed_saving_draft_online">Hiba történt a piszkozat mentése közben: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">Message \"%s\" does not exist.</string>
     <string name="failed_uploading_attachment_online">Melléklet hiba az üzenethez: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Nem nyitható meg az üzenet, miközben elküldés alatt van</string>
     <string name="enable_conversation_mode">Beszélgetés engedélyezése</string>

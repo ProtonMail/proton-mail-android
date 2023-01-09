@@ -836,6 +836,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ongeldige Firebase API-sleutel. Push-meldingen werken niet.</string>
     <string name="failed_saving_draft_online">Onlin concept opslaan voor bericht mislukt: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">Bericht \"%s\" bestaat niet.</string>
     <string name="failed_uploading_attachment_online">Fout in bijlage voor bericht: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Kan dit bericht niet openen terwijl het verzonden wordt</string>
     <string name="enable_conversation_mode">Gespreksmodus inschakelen</string>

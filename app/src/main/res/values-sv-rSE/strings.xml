@@ -835,6 +835,7 @@ av nya meddelanden i bakgrunden</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ogiltig Firebase API-nyckel. Push-meddelanden kommer inte fungera.</string>
     <string name="failed_saving_draft_online">Det gick inte att spara utkast för meddelande: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">Meddelande ”%s” finns inte.</string>
     <string name="failed_uploading_attachment_online">Fel med bilaga till meddelande: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Kan inte öppna detta meddelande när det skickas</string>
     <string name="enable_conversation_mode">Aktivera konversationsläge</string>
