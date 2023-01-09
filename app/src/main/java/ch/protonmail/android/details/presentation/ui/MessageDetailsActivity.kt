@@ -668,7 +668,15 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         messageDetailsActionsView.bind(actionsUiModel)
         messageDetailsActionsView.setAction(
             BottomActionsView.ActionPosition.ACTION_FIRST, !message.isScheduled,
-            if (hasMultipleRecipients) R.drawable.ic_proton_arrows_up_and_left else R.drawable.ic_proton_arrow_up_and_left
+            if (hasMultipleRecipients) R.drawable.ic_proton_arrows_up_and_left else R.drawable.ic_proton_arrow_up_and_left,
+            if (hasMultipleRecipients) getString(R.string.reply_all) else getString(R.string.reply)
+        )
+        messageDetailsActionsView.setAction(
+            BottomActionsView.ActionPosition.ACTION_THIRD, !message.isScheduled,
+            if (viewModel.shouldShowDeleteActionInBottomActionBar()) R.drawable.ic_proton_trash_cross else R.drawable.ic_proton_trash,
+            if (viewModel.shouldShowDeleteActionInBottomActionBar()) getString(R.string.delete) else getString(
+                R.string.trash
+            )
         )
         messageDetailsActionsView.setOnFourthActionClickListener {
             showLabelsActionSheet(LabelType.MESSAGE_LABEL)

@@ -352,7 +352,11 @@ internal class MailboxActivity :
                 if (MessageUtils.areAllUnRead(
                         selectedMessages
                     )
-                ) R.drawable.ic_proton_envelope_open_text else R.drawable.ic_proton_envelope_dot
+                ) R.drawable.ic_proton_envelope_open_text else R.drawable.ic_proton_envelope_dot,
+                if (MessageUtils.areAllUnRead(
+                        selectedMessages
+                    )
+                ) getString(R.string.mark_as_read) else getString(R.string.mark_as_unread)
             )
         }
 
@@ -1019,6 +1023,37 @@ internal class MailboxActivity :
             R.drawable.ic_proton_tag
         )
         mailboxActionsView.bind(actionsUiModel)
+
+
+        mailboxActionsView.setAction(
+            BottomActionsView.ActionPosition.ACTION_SECOND, true,
+            if (currentMailboxLocation in arrayOf(
+                    MessageLocationType.DRAFT,
+                    MessageLocationType.ALL_DRAFT,
+                    MessageLocationType.SENT,
+                    MessageLocationType.ALL_SENT,
+                    MessageLocationType.TRASH,
+                    MessageLocationType.SPAM
+                )
+            ) R.drawable.ic_proton_trash_cross else R.drawable.ic_proton_trash,
+            if (currentMailboxLocation in arrayOf(
+                    MessageLocationType.DRAFT,
+                    MessageLocationType.ALL_DRAFT,
+                    MessageLocationType.SENT,
+                    MessageLocationType.ALL_SENT,
+                    MessageLocationType.TRASH,
+                    MessageLocationType.SPAM
+                )
+            ) getString(R.string.delete) else getString(
+                R.string.trash
+            )
+        )
+        mailboxActionsView.setAction(
+            BottomActionsView.ActionPosition.ACTION_THIRD, true,
+            R.drawable.ic_proton_folder_arrow_in,
+            getString(R.string.move_to)
+        )
+
         mailboxActionsView.setOnFirstActionClickListener {
             val messageIds = getSelectedMessageIds()
             if (MessageUtils.areAllUnRead(selectedMessages)) {
