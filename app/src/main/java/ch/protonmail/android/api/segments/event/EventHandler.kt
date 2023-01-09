@@ -366,6 +366,9 @@ class EventHandler @AssistedInject constructor(
             ActionType.UPDATE_FLAGS -> {
                 updateMessageFlags(messageId, event)
             }
+            ActionType.UNKNOWN -> {
+                Timber.i("Unsupported Action type: ${event.type} received")
+            }
         }
         return
     }
@@ -520,6 +523,9 @@ class EventHandler @AssistedInject constructor(
                 }
 
                 ActionType.UPDATE_FLAGS -> {
+                }
+                ActionType.UNKNOWN -> {
+                    Timber.i("Unsupported Action type: ${event.type} received")
                 }
             }
         }

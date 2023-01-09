@@ -210,6 +210,7 @@ internal class AccountStateManager @Inject constructor(
                 username = account.username
             )
             account.isReady() -> accountManager.setAsPrimary(userId)
+            else -> Unit
         }
     }
 
