@@ -423,7 +423,7 @@
     <string name="contact_vcard_new_row_phone">bæta við símanúmeri</string>
     <string name="contact_vcard_new_row_address">bæta við heimilisfangi</string>
     <string name="contact_vcard_new_row_other">bæta við upplýsingum</string>
-    <string name="vcard_other_option_org">Fyrirtæki/Stofnun/Samtök/Félag</string>
+    <string name="vcard_other_option_org">Stofnun</string>
     <string name="vcard_other_option_title">Titill</string>
     <string name="vcard_other_option_nickname">Gælunafn</string>
     <string name="vcard_other_option_birthday">Fæðingardagur</string>
@@ -836,6 +836,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ógildur API-kerfisviðmótslykill fyrir Firebase. Ýtitilkynningar munu ekki virka.</string>
     <string name="failed_saving_draft_online">Mistókst að vista netlægt drög að skilaboðum: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">Message \"%s\" does not exist.</string>
     <string name="failed_uploading_attachment_online">Viðhengisvilla fyrir skilaboð: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Get ekki opnað þessi skilaboð á meðan verið er að senda þau</string>
     <string name="enable_conversation_mode">Virkja samtalsham</string>

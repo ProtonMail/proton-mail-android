@@ -775,7 +775,7 @@
     <string name="auto_lock_app">Verrouillage automatique de l\'application</string>
     <string name="auto_lock_description">Activez cette fonctionnalité pour verrouiller automatiquement votre application et utilisez un code PIN ou une empreinte digitale pour la déverrouiller.</string>
     <string name="change_pin_code">Modifier le code PIN</string>
-    <string name="auto_lock_timer">Délai de verrouillage automatique</string>
+    <string name="auto_lock_timer">Délai avant verrouillage automatique</string>
     <string name="connections_via_third_parties">Routage alternatif</string>
     <string name="allow_secure_connections_via_third_parties">Autoriser le routage alternatif</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">En cas de blocage des sites Proton, ce paramètre permet à l\'application d\'essayer un routage réseau alternatif pour atteindre Proton, ce qui peut être utile pour contourner les pare-feu ou les problèmes de réseau. Nous vous recommandons de conserver ce paramètre activé pour une plus grande fiabilité.</string>
@@ -827,6 +827,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">La clé API pour Firebase n\'est pas valide. Les notifications push ne fonctionneront pas.</string>
     <string name="failed_saving_draft_online">Le brouillon du message n\'a pas pu être sauvegardé en ligne : « %s »</string>
+    <string name="failed_draft_does_not_exist">Le message « %s » n\'existe pas.</string>
     <string name="failed_uploading_attachment_online">Erreur de pièce jointe pour le message : « %s »</string>
     <string name="cannot_open_message_while_being_sent">Impossible d\'ouvrir ce message lors de son envoi</string>
     <string name="enable_conversation_mode">Activer le mode conversation</string>

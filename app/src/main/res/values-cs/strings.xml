@@ -864,6 +864,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Klíč Firebase API není platný. Oznámení nebudou fungovat.</string>
     <string name="failed_saving_draft_online">Nepodařilo se uložit koncept zprávy: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">Zpráva \"%s\" neexistuje.</string>
     <string name="failed_uploading_attachment_online">Chyba přílohy pro zprávu: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Tuto zprávu nelze během odesílání otevřít</string>
     <string name="enable_conversation_mode">Povolit mód konverzace</string>

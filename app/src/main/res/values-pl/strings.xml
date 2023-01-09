@@ -860,6 +860,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Klucz interfejsu API Firebase jest nieprawidłowy. Powiadomienia nie będą działać.</string>
     <string name="failed_saving_draft_online">Nie udało się zapisać szkicu: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">Wiadomość \"%s\" nie istnieje.</string>
     <string name="failed_uploading_attachment_online">Wystąpił błąd załącznika dla wiadomości: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Nie można otworzyć wiadomości podczas jej wysyłania</string>
     <string name="enable_conversation_mode">Włącz tryb wątku</string>

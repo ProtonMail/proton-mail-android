@@ -38,7 +38,7 @@
     <string name="x_parent_folder_icon_description">サブフォルダを含むフォルダのアイコン</string>
     <!-- endregion -->
     <!-- region Drawer -->
-    <string name="drawer_scheduled">送信予約済み</string>
+    <string name="drawer_scheduled">送信予約</string>
     <string name="drawer_contacts">連絡先</string>
     <string name="drawer_lock_the_app">アプリをロック</string>
     <string name="drawer_report_bug">問題を報告</string>
@@ -72,7 +72,7 @@
     <string name="details_hyperlink_phishing_dialog_cancel_action">戻る (推奨)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">警告を無視して続行</string>
     <string name="scheduled_message_info">このメッセージは %s に送信されます</string>
-    <string name="scheduled_message_edit_info">送信予約されたメッセージは現在、ウェブまたは iOS 版アプリからのみ編集できます</string>
+    <string name="scheduled_message_edit_info">現在、送信予約メッセージは、ウェブまたは iOS 版アプリからのみ編集できます。</string>
     <string name="scheduled_message_moved_to_trash_title">メッセージは送信されません</string>
     <string name="scheduled_message_moved_to_trash_desc">このメッセージをごみ箱へ移動すると、送信予約はキャンセルされます</string>
     <!-- endregion -->
@@ -747,7 +747,7 @@
     <string name="swipe_action_mark_read">メッセージを既読にする</string>
     <string name="swipe_action_mark_read_short">既読</string>
     <plurals name="action_move_to_trash">
-        <item quantity="other">メッセージをごみ箱に移動しました</item>
+        <item quantity="other">メッセージがごみ箱に移動されました</item>
     </plurals>
     <!-- endregion -->
     <string name="local_storage">ストレージ容量の上限</string>
@@ -814,6 +814,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Firebase API キーが無効です。プッシュ通知は動作しません。</string>
     <string name="failed_saving_draft_online">ドラフトメッセージの保存に失敗しました: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">Message \"%s\" does not exist.</string>
     <string name="failed_uploading_attachment_online">添付ファイルのエラー: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">送信中にこのメッセージを開くことはできません</string>
     <string name="enable_conversation_mode">会話モードを有効化</string>

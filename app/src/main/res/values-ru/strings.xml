@@ -35,7 +35,7 @@
     <!-- region Content descriptions: accessibility description for icons -->
     <string name="x_label_icon_description">Значок ярлыка</string>
     <string name="x_folder_icon_description">Значок папки</string>
-    <string name="x_parent_folder_icon_description">Папка с детским значком</string>
+    <string name="x_parent_folder_icon_description">Папка с дочерним значком</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_scheduled">Запланированные</string>
@@ -50,7 +50,7 @@
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Эта папка пуста</string>
     <string name="mailbox_empty_inbox_subtitle">Вы в курсе всех событий</string>
-    <string name="mailbox_empty_spam_subtitle">Папка Спам пуста</string>
+    <string name="mailbox_empty_spam_subtitle">Ваша папка со спамом пуста</string>
     <string name="mailbox_empty_trash_subtitle">Корзина пуста</string>
     <string name="mailbox_empty_state_no_results_found">Результатов не найдено</string>
     <string name="mailbox_empty_state_try_a_different_term">Попробуйте другой поисковый запрос</string>
@@ -95,7 +95,7 @@
     <string name="set_msg_password_info_icon_description">Информация</string>
     <string name="set_msg_password_msg_password_title">Пароль сообщения</string>
     <string name="set_msg_password_msg_password_hint">от 4 до 21 символа</string>
-    <string name="set_msg_password_repeat_password_title">Подтвердить пароль</string>
+    <string name="set_msg_password_repeat_password_title">Повторите пароль</string>
     <string name="set_msg_password_repeat_password_hint">Пароли должны совпадать</string>
     <string name="set_msg_password_password_hint_title">Подсказка к паролю</string>
     <string name="set_msg_password_password_hint_hint">Укажите подсказку (необязательно)</string>
@@ -132,7 +132,7 @@
     <!-- region App Theme -->
     <string name="app_theme_title">Тема приложения</string>
     <string name="app_theme_light">Светлая</string>
-    <string name="app_theme_dark">Темная</string>
+    <string name="app_theme_dark">Тёмная</string>
     <string name="app_theme_system">Системная по умолчанию</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
@@ -864,6 +864,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Недействительный ключ API Firebase. Push-уведомления не будут работать.</string>
     <string name="failed_saving_draft_online">Не удалось сохранить онлайн черновик сообщения: \"%s\"</string>
+    <string name="failed_draft_does_not_exist">Сообщение \"%s\" не существует.</string>
     <string name="failed_uploading_attachment_online">Ошибка вложения для сообщения: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Невозможно открыть сообщение пока оно отправляется</string>
     <string name="enable_conversation_mode">Включить цепочки писем</string>

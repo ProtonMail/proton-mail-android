@@ -828,6 +828,7 @@ Ziehe in Erwägung, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, b
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ungültiger Firebase API-Schlüssel. Push-Benachrichtigungen werden nicht funktionieren.</string>
     <string name="failed_saving_draft_online">Speichern des Online-Entwurfs für Nachricht „%s“ fehlgeschlagen.</string>
+    <string name="failed_draft_does_not_exist">Die Nachricht „%s“ existiert nicht.</string>
     <string name="failed_uploading_attachment_online">Fehler beim Anhängen an die Nachricht: „%s”</string>
     <string name="cannot_open_message_while_being_sent">Nachricht kann während des Sendens nicht geöffnet werden</string>
     <string name="enable_conversation_mode">Unterhaltungsmodus aktivieren</string>
