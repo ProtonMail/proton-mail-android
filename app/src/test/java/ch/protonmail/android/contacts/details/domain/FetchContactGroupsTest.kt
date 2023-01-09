@@ -33,19 +33,26 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class FetchContactGroupsTest : ArchTest, CoroutinesTest {
+class FetchContactGroupsTest : ArchTest by ArchTest(),
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     private val repository: ContactDetailsRepository = mockk()
 
-    private val useCase = FetchContactGroups(
-        repository, dispatchers
-    )
+    private lateinit var useCase: FetchContactGroups
+
+    @BeforeTest
+    fun setUp() {
+        useCase = FetchContactGroups(repository, dispatchers)
+    }
 
     @Test
     fun verifyStandardCaseJustOneEmissionOfTwoValues() = runTest(dispatchers.Main) {

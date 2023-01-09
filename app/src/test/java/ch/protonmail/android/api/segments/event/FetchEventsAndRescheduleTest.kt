@@ -48,7 +48,7 @@ internal class FetchEventsAndRescheduleTest {
     private val alarmReceiverMock = mockk<AlarmReceiver> {
         every { setAlarm(contextMock) } just runs
     }
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     private val fetchEventsAndReschedule = FetchEventsAndReschedule(
         eventManagerMock,

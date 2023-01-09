@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
+import me.proton.core.test.kotlin.flowTest
 import kotlin.test.Test
 
 class ContactDetailsRepositoryTest {
@@ -65,7 +66,7 @@ class ContactDetailsRepositoryTest {
         coEvery { saveAllContactsEmails(any<List<ContactEmail>>()) } returns mockk()
     }
 
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
    
     private val repository = ContactDetailsRepository(
         jobManager, apiManager, contactDao, dispatchers, labelsRepository,
@@ -179,7 +180,7 @@ class ContactDetailsRepositoryTest {
             coEvery { contactDao.insertFullContactDetails(mockContact) } just Runs
 
             // when
-            repository.observeFullContactDetails(testContactId).test {
+            flowTest(repository.observeFullContactDetails(testContactId)) {
                 dbResponseFlow.send(null)
 
                 // then

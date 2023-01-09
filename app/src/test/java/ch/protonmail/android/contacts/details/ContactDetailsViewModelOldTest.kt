@@ -33,11 +33,13 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.test.kotlin.assertIs
 import studio.forface.viewstatestore.ViewState
 import java.io.FileNotFoundException
@@ -53,8 +55,8 @@ import kotlin.test.Test
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ContactDetailsViewModelOldTest :
-    ArchTest,
-    CoroutinesTest,
+    ArchTest by ArchTest(),
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }),
     ViewStateStoreTest by viewStateStoreTest(errorStateGenerator) {
 
     private val userManager = mockk<UserManager>()

@@ -72,7 +72,7 @@ class FetchMailSettingsWorkerTest {
             every { state } returns AccountState.Ready
         }
     )
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     @BeforeTest
     fun setUp() {

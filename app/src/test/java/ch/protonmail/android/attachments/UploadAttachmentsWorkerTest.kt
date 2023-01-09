@@ -47,19 +47,23 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.user.domain.entity.AddressId
 import org.junit.Assert.assertArrayEquals
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
  * Test suite for [UploadAttachments]
  */
-class UploadAttachmentsWorkerTest : CoroutinesTest {
+class UploadAttachmentsWorkerTest :
+    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     private val context: Context = mockk(relaxed = true)
 
@@ -99,17 +103,22 @@ class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     private val crypto: AddressCrypto = mockk(relaxed = true)
 
-    private val uploadAttachmentsWorker = UploadAttachmentsWorker(
-        context = context,
-        params = parameters,
-        dispatchers = dispatchers,
-        attachmentsRepository = attachmentsRepository,
-        databaseProvider = databaseProvider,
-        messageDetailsRepository = messageDetailsRepository,
-        addressCryptoFactory = cryptoFactory,
-        userManager = userManager,
-        getMailSettings = getMailSettings,
-    )
+    private lateinit var uploadAttachmentsWorker: UploadAttachmentsWorker
+
+    @BeforeTest
+    fun setUp() {
+        uploadAttachmentsWorker = UploadAttachmentsWorker(
+            context = context,
+            params = parameters,
+            dispatchers = dispatchers,
+            attachmentsRepository = attachmentsRepository,
+            databaseProvider = databaseProvider,
+            messageDetailsRepository = messageDetailsRepository,
+            addressCryptoFactory = cryptoFactory,
+            userManager = userManager,
+            getMailSettings = getMailSettings,
+        )
+    }
 
     @Test
     fun workerEnqueuerCreatesOneTimeRequestWorkerWhichIsUniqueForMessageId() {

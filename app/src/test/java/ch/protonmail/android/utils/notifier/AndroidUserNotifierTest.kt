@@ -39,7 +39,7 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class AndroidUserNotifierTest : CoroutinesTest {
+class AndroidUserNotifierTest : CoroutinesTest by CoroutinesTest() {
 
     private val testUserId = UserId("id")
     private val testUserName = Name("name")
@@ -57,16 +57,17 @@ class AndroidUserNotifierTest : CoroutinesTest {
         }
     }
 
-    private val userNotifier = AndroidUserNotifier(
-        notificationServer,
-        userManager,
-        context,
-        dispatchers
-    )
+    private lateinit var userNotifier: AndroidUserNotifier
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+        userNotifier = AndroidUserNotifier(
+            notificationServer,
+            userManager,
+            context,
+            dispatchers
+        )
     }
 
     @Test

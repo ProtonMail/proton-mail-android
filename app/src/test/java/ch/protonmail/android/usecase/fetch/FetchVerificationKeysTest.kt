@@ -37,11 +37,12 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class FetchVerificationKeysTest : CoroutinesTest {
+class FetchVerificationKeysTest : CoroutinesTest by CoroutinesTest() {
 
     private val testUserId = UserId("id")
     private val testUser = mockk<User> {
@@ -64,7 +65,12 @@ class FetchVerificationKeysTest : CoroutinesTest {
 
     private val contactDao: ContactDao = mockk()
 
-    private val useCase = FetchVerificationKeys(api, userManager, userCryptoFactory, contactDao, dispatchers)
+    private lateinit var useCase: FetchVerificationKeys
+
+    @BeforeTest
+    fun setUp() {
+        useCase = FetchVerificationKeys(api, userManager, userCryptoFactory, contactDao, dispatchers)
+    }
 
     @Test
     fun verifyThatContactsAreFetchedCorrectlyFromRemoteApi() = runTest {

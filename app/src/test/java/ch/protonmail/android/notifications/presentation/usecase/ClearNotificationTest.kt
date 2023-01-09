@@ -30,7 +30,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Test
 
-class ClearNotificationTest : CoroutinesTest {
+class ClearNotificationTest : CoroutinesTest by CoroutinesTest() {
 
     private val userId = UserId("id")
     private val notificationId = "messageId"

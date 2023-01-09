@@ -90,7 +90,7 @@ import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-class CreateDraftWorkerTest : CoroutinesTest {
+class CreateDraftWorkerTest : CoroutinesTest by CoroutinesTest() {
 
     private val testUserId = UserId("id")
     private val testMessagePayload = MessagePayload(

@@ -40,7 +40,7 @@ class UpdateSwipeActionsTest {
 
     private val userId = UserId("userId")
 
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     @BeforeTest
     fun setUp() {

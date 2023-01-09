@@ -43,7 +43,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class VerifyConnectionTest : CoroutinesTest, ArchTest {
+class VerifyConnectionTest : CoroutinesTest by CoroutinesTest(), ArchTest by ArchTest() {
 
     @MockK
     private lateinit var workEnqueuer: PingWorker.Enqueuer

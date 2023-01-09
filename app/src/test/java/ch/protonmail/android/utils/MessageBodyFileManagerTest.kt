@@ -46,7 +46,7 @@ class MessageBodyFileManagerTest {
     @MockK
     private lateinit var fileHelper: FileHelper
 
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
 
     private lateinit var messageBodyFileManager: MessageBodyFileManager
 

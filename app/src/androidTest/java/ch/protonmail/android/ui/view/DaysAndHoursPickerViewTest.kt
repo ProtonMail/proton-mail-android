@@ -40,7 +40,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @RunWith(AndroidJUnit4ClassRunner::class)
-class DaysAndHoursPickerViewTest : ViewTest<DaysAndHoursPickerView>(::DaysAndHoursPickerView), CoroutinesTest {
+class DaysAndHoursPickerViewTest : ViewTest<DaysAndHoursPickerView>(::DaysAndHoursPickerView), CoroutinesTest by CoroutinesTest() {
 
     // Days
     @Test

@@ -54,7 +54,7 @@ private const val TEST_MESSAGE_BODY_1 = "Message body 1"
 private const val TEST_MESSAGE_BODY_2 = "Message body 2"
 private const val TEST_DOCUMENT_CONTENT = "document"
 
-internal class MessageRendererTest : CoroutinesTest {
+internal class MessageRendererTest : CoroutinesTest by CoroutinesTest() {
 
     @get:Rule
     val folder: TemporaryFolder = TemporaryFolder()

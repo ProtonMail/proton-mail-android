@@ -39,7 +39,7 @@ import kotlin.test.Test
 @Ignore("Benchmarks are useful only when observed, not needed to run for every pipeline")
 class LabelOrFolderWithChildrenMapperBenchmarks {
 
-    private val mapper = LabelOrFolderWithChildrenMapper(TestDispatcherProvider)
+    private val mapper = LabelOrFolderWithChildrenMapper(TestDispatcherProvider())
 
     private lateinit var data50parents100children: List<LabelEntity>
     private lateinit var data200parents800children: List<LabelEntity>

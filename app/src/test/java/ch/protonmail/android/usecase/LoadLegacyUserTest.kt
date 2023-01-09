@@ -32,7 +32,7 @@ import kotlin.test.Test
 /**
  * Test suite for [LoadLegacyUser]
  */
-class LoadLegacyUserTest : CoroutinesTest {
+class LoadLegacyUserTest : CoroutinesTest by CoroutinesTest() {
 
     @Test
     fun returnsLegacyUserIfNoError() = runTest {

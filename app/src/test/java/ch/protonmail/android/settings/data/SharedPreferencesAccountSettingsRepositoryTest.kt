@@ -41,7 +41,7 @@ internal class SharedPreferencesAccountSettingsRepositoryTest {
     private val secureSharedPreferencesFactoryMock = mockk<SecureSharedPreferences.Factory> {
         every { userPreferences(UserTestData.userId) } returns userPreferencesMock
     }
-    private val dispatchers = TestDispatcherProvider
+    private val dispatchers = TestDispatcherProvider()
     private val sharedPreferencesAccountSettingsRepository = SharedPreferencesAccountSettingsRepository(
         secureSharedPreferencesFactoryMock,
         dispatchers

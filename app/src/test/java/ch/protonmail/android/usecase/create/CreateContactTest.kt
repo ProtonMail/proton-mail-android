@@ -48,15 +48,17 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Rule
 import java.io.File
 import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class CreateContactTest : CoroutinesTest {
+class CreateContactTest : CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()

@@ -40,7 +40,7 @@ import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ObserveConversationsByLocationTest : CoroutinesTest {
+class ObserveConversationsByLocationTest : CoroutinesTest by CoroutinesTest() {
 
     private var userId = UserId("id")
 
