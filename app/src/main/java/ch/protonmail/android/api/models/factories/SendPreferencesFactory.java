@@ -352,10 +352,10 @@ public class SendPreferencesFactory {
         List<String> apiFingerprints = getSendFingerprints(pubKeyResp.getKeys());
         for (String key : pinnedKeys) {
             KeyInformation ki = crypto.deriveKeyInfo(key);
-            if (ki.isValid() && ki.isExpired()) {
+            if (!ki.isValid() || ki.isExpired() || !ki.canEncrypt()) {
                 continue;
             }
-            if (pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL &&
+            if ((pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL || !apiFingerprints.isEmpty()) &&
                 !apiFingerprints.contains(ki.getFingerprint())) {
                 continue;
             }

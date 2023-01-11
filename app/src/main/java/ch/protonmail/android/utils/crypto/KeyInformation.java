@@ -32,6 +32,7 @@ public class KeyInformation {
     private String fingerprint;
     private boolean isExpired;
     private boolean isValid;
+    private boolean canEncrypt;
     private byte[] publicKey;
     private byte[] privateKey;
     private boolean compromised;
@@ -43,17 +44,19 @@ public class KeyInformation {
                 null,
                 false,
                 null,
-                true
+                true,
+                false
         );
     }
 
-    public KeyInformation (byte[] publicKey, byte[] privateKey, boolean isValid, String fingerprint, boolean isExpired) {
+    public KeyInformation (byte[] publicKey, byte[] privateKey, boolean isValid, String fingerprint, boolean isExpired, boolean canEncrypt) {
         this.isValid = isValid;
         this.fingerprint = fingerprint;
         this.isExpired = isExpired;
         this.publicKey = publicKey;
         this.privateKey = privateKey;
         this.compromised = false;
+        this.canEncrypt = canEncrypt;
     }
 
     public boolean isExpired() {
@@ -103,5 +106,9 @@ public class KeyInformation {
         result = 31 * result + Arrays.hashCode(publicKey);
         result = 31 * result + Arrays.hashCode(privateKey);
         return result;
+    }
+
+    public boolean canEncrypt() {
+        return canEncrypt;
     }
 }
