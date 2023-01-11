@@ -295,7 +295,7 @@ class NotificationServer @Inject constructor(
     ) {
         // Create content Intent for open SwitchUserAndOpenMessageDetailsActivity
         val contentIntent = SwitchUserAndOpenMessageDetailsActivity.Input(
-            userId = user.id,
+            userId = userId,
             messageId = messageId,
             locationType = message?.location?.let(MessageLocationType::fromInt) ?: MessageLocationType.INVALID,
             messageSubject = notificationBody
