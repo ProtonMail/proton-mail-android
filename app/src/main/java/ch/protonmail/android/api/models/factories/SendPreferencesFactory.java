@@ -30,6 +30,7 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -349,14 +350,14 @@ public class SendPreferencesFactory {
      * For internal recipients, we only consider pinned keys that match (by fingerprint) those fetched from the API.
      */
     private String findPinnedEncryptionKey(List<String> pinnedKeys, PublicKeyResponse pubKeyResp) {
-        List<String> apiFingerprints = getSendFingerprints(pubKeyResp.getKeys());
+        List<byte[]> apiSendingKeys = getSendingKeys(pubKeyResp.getKeys());
         for (String key : pinnedKeys) {
             KeyInformation ki = crypto.deriveKeyInfo(key);
             if (!ki.isValid() || ki.isExpired() || !ki.canEncrypt()) {
                 continue;
             }
-            if ((pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL || !apiFingerprints.isEmpty()) &&
-                !apiFingerprints.contains(ki.getFingerprint())) {
+            if ((pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL || !apiSendingKeys.isEmpty()) &&
+                !sendingKeysContains(apiSendingKeys, ki.getPublicKey())) {
                 continue;
             }
             return key;
@@ -364,15 +365,24 @@ public class SendPreferencesFactory {
         return null;
     }
 
-    private List<String> getSendFingerprints(PublicKeyBody[] bodies) {
-        List<String> fingerprints = new ArrayList<>();
+    private boolean sendingKeysContains(List<byte[]> apiSendingKeys, byte[] publicKey){
+        for (byte[] apiSendingKey : apiSendingKeys) {
+            if (Arrays.equals(apiSendingKey, publicKey)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<byte[]> getSendingKeys(PublicKeyBody[] bodies) {
+        List<byte[]> sendingKeys = new ArrayList<>();
         for (PublicKeyBody body : bodies) {
             if (body.isAllowedForSending()) {
                 KeyInformation ki = crypto.deriveKeyInfo(body.getPublicKey());
-                fingerprints.add(ki.getFingerprint());
+                sendingKeys.add(ki.getPublicKey());
             }
         }
-        return fingerprints;
+        return sendingKeys;
     }
 
     private SendPreference buildUsingDefaults(String email, PublicKeyResponse pubKeyResp) {
