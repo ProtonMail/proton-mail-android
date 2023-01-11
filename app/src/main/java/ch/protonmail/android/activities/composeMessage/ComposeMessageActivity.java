@@ -2047,7 +2047,12 @@ public class ComposeMessageActivity
     }
 
     public void checkPermissionsAndKeyboardToggle() {
-        if (ActivityCompat.checkSelfPermission(ComposeMessageActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && !askForPermission) {
+        boolean hasNotGrantedReadMediaPermissions =
+                ActivityCompat.checkSelfPermission(ComposeMessageActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(ComposeMessageActivity.this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(ComposeMessageActivity.this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED;
+
+        if (hasNotGrantedReadMediaPermissions && !askForPermission) {
             UiUtil.hideKeyboard(this);
         } else if (ActivityCompat.checkSelfPermission(ComposeMessageActivity.this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
                 && !askForPermission) {

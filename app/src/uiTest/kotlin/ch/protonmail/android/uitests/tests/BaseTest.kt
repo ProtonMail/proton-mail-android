@@ -20,6 +20,9 @@ package ch.protonmail.android.uitests.tests
 
 import android.Manifest.permission.READ_CONTACTS
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.READ_MEDIA_AUDIO
+import android.Manifest.permission.READ_MEDIA_IMAGES
+import android.Manifest.permission.READ_MEDIA_VIDEO
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Context
 import android.widget.Toast
@@ -41,7 +44,6 @@ import me.proton.core.test.android.instrumented.utils.FileUtils.prepareArtifacts
 import me.proton.core.test.android.instrumented.utils.Shell.deleteDownloadArtifactsFolder
 import me.proton.core.test.quark.data.User
 import me.proton.core.util.android.sharedpreferences.set
-import me.proton.core.util.kotlin.deserializeList
 import me.proton.fusion.Fusion
 import org.junit.After
 import org.junit.BeforeClass
