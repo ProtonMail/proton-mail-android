@@ -357,7 +357,7 @@ public class SendPreferencesFactory {
                 continue;
             }
             // TODO: Compare full binary keys, fingerprints is not enough to detect subkey changes
-            if (pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL &&
+            if ((pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL || !apiFingerprints.isEmpty()) &&
                 !apiFingerprints.contains(ki.getFingerprint())) {
                 continue;
             }
