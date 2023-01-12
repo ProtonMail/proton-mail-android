@@ -30,6 +30,7 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -221,8 +222,14 @@ public class SendPreferencesFactory {
                 RawProperty encryptFlag = VCardUtil.findProperty(signed, "x-pm-encrypt", group);
                 encrypt = encryptFlag == null || !encryptFlag.getValue().equalsIgnoreCase("false");
             } else if(encryptionKey != null) {
-                // WKD keys -> encrypt by default
-                encrypt = true;
+                RawProperty useUntrustedKeyFlag =
+                        VCardUtil.findProperty(signed, "x-pm-encrypt-untrusted", group);
+                /*
+                WKD keys:
+                encrypt by default, except if the contact has a flag to disable untrusted keys
+                 */
+                encrypt = useUntrustedKeyFlag == null ||
+                        !useUntrustedKeyFlag.getValue().equalsIgnoreCase("false");
             }
         }
         // always sign when encrypting
@@ -346,10 +353,11 @@ public class SendPreferencesFactory {
         List<String> apiFingerprints = getSendFingerprints(pubKeyResp.getKeys());
         for (String key : pinnedKeys) {
             KeyInformation ki = crypto.deriveKeyInfo(key);
-            if (ki.isValid() && ki.isExpired()) {
+            if (!ki.isValid() || ki.isExpired() || !ki.canEncrypt()) {
                 continue;
             }
-            if (pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL &&
+            // TODO: Compare full binary keys, fingerprints is not enough to detect subkey changes
+            if ((pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL || !apiFingerprints.isEmpty()) &&
                 !apiFingerprints.contains(ki.getFingerprint())) {
                 continue;
             }

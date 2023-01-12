@@ -124,6 +124,10 @@ public class OpenPGP {
         return Crypto.newKeyFromArmored(publicKey).isExpired();
     }
 
+    public boolean canEncrypt(String publicKey) throws Exception {
+        return Crypto.newKeyFromArmored(publicKey).canEncrypt();
+    }
+
     public String signBinDetached(byte[] plainData, String privateKey, byte[] passphrase) throws Exception {
         KeyRing privateKeyRing = buildPrivateKeyRingArmored(privateKey, passphrase);
         try {
