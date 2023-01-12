@@ -350,14 +350,15 @@ public class SendPreferencesFactory {
      * For internal recipients, we only consider pinned keys that match (by fingerprint) those fetched from the API.
      */
     private String findPinnedEncryptionKey(List<String> pinnedKeys, PublicKeyResponse pubKeyResp) {
-        List<byte[]> apiSendingKeys = getSendingKeys(pubKeyResp.getKeys());
+        List<String> apiFingerprints = getSendFingerprints(pubKeyResp.getKeys());
         for (String key : pinnedKeys) {
             KeyInformation ki = crypto.deriveKeyInfo(key);
             if (!ki.isValid() || ki.isExpired() || !ki.canEncrypt()) {
                 continue;
             }
-            if ((pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL || !apiSendingKeys.isEmpty()) &&
-                !sendingKeysContains(apiSendingKeys, ki.getPublicKey())) {
+            // TODO: Compare full binary keys, fingerprints is not enough to detect subkey changes
+            if (pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL &&
+                !apiFingerprints.contains(ki.getFingerprint())) {
                 continue;
             }
             return key;
@@ -365,24 +366,15 @@ public class SendPreferencesFactory {
         return null;
     }
 
-    private boolean sendingKeysContains(List<byte[]> apiSendingKeys, byte[] publicKey){
-        for (byte[] apiSendingKey : apiSendingKeys) {
-            if (Arrays.equals(apiSendingKey, publicKey)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private List<byte[]> getSendingKeys(PublicKeyBody[] bodies) {
-        List<byte[]> sendingKeys = new ArrayList<>();
+    private List<String> getSendFingerprints(PublicKeyBody[] bodies) {
+        List<String> fingerprints = new ArrayList<>();
         for (PublicKeyBody body : bodies) {
             if (body.isAllowedForSending()) {
                 KeyInformation ki = crypto.deriveKeyInfo(body.getPublicKey());
-                sendingKeys.add(ki.getPublicKey());
+                fingerprints.add(ki.getFingerprint());
             }
         }
-        return sendingKeys;
+        return fingerprints;
     }
 
     private SendPreference buildUsingDefaults(String email, PublicKeyResponse pubKeyResp) {
