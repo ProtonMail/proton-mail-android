@@ -128,6 +128,44 @@ private const val INTERNAL_CONTACT_PINNED_KEY =
         -----END PGP PUBLIC KEY BLOCK-----
     """
 
+private const val EXTERNAL_CONTACT_DATA_WITH_PINNED_KEY_EXPIRED_SUBKEY =
+    """
+        BEGIN:VCARD
+        VERSION:4.0
+        FN;PREF=1:expired-encryption-key@domain.tld
+        ITEM1.EMAIL;PREF=1:expired-encryption-key@domain.tld
+        UID:proton-web-efc9290f-568b-ff71-adfe-434c07b51b72
+        ITEM1.KEY;PREF=1:data:application/pgp-keys;base64,xjMEYsWyPxYJKwYBBAHaRw8BA
+         QdApy7e/4nQpvqU7Nb+VKcxBOn6k5Ns9A96ZgllUvoKXFrNPURhaWx5IHJvdGF0aW5nIGVuY3J5
+         cHRpb24gc3Via2V5IDxkYWlseS1zdWJrZXlAcHJvdG9ua2V5LmNvbT7CqwQTFgoAPBYhBOsxSNg
+         7naEMH6zUw0s0O0Tu5J/1BQJixbI/AhsDBQsJCAcCAyICAQYVCgkICwIEFgIDAQIeBwIXgAAhCR
+         BLNDtE7uSf9RYhBOsxSNg7naEMH6zUw0s0O0Tu5J/1MYkA/0MHro5TnjHjKJfZDgjqb8Gx1TSi4
+         vn9It6Hvb68va9iAQCkdKi+dnPZR9BWVM7cbGFxRRADPojCjFMwUwi8NPq+A87AzQRixoZQAQwA
+         uKcvcJVpxqWGeFYzCY3wCwunuYoWReZtpIQOSOIFX0Lj0Wxd6oFLYR9FZN/hOGI9JG1ijpjgWVM
+         F9FN/rLUtNtUt6nyQ0AraFPQMtJKXIe1QN9g2p1M2O1Tq+d0z0/Hyrf5wVNE0NpwH9mloLPWtvg
+         VGZ1zXs9D6A8XOhXhN7+qYvT2IGuQCqOL5dx3CaFepDESyUN6VYTRxZS0vWJDelAfD/D/LoAj15
+         +a5lU+9gfKwI1a5CTGbiaOlLvRGWphsIGVW5unxF3kRHj3RKaU03mytRd0qnQNkfHTNN8VRDQJE
+         /sVLcBcgYbsRLmPovHyAsAl1ZgOqi+GnWX+9owDS315BbKAtKMcbeB8JekivpuYu/Zqt8ZlqPsv
+         XzkJ6EXAEiMA6sAylsotoaVq5HcyOtydQAhIR2vD8m7fzOP3f3MDUIJ4qlDMiGwydaN/JO5vCO/
+         B8EftP2giuY0804TvxFms2a84nINKGMxsKbXcFKPVRGyAZSCeYyVT+pWNbim9zABEBAAHClQQYF
+         ggAJhYhBOsxSNg7naEMH6zUw0s0O0Tu5J/1BQJixoZQAhsMBQkAAVGAACEJEEs0O0Tu5J/1FiEE
+         6zFI2DudoQwfrNTDSzQ7RO7kn/XvcwEAnK8HSZOTYh9MUPpchBmAoD+Ezv2zcs79TUazFn6im3s
+         BAIWZEWLVN//jr6I+88z2qkF/B8xYBjKvml0nKr6mMpcJ
+        END:VCARD
+    """
+
+private const val EXTERNAL_CONTACT_DATA_WITH_PINNED_KEY_EXPIRED_SUBKEY_SIGNATURE =
+    """
+        -----BEGIN PGP SIGNATURE-----
+
+        wr0EARYKAG8FgmO/0T8JEMWIjIjnBBwHRxQAAAAAAB4AIHNhbHRAbm90YXRpb25z
+        LnNlcXVvaWEtcGdwLm9yZ6La49zW9I1JjszhnCGSEbn3au0h6TqkyTy4RP9W6JEe
+        FiEENxbs5dz3SjF9Nc15xYiMiOcEHAcAACKmAQDpxS9FtQRyHB8LbxmVt25Q+Oy2
+        3f+QTIu9qovB7fpOiwEA48mQghjemyspeelz7uofvk3Vkt8tqIT/zTq1Y/ScbQ4=
+        =zL80
+        -----END PGP SIGNATURE-----
+    """
+
 public class SendPreferencesFactoryTest {
     private val context = mockk<Context>(relaxed = true)
     private val apiManager = mockk<ProtonMailApiManager>()
@@ -300,6 +338,27 @@ public class SendPreferencesFactoryTest {
         )
 
         val actual = sendPreferencesFactory.buildFromContact( "free@proton.black", publicKeyResponse, signedContactDetails) as SendPreference
+        assertEqualSecurityPreferences(expected, actual)
+    }
+
+    @Test
+    fun `testBuildFromContactWithPinnedKeyExpiredSubKeyNoApiKeyExternal`() {
+        val contactDataWithPinnedKey = EXTERNAL_CONTACT_DATA_WITH_PINNED_KEY_EXPIRED_SUBKEY.trimIndent()
+        val contactSignature = EXTERNAL_CONTACT_DATA_WITH_PINNED_KEY_EXPIRED_SUBKEY_SIGNATURE.trimIndent()
+        val signedContactDetails = mockk<FullContactDetails> {
+            every { encryptedData } returns listOf(ContactEncryptedData(
+                contactDataWithPinnedKey,
+                contactSignature,
+                Constants.VCardType.SIGNED
+            ))
+        }
+        val publicKeyResponse = PublicKeyResponse(PublicKeyResponse.RecipientType.EXTERNAL.value, "", emptyArray())
+        val expected = SendPreference(
+            "expired-encryption-key@domain.tld", false, false, MIMEType.HTML, null, PackageType.CLEAR,
+            false, true, true, false
+        )
+
+        val actual = sendPreferencesFactory.buildFromContact( "expired-encryption-key@domain.tld", publicKeyResponse, signedContactDetails) as SendPreference
         assertEqualSecurityPreferences(expected, actual)
     }
 
