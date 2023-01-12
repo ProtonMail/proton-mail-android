@@ -112,6 +112,7 @@ class FetchVerificationKeysTest : CoroutinesTest by CoroutinesTest() {
                     null,
                     false,
                     null,
+                    false,
                     false
                 )
             )
@@ -162,7 +163,8 @@ class FetchVerificationKeysTest : CoroutinesTest by CoroutinesTest() {
             null,
             false,
             null,
-            true
+            true,
+            false,
         )
         val expected = listOf(keyInformation)
         every { userCrypto.deriveKeyInfo(any()) } returns keyInformation

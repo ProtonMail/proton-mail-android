@@ -92,8 +92,9 @@ class UserCrypto @AssistedInject constructor(
             val isExpired = openPgp.isKeyExpired(key)
             var privateKey = Armor.unarmor(key)
             val publicKey = openPgp.getPublicKey(key)
+            val canEncrypt = openPgp.canEncrypt(key)
             privateKey = if (Arrays.equals(privateKey, publicKey)) null else privateKey
-            KeyInformation(publicKey, privateKey, true, fingerprint, isExpired)
+            KeyInformation(publicKey, privateKey, true, fingerprint, isExpired, canEncrypt)
         } catch (ignored: Exception) {
             KeyInformation.EMPTY()
         }
