@@ -75,7 +75,7 @@ const val `json-simple version` =               "1.1.1"         // Released: Mar
 const val `browserstack-plugin version` =       "3.0.1"         // Released: Jun 10, 2020
 const val `uiautomator version` =               "2.3.0-alpha01"
 const val `sun-mail-android version` =          "1.5.5"         // Released: Mar 06, 2020
-const val `turbine version` =                   "0.9.0"         // Released: Aug 01, 2022
+const val `turbine version` =                   "0.12.1"
 const val `junit-ktx version` =                 "1.1.4"
 
 // Android

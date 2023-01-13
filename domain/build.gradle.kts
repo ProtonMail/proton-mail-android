@@ -33,7 +33,6 @@ dependencies {
         `Proton-user-domain`,
 
         // Kotlin
-        `kotlin-jdk8`,
         `coroutines-core`,
         `serialization-json`,
 
