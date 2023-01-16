@@ -615,8 +615,8 @@
     <string name="contact_group_saved">Grupo salvo</string>
     <string name="no_recipients">Nenhum destinatário</string>
     <plurals name="contact_group_selected">
-        <item quantity="one">%d Selecionado</item>
-        <item quantity="other">%d Selecionado</item>
+        <item quantity="one">%d selecionado</item>
+        <item quantity="other">%d selecionado</item>
     </plurals>
     <string name="paid_plan_needed">Por favor, faça o upgrade para um plano pago para ter estes recursos premium</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Membros)</string>

@@ -814,7 +814,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Firebase API キーが無効です。プッシュ通知は動作しません。</string>
     <string name="failed_saving_draft_online">ドラフトメッセージの保存に失敗しました: \"%s\"</string>
-    <string name="failed_draft_does_not_exist">Message \"%s\" does not exist.</string>
+    <string name="failed_draft_does_not_exist">メッセージ「%s」が存在しません。</string>
     <string name="failed_uploading_attachment_online">添付ファイルのエラー: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">送信中にこのメッセージを開くことはできません</string>
     <string name="enable_conversation_mode">会話モードを有効化</string>
