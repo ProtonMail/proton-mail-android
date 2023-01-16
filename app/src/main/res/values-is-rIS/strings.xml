@@ -157,7 +157,7 @@
     <string name="contact_details_remote_content_dialog_positive_button">Hlaða inn efni</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">Persónuvernd fyrir alla</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Gagnaleynd fyrir alla</string>
     <string name="new_user_onboarding_privacy_for_all_description">Bjóddu tengiliðum þínum í Proton tölvupóst til að njóta óaðfinnanlegrar enda-í-enda dulkóðunar, eða bæta lykilorðsvörn við skilaboð sem þú sendir þeim.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Hreint og fínt</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Skráðu, merktu og litakóðaðu skilaboð til að búa til þitt fullkomna, sérsniðna pósthólf.</string>
@@ -836,7 +836,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ógildur API-kerfisviðmótslykill fyrir Firebase. Ýtitilkynningar munu ekki virka.</string>
     <string name="failed_saving_draft_online">Mistókst að vista netlægt drög að skilaboðum: \"%s\"</string>
-    <string name="failed_draft_does_not_exist">Message \"%s\" does not exist.</string>
+    <string name="failed_draft_does_not_exist">Skilaboðin „%s“ eru ekki til.</string>
     <string name="failed_uploading_attachment_online">Viðhengisvilla fyrir skilaboð: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Get ekki opnað þessi skilaboð á meðan verið er að senda þau</string>
     <string name="enable_conversation_mode">Virkja samtalsham</string>

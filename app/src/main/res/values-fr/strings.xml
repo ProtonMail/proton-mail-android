@@ -355,7 +355,7 @@
     <string name="pin_invalid">Le code PIN n\'est pas valide, entrez le bon code de 4 chiffres.</string>
     <string name="pin_not_match">Le code PIN ne correspond pas.</string>
     <string name="new_pin_saved">Nouveau code PIN enregistré</string>
-    <string name="attachment_download_success">%s a bien été téléchargé dans le gestionnaire de fichiers.</string>
+    <string name="attachment_download_success">%s a été téléchargé dans le gestionnaire de fichiers.</string>
     <string name="attachment_download_failed">%s n\'a pas pu être téléchargé correctement.</string>
     <string name="ringtone">Sonnerie</string>
     <string name="ringtone_selected">Sonnerie :</string>

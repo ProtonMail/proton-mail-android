@@ -204,7 +204,7 @@
     <string name="open_drawer">Öffnen</string>
     <string name="close_drawer">Schließen</string>
     <string name="inbox_option">Posteingang</string>
-    <string name="starred_option">Gekennzeichnet</string>
+    <string name="starred_option">Markiert</string>
     <string name="drafts_option">Entwürfe</string>
     <string name="sent_option">Gesendet</string>
     <string name="archive_option">Archiv</string>
@@ -212,7 +212,7 @@
     <string name="spam_option">Spam</string>
     <string name="allmail_option">Alle Nachrichten</string>
     <string name="inbox">Posteingang</string>
-    <string name="starred">Gekennzeichnet</string>
+    <string name="starred">Markiert</string>
     <string name="drafts">Entwürfe</string>
     <string name="sent">Gesendet</string>
     <string name="archive">Archiv</string>
@@ -751,8 +751,8 @@ Ziehe in Erwägung, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, b
     <string name="swipe_action_chooser_title">Wischgeste wählen</string>
     <string name="swipe_action_trash">In den Papierkorb verschoben</string>
     <string name="swipe_action_trash_short">In Papierkorb verschieben</string>
-    <string name="swipe_action_star">Kennzeichnung der Nachricht aktualisiert</string>
-    <string name="swipe_action_star_short">Kennzeichnung aktualisieren</string>
+    <string name="swipe_action_star">Markierung der Nachricht aktualisiert</string>
+    <string name="swipe_action_star_short">Markierung aktualisieren</string>
     <string name="swipe_action_spam">Nachricht als Spam gekennzeichnet</string>
     <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Nachricht archiviert</string>
@@ -835,9 +835,9 @@ Ziehe in Erwägung, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, b
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="star">Kennzeichnen</string>
-    <string name="unstar">Kennzeichnung entfernen</string>
-    <string name="star_unstar">Kennzeichnen/Kennzeichnung aufheben</string>
+    <string name="star">Markieren</string>
+    <string name="unstar">Markierung entfernen</string>
+    <string name="star_unstar">Markieren/Markierung entfernen</string>
     <string name="send_to_archive">In Archiv verschieben?</string>
     <string name="label_as">Hinzufügen zur Kategorie…</string>
     <string name="mark_as_unread">Als ungelesen markieren</string>
