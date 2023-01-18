@@ -90,7 +90,7 @@ class SetMessagePasswordActivityTest {
         val expectedHint = "hint"
 
         // when
-        val scenario = ActivityScenario.launch<SetMessagePasswordActivity>(baseIntent)
+        val scenario = ActivityScenario.launchActivityForResult<SetMessagePasswordActivity>(baseIntent)
         setPassword(expectedPassword)
         setHint(expectedHint)
         performApplyClick()
@@ -110,7 +110,7 @@ class SetMessagePasswordActivityTest {
         val intent = baseIntent
             .putExtra(ARG_SET_MESSAGE_PASSWORD_PASSWORD, "old password")
             .putExtra(ARG_SET_MESSAGE_PASSWORD_HINT, "old hint")
-        val scenario = ActivityScenario.launch<SetMessagePasswordActivity>(intent)
+        val scenario = ActivityScenario.launchActivityForResult<SetMessagePasswordActivity>(intent)
         performRemovePasswordClick()
 
         // then
