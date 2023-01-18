@@ -245,7 +245,7 @@ internal class MailboxActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().setKeepOnScreenCondition {
-            accountStateManager.state.value != AccountStateManager.State.PrimaryExist
+            accountStateManager.state.value == AccountStateManager.State.Processing
         }
         super.onCreate(savedInstanceState)
 
