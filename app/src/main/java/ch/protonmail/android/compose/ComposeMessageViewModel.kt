@@ -552,6 +552,7 @@ class ComposeMessageViewModel @Inject constructor(
                     SavingDraftError(errorMessage, false)
                 )
             }
+            SaveDraftResult.MessageAlreadySent -> Unit
         }
     }
 

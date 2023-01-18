@@ -197,6 +197,7 @@ internal class AccountStateManager @Inject constructor(
     fun addAccount() = scope.launch {
         authOrchestrator.startAddAccountWorkflow(
             requiredAccountType = requiredAccountType,
+            creatableAccountType = requiredAccountType,
             product = product
         )
     }
@@ -209,6 +210,7 @@ internal class AccountStateManager @Inject constructor(
                 username = account.username
             )
             account.isReady() -> accountManager.setAsPrimary(userId)
+            else -> Unit
         }
     }
 

@@ -22,7 +22,6 @@ package ch.protonmail.android.compose.presentation.ui
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
@@ -62,7 +61,7 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        launchActivity(expectedDays, expectedHours)
+        launchActivityForResult(expectedDays, expectedHours)
 
         // then
         onNoneCheck().checkSelected()
@@ -82,7 +81,7 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 1
 
         // when
-        launchActivity(expectedDays, expectedHours)
+        launchActivityForResult(expectedDays, expectedHours)
 
         // then
         onNoneCheck().checkNotSelected()
@@ -103,7 +102,7 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        launchActivity(expectedDays, expectedHours)
+        launchActivityForResult(expectedDays, expectedHours)
 
         // then
         onNoneCheck().checkNotSelected()
@@ -124,7 +123,7 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        launchActivity(expectedDays, expectedHours)
+        launchActivityForResult(expectedDays, expectedHours)
 
         // then
         onNoneCheck().checkNotSelected()
@@ -145,7 +144,7 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        launchActivity(expectedDays, expectedHours)
+        launchActivityForResult(expectedDays, expectedHours)
 
         // then
         onNoneCheck().checkNotSelected()
@@ -167,7 +166,7 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        val scenario = launchActivity()
+        val scenario = launchActivityForResult()
         onNoneView().performSelection()
         performSetClick()
 
@@ -182,7 +181,7 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 1
 
         // when
-        val scenario = launchActivity()
+        val scenario = launchActivityForResult()
         onOneHourView().performSelection()
         performSetClick()
 
@@ -197,7 +196,7 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        val scenario = launchActivity()
+        val scenario = launchActivityForResult()
         onOneDayView().performSelection()
         performSetClick()
 
@@ -212,7 +211,7 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        val scenario = launchActivity()
+        val scenario = launchActivityForResult()
         onThreeDaysView().performSelection()
         performSetClick()
 
@@ -227,7 +226,7 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        val scenario = launchActivity()
+        val scenario = launchActivityForResult()
         onOneWeekView().performSelection()
         performSetClick()
 
@@ -251,10 +250,10 @@ class SetMessageExpirationActivityTest {
     }
     // endregion
 
-    private fun launchActivity(
+    private fun launchActivityForResult(
         extraExpirationDays: Int? = 0,
         extraExpirationHours: Int? = 0
-    ) = launchActivity<SetMessageExpirationActivity>(
+    ) = ActivityScenario.launchActivityForResult<SetMessageExpirationActivity>(
         Intent(ApplicationProvider.getApplicationContext(), SetMessageExpirationActivity::class.java)
             .apply {
                 extraExpirationDays?.let { putExtra(ARG_SET_MESSAGE_EXPIRATION_DAYS, it) }

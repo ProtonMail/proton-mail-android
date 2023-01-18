@@ -441,6 +441,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                     )
                 }
             }
+            else -> Unit
         }
     }
 

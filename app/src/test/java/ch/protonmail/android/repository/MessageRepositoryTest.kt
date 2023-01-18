@@ -62,20 +62,17 @@ import io.mockk.runs
 import io.mockk.slot
 import io.mockk.spyk
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.withTimeout
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
+import me.proton.core.test.kotlin.UnconfinedCoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
 import org.junit.Before
 import org.junit.Test
@@ -83,10 +80,9 @@ import java.io.IOException
 import kotlin.random.Random.Default.nextBytes
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
+import kotlin.time.Duration.Companion.seconds
 
-class MessageRepositoryTest: CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
+class MessageRepositoryTest: CoroutinesTest by UnconfinedCoroutinesTest() {
 
     private val messageDao: MessageDao = mockk(relaxUnitFun = true) {
         coEvery { saveMessage(any()) } returns 123
@@ -773,18 +769,14 @@ class MessageRepositoryTest: CoroutinesTest by CoroutinesTest({ TestDispatcherPr
         }
     }
 
-    @Test(expected = TimeoutCancellationException::class)
+    @Test
     fun getCountersIsCancelledWhenApiCallIsCancelled() = coroutinesTest {
         // given
-        coEvery { protonMailApiManager.fetchMessagesCounts(testUserId) } answers {
-            throw CancellationException("Cancelled")
-        }
+        coEvery { protonMailApiManager.fetchMessagesCounts(testUserId) } throws(CancellationException("Cancelled"))
 
         // when
-        withTimeout(1.toDuration(DurationUnit.SECONDS)) {
-            messageRepository.getUnreadCounters(testUserId).test {
-                awaitItem()
-            }
+        messageRepository.getUnreadCounters(testUserId).test(timeout = 1.seconds) {
+            expectNoEvents()
         }
     }
 

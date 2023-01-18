@@ -512,7 +512,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     showToast(R.string.downloading)
                 }
             }
-            Status.FAILED -> showToast(R.string.cant_download_attachment)
+            Status.FAILED, Status.VALIDATION_FAILED -> showToast(R.string.cant_download_attachment)
             Status.NO_NETWORK,
             Status.UNAUTHORIZED -> {
                 // NOOP, when on enums should be exhaustive

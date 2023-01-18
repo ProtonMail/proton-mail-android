@@ -93,29 +93,26 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.withTimeoutOrNull
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
+import me.proton.core.test.kotlin.UnconfinedCoroutinesTest
 import me.proton.core.test.kotlin.flowTest
 import java.io.IOException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.DurationUnit
+import kotlin.time.seconds
 import kotlin.time.toDuration
 
 private const val STARRED_LABEL_ID = "10"
 
-class ConversationsRepositoryImplTest : ArchTest by ArchTest(),
-    CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
+class ConversationsRepositoryImplTest : ArchTest by ArchTest(), CoroutinesTest by UnconfinedCoroutinesTest() {
 
     private val testUserId = UserId("id")
 
@@ -1630,17 +1627,12 @@ class ConversationsRepositoryImplTest : ArchTest by ArchTest(),
     @Test
     fun getCountersIsCancelledWhenApiCallIsCancelled() = coroutinesTest {
         // given
-        coEvery { api.fetchConversationsCounts(testUserId) } answers {
-            throw CancellationException("Cancelled")
-        }
+        coEvery { api.fetchConversationsCounts(testUserId) } throws(CancellationException("Cancelled"))
 
         // when
-        val result = withTimeoutOrNull(3.toDuration(DurationUnit.SECONDS)) {
-            conversationsRepository.getUnreadCounters(testUserId).test {
-                awaitItem()
-            }
+        conversationsRepository.getUnreadCounters(testUserId).test(timeout = 1.seconds) {
+            expectNoEvents()
         }
-        assertNull(result)
     }
 
     private fun setupUnreadCounterDaoToSimulateReplace() {

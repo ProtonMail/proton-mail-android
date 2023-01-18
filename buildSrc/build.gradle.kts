@@ -21,13 +21,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.6.21"
 }
 
 repositories {
     google()
     gradlePluginPortal()
-    maven("https://plugins.gradle.org/m2/")
 }
 
 dependencies {
@@ -38,7 +36,6 @@ dependencies {
     implementation("com.android.tools.build:gradle:$android")
     // Needed for many utils
     implementation("studio.forface.easygradle:dsl-android:$easyGradle")
-    implementation(kotlin("stdlib-jdk8"))
     // Workaround for Dagger 2.40.5 https://github.com/google/dagger/issues/3068#issuecomment-999118496
     implementation("com.squareup:javapoet:1.13.0")
 }
