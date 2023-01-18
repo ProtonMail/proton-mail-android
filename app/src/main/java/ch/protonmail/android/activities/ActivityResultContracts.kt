@@ -28,6 +28,7 @@ import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.onboarding.newuser.presentation.NewUserOnboardingActivity
 import ch.protonmail.android.settings.presentation.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.settings.presentation.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.settings.presentation.SettingsActivity
@@ -151,5 +152,15 @@ class StartSearch : ActivityResultContract<Unit, Unit?>() {
     override fun parseResult(resultCode: Int, result: Intent?): Unit? {
         if (resultCode != Activity.RESULT_OK) return null
         return Unit
+    }
+}
+
+class StartOnboarding : ActivityResultContract<Unit, Boolean?>() {
+
+    override fun createIntent(context: Context, input: Unit): Intent =
+        AppUtil.decorInAppIntent(Intent(context, NewUserOnboardingActivity::class.java))
+
+    override fun parseResult(resultCode: Int, result: Intent?): Boolean {
+        return true
     }
 }

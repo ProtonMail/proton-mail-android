@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.mailbox.presentation.ui
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -28,6 +29,7 @@ import android.content.res.Resources
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -37,6 +39,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -57,6 +60,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.StartCompose
+import ch.protonmail.android.activities.StartOnboarding
 import ch.protonmail.android.activities.StartSearch
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.adapters.messages.MailboxItemViewHolder.MessageViewHolder
@@ -106,7 +110,6 @@ import ch.protonmail.android.notifications.data.remote.fcm.MultiUserFcmTokenMana
 import ch.protonmail.android.notifications.data.remote.fcm.RegisterDeviceWorker
 import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
 import ch.protonmail.android.notifications.presentation.utils.EXTRA_MAILBOX_LOCATION
-import ch.protonmail.android.onboarding.newuser.presentation.NewUserOnboardingActivity
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -120,6 +123,7 @@ import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.getColorIdFromAttr
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
@@ -238,6 +242,27 @@ internal class MailboxActivity :
         }
     }
     private val startSearchLauncher = registerForActivityResult(StartSearch()) {}
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (!isGranted) {
+                showInfoDialog(
+                    this, getString(R.string.need_permissions_title),
+                    getString(R.string.need_notification_permissions_to_receive_notifications)
+                ) { unit: Unit -> unit }
+            }
+        }
+
+    private val startOnboardingActivityLauncher = registerForActivityResult(StartOnboarding()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        }
+
+    }
 
     override val currentLabelId get() = mailboxLabelId
 
@@ -743,7 +768,7 @@ internal class MailboxActivity :
         if (userManager.currentUserId != null &&
             !defaultSharedPreferences.getBoolean(PREF_NEW_USER_ONBOARDING_SHOWN, false)
         ) {
-            startActivity(Intent(this, NewUserOnboardingActivity::class.java))
+            startOnboardingActivityLauncher.launch(Unit)
         }
 
         registerFcmReceiver()
