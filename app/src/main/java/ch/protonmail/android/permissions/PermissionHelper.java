@@ -43,7 +43,7 @@ public class PermissionHelper {
     private PermissionHelper(Constants.PermissionType type, Activity activity, PermissionCallback callback) {
         _permissionType = type;
         if (type == Constants.PermissionType.STORAGE) {
-            mManifestPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+            mManifestPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
             mRequestCode = REQUEST_CODE_ACCESS_STORAGE;
             mPermissionRequestedPref = Constants.Prefs.PREF_PERMISSION_ACCESS_STORAGE;
         } else if (type == Constants.PermissionType.CONTACTS) {
