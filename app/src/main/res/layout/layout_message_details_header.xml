@@ -117,6 +117,7 @@
             android:textAppearance="@style/Proton.Text.Overline"
             android:textColor="?attr/proton_text_accent"
             android:visibility="gone"
+            app:chipCornerRadius="@dimen/size_corner_xxs"
             app:chipMinTouchTargetSize="0dp"
             app:layout_constraintBottom_toBottomOf="@id/senderNameWrapper"
             app:layout_constraintStart_toEndOf="@id/senderNameTextView"
