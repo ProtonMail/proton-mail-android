@@ -173,6 +173,7 @@ class MailboxItemView @JvmOverloads constructor(
         sending_uploading_progress_bar.isVisible = isBeingSent || areAttachmentsBeingUploaded
         attachment_image_view.isVisible = mailboxItem.hasAttachments
         star_image_view.isVisible = mailboxItem.isStarred
+        authenticity_badge_chip.isVisible = mailboxItem.isProton
 
         empty_space_view.isVisible = attachment_image_view.isVisible || star_image_view.isVisible
 

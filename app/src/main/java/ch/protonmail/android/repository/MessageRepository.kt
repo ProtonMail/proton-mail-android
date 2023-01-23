@@ -392,7 +392,8 @@ class MessageRepository @Inject constructor(
         val senderContactName = contactEmails.find { it.email == sender.emailAddress }?.name
         return MessageSender(
             if (!senderContactName.isNullOrEmpty()) senderContactName else sender.name,
-            sender.emailAddress
+            sender.emailAddress,
+            sender.isProton
         )
     }
 

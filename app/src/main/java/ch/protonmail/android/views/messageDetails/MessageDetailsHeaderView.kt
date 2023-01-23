@@ -52,6 +52,7 @@ import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.views.messagesList.SenderInitialView
+import com.google.android.material.chip.Chip
 
 private const val HYPHEN = "-"
 
@@ -72,6 +73,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     private val senderInitialView: SenderInitialView
     private val senderNameTextView: TextView
     private val senderEmailTextView: TextView
+    private val authenticityBadge: Chip
 
     private val recipientsCollapsedTextView: TextView
     private val toExpandedTextView: TextView
@@ -121,6 +123,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         senderInitialView = binding.senderInitialView
         senderNameTextView = binding.senderNameTextView
         senderEmailTextView = binding.senderEmailTextView
+        authenticityBadge = binding.authenticityBadgeChip
 
         recipientsCollapsedTextView = binding.recipientsCollapsedTextView
         toExpandedTextView = binding.toExpandedTextView
@@ -191,6 +194,8 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         senderNameTextView.text = senderText
         senderEmailTextView.text = context.getString(R.string.recipient_email_format, message.senderEmail)
         senderEmailTextView.setOnClickListener(getOnSenderClickListener(message.senderEmail))
+
+        authenticityBadge.isVisible = message.sender?.isProton ?: false
 
         labelsCollapsedGroupView.setLabels(nonExclusiveLabels)
         labelsExpandedGroupView.setLabels(nonExclusiveLabels)

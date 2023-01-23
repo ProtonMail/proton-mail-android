@@ -19,6 +19,7 @@
 package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.data.local.model.MessageSender
+import me.proton.core.util.kotlin.toBoolean
 import javax.inject.Inject
 
 class MessageSenderFactory @Inject constructor() {
@@ -33,6 +34,6 @@ class MessageSenderFactory @Inject constructor() {
     fun createMessageSender(serverMessageSender: ServerMessageSender): MessageSender {
         val name = serverMessageSender.name
         val emailAddress = requireNotNull(serverMessageSender.address)
-        return MessageSender(name, emailAddress)
+        return MessageSender(name, emailAddress, serverMessageSender.isProton.toBoolean())
     }
 }

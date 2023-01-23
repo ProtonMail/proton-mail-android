@@ -19,6 +19,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="?attr/proton_interaction_norm" />
     <corners
-        android:bottomRightRadius="@dimen/size_corner_xxs"
-        android:topRightRadius="@dimen/size_corner_xxs" />
+        android:bottomRightRadius="@dimen/size_corner_xxxs"
+        android:topRightRadius="@dimen/size_corner_xxxs" />
 </shape>

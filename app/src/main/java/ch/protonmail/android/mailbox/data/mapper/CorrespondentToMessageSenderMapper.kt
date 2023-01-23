@@ -31,5 +31,7 @@ class CorrespondentToMessageSenderMapper @Inject constructor() :
     Mapper<Correspondent, MessageSender> {
 
     fun toDatabaseModel(correspondent: Correspondent): MessageSender =
-        MessageSender(name = correspondent.name, emailAddress = correspondent.address)
+        MessageSender(
+            name = correspondent.name, emailAddress = correspondent.address, isProton = correspondent.isProton
+        )
 }

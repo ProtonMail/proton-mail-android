@@ -73,7 +73,7 @@ class MailboxItemUiModelMapperTest {
         // given
         val message = Message().apply {
             messageId = TEST_ITEM_ID
-            sender = MessageSender(TEST_SENDER_NAME, TEST_SENDER_ADDRESS)
+            sender = MessageSender(TEST_SENDER_NAME, TEST_SENDER_ADDRESS, true)
             subject = TEST_SUBJECT
             time = TEST_MESSAGE_TIME_SEC
             numAttachments = 1
@@ -107,7 +107,8 @@ class MailboxItemUiModelMapperTest {
             messageLabels = emptyList(),
             allLabelsIds = emptyList(),
             isDraft = false,
-            isScheduled = false
+            isScheduled = false,
+            isProton = true
         )
 
         // when
@@ -150,10 +151,10 @@ class MailboxItemUiModelMapperTest {
     @Test
     fun `message sender has name from correspondent address`() = runBlockingTest {
         // given
-        val sender = MessageSender(EMPTY_STRING, TEST_EMAIL_ADDRESS)
+        val sender = MessageSender(EMPTY_STRING, TEST_EMAIL_ADDRESS, true)
         val message = buildMessage(sender)
         val expected = buildMailboxItemUiModel(
-            correspondentsNames = sender.emailAddress!!, messageData = buildMessageData()
+            correspondentsNames = sender.emailAddress!!, messageData = buildMessageData(), isProton = true
         )
 
         // when
@@ -166,9 +167,11 @@ class MailboxItemUiModelMapperTest {
     @Test
     fun `message sender has name from correspondent name`() = runBlockingTest {
         // given
-        val sender = MessageSender(TEST_CORRESPONDENT_NAME, TEST_EMAIL_ADDRESS)
+        val sender = MessageSender(TEST_CORRESPONDENT_NAME, TEST_EMAIL_ADDRESS, true)
         val message = buildMessage(sender)
-        val expected = buildMailboxItemUiModel(correspondentsNames = sender.name!!, messageData = buildMessageData())
+        val expected = buildMailboxItemUiModel(
+            correspondentsNames = sender.name!!, messageData = buildMessageData(), isProton = true
+        )
 
         // when
         val result = mapper.toUiModel(message, INBOX.asLabelId(), allLabels = emptyList())
@@ -180,10 +183,10 @@ class MailboxItemUiModelMapperTest {
     @Test
     fun `message has sender as correspondents names for inbox folder`() = runBlockingTest {
         // given
-        val sender = MessageSender(TEST_CORRESPONDENT_NAME, TEST_EMAIL_ADDRESS)
+        val sender = MessageSender(TEST_CORRESPONDENT_NAME, TEST_EMAIL_ADDRESS, true)
         val message = buildMessage(sender = sender)
         val expected = buildMailboxItemUiModel(
-            correspondentsNames = TEST_CORRESPONDENT_NAME, messageData = buildMessageData()
+            correspondentsNames = TEST_CORRESPONDENT_NAME, messageData = buildMessageData(), isProton = true
         )
 
         // when
@@ -320,7 +323,8 @@ class MailboxItemUiModelMapperTest {
             messageLabels = emptyList(),
             allLabelsIds = emptyList(),
             isDraft = false,
-            isScheduled = false
+            isScheduled = false,
+            isProton = false
         )
 
         // when
@@ -544,7 +548,7 @@ class MailboxItemUiModelMapperTest {
         }
 
         fun buildMessage(
-            sender: MessageSender = MessageSender(EMPTY_STRING, EMPTY_STRING),
+            sender: MessageSender = MessageSender(EMPTY_STRING, EMPTY_STRING, false),
             toRecipients: List<MessageRecipient> = emptyList(),
             ccRecipients: List<MessageRecipient> = emptyList(),
             bccRecipients: List<MessageRecipient> = emptyList(),
@@ -588,6 +592,7 @@ class MailboxItemUiModelMapperTest {
             messageData: MessageData? = null,
             messageLabels: List<LabelChipUiModel> = emptyList(),
             allLabelsIds: List<LabelId> = emptyList(),
+            isProton: Boolean = false
         ) = MailboxItemUiModel(
             itemId = EMPTY_STRING,
             correspondentsNames = correspondentsNames,
@@ -602,7 +607,8 @@ class MailboxItemUiModelMapperTest {
             messageLabels = messageLabels,
             allLabelsIds = allLabelsIds,
             isDraft = isDraft,
-            isScheduled = isScheduled
+            isScheduled = isScheduled,
+            isProton = isProton
         )
 
         fun buildMessageData() = MessageData(

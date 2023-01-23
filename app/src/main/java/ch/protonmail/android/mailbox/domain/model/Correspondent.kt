@@ -21,5 +21,6 @@ package ch.protonmail.android.mailbox.domain.model
 
 data class Correspondent(
     val name: String,
-    val address: String
+    val address: String,
+    val isProton: Boolean = false
 )

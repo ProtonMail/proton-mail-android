@@ -92,32 +92,62 @@
         android:layout_height="@dimen/mailbox_list_item_icon_size"
         android:layout_marginEnd="@dimen/mailbox_list_item_views_margin"
         app:layout_constraintStart_toEndOf="@id/forward_image_view"
-        app:layout_constraintEnd_toStartOf="@id/correspondents_text_view"
-        app:layout_constraintTop_toTopOf="@id/correspondents_text_view"
-        app:layout_constraintBottom_toBottomOf="@id/correspondents_text_view"
+        app:layout_constraintEnd_toStartOf="@id/correspondents_wrapper_view"
+        app:layout_constraintTop_toTopOf="@id/correspondents_wrapper_view"
+        app:layout_constraintBottom_toBottomOf="@id/correspondents_wrapper_view"
         app:srcCompat="@drawable/ic_proton_pen" />
 
-    <TextView
-        android:id="@+id/correspondents_text_view"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/correspondents_wrapper_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/mailbox_list_item_views_margin"
-        app:layout_constraintStart_toEndOf="@id/draft_image_view"
         app:layout_constraintEnd_toStartOf="@id/time_date_text_view"
-        app:layout_constraintTop_toTopOf="parent"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:textAppearance="@style/Proton.Text.Default"
-        tools:text="@tools:sample/full_names" />
+        app:layout_constraintStart_toEndOf="@id/draft_image_view"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/correspondents_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textAppearance="@style/Proton.Text.Default"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@tools:sample/full_names" />
+
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/authenticity_badge_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/mailbox_list_item_icon_size"
+            android:layout_marginStart="@dimen/padding_xs"
+            android:background="@color/background_secondary"
+            android:clickable="false"
+            android:contentDescription="@string/is_proton"
+            android:text="@string/is_proton_official_badge"
+            android:textAppearance="@style/Proton.Text.Overline"
+            android:textColor="?attr/proton_text_accent"
+            android:visibility="gone"
+            app:chipCornerRadius="@dimen/size_corner_xxs"
+            app:chipMinTouchTargetSize="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/correspondents_text_view"
+            app:layout_constraintStart_toEndOf="@id/correspondents_text_view"
+            app:layout_constraintTop_toTopOf="@id/correspondents_text_view"
+            app:rippleColor="@android:color/transparent"
+            app:textEndPadding="@dimen/padding_xs"
+            app:textStartPadding="@dimen/padding_xs" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/time_date_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/correspondents_text_view"
+        app:layout_constraintStart_toEndOf="@id/correspondents_wrapper_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/correspondents_text_view"
-        app:layout_constraintBottom_toBottomOf="@id/correspondents_text_view"
+        app:layout_constraintTop_toTopOf="@id/correspondents_wrapper_view"
+        app:layout_constraintBottom_toBottomOf="@id/correspondents_wrapper_view"
         android:textAppearance="@style/Proton.Text.Caption.Weak"
         tools:text="@tools:sample/date/ddmmyy" />
 
@@ -128,8 +158,8 @@
         android:orientation="horizontal"
         app:layout_constraintStart_toEndOf="@id/sender_initial_barrier"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/correspondents_text_view" />
-    
+        app:layout_constraintTop_toBottomOf="@id/correspondents_wrapper_view" />
+
     <ImageView
         android:id="@+id/first_location_image_view"
         android:layout_width="@dimen/mailbox_list_item_icon_size"
@@ -180,7 +210,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/third_location_image_view"
         app:layout_constraintEnd_toStartOf="@id/messages_number_text_view"
-        app:layout_constraintTop_toBottomOf="@id/correspondents_text_view"
+        app:layout_constraintTop_toBottomOf="@id/correspondents_wrapper_view"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constrainedWidth="true"
         android:maxLines="1"

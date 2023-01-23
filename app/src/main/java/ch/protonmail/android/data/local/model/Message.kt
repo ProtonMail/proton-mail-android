@@ -95,6 +95,7 @@ const val COLUMN_MESSAGE_PREFIX_SENDER = "Sender_"
 const val COLUMN_MESSAGE_REPLY_TOS = "ReplyTos"
 const val COLUMN_MESSAGE_SENDER_EMAIL = "SenderSerialized"
 const val COLUMN_MESSAGE_SENDER_NAME = "SenderName"
+const val COLUMN_MESSAGE_SENDER_IS_PROTON = "IsProton"
 const val COLUMN_MESSAGE_SIZE = "Size"
 const val COLUMN_MESSAGE_SPAM_SCORE = "SpamScore"
 const val COLUMN_MESSAGE_SUBJECT = "Subject"
@@ -217,7 +218,7 @@ data class Message @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_MESSAGE_ORDER, defaultValue = Long.MAX_VALUE.toString())
     val order: Long = Long.MAX_VALUE
 
-) : Serializable {
+    ) : Serializable {
 
     @Ignore
     var attachments = listOf<Attachment>()
