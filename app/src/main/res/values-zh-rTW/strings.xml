@@ -644,6 +644,7 @@
     <string name="need_storage_permissions_download_attachment_text">為了下載附件，您需要允許
         存取儲存空間。</string>
     <string name="need_contacts_permissions_text">為了匯入聯絡人，您必須允許存取聯絡人。</string>
+    <string name="need_notification_permissions_to_receive_notifications">In order to receive notifications from the app you need to enable permissions for notifications.</string>
     <string name="push_notifications_alert_title">推送通知提醒</string>
     <string name="push_notifications_alert_subtitle">若 Google Play 服務尚未更新，Proton Mail 的推送通知將無法正常運作。</string>
     <string name="app_locked">應用程式已鎖定</string>

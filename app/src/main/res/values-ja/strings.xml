@@ -638,6 +638,7 @@
     <string name="need_storage_permissions_add_attachment_text">添付ファイルを追加するには、ストレージへのアクセスを許可する必要があります。</string>
     <string name="need_storage_permissions_download_attachment_text">添付ファイルをダウンロードするには、ストレージへのアクセスを許可する必要があります。</string>
     <string name="need_contacts_permissions_text">この連絡先をインポートするには、連絡先へのアクセスを許可する必要があります。</string>
+    <string name="need_notification_permissions_to_receive_notifications">In order to receive notifications from the app you need to enable permissions for notifications.</string>
     <string name="push_notifications_alert_title">プッシュ通知警告</string>
     <string name="push_notifications_alert_subtitle">Proton Mail のプッシュ通知は、Google Play サービスを更新しないと機能しません。</string>
     <string name="app_locked">アプリはロックされています。</string>

@@ -658,6 +658,7 @@
     <string name="need_storage_permissions_download_attachment_text">Om bijlagen toe te downloaden moet u
         toegang tot opslag toestaan.</string>
     <string name="need_contacts_permissions_text">Om contacten te importeren moet u toegang tot contacten toestaan.</string>
+    <string name="need_notification_permissions_to_receive_notifications">In order to receive notifications from the app you need to enable permissions for notifications.</string>
     <string name="push_notifications_alert_title">Pushmelding</string>
     <string name="push_notifications_alert_subtitle">Pushmeldingen voor Proton Mail werken niet zonder bijgewerkte Google Play-diensten.</string>
     <string name="app_locked">App vergrendeld</string>

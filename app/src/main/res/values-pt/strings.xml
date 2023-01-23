@@ -658,6 +658,7 @@ como a transferência de novas mensagens em segundo plano.</string>
     <string name="need_storage_permissions_download_attachment_text">Para transferir anexos tem de permitir
         acesso ao armazenamento.</string>
     <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
+    <string name="need_notification_permissions_to_receive_notifications">In order to receive notifications from the app you need to enable permissions for notifications.</string>
     <string name="push_notifications_alert_title">Alerta de notificações forçadas</string>
     <string name="push_notifications_alert_subtitle">As notificações push para o Proton Mail não funcionam sem os serviços Google Play atualizados.</string>
     <string name="app_locked">Aplicação bloqueada</string>

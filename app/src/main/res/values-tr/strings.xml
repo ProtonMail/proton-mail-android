@@ -657,6 +657,7 @@
     <string name="need_storage_permissions_download_attachment_text">Ek dosyaları indirmek için depolama alanına erişme
         izni vermeniz gerekir.</string>
     <string name="need_contacts_permissions_text">Kişileri içe aktarmak için kişilere erişme izni vermeniz gerekir.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Uygulama bildirimlerini alabilmek için bildirim izinlerini vermeniz gerekir.</string>
     <string name="push_notifications_alert_title">Anlık bildirim uyarıları</string>
     <string name="push_notifications_alert_subtitle">Proton Mail anlık bildirimleri, güncellenmiş Google Play hizmetleri olmadan çalışmaz.</string>
     <string name="app_locked">Uygulama kilitlendi</string>

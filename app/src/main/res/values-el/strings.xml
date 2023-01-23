@@ -662,6 +662,7 @@
     <string name="need_storage_permissions_download_attachment_text">Για να κάνετε λήψη συνημμένων πρέπει να επιτρέψετε
          πρόσβαση στο χώρο αποθήκευσης.</string>
     <string name="need_contacts_permissions_text">Για να εισάγετε επαφές πρέπει να επιτρέψετε την πρόσβαση σε επαφές.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Για να λαμβάνετε ειδοποιήσεις από την εφαρμογή, πρέπει να ενεργοποιήσετε τις άδειες για ειδοποιήσεις.</string>
     <string name="push_notifications_alert_title">Ειδοποιήσεις Push</string>
     <string name="push_notifications_alert_subtitle">Οι ειδοποιήσεις Push για το Proton Mail δεν λειτουργούν χωρίς ενημερωμένες υπηρεσίες Google Play.</string>
     <string name="app_locked">Η εφαρμογή είναι κλειδωμένη</string>

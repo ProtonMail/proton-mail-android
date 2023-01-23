@@ -143,7 +143,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nuevos mensajes</string>
-    <string name="notification_invalid_sender_sending_failed">Tu mensaje se ha hallado como borrador. Por favor, verifica que la dirección de correo \"De:\" en el mensaje está activa.</string>
+    <string name="notification_invalid_sender_sending_failed">Tu mensaje se ha guardado como borrador. Por favor, verifica que la dirección de correo \"De:\" en el mensaje está activa.</string>
     <string name="notification_invalid_subject_sending_failed">Tu mensaje se ha guardado como borrador. El asunto no es válido.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
@@ -158,13 +158,13 @@
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Privacidad para todos</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Invite a sus contactos a Proton Mail para que disfruten de un cifrado ininterrumpido de extremo a extremo, o añada protección con contraseña a los mensajes que les envíe.</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Invita a tus contactos a Proton Mail para que disfruten de un cifrado perfecto de extremo a extremo, o añade una protección con contraseña a los mensajes que les envíes.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Limpio y ordenado</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">Archive, etiquete y clasifique por colores sus mensajes para crear una bandeja de entrada personalizada perfecta.</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Archiva, etiqueta y codifica por colores los mensajes para crear tu bandeja de entrada perfecta y personalizada.</string>
     <string name="existing_user_onboarding_new_look_headline">Nuevo aspecto, misma protección</string>
     <string name="existing_user_onboarding_new_look_description">Su correo electrónico cifrado ha sido completamente rediseñado para facilitar su uso.</string>
     <string name="existing_user_onboarding_new_features_headline">Nuevas características</string>
-    <string name="existing_user_onboarding_new_features_description">Disfrute de nuevas funciones como modo oscuro, notificaciones mejoradas, filtro de mensajes no leídos y subcarpetas.</string>
+    <string name="existing_user_onboarding_new_features_description">Disfruta de nuevas funciones como el modo oscuro, notificaciones mejoradas, un filtro de mensajes no leídos y subcarpetas.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualizado, protección unificada</string>
     <string name="existing_user_onboarding_updated_proton_description">Presentamos el nuevo aspecto de Proton. Muchos servicios, una sola misión. Te damos la bienvenida a una Internet donde la privacidad es la norma. <a href="https://proton.me/news/updated-proton">Más información</a></string>
     <string name="onboarding_next">Siguiente</string>
@@ -193,7 +193,7 @@
     <string name="update_app_title">Actualización requerida</string>
     <string name="update_app">Tu aplicación de ProtonMail no puede utilizarse hasta que esté actualizada</string>
     <string name="you_are_offline">No estás conectado</string>
-    <string name="api_offline">Proton Mail está actualmente fuera de línea, visita https://protonstatus.com o nuestro Twitter para comprobar el estado actual: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail está actualmente fuera de línea. Visita https://protonstatus.com o nuestro Twitter para comprobar el estado actual: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Contacto guardado</string>
     <string name="contact_saved_offline">Contacto guardado. Se sincronizará cuando la conexión esté disponible.</string>
     <string name="contact_exist">El correo del contacto ya existe</string>
@@ -277,8 +277,8 @@
     <string name="select_file">Seleccionar archivo</string>
     <string name="attach_file">Adjuntar archivo</string>
     <string name="take_photo">Tomar foto</string>
-    <string name="problem_taking_photo">Hubo un problema al tomar una foto</string>
-    <string name="problem_selecting_file">Hubo un problema al agregar el archivo seleccionado</string>
+    <string name="problem_taking_photo">Ha ocurrido un problema al tomar una foto</string>
+    <string name="problem_selecting_file">Ha ocurrido un problema al agregar el archivo seleccionado</string>
     <string name="add_contact">Añadir contacto</string>
     <string name="delete_contact">¿Borrar %s de sus contactos?</string>
     <string name="confirm">Confirmar</string>
@@ -296,7 +296,7 @@
     <string name="invalid_email_address">La dirección \'%s\' es inválida</string>
     <string name="invalid_email_address_removed">La dirección \'%s\' no es válida y fue eliminada</string>
     <string name="no_recipients_specified">Agregue al menos un destinatario</string>
-    <string name="no_password_specified">Los tiempos de expiración sólo se pueden establecer en mensajes totalmente cifrados. Por favor, establezca una contraseña para sus destinatarios que no sean de Proton Mail.</string>
+    <string name="no_password_specified">Los tiempos de expiración sólo se pueden establecer en mensajes totalmente cifrados. Por favor, establece una contraseña para tus destinatarios que no sean de Proton Mail.</string>
     <string name="attachment_limit">Los archivos adjuntos están limitados a %1$s. El total adjunto sería %2$s.</string>
     <string name="sending_message">Enviando mensaje...</string>
     <string name="sending_message_offline">Sin conexión, en espera para enviar más tarde...</string>
@@ -308,7 +308,7 @@
     <string name="cancel">Cancelar</string>
     <string name="close">Cerrar</string>
     <string name="eo_password_title">Establecer contraseña</string>
-    <string name="eo_password_subtitle">Establezca una contraseña para cifrar este mensaje para usuarios que no sean de Proton Mail</string>
+    <string name="eo_password_subtitle">Establece una contraseña para cifrar este mensaje para usuarios que no sean de Proton Mail</string>
     <string name="eo_password_more_info">Obtener más información</string>
     <string name="no_attachments">0 archivos adjuntos</string>
     <string name="display_name_banned_chars">Nombre a mostrar no válido. \'&gt;\' y \'&lt;\' no están permitidos</string>
@@ -339,7 +339,7 @@
     <string name="saving_failed_no_conn">Error al guardar, no hay conexión</string>
     <string name="attachment_exists">Archivo ya adjuntado</string>
     <string name="eo_password_not_completed">Contraseña del mensaje incompleta.</string>
-    <string name="delinquency_subtitle">El acceso a esta cuenta está deshabilitado por falta de pago. Inicie sesión a través de proton.me para pagar su factura pendiente.</string>
+    <string name="delinquency_subtitle">El acceso a esta cuenta está deshabilitado por falta de pago. Inicia sesión a través de proton.me para pagar tu factura pendiente.</string>
     <string name="downloading">Descargando...</string>
     <string name="cant_download_attachment">No se puede descargar el archivo adjunto</string>
     <string-array name="auto_logout_options_array">
@@ -531,7 +531,7 @@
     <string name="remove_password_question">¿Quitar contraseña?</string>
     <string name="attachment_storage_value_current">Seleccionado actualmente: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Seleccionado actualmente: ilimitado</string>
-    <string name="attachment_offline_max_storage">Configure el almacenamiento máximo que Proton Mail podrá utilizar en su teléfono.</string>
+    <string name="attachment_offline_max_storage">Configura el almacenamiento máximo que Proton Mail puede utilizar en tu teléfono.</string>
     <string name="load_embedded_images_failed_no_network">Falló la carga de imágenes incrustadas. Compruebe su conexión de red.</string>
     <string name="load_embedded_images_failed">Falló la carga de imágenes incrustadas.</string>
     <string name="unlimited">Ilimitado</string>
@@ -548,7 +548,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Enviado por usted con cifrado de extremo a extremo</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Enviado por Proton Mail con cifrado de conocimiento cero</string>
+    <string name="sender_lock_sent_autoresponder">Enviado por Proton Mail con cifrado de acceso cero</string>
     <string name="sender_lock_verification_failed">La verificación del remitente ha fallado</string>
     <string name="sender_lock_pgp_encrypted">Mensaje cifrado con PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Mensaje cifrado con PGP desde dirección verificada</string>
@@ -577,7 +577,7 @@
     <string name="channel_description_account">Estado de cuenta</string>
     <string name="channel_name_ongoing_operations">Operaciones en curso</string>
     <string name="channel_description_ongoing_operations">Muestra todas las operaciones en curso como
-		descarga de mensajes nuevos en segundo plano</string>
+		la descarga de mensajes nuevos en segundo plano</string>
     <string name="retrieving_notifications">Recuperando notificaciones</string>
     <string name="report_phishing">Reportar suplantación</string>
     <string name="print">Imprimir</string>
@@ -654,10 +654,11 @@ compre más
         Considere liberar algo de espacio o compre más antes de quedarse sin espacio.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permisos</string>
-    <string name="need_storage_permissions_add_attachment_text">Para adjuntar archivos necesita permitir
+    <string name="need_storage_permissions_add_attachment_text">Para añadir archivos adjuntos, necesitas permitir
         el acceso al almacenamiento.</string>
-    <string name="need_storage_permissions_download_attachment_text">Para descargar archivos adjuntos necesita permitir         el acceso al almacenamiento.</string>
+    <string name="need_storage_permissions_download_attachment_text">Para descargar archivos adjuntos necesitas permitir         el acceso al almacenamiento.</string>
     <string name="need_contacts_permissions_text">Para importar los contactos es necesario permitir el acceso a los mismos.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Para recibir notificaciones de la aplicación necesitas habilitar los permisos para notificaciones.</string>
     <string name="push_notifications_alert_title">Alerta de notificaciones push</string>
     <string name="push_notifications_alert_subtitle">Las notificaciones push para Proton Mail no funcionan si los servicios de Google Play no están actualizados.</string>
     <string name="app_locked">Aplicación bloqueada</string>
@@ -692,7 +693,7 @@ compre más
     <string name="edit_mobile_footer">Habilitar pie de página para móvil</string>
     <string name="default_mobile_footer">Enviado desde Proton Mail móvil</string>
     <string name="mobile_footer_is_premium">Solamente los usuarios de pago pueden cambiar el pie de página en la aplicación móvil</string>
-    <string name="mobile_footer_info">Este pie de página se añadirá después de su firma</string>
+    <string name="mobile_footer_info">Este pie de página se añadirá después de tu firma</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Silenciar</string>
     <string name="notifications_snooze">Posponer notificaciones</string>

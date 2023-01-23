@@ -494,9 +494,9 @@
     <string name="spam_score_101">Az e-mail nem felelt meg a domain név ellenőrzési követelményeinek. Lehet becsapós üzenet vagy hibásan továbbított!</string>
     <string name="spam_score_102">Ez az üzenet lehetséges, hogy egy adathalászati kísérlet! Kérjük, alaposan ellenőrizze, hogy a feladó és az üzenet szövege megbízható-e. <a href="https://proton.me/blog/prevent-phishing-attacks">TOVÁBBI INFORMÁCIÓK</a></string>
     <string name="print_from_template">Feladó: %s</string>
-    <string name="print_to_template">To: %s;  </string>
-    <string name="print_cc_template">CC: %s;  </string>
-    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="print_to_template">Címzett: %s;  </string>
+    <string name="print_cc_template">Másolat: %s;  </string>
+    <string name="print_bcc_template">Titkos másolat: %s;  </string>
     <string name="address">Cím: </string>
     <string name="address_street">Utca, házszám</string>
     <string name="address_extended_street">Bővített utca</string>
@@ -576,8 +576,8 @@
     <string name="channel_name_account">Fiók</string>
     <string name="channel_description_account">Fiók állapota</string>
     <string name="channel_name_ongoing_operations">Folyamatban lévő műveletek</string>
-    <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
-		message download on background</string>
+    <string name="channel_description_ongoing_operations">Mutatja az összes folyamatban lévő műveletet,
+	mint új üzenet letöltése a háttérben</string>
     <string name="retrieving_notifications">Értesítések keresése</string>
     <string name="report_phishing">Adathalászat bejelentése</string>
     <string name="print">Nyomtatás</string>
@@ -658,6 +658,7 @@
     <string name="need_storage_permissions_download_attachment_text">Melléklet letöltéséhez engedélyeznie kell 
         a tárhely elérését.</string>
     <string name="need_contacts_permissions_text">A névjegyek importálásához engedélyeznie kell a névjegyek elérését.</string>
+    <string name="need_notification_permissions_to_receive_notifications">In order to receive notifications from the app you need to enable permissions for notifications.</string>
     <string name="push_notifications_alert_title">Push értesítés riasztás</string>
     <string name="push_notifications_alert_subtitle">A Proton Mail push értesítések nem működnek a legújabb Google Play szolgáltatások nélkül.</string>
     <string name="app_locked">Az alkalmazás zárolt</string>
@@ -788,7 +789,7 @@
     <string name="connections_via_third_parties">Alternatív útválasztás</string>
     <string name="allow_secure_connections_via_third_parties">Alternatív útválasztás engedélyezése</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Ha a Proton szolgáltatásai le vannak tiltva, ezzel a beállítással az alkalmazás alternatív hálózati útvonalakat próbál meg használni, ami hasznos lehet tűzfalak megkerüléséhez vagy hálózati problémák megoldásához. Javasolt ezt a beállítást bekapcsolva a tartani nagyobb megbízhatóság érdekében. <a href="https://proton.me/blog/anti-censorship-alternative-routing">További információk</a></string>
     <string name="app_language">Alkalmazás nyelve</string>
     <string name="custom_language_dialog_title">Alkalmazás nyelv választása</string>
     <string name="auto_detect">Automatikus-észlelés</string>
@@ -837,7 +838,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Helytelen Firebase API kulcs. A Push értesítések nem fognak működni.</string>
     <string name="failed_saving_draft_online">Hiba történt a piszkozat mentése közben: \"%s\"</string>
-    <string name="failed_draft_does_not_exist">Message \"%s\" does not exist.</string>
+    <string name="failed_draft_does_not_exist">Az üzenet \"%s\" nem létezik.</string>
     <string name="failed_uploading_attachment_online">Melléklet hiba az üzenethez: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Nem nyitható meg az üzenet, miközben elküldés alatt van</string>
     <string name="enable_conversation_mode">Beszélgetés engedélyezése</string>

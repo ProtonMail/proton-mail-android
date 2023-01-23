@@ -670,6 +670,7 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="need_storage_permissions_download_attachment_text">Pentru a descărca atașamente, trebuie să permiteți
         accesul la spațiul de stocare al telefonului.</string>
     <string name="need_contacts_permissions_text">Pentru a importa contacte, trebuie să permiteți accesul la contacte.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Pentru a primi notificări de la aplicație trebuie să activați permisiunea pentru notificări.</string>
     <string name="push_notifications_alert_title">Notificări instante</string>
     <string name="push_notifications_alert_subtitle">Notificările instante pentru Proton Mail nu funcționează fără ultima actualizare a serviciilor Google Play.</string>
     <string name="app_locked">Aplicație blocată</string>

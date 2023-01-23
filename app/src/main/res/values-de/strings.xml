@@ -650,6 +650,7 @@ Ziehe in Erwägung, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, b
     <string name="need_storage_permissions_add_attachment_text">Um Anhänge hinzuzufügen, musst du den Zugriff auf deinen Gerätespeicher erlauben.</string>
     <string name="need_storage_permissions_download_attachment_text">Um Anhänge herunterzuladen, musst du den Zugriff auf deinen Gerätespeicher erlauben.</string>
     <string name="need_contacts_permissions_text">Um Kontakte zu importieren, musst du den Zugriff auf die Kontakte deines Geräts erlauben.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Um Benachrichtigungen von der App zu erhalten, musst du die Berechtigungen für Benachrichtigungen aktivieren.</string>
     <string name="push_notifications_alert_title">Push-Benachrichtigungen</string>
     <string name="push_notifications_alert_subtitle">Push-Benachrichtigungen für Proton Mail funktionieren nicht ohne aktualisierte Google Play-Dienste.</string>
     <string name="app_locked">App gesperrt</string>
@@ -828,7 +829,7 @@ Ziehe in Erwägung, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, b
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ungültiger Firebase API-Schlüssel. Push-Benachrichtigungen werden nicht funktionieren.</string>
     <string name="failed_saving_draft_online">Speichern des Online-Entwurfs für Nachricht „%s“ fehlgeschlagen.</string>
-    <string name="failed_draft_does_not_exist">Die Nachricht „%s“ existiert nicht.</string>
+    <string name="failed_draft_does_not_exist">Die Nachricht „%s” existiert nicht.</string>
     <string name="failed_uploading_attachment_online">Fehler beim Anhängen an die Nachricht: „%s”</string>
     <string name="cannot_open_message_while_being_sent">Nachricht kann während des Sendens nicht geöffnet werden</string>
     <string name="enable_conversation_mode">Unterhaltungsmodus aktivieren</string>

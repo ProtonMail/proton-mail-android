@@ -657,6 +657,7 @@
     <string name="need_storage_permissions_download_attachment_text">Per a poder descarregar adjunts heu de permetre 
         l\'accés a l\'emmagatzematge.</string>
     <string name="need_contacts_permissions_text">Per a poder importar contactes heu de permetre l\'accés als contactes.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Per a poder rebre notificacions des de l\'aplicació necessiteu activar els permisos per a notificacions.</string>
     <string name="push_notifications_alert_title">Alerta de notificacions push</string>
     <string name="push_notifications_alert_subtitle">Les notificacions push per a Proton Mail no funcionen sense els serveis de Google Play actualitzats.</string>
     <string name="app_locked">L\'aplicació està bloquejada</string>
@@ -834,7 +835,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">La clau de l\'API de Firebase no és vàlida. Les notificacions Push no funcionaran.</string>
     <string name="failed_saving_draft_online">Error en desar un borrador en línia pel missatge: \"%s\"</string>
-    <string name="failed_draft_does_not_exist">Message \"%s\" does not exist.</string>
+    <string name="failed_draft_does_not_exist">El missatge \"%s\" no existeix.</string>
     <string name="failed_uploading_attachment_online">Error d\'adjunt pel missatge: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">No es pot obrir aquest missatge mentre s\'envia</string>
     <string name="enable_conversation_mode">Habilitar el mode de conversa</string>

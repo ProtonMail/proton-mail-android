@@ -658,6 +658,7 @@
     <string name="need_storage_permissions_download_attachment_text">Para baixar anexos, você precisa permitir
          acesso ao armazenamento.</string>
     <string name="need_contacts_permissions_text">Para importar contatos, você precisa permitir o acesso aos contatos.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Para receber notificações do aplicativo, você precisa ativar permissões para notificações.</string>
     <string name="push_notifications_alert_title">Alerta de notificações push</string>
     <string name="push_notifications_alert_subtitle">As notificações via Push do Proton Mail não funcionam sem o Google Play Services atualizado.</string>
     <string name="app_locked">Aplicativo bloqueado</string>
