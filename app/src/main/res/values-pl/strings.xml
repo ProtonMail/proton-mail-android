@@ -679,6 +679,7 @@
     <string name="need_storage_permissions_download_attachment_text">Aby pobrać załączniki, musisz zezwolić
         na dostęp do pamięci wewnętrznej.</string>
     <string name="need_contacts_permissions_text">Aby zaimportować kontakty, musisz zezwolić na dostęp do kontaktów.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Musisz zezwolić aplikacji na wysyłanie powiadomień, aby je odbierać.</string>
     <string name="push_notifications_alert_title">Alert o powiadomieniach</string>
     <string name="push_notifications_alert_subtitle">Powiadomienia Proton Mail nie działają bez zaktualizowanych usług Google Play.</string>
     <string name="app_locked">Aplikacja jest zablokowana</string>

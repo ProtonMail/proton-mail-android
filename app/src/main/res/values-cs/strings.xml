@@ -682,6 +682,7 @@
     <string name="need_storage_permissions_download_attachment_text">Pro možnost stahování příloh musíte povolit přístup
         k úložišti.</string>
     <string name="need_contacts_permissions_text">Chcete-li importovat kontakty, musíte ke kontaktům povolit přístup.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Chcete-li přijímat oznámení z aplikace, musíte povolit oprávnění pro oznámení.</string>
     <string name="push_notifications_alert_title">Oznámení Push notifikací</string>
     <string name="push_notifications_alert_subtitle">Push notifikace pro Proton Mail nefungují bez aktuální verze služeb Google Play.</string>
     <string name="app_locked">Aplikace uzamčena</string>

@@ -658,6 +658,7 @@
         aðgang að gagnageymslu.</string>
     <string name="need_contacts_permissions_text">Til að geta flutt inn tengiliði þarftu að leyfa
         aðgang að tengiliðum.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Til að fá tilkynningar frá forritinu þarftu að virkja heimildir fyrir tilkynningar.</string>
     <string name="push_notifications_alert_title">Viðvörun vegna ýti-tilkynninga</string>
     <string name="push_notifications_alert_subtitle">Ýti-tilkynningar fyrir Proton tölvupóst virka ekki nema með uppfærðri Google Play þjónustu.</string>
     <string name="app_locked">Forrit læst</string>

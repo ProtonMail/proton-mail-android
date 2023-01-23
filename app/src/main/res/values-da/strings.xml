@@ -658,6 +658,7 @@
     <string name="need_storage_permissions_download_attachment_text">For at downloade vedhæftninger skal du tillade
         adgang til lager.</string>
     <string name="need_contacts_permissions_text">For at importere kontakter skal du tillade adgang til kontakter.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Hvis du vil modtage notifikationer fra appen, skal du aktivere tilladelser til notifikationer.</string>
     <string name="push_notifications_alert_title">Push-notifikationsadvarsel</string>
     <string name="push_notifications_alert_subtitle">Push-notifikationer for Proton Mail fungerer ikke uden opdaterede Google Play-tjenester.</string>
     <string name="app_locked">App er låst</string>

@@ -647,6 +647,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="need_storage_permissions_download_attachment_text">Untuk dapat mengunduh lampiran, Anda harus terlebih dahulu
         memberikan kami izin akses ke perangkat Anda.</string>
     <string name="need_contacts_permissions_text">Untuk mengimpor kontak, Anda harus mengizinkan akses ke kontak.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Untuk menerima notifikasi dari aplikasi, Anda perlu mengaktifkan izin untuk notifikasi.</string>
     <string name="push_notifications_alert_title">Peringatan notifikasi</string>
     <string name="push_notifications_alert_subtitle">Proton Mail tidak dapat mengirimkan notifikasi apabila layanan Google Play belum diperbarui.</string>
     <string name="app_locked">Aplikasi terkunci</string>

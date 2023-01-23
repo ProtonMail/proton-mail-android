@@ -638,6 +638,7 @@
     <string name="need_storage_permissions_add_attachment_text">若要添加附件，您需要给予程序读取文件的权限。</string>
     <string name="need_storage_permissions_download_attachment_text">若要下载附件，您需要给予程序读取文件的权限。</string>
     <string name="need_contacts_permissions_text">若要导入通讯录，您需要给予程序读取通讯录的权限。</string>
+    <string name="need_notification_permissions_to_receive_notifications">开启通知权限方可接收来自应用的通知。</string>
     <string name="push_notifications_alert_title">通知推送</string>
     <string name="push_notifications_alert_subtitle">没有新版 Google Play 服务支持，Proton Mail 无法推送通知。</string>
     <string name="app_locked">程序已锁定</string>

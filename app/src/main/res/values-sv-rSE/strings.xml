@@ -657,6 +657,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="need_storage_permissions_download_attachment_text">För att ladda ner bilagor måste du tillåta
         åtkomst till lagring.</string>
     <string name="need_contacts_permissions_text">För att importera kontakter måste du tillåta åtkomst till kontakter.</string>
+    <string name="need_notification_permissions_to_receive_notifications">För att få aviseringar från appen måste du aktivera behörigheter för aviseringar.</string>
     <string name="push_notifications_alert_title">Push-notifieringar</string>
     <string name="push_notifications_alert_subtitle">Push-aviseringar för ProtonMail fungerar inte utan uppdaterade Google Play-tjänster.</string>
     <string name="app_locked">Appen är låst</string>

@@ -682,6 +682,7 @@
     <string name="need_storage_permissions_download_attachment_text">Чтобы скачать вложения, вам нужно разрешить
         доступ к хранилищу.</string>
     <string name="need_contacts_permissions_text">Чтобы импортировать контакты вам надо предоставить доступ к контактам.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Чтобы получать уведомления от приложения, необходимо разрешить приложению показывать уведомления.</string>
     <string name="push_notifications_alert_title">Предупреждение о push-уведомлениях</string>
     <string name="push_notifications_alert_subtitle">Push-уведомления для Proton Mail не работают без обновленных сервисов Google Play.</string>
     <string name="app_locked">Приложение заблокировано</string>
