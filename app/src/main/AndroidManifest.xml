@@ -126,6 +126,11 @@
                 tools:node="remove"/>
 
             <meta-data
+                android:name="me.proton.core.network.presentation.init.UnAuthSessionFetcherInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+
+            <meta-data
                 android:name="ch.protonmail.android.security.presentation.SecurityManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
