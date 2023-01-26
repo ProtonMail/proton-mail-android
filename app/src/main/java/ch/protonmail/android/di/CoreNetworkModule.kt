@@ -25,7 +25,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.proton.core.auth.domain.ClientSecret
 import me.proton.core.network.data.client.ExtraHeaderProviderImpl
 import me.proton.core.network.data.di.BaseProtonApiUrl
 import me.proton.core.network.data.di.Constants
@@ -40,10 +39,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
-    @Provides
-    @ClientSecret
-    fun provideClientSecret(): String = ""
 
     @Provides
     @BaseProtonApiUrl

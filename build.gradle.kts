@@ -36,7 +36,7 @@ allprojects {
 plugins {
     id("me.proton.kotlin") version "0.1" // Released: Oct 09, 2020
     id("me.proton.tests") version "0.1" // Released: Oct 09, 2020
-    id("me.proton.core.gradle-plugins.detekt") version "1.0.0-alpha03"
+    id("me.proton.core.gradle-plugins.detekt") version "1.1.2"
     `sonarQube`
 }
 
