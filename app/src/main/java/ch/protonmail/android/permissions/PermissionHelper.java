@@ -22,6 +22,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -43,7 +44,9 @@ public class PermissionHelper {
     private PermissionHelper(Constants.PermissionType type, Activity activity, PermissionCallback callback) {
         _permissionType = type;
         if (type == Constants.PermissionType.STORAGE) {
-            mManifestPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                mManifestPermission = Manifest.permission.READ_MEDIA_IMAGES;
+            } else mManifestPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
             mRequestCode = REQUEST_CODE_ACCESS_STORAGE;
             mPermissionRequestedPref = Constants.Prefs.PREF_PERMISSION_ACCESS_STORAGE;
         } else if (type == Constants.PermissionType.CONTACTS) {
