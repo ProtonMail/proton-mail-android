@@ -46,7 +46,7 @@ public class PermissionHelper {
         if (type == Constants.PermissionType.STORAGE) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 mManifestPermission = Manifest.permission.READ_MEDIA_IMAGES;
-            } else mManifestPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
+            } else mManifestPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
             mRequestCode = REQUEST_CODE_ACCESS_STORAGE;
             mPermissionRequestedPref = Constants.Prefs.PREF_PERMISSION_ACCESS_STORAGE;
         } else if (type == Constants.PermissionType.CONTACTS) {
