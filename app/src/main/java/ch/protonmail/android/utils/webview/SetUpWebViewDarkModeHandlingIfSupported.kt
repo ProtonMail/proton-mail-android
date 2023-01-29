@@ -21,6 +21,7 @@ package ch.protonmail.android.utils.webview
 
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import android.webkit.WebView
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
@@ -36,6 +37,10 @@ class SetUpWebViewDarkModeHandlingIfSupported @Inject constructor(
         if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
             val viewInDarkModeMessagePreference = getViewInDarkModeMessagePreference(context, userId, messageId)
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                webView.settings.isAlgorithmicDarkeningAllowed = viewInDarkModeMessagePreference
+            }
+            
             when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                 Configuration.UI_MODE_NIGHT_YES -> {
                     if (viewInDarkModeMessagePreference) {
@@ -45,6 +50,9 @@ class SetUpWebViewDarkModeHandlingIfSupported @Inject constructor(
                     }
                 }
                 Configuration.UI_MODE_NIGHT_NO, Configuration.UI_MODE_NIGHT_UNDEFINED -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        webView.settings.isAlgorithmicDarkeningAllowed = false
+                    }
                     WebSettingsCompat.setForceDark(webView.settings, WebSettingsCompat.FORCE_DARK_OFF)
                 }
             }
