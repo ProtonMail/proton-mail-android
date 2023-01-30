@@ -61,6 +61,8 @@
     <string name="mailbox_updated_just_now">刚刚更新</string>
     <string name="mailbox_updated_recently">刚刚更新</string>
     <string name="mailbox_updating">正在更新邮件…</string>
+    <string name="is_proton">此邮件来自 Proton 官方</string>
+    <string name="is_proton_official_badge">官方</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">在Proton日历中打开</string>
@@ -363,7 +365,7 @@
     <string name="sync_attachments">正在同步附件</string>
     <string name="processing_attachment">正在处理附件</string>
     <string name="hyperlink_confirmation_dialog_text_html">您即将在浏览器中打开：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;确定要继续吗？</string>
-    <string name="dont_ask_again">不再询问</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">口令错误，还可尝试 %d 次</item>
     </plurals>

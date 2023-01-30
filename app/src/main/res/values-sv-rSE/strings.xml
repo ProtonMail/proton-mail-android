@@ -62,6 +62,8 @@
     <string name="mailbox_updated_just_now">Uppdaterad just nu</string>
     <string name="mailbox_updated_recently">Uppdaterad nyligen</string>
     <string name="mailbox_updating">Uppdaterar…</string>
+    <string name="is_proton">Detta är ett Proton-meddelande</string>
+    <string name="is_proton_official_badge">Officiell</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Öppna i Proton Calendar</string>
@@ -367,7 +369,7 @@
     <string name="sync_attachments">Synkroniserar bilagor</string>
     <string name="processing_attachment">Bearbetar bilaga</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du är på väg att starta webbläsaren och navigera till:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vill du fortsätta?</string>
-    <string name="dont_ask_again">Fråga inte igen</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Felaktig PIN-kod, %d försök återstår</item>
         <item quantity="other">Felaktig PIN-kod, %d försök återstår</item>

@@ -371,7 +371,7 @@
     <string name="sync_attachments">Syncing attachments</string>
     <string name="processing_attachment">Processing attachment</string>
     <string name="hyperlink_confirmation_dialog_text_html">You are about to launch the web browser and navigate to:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Do you want to continue?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Incorrect PIN, %d attempt remaining</item>
         <item quantity="other">Incorrect PIN, %d attempts remaining</item>

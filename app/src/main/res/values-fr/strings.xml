@@ -62,6 +62,8 @@
     <string name="mailbox_updated_just_now">Mis à jour à l\'instant</string>
     <string name="mailbox_updated_recently">Mis à jour récemment</string>
     <string name="mailbox_updating">Mise à jour…</string>
+    <string name="is_proton">Ceci est un message de Proton.</string>
+    <string name="is_proton_official_badge">Officiel</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Ouvrir dans Proton Calendar</string>
@@ -367,7 +369,7 @@
     <string name="sync_attachments">Synchronisation des pièces jointes</string>
     <string name="processing_attachment">Traitement des pièces jointes</string>
     <string name="hyperlink_confirmation_dialog_text_html">Vous êtes sur le point de lancer le navigateur web et de visiter : &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Souhaitez-vous continuer ?</string>
-    <string name="dont_ask_again">Ne plus demander</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Le code PIN n\'est pas correct, il reste %d tentative.</item>
         <item quantity="other">Le code PIN n\'est pas correct, il reste %d tentatives.</item>

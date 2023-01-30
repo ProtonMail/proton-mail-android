@@ -62,6 +62,8 @@
     <string name="mailbox_updated_just_now">Uppfært núna</string>
     <string name="mailbox_updated_recently">Uppfært nýlega</string>
     <string name="mailbox_updating">Uppfæri...</string>
+    <string name="is_proton">Þetta er Proton skilaboð</string>
+    <string name="is_proton_official_badge">Opinber</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Opna í Proton dagatali</string>
@@ -367,7 +369,7 @@
     <string name="sync_attachments">Samstilli viðhengi</string>
     <string name="processing_attachment">Vinn með viðhengi</string>
     <string name="hyperlink_confirmation_dialog_text_html">Þú ert í þann mund að fara að ræsa vafrann og fara á:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Viltu halda áfram?</string>
-    <string name="dont_ask_again">Ekki spyrja aftur</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Rangt PIN-númer, %d tilraun eftir</item>
         <item quantity="other">Rangt PIN-númer, %d tilraunir eftir</item>

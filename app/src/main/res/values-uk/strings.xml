@@ -64,6 +64,8 @@
     <string name="mailbox_updated_just_now">Щойно оновлено</string>
     <string name="mailbox_updated_recently">Недавно оновлено</string>
     <string name="mailbox_updating">Оновлення…</string>
+    <string name="is_proton">Це повідомлення Proton</string>
+    <string name="is_proton_official_badge">Офіційне</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Відкрити у Proton Calendar</string>
@@ -375,7 +377,7 @@
     <string name="sync_attachments">Синхронізація вкладень</string>
     <string name="processing_attachment">Обробка вкладення</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ви збираєтеся запустити браузер і перейти до:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Хочете продовжити?</string>
-    <string name="dont_ask_again">Не питати знову</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Неправильний ПІН. Залишилась %d спроба</item>
         <item quantity="few">Неправильний ПІН. Залишилось %d спроби</item>
@@ -484,7 +486,7 @@
     <string name="download_complete">Завантаження завершено</string>
     <string name="message_expires_in">Термін дії цього повідомлення завершується через %s</string>
     <string name="unsaved_changes_title">Незбережені зміни</string>
-    <string name="unsaved_changes_subtitle">Виявлено незбереженні записи у формі. Ви дійсно хочете відхилити їх?</string>
+    <string name="unsaved_changes_subtitle">Виявлено незбережені записи у формі. Ви дійсно хочете відхилити їх?</string>
     <string name="request_timeout">Час очікування запиту завершився. Будь ласка, спробуйте знову</string>
     <string name="no_folders">Немає тек</string>
     <string name="folder_add_new">Додати нову теку</string>
@@ -682,7 +684,7 @@
     <string name="need_storage_permissions_download_attachment_text">Щоб завантажити вкладення вам потрібно надати
         доступ до сховища.</string>
     <string name="need_contacts_permissions_text">Щоб імпортувати контакти, вам потрібно надати доступ до контактів.</string>
-    <string name="need_notification_permissions_to_receive_notifications">Щоб отримувати сповіщення із застосунку, вам потрібно увімкнути дозволи на сповіщення.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Щоб отримувати сповіщення із застосунку, ви маєте надати дозвіл на показ сповіщень.</string>
     <string name="push_notifications_alert_title">Push-сповіщення</string>
     <string name="push_notifications_alert_subtitle">Push-сповіщення Proton Mail не працюють без оновлених сервісів Google Play.</string>
     <string name="app_locked">Програму заблоковано</string>

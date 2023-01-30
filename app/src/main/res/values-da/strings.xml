@@ -62,6 +62,8 @@
     <string name="mailbox_updated_just_now">Netop opdateret</string>
     <string name="mailbox_updated_recently">Opdateret for nylig</string>
     <string name="mailbox_updating">Opdaterer…</string>
+    <string name="is_proton">Dette er en Proton-besked</string>
+    <string name="is_proton_official_badge">Officiel</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Åbn i Proton Calendar</string>
@@ -367,7 +369,7 @@
     <string name="sync_attachments">Synkroniserer vedhæftninger</string>
     <string name="processing_attachment">Behandler vedhæftninger</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du er ved at starte webbrowseren og navigere til:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Ønsker du at fortsætte?</string>
-    <string name="dont_ask_again">Spørg ikke igen</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Forkert PIN-kode, %d forsøg tilbage</item>
         <item quantity="other">Forkert PIN-kode, %d forsøg tilbage</item>

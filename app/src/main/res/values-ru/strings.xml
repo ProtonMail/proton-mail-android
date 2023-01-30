@@ -64,6 +64,8 @@
     <string name="mailbox_updated_just_now">Обновлено только что</string>
     <string name="mailbox_updated_recently">Недавно обновлено</string>
     <string name="mailbox_updating">Обновляется…</string>
+    <string name="is_proton">Это сообщение от Proton</string>
+    <string name="is_proton_official_badge">Официальный</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Открыть в Proton Calendar</string>
@@ -132,7 +134,7 @@
     <!-- region App Theme -->
     <string name="app_theme_title">Тема приложения</string>
     <string name="app_theme_light">Светлая</string>
-    <string name="app_theme_dark">Тёмная</string>
+    <string name="app_theme_dark">Темная</string>
     <string name="app_theme_system">Системная по умолчанию</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
@@ -206,13 +208,13 @@
     <string name="open_drawer">Открыть</string>
     <string name="close_drawer">Закрыть</string>
     <string name="inbox_option">Входящие</string>
-    <string name="starred_option">Важные</string>
+    <string name="starred_option">Отмеченные звездочкой</string>
     <string name="drafts_option">Черновики</string>
     <string name="sent_option">Отправленные</string>
     <string name="archive_option">Архив</string>
     <string name="trash_option">Корзина</string>
     <string name="spam_option">Спам</string>
-    <string name="allmail_option">Все письма</string>
+    <string name="allmail_option">Вся почта</string>
     <string name="inbox">Входящие</string>
     <string name="starred">Со звёздами</string>
     <string name="drafts">Черновики</string>
@@ -375,7 +377,7 @@
     <string name="sync_attachments">Синхронизация вложений</string>
     <string name="processing_attachment">Обработка вложений</string>
     <string name="hyperlink_confirmation_dialog_text_html">Вы собираетесь запустить веб-браузер и перейти по адресу:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Вы хотите продолжить?</string>
-    <string name="dont_ask_again">Больше не спрашивать</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Неправильный PIN-код, осталась %d попытка</item>
         <item quantity="few">Неправильный PIN-код, осталось %d попытки</item>

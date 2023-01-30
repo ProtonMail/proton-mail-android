@@ -62,6 +62,8 @@
     <string name="mailbox_updated_just_now">Ενημερώθηκε μόλις τώρα</string>
     <string name="mailbox_updated_recently">Ενημερώθηκε πρόσφατα</string>
     <string name="mailbox_updating">Γίνεται ενημέρωση…</string>
+    <string name="is_proton">Αυτό είναι ένα μήνυμα από το Proton</string>
+    <string name="is_proton_official_badge">Επίσημο</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Άνοιγμα στο Proton Calendar</string>
@@ -369,7 +371,7 @@
     <string name="sync_attachments">Συγχρονισμός συνημμένων</string>
     <string name="processing_attachment">Επεξεργασία συνημμένου</string>
     <string name="hyperlink_confirmation_dialog_text_html">Πρόκειται να ξεκινήσει το πρόγραμμα περιήγησης ιστού και να περιηγηθείτε στο &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;;br/Θα θέλατε να συνεχίσετε;</string>
-    <string name="dont_ask_again">Να μην ερωτηθώ ξανά</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Λανθασμένος κωδικός PIN, απομένει %d προσπάθεια</item>
         <item quantity="other">Λανθασμένος κωδικός PIN, απομένουν %d προσπάθειες</item>

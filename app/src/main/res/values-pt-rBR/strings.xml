@@ -62,6 +62,8 @@
     <string name="mailbox_updated_just_now">Atualizado agora</string>
     <string name="mailbox_updated_recently">Atualizado recentemente</string>
     <string name="mailbox_updating">Atualizando…</string>
+    <string name="is_proton">Essa é uma mensagem do Proton.</string>
+    <string name="is_proton_official_badge">Oficial</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Abrir no Proton Calendar</string>
@@ -367,7 +369,7 @@
     <string name="sync_attachments">Sincronizando anexos</string>
     <string name="processing_attachment">Processando anexo</string>
     <string name="hyperlink_confirmation_dialog_text_html">Você está prestes a ser redirecionado para:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Você deseja continuar?</string>
-    <string name="dont_ask_again">Não perguntar novamente</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorreto, %d tentativa restante</item>
         <item quantity="other">PIN incorreto, %d tentativas restantes</item>
@@ -658,7 +660,7 @@
     <string name="need_storage_permissions_download_attachment_text">Para baixar anexos, você precisa permitir
          acesso ao armazenamento.</string>
     <string name="need_contacts_permissions_text">Para importar contatos, você precisa permitir o acesso aos contatos.</string>
-    <string name="need_notification_permissions_to_receive_notifications">Para receber notificações do aplicativo, você precisa ativar permissões para notificações.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Para receber notificações do aplicativo, você precisa habilitar permissões para notificações.</string>
     <string name="push_notifications_alert_title">Alerta de notificações push</string>
     <string name="push_notifications_alert_subtitle">As notificações via Push do Proton Mail não funcionam sem o Google Play Services atualizado.</string>
     <string name="app_locked">Aplicativo bloqueado</string>
