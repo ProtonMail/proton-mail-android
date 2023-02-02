@@ -64,6 +64,8 @@
     <string name="mailbox_updated_just_now">Právě aktualizováno</string>
     <string name="mailbox_updated_recently">Nedávno aktualizováno</string>
     <string name="mailbox_updating">Aktualizuji…</string>
+    <string name="is_proton">Toto je zpráva od Protonu</string>
+    <string name="is_proton_official_badge">Oficiální</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Otevřít v Proton kalendáři</string>
@@ -375,7 +377,7 @@
     <string name="sync_attachments">Synchronizace příloh</string>
     <string name="processing_attachment">Zpracování přílohy</string>
     <string name="hyperlink_confirmation_dialog_text_html">Chystáte se spustit webový prohlížeč a přejít na&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Chcete pokračovat?</string>
-    <string name="dont_ask_again">Příště se neptat</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Nesprávný kód PIN, zbývá %d pokus</item>
         <item quantity="few">Nesprávný kód PIN, zbývají %d pokusy</item>

@@ -62,6 +62,8 @@
     <string name="mailbox_updated_just_now">Yettwaleqqem tura kan</string>
     <string name="mailbox_updated_recently">Yettwaleqqem melmi kan</string>
     <string name="mailbox_updating">Yettleqqim…</string>
+    <string name="is_proton">This is a Proton message</string>
+    <string name="is_proton_official_badge">Official</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Ldi di Proton Calendar</string>
@@ -367,7 +369,7 @@
     <string name="sync_attachments">Amtawi n ifuyla yeddan</string>
     <string name="processing_attachment">Asesfer n ufaylu yeddan</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ad tsnekreḍ iminig web akken zd terzuḍ ɣer:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Tebɣiḍ ad tkemleḍ?</string>
-    <string name="dont_ask_again">Ur ssutur ara tikelt-nniḍen</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Yir tangalt PIN,%d n uɛraḍ i d-yeqqimen</item>
         <item quantity="other">Yir tangalt PIN,%d n uɛraḍ i d-yeqqimen</item>

@@ -61,6 +61,8 @@
     <string name="mailbox_updated_just_now">Baru saja diperbarui</string>
     <string name="mailbox_updated_recently">Baru-baru ini diperbarui</string>
     <string name="mailbox_updating">Memperbarui…</string>
+    <string name="is_proton">Ini merupakan pesan Proton</string>
+    <string name="is_proton_official_badge">Resmi</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Buka di Proton Calendar</string>
@@ -364,7 +366,7 @@
     <string name="processing_attachment">Memproses lampiran</string>
     <string name="hyperlink_confirmation_dialog_text_html">Anda akan meluncurkan peramban web dan pindah
 ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda ingin melanjutkan?</string>
-    <string name="dont_ask_again">Jangan tanyakan lagi</string>
+    <string name="dont_ask_again">Do not ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PIN salah, %d upaya tersisa</item>
     </plurals>
@@ -836,7 +838,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="star_unstar">Bintangi/Hapus Bintang</string>
     <string name="send_to_archive">Kirim ke arsip?</string>
     <string name="label_as">Labeli sebagai…</string>
-    <string name="mark_as_unread">Tandai sebagai belum dibaca</string>
+    <string name="mark_as_unread">Tandai belum dibaca</string>
     <string name="mark_as_read">Tandai sebagai telah dibaca</string>
     <string name="move_message">Pindahkan pesan</string>
     <string name="manage">Kelola</string>
