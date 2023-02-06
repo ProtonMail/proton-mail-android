@@ -26,7 +26,7 @@
     <string name="x_done">Готово</string>
     <string name="x_edit">Изменить</string>
     <string name="x_hours">Часов</string>
-    <string name="x_more">Еще</string>
+    <string name="x_more">Ещё</string>
     <string name="x_none">Нет</string>
     <string name="x_search">Поиск</string>
     <string name="x_set">Установить</string>
@@ -50,7 +50,7 @@
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Эта папка пуста</string>
     <string name="mailbox_empty_inbox_subtitle">Вы в курсе всех событий</string>
-    <string name="mailbox_empty_spam_subtitle">Ваша папка со спамом пуста</string>
+    <string name="mailbox_empty_spam_subtitle">Папка Спам пуста</string>
     <string name="mailbox_empty_trash_subtitle">Корзина пуста</string>
     <string name="mailbox_empty_state_no_results_found">Результатов не найдено</string>
     <string name="mailbox_empty_state_try_a_different_term">Попробуйте другой поисковый запрос</string>
@@ -123,8 +123,8 @@
     <string name="settings_confirm_pin_code_title">Повторите PIN-код</string>
     <string name="settings_pins_dont_match">PIN-коды должны совпадать!</string>
     <string name="settings_enter_pin_code_title">Введите PIN-код</string>
-    <string name="settings_storage_limit_mb_value">%1$d МB (%2$.2f МB используется)</string>
-    <string name="settings_storage_limit_unlimited_value">Безлимитный (%1$.2f MB используется)</string>
+    <string name="settings_storage_limit_mb_value">%1$d МБ (%2$.2f МБ используется)</string>
+    <string name="settings_storage_limit_unlimited_value">Безлимитный (%1$.2f МБ используется)</string>
     <string name="settings_swipe_settings_info">Настройте жесты для доступа к наиболее часто используемым действиям.</string>
     <string name="settings_swipe_left_to_right">Слева направо</string>
     <string name="settings_swipe_right_to_left">Справа налево</string>
@@ -134,7 +134,7 @@
     <!-- region App Theme -->
     <string name="app_theme_title">Тема приложения</string>
     <string name="app_theme_light">Светлая</string>
-    <string name="app_theme_dark">Темная</string>
+    <string name="app_theme_dark">Тёмная</string>
     <string name="app_theme_system">Системная по умолчанию</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
@@ -147,8 +147,8 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Новые сообщения</string>
-    <string name="notification_invalid_sender_sending_failed">Ваше сообщение может быть найдено как черновик. Пожалуйста, проверьте, активена ли электронная почта \" От:\" в сообщении.</string>
-    <string name="notification_invalid_subject_sending_failed">Ваше сообщение может быть найдено как черновик. Тема не является действительной.</string>
+    <string name="notification_invalid_sender_sending_failed">Ваше сообщение осталось в черновиках. Пожалуйста, проверьте, что эл. адрес отправителя в сообщении активен.</string>
+    <string name="notification_invalid_subject_sending_failed">Ваше сообщение осталось в черновиках. Тема недействительна.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Нет контактов</string>
@@ -162,13 +162,13 @@
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Конфиденциальность для всех</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Пригласите ваши контакты в Proton Mail, чтобы пользоваться бесшовным конечным шифрованием, или добавьте защиту паролем в отправляемые им сообщения.</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Пригласите ваши контакты в Proton Mail, чтобы пользоваться бесшовным сквозным шифрованием, или добавьте защиту паролем в отправляемые им сообщения.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Чистый и опрятный</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">Файлы, ярлыки и цветовая маркировка сообщений помогают создать ваш идеальный индивидуальный почтовый ящик.</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Упорядочивайте, отмечайте и раскрашивайте зашифрованные сообщения, чтобы создать идеальный индивидуальный почтовый ящик.</string>
     <string name="existing_user_onboarding_new_look_headline">Новый внешний вид, та же защита</string>
     <string name="existing_user_onboarding_new_look_description">Ваша зашифрованная электронная почта была полностью переработана для удобства использования.</string>
     <string name="existing_user_onboarding_new_features_headline">Новые функции</string>
-    <string name="existing_user_onboarding_new_features_description">Воспользуйтесь такими новыми функциями, как темный режим, улучшенные уведомления, фильтр непрочитанных сообщений и вложенные папки.</string>
+    <string name="existing_user_onboarding_new_features_description">Воспользуйтесь такими новыми функциями, как тёмный режим, улучшенные уведомления, фильтр непрочитанных сообщений и вложенные папки.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Обновленный Proton, единая защита</string>
     <string name="existing_user_onboarding_updated_proton_description">Представляем обновленный вид Proton. Много услуг, одна миссия. Добро пожаловать в Интернет, где конфиденциальность установлена по умолчанию. <a href="https://proton.me/news/updated-proton">Подробнее</a></string>
     <string name="onboarding_next">Далее</string>
@@ -178,7 +178,7 @@
     <!-- endregion -->
     <!-- region Snackbars -->
     <string name="snackbar_message_draft_saved">Черновик сохранен</string>
-    <string name="snackbar_message_draft_moved_to_trash">Черновик перемещен в корзину</string>
+    <string name="snackbar_message_draft_moved_to_trash">Черновик перемещён в корзину</string>
     <string name="snackbar_action_discard">Сбросить</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
@@ -208,7 +208,7 @@
     <string name="open_drawer">Открыть</string>
     <string name="close_drawer">Закрыть</string>
     <string name="inbox_option">Входящие</string>
-    <string name="starred_option">Отмеченные звездочкой</string>
+    <string name="starred_option">Отмеченные звёздочкой</string>
     <string name="drafts_option">Черновики</string>
     <string name="sent_option">Отправленные</string>
     <string name="archive_option">Архив</string>
@@ -275,7 +275,7 @@
         <item quantity="one">\u0020 %d вложение</item>
         <item quantity="few">\u0020 %d вложения</item>
         <item quantity="many">\u0020 %d вложений</item>
-        <item quantity="other">\u0020 %d вложения</item>
+        <item quantity="other">\u0020 %d вложений</item>
     </plurals>
     <plurals name="attachments_number">
         <item quantity="one">%d вложение</item>
@@ -377,7 +377,7 @@
     <string name="sync_attachments">Синхронизация вложений</string>
     <string name="processing_attachment">Обработка вложений</string>
     <string name="hyperlink_confirmation_dialog_text_html">Вы собираетесь запустить веб-браузер и перейти по адресу:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Вы хотите продолжить?</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">Больше не спрашивать</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Неправильный PIN-код, осталась %d попытка</item>
         <item quantity="few">Неправильный PIN-код, осталось %d попытки</item>

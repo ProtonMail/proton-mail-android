@@ -366,7 +366,7 @@
     <string name="processing_attachment">Memproses lampiran</string>
     <string name="hyperlink_confirmation_dialog_text_html">Anda akan meluncurkan peramban web dan pindah
 ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda ingin melanjutkan?</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">Jangan tanyakan lagi</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PIN salah, %d upaya tersisa</item>
     </plurals>
