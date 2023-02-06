@@ -1440,7 +1440,11 @@ public class ComposeMessageActivity
             onMessageLoaded(event.getMessage(), true, true);
         } else {
             if (!isFinishing()) {
-                DialogUtils.Companion.showInfoDialog(ComposeMessageActivity.this, getString(R.string.app_name), getString(R.string.messages_load_failure),
+                DialogUtils.Companion.showInfoDialog(
+                        ComposeMessageActivity.this,
+                        getString(R.string.app_name),
+                        getString(R.string.messages_load_failure),
+                        false,
                         unit -> {
                             finishActivity(false);
                             return unit;
