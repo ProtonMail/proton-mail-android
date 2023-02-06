@@ -61,8 +61,8 @@
     <string name="mailbox_updated_just_now">たった今更新</string>
     <string name="mailbox_updated_recently">最近更新されました</string>
     <string name="mailbox_updating">更新中…</string>
-    <string name="is_proton">This is a Proton message</string>
-    <string name="is_proton_official_badge">Official</string>
+    <string name="is_proton">これは Proton のメッセージです</string>
+    <string name="is_proton_official_badge">公式</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Proton Calendar で開く</string>

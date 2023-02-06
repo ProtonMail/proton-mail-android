@@ -61,7 +61,7 @@
     <string name="mailbox_updated_just_now">剛剛更新</string>
     <string name="mailbox_updated_recently">最近更新</string>
     <string name="mailbox_updating">正在更新……</string>
-    <string name="is_proton">This is a Proton message</string>
+    <string name="is_proton">這是 Proton 訊息</string>
     <string name="is_proton_official_badge">官方</string>
     <!-- endregion -->
     <!-- region Details -->
@@ -365,7 +365,7 @@
     <string name="sync_attachments">正在同步附件</string>
     <string name="processing_attachment">正在處理附件</string>
     <string name="hyperlink_confirmation_dialog_text_html">您即將啟動網頁瀏覽器並導航到:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;您想繼續嗎？</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">請勿再問</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PIN 碼不正確，剩下 %d 次嘗試</item>
     </plurals>

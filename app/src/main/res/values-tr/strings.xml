@@ -369,7 +369,7 @@
     <string name="sync_attachments">Ek dosyalar eşitleniyor</string>
     <string name="processing_attachment">Ek dosya işleniyor</string>
     <string name="hyperlink_confirmation_dialog_text_html">Web tarayıcısını başlatarak gezinmek üzeresiniz: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;İlerlemek istiyor musunuz?</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">Bir daha sorma</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN kodu yanlış. %d deneme kaldı</item>
         <item quantity="other">PIN kodu yanlış. %d deneme kaldı</item>

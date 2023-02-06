@@ -377,7 +377,7 @@
     <string name="sync_attachments">Synchronizowanie załączników</string>
     <string name="processing_attachment">Przetwarzanie załączników</string>
     <string name="hyperlink_confirmation_dialog_text_html">Masz zamiar uruchomić przeglądarkę i przejść do:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Czy chcesz kontynuować?</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">Nie pytaj ponownie</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Kod PIN jest nieprawidłowy, pozostała %d próba</item>
         <item quantity="few">Kod PIN jest nieprawidłowy, pozostały %d próby</item>

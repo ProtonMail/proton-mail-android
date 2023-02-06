@@ -62,8 +62,8 @@
     <string name="mailbox_updated_just_now">Zojuist geüpdatet</string>
     <string name="mailbox_updated_recently">Recent geüpdatet</string>
     <string name="mailbox_updating">Updaten…</string>
-    <string name="is_proton">This is a Proton message</string>
-    <string name="is_proton_official_badge">Official</string>
+    <string name="is_proton">Dit is een Proton bericht.</string>
+    <string name="is_proton_official_badge">Officieel</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
@@ -369,7 +369,7 @@
     <string name="sync_attachments">Bijlagen synchroniseren</string>
     <string name="processing_attachment">Bijlage verwerken</string>
     <string name="hyperlink_confirmation_dialog_text_html">U staat op het punt om de webbrowser te starten en te navigeren naar:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Wilt u doorgaan?</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">Niet opnieuw vragen</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Onjuiste PIN-code, %d poging resterend</item>
         <item quantity="other">Onjuiste PIN-code, %d pogingen resterend</item>
@@ -660,7 +660,7 @@
     <string name="need_storage_permissions_download_attachment_text">Om bijlagen toe te downloaden moet u
         toegang tot opslag toestaan.</string>
     <string name="need_contacts_permissions_text">Om contacten te importeren moet u toegang tot contacten toestaan.</string>
-    <string name="need_notification_permissions_to_receive_notifications">Om berichten te ontvangen van de app, moet je toestemming verlenen voor berichtgeving.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Om meldingen te ontvangen van de app, moet je toestemming verlenen voor meldingen.</string>
     <string name="push_notifications_alert_title">Pushmelding</string>
     <string name="push_notifications_alert_subtitle">Pushmeldingen voor Proton Mail werken niet zonder bijgewerkte Google Play-diensten.</string>
     <string name="app_locked">App vergrendeld</string>
