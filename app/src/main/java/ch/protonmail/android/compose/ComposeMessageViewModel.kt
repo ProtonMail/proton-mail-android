@@ -157,6 +157,7 @@ class ComposeMessageViewModel @Inject constructor(
     private var _protonMailGroups: List<MessageRecipient> = java.util.ArrayList()
     private var _androidContactsLoaded: Boolean = false
     private var _protonMailContactsLoaded: Boolean = false
+    private var _isLoadingDraftBody: Boolean = false
 
     private val _fetchedBodyEvents: MutableLiveData<String> = MutableLiveData()
 
@@ -677,6 +678,7 @@ class ComposeMessageViewModel @Inject constructor(
             .flatMap {
                 if (it.messageBody.isNullOrEmpty()) {
                     composeMessageRepository.startFetchDraftDetail(_draftId.get())
+                    _isLoadingDraftBody = true
                 } else {
                     it.isDownloaded = true
                     val attachments = composeMessageRepository.getAttachmentsBlocking(it)
@@ -697,6 +699,7 @@ class ComposeMessageViewModel @Inject constructor(
                 },
                 {
                     composeMessageRepository.startFetchDraftDetail(_draftId.get())
+                    _isLoadingDraftBody = true
                     _messageResultError.postValue(
                         Event(PostResult(it.message ?: "", Status.FAILED))
                     )
@@ -1388,6 +1391,12 @@ class ComposeMessageViewModel @Inject constructor(
         _messageDataResult.message.subject == context.getString(R.string.empty_subject) &&
         _messageDataResult.content.isEmpty() &&
         _messageDataResult.attachmentList.isEmpty()
+
+    fun onLoadingDraftBodyFinished() {
+        _isLoadingDraftBody = false
+    }
+
+    fun isLoadingDraftBody(): Boolean = _messageDataResult.content.isEmpty() && _isLoadingDraftBody
 
     private fun parentMessageAsync() = viewModelScope.async(dispatchers.Io) {
         val parentId = _parentId

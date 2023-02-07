@@ -988,10 +988,15 @@ public class ComposeMessageActivity
 
     @Override
     public void onBackPressed() {
-        if (composeMessageViewModel.isDraftEmpty(this)) {
+        if (composeMessageViewModel.isLoadingDraftBody()) {
+            Timber.d("Exit composer: do not save and close");
+            finishActivity(false);
+        } else if (composeMessageViewModel.isDraftEmpty(this)) {
+            Timber.d("Exit composer: deleting draft and closing");
             composeMessageViewModel.deleteDraft();
             finishActivity(false);
         } else {
+            Timber.d("Exit composer: saving draft");
             UiUtil.hideKeyboard(ComposeMessageActivity.this);
             composeMessageViewModel.setBeforeSaveDraft(true, messageBodyEditText.getText().toString(), UserAction.SAVE_DRAFT_EXIT);
         }
@@ -1428,13 +1433,18 @@ public class ComposeMessageActivity
     @Subscribe
     public void onFetchDraftDetailEvent(FetchDraftDetailEvent event) {
         binding.composerProgressLayout.setVisibility(View.GONE);
+        composeMessageViewModel.onLoadingDraftBodyFinished();
         if (event.success) {
             composeMessageViewModel.initSignatures();
             composeMessageViewModel.processSignature();
             onMessageLoaded(event.getMessage(), true, true);
         } else {
             if (!isFinishing()) {
-                DialogUtils.Companion.showInfoDialog(ComposeMessageActivity.this, getString(R.string.app_name), getString(R.string.messages_load_failure),
+                DialogUtils.Companion.showInfoDialog(
+                        ComposeMessageActivity.this,
+                        getString(R.string.app_name),
+                        getString(R.string.messages_load_failure),
+                        false,
                         unit -> {
                             finishActivity(false);
                             return unit;

@@ -45,6 +45,16 @@ class DialogUtils {
             message: String,
             okListener: ((Unit) -> Unit)?
         ) {
+            showInfoDialog(context, title, message, true, okListener)
+        }
+
+        fun showInfoDialog(
+            context: Context,
+            title: String,
+            message: String,
+            cancellable: Boolean,
+            okListener: ((Unit) -> Unit)?
+        ) {
             val builder = AlertDialog.Builder(context)
 
             val messageWithLinks = SpannableString(message)
@@ -58,6 +68,7 @@ class DialogUtils {
                         dialog.dismiss()
                     }
                 }
+                .setCancelable(cancellable)
                 .create()
 
             val dialog: AlertDialog = builder.show()
