@@ -56,8 +56,8 @@
     <string name="mailbox_empty_state_try_a_different_term">Intenta un término de búsqueda diferente.</string>
     <string name="mailbox_no_messages">Ningún mensaje</string>
     <plurals name="mailbox_unread_count">
-        <item quantity="one">%d no leído</item>
-        <item quantity="other">%d no leídos</item>
+        <item quantity="one">%d sin leer</item>
+        <item quantity="other">%d sin leer</item>
     </plurals>
     <string name="mailbox_updated_just_now">Actualizado justo ahora</string>
     <string name="mailbox_updated_recently">Actualizado recientemente</string>
@@ -166,7 +166,7 @@
     <string name="existing_user_onboarding_new_look_headline">Nuevo aspecto, misma protección</string>
     <string name="existing_user_onboarding_new_look_description">Tu correo electrónico cifrado ha sido completamente rediseñado para facilitar su uso.</string>
     <string name="existing_user_onboarding_new_features_headline">Nuevas funciones</string>
-    <string name="existing_user_onboarding_new_features_description">Disfruta de nuevas funciones como el modo oscuro, notificaciones mejoradas, un filtro de mensajes no leídos y subcarpetas.</string>
+    <string name="existing_user_onboarding_new_features_description">Disfruta de nuevas funciones como el modo oscuro, notificaciones mejoradas, un filtro de mensajes sin leer y carpetas secundarias.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualizado, protección unificada</string>
     <string name="existing_user_onboarding_updated_proton_description">Presentamos el nuevo aspecto de Proton. Muchos servicios, una sola misión. Te damos la bienvenida a una Internet donde la privacidad es la norma. <a href="https://proton.me/news/updated-proton">Más información</a></string>
     <string name="onboarding_next">Siguiente</string>
@@ -235,7 +235,7 @@
     <string name="move_to_archive">Mover a Archivo</string>
     <string name="move_to_trash">Mover a Papelera</string>
     <string name="move_to_spam">Mover a Spam</string>
-    <string name="move_to_inbox">Mover a bandeja de entrada</string>
+    <string name="move_to_inbox">Mover a la Bandeja de entrada</string>
     <string name="move_to">Mover a…</string>
     <string name="are_you_sure_empty">¿Estás seguro de que quieres eliminar todos los mensajes de esta carpeta?</string>
     <string name="send">Enviar</string>
@@ -324,7 +324,7 @@
     <string name="label_add">Añadir</string>
     <string name="no_browser_found">Instala una aplicación del navegador para finalizar esta acción.</string>
     <string name="no_application_found">No se ha encontrado una aplicación para ejecutar esta acción.</string>
-    <string name="no_application_found_or_link_invalid">No se ha encontrado ninguna app para manejar esta acción o URL no válida</string>
+    <string name="no_application_found_or_link_invalid">No se ha encontrado ninguna aplicación para ejecutar esta acción o URL no válida.</string>
     <string name="label_deleted">Etiqueta eliminada</string>
     <string name="label_deleted_error">Error al eliminar la etiqueta</string>
     <string name="message_deleted_error">Error al eliminar algunos mensajes. Algunos de los mensajes seleccionados están en proceso de envío.</string>

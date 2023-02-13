@@ -51,7 +51,7 @@
     <string name="mailbox_empty_folder_subtitle">Denne mappe er tom</string>
     <string name="mailbox_empty_inbox_subtitle">Du er ajour</string>
     <string name="mailbox_empty_spam_subtitle">Din spam-mappe er tom</string>
-    <string name="mailbox_empty_trash_subtitle">Papirkuven er tom</string>
+    <string name="mailbox_empty_trash_subtitle">Papirkurven er tom</string>
     <string name="mailbox_empty_state_no_results_found">Ingen resultater fundet</string>
     <string name="mailbox_empty_state_try_a_different_term">Prøv et andet søgeord</string>
     <string name="mailbox_no_messages">Ingen beskeder</string>
@@ -62,7 +62,7 @@
     <string name="mailbox_updated_just_now">Netop opdateret</string>
     <string name="mailbox_updated_recently">Opdateret for nylig</string>
     <string name="mailbox_updating">Opdaterer…</string>
-    <string name="is_proton">Dette er en Proton-besked</string>
+    <string name="is_proton">Dette er en Proton-besked.</string>
     <string name="is_proton_official_badge">Officiel</string>
     <!-- endregion -->
     <!-- region Details -->
@@ -197,7 +197,7 @@
     <string name="you_are_offline">Du er offline</string>
     <string name="api_offline">Proton Mail er i øjeblikket offline. Tjek https://protonstatus.com eller vores Twitter for den aktuelle status: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontakt er gemt</string>
-    <string name="contact_saved_offline">Kontakt gemt. Den synkes, når en forbindelse bliver tilgængelig.</string>
+    <string name="contact_saved_offline">Kontakt gemt. Den synkroniseres, når forbindelse bliver tilgængelig</string>
     <string name="contact_exist">Kontaktmail findes allerede</string>
     <string name="invalid_email">Ugyldig e-mailadresse</string>
     <string name="duplicate_email">E-mail er en dublet</string>
@@ -300,7 +300,7 @@
     <string name="no_recipients_specified">Angiv mindst én modtager</string>
     <string name="no_password_specified">Udløbstider kan kun sættes for fuldt krypterede beskeder. Opsæt en adgangskode til dine modtagere, som ikke anvender Proton Mail.</string>
     <string name="attachment_limit">Vedhæftninger er begrænset til %1$s. Vedhæftninger i alt ville udgøre %2$s.</string>
-    <string name="sending_message">Sender besked ...</string>
+    <string name="sending_message">Sender besked...</string>
     <string name="sending_message_offline">Offline, sat i kø til senere afsendelse...</string>
     <string name="message_sent">Besked afsendt</string>
     <string name="message_failed">Beskedafsendelse mislykkedes</string>
@@ -369,7 +369,7 @@
     <string name="sync_attachments">Synkroniserer vedhæftninger</string>
     <string name="processing_attachment">Behandler vedhæftninger</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du er ved at starte webbrowseren og navigere til:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Ønsker du at fortsætte?</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">Spørg ikke igen</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Forkert PIN-kode, %d forsøg tilbage</item>
         <item quantity="other">Forkert PIN-kode, %d forsøg tilbage</item>

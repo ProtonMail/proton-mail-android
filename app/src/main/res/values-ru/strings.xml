@@ -162,7 +162,7 @@
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Конфиденциальность для всех</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Пригласите ваши контакты в Proton Mail, чтобы пользоваться бесшовным сквозным шифрованием, или добавьте защиту паролем в отправляемые им сообщения.</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Пригласите свои контакты в Proton Mail, чтобы пользоваться безупречным сквозным шифрованием, или добавьте защиту паролем к сообщениям, которые вы им отправляете.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Чистый и опрятный</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Упорядочивайте, отмечайте и раскрашивайте зашифрованные сообщения, чтобы создать идеальный индивидуальный почтовый ящик.</string>
     <string name="existing_user_onboarding_new_look_headline">Новый внешний вид, та же защита</string>
