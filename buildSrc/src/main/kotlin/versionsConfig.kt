@@ -29,7 +29,7 @@ fun initVersions() {
     // endregion
 
     // region Android
-    `android-gradle-plugin version` =           "7.3.1"
+    `android-gradle-plugin version` =           "7.4.1"
 
     `android-annotation version` =              "1.1.0"         // Released: Jun 05, 2019
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
@@ -108,8 +108,8 @@ const val `okio version` =                      "2.10.0"        // Released: Jan
 const val `rf2 converter version` =             "2.9.0"         // Released: May 20, 2020
 const val `rxJava version` =                    "2.0.2"         // Released: Dec 02, 201
 const val `rxRelay version` =                   "2.1.1"         // Released: Aug 23, 201
-const val `sentry version` =                    "6.3.1"         // Released: Aug 03, 2022
-const val `sentry-plugin version` =             "3.1.3"         // Released: Jul 19, 2022
+const val `sentry version` =                    "6.11.0"
+const val `sentry-plugin version` =             "3.4.2"
 const val `sonarQube version` =                 "2.7.1"         // Released: May 14, 2019
 const val `stetho version` =                    "1.5.1"         // Released: Mar 18, 2019
 const val `timber version` =                    "4.7.1"         // Released:
