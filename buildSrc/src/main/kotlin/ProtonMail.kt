@@ -29,7 +29,7 @@ object ProtonMail {
     const val versionCode = 931
 
     const val compileSdk = 33
-    const val targetSdk = 33
+    const val targetSdk = 31
     const val minSdk = 23
 
     val jvmTarget = JavaVersion.VERSION_11
