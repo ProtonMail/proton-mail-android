@@ -690,7 +690,7 @@ Ziehe in Erwägung, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, b
     <string name="mobile_footer_info">Diese Fußzeile wird nach deiner Signatur eingefügt</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Zurückstellen</string>
-    <string name="notifications_snooze">Benachrichtigungen verzögern</string>
+    <string name="notifications_snooze">Benachrichtigungen pausieren</string>
     <string-array name="quick_snooze_values">
         <item>30 Minuten</item>
         <item>1 Stunde</item>
@@ -714,7 +714,7 @@ Ziehe in Erwägung, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, b
     </plurals>
     <string name="quick_snooze_resume_hours">Benachrichtigungen werden in %1$d Stunden und %2$d Minuten fortgesetzt</string>
     <string name="minutes">Minuten</string>
-    <string name="set_custom_quick_snooze">Schneller „Später lesen“-Zeitpunkt festlegen</string>
+    <string name="set_custom_quick_snooze">Schnellen „Später lesen“-Zeitpunkt festlegen</string>
     <string name="turn_off">Deaktivieren</string>
     <string name="work_days">Werktags</string>
     <string name="weekends">Wochenende</string>

@@ -365,7 +365,7 @@
     <string name="sync_attachments">添付ファイルを同期しています...</string>
     <string name="processing_attachment">添付ファイルの処理中</string>
     <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次のURLを開こうとしています：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">今後表示しない</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PINコードが間違っています。 あと%d回試すことができます。</item>
     </plurals>
@@ -481,8 +481,8 @@
     <string name="sender_name_address">%1$sに&lt; %2$s &gt; が送信</string>
     <string name="update_label">ラベルを更新</string>
     <string name="delete">削除</string>
-    <string name="subject_copied">件名をクリップボードにコピーしました</string>
-    <string name="details_copied">クリップボードへのコピーの詳細</string>
+    <string name="subject_copied">件名がクリップボードにコピーされました</string>
+    <string name="details_copied">詳細がクリップボードにコピーされました</string>
     <string name="saving">保存中...</string>
     <string name="update_folder">フォルダーを更新</string>
     <string name="spam_score_100">このメールは Proton Mail のアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
