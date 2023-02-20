@@ -35,6 +35,7 @@
     <string name="default_delimiter" translatable="false">:</string>
     <array name="custom_language_labels" translatable="false">
         <item>English</item>
+        <item>Беларуская</item>
         <item>Català</item>
         <item>Čeština</item>
         <item>Dansk</item>
@@ -63,6 +64,7 @@
     </array>
     <array name="custom_language_values" translatable="false">
         <item>en</item>
+        <item>be</item>
         <item>ca_ES</item>
         <item>cs</item>
         <item>da</item>

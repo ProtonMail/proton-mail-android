@@ -258,7 +258,7 @@
     <string name="days">Dage</string>
     <string name="hours">Timer</string>
     <string name="max_labels_exceeded">Beskeden %1$s kan ikke have mere end %2$d etiketter.</string>
-    <string name="max_attachments_reached">Det maksimale vedhæftningsantal pr. besked er nået.</string>
+    <string name="max_attachments_reached">Det maksimale antal vedhæftninger per besked er nået</string>
     <string name="max_attachments_size_reached">Den maksimale vedhæftningsstørrelse per besked er nået</string>
     <string name="expiration_days">%dD</string>
     <string name="expiration_hours">%dT</string>

@@ -153,7 +153,7 @@
     <string name="contacts_empty_state_no_groups">No hay grupos</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">Los grupos de contactos no se importarán. Actualiza a un plan de pago para disfrutar de las funciones prémium.</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">Los grupos de contactos no se importarán. Pasa a un plan de pago para disfrutar de las funciones prémium.</string>
     <string name="contact_details_remote_content_dialog_title">Contenido remoto</string>
     <string name="contact_details_remote_content_dialog_message">Este contacto contiene contenido remoto.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Cargar contenido</string>
@@ -380,7 +380,7 @@
     </plurals>
     <string name="logout">Cerrar sesión</string>
     <string name="logout_question_next_account">Serás redirigido por %s.</string>
-    <string name="upgrade">Actualizar</string>
+    <string name="upgrade">Cambiar de plan</string>
     <string name="error">Error</string>
     <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
@@ -620,7 +620,7 @@
         <item quantity="one">%d seleccionado</item>
         <item quantity="other">%d seleccionados</item>
     </plurals>
-    <string name="paid_plan_needed">Actualiza a un plan de pago para estas funciones prémium.</string>
+    <string name="paid_plan_needed">Pasa a un plan de pago para estas funciones prémium.</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d miembros)</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">¿Estás seguro de que quieres eliminar este grupo?</item>
