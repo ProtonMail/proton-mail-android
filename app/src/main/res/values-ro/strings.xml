@@ -160,10 +160,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">Încărcare conținut</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">Confidențialitate pentru toți</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Invitați-vă contactele la Proton Mail pentru a beneficia de criptarea în ambele părți sau adăugați protecția cu parolă la mesajele pe care le trimiteți.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Intimitate pentru toți</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Invitați persoane pentru a beneficia de criptare perfectă sau adăugați parole la mesaje.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Curată și ordonată</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">Clasificați, etichetați și codificați prin culori mesajele pentru a vă crea o experiență personală de utilizare.</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Clasificați, etichetați și atribuiți culori mesajelor ușurându-vă utilizarea.</string>
     <string name="existing_user_onboarding_new_look_headline">Un aspect nou, aceeași protecție.</string>
     <string name="existing_user_onboarding_new_look_description">E-mailul criptat a fost reproiectat în întregime pentru a fi mai ușor de utilizat.</string>
     <string name="existing_user_onboarding_new_features_headline">Caracteristici noi</string>
