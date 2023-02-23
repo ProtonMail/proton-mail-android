@@ -26,4 +26,4 @@ import me.proton.core.auth.domain.repository.AuthRepository
     "Please convert caller Java file to Kotlin.",
     ReplaceWith("runBlocking { randomModulus() }", "kotlinx.coroutines.runBlocking")
 )
-fun AuthRepository.randomModulusBlocking() = runBlocking { randomModulus() }
+fun AuthRepository.randomModulusBlocking() = runBlocking { randomModulus(null) }
