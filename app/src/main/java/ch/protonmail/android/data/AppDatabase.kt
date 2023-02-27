@@ -60,6 +60,8 @@ import me.proton.core.key.data.entity.PublicAddressEntity
 import me.proton.core.key.data.entity.PublicAddressKeyEntity
 import me.proton.core.mailsettings.data.db.MailSettingsDatabase
 import me.proton.core.mailsettings.data.entity.MailSettingsEntity
+import me.proton.core.observability.data.db.ObservabilityDatabase
+import me.proton.core.observability.data.entity.ObservabilityEventEntity
 import me.proton.core.payment.data.local.db.PaymentDatabase
 import me.proton.core.payment.data.local.entity.GooglePurchaseEntity
 import me.proton.core.user.data.db.AddressDatabase
@@ -103,6 +105,7 @@ import timber.log.Timber
         FeatureFlagEntity::class,
         ChallengeFrameEntity::class,
         GooglePurchaseEntity::class,
+        ObservabilityEventEntity::class,
         // Mail
         LabelEntity::class,
         NotificationEntity::class
@@ -137,14 +140,15 @@ internal abstract class AppDatabase :
     UserSettingsDatabase,
     FeatureFlagDatabase,
     ChallengeDatabase,
-    PaymentDatabase {
+    PaymentDatabase,
+    ObservabilityDatabase {
 
     abstract fun labelDao(): LabelDao
     abstract fun notificationDao(): NotificationDao
 
     companion object {
 
-        const val version = 10
+        const val version = 11
         private const val name = "proton-mail.db"
 
         private fun getDbCreationCallback(context: Context): Callback = object : Callback() {
@@ -173,6 +177,7 @@ internal abstract class AppDatabase :
                 AppDatabaseMigrations.MIGRATION_7_8,
                 AppDatabaseMigrations.MIGRATION_8_9,
                 AppDatabaseMigrations.MIGRATION_9_10,
+                AppDatabaseMigrations.MIGRATION_10_11,
             )
             Timber.v("Db migrations list size ${migrations.size}")
             return migrations

@@ -319,6 +319,7 @@ dependencies {
         `Proton-metrics`,
         `Proton-key`,
         `Proton-human-verification`,
+        `Proton-observability`,
         `Proton-payment`,
         // `Proton-payment-iap`,
         `Proton-plan`,
