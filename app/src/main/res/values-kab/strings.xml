@@ -62,8 +62,8 @@
     <string name="mailbox_updated_just_now">Yettwaleqqem tura kan</string>
     <string name="mailbox_updated_recently">Yettwaleqqem melmi kan</string>
     <string name="mailbox_updating">Yettleqqim…</string>
-    <string name="is_proton">This is a Proton message</string>
-    <string name="is_proton_official_badge">Official</string>
+    <string name="is_proton">Wagi d izen n Proton</string>
+    <string name="is_proton_official_badge">Unsib</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Ldi di Proton Calendar</string>
@@ -74,7 +74,7 @@
     <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Uɣal ɣer deffir (yettwasemter)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Zgel alɣu, tkemmkeḍ</string>
-    <string name="scheduled_message_info">This message will be sent on %s</string>
+    <string name="scheduled_message_info">Izen-a ad yettwazen deg %s</string>
     <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
     <string name="scheduled_message_moved_to_trash_title">Message will not be sent</string>
     <string name="scheduled_message_moved_to_trash_desc">Moving this message to trash will cancel its schedule.</string>
@@ -91,7 +91,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; yura:</string>
     <string name="set_msg_password_title">Sbadu awal uffir</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
+    <string name="set_msg_password_info">Sbadu awal uffir akken ad tewglehneḍ izen-agi i wid isseqdacen ara Proton Mail. <a href="https://proton.me/support/password-protected-emails">Issin ugar</a></string>
     <string name="set_msg_password_info_icon_description">Talɣut</string>
     <string name="set_msg_password_msg_password_title">Awal n uffir n yizen</string>
     <string name="set_msg_password_msg_password_hint">8 ar 21 n yisekkilen</string>
@@ -113,7 +113,7 @@
     <string name="set_msg_expiration_custom">Yugen</string>
     <string name="set_msg_expiration_check_description">Aferdis-agi yettwafren</string>
     <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
-    <string name="composer_invalid_subject_saving_draft_failed">The subject is not valid.</string>
+    <string name="composer_invalid_subject_saving_draft_failed">Asentel d arameɣtu.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Asentel</string>
@@ -126,7 +126,7 @@
     <string name="settings_swipe_settings_info">Sbadu isillifen n uzuɣer akken ad tkecmeḍ ɣer tigawin i yettwaseqdacen s waṭas.</string>
     <string name="settings_swipe_left_to_right">Seg uzelmaḍ s ayeffus</string>
     <string name="settings_swipe_right_to_left">Seg uyeffus s azelmaḍ</string>
-    <string name="settings_swipe_saving">Saving Swipe action…</string>
+    <string name="settings_swipe_saving">Tigawt is n uḍummu n usekles…</string>
     <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
     <!-- endregion -->
     <!-- region App Theme -->
@@ -343,7 +343,7 @@
     <string name="eo_password_not_completed">Awal uffir n yizen ur immid ara.</string>
     <string name="delinquency_subtitle">Anekcum ar umiḍan-agi yensa ɣef sebba n lexlas mazal. Ma ulac aɣilif qqen ar proton.me akken ad xelseḍ tafaturt mazal.</string>
     <string name="downloading">Asider...</string>
-    <string name="cant_download_attachment">Can\'t download attachment</string>
+    <string name="cant_download_attachment">Ur izmir ara ad d-isader amedday</string>
     <string-array name="auto_logout_options_array">
         <item>Imir kan</item>
         <item>5 n tisdatin n urmud</item>
@@ -369,7 +369,7 @@
     <string name="sync_attachments">Amtawi n ifuyla yeddan</string>
     <string name="processing_attachment">Asesfer n ufaylu yeddan</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ad tsnekreḍ iminig web akken zd terzuḍ ɣer:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Tebɣiḍ ad tkemleḍ?</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">Ur ssutur ara tikkelt-nniḍen</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Yir tangalt PIN,%d n uɛraḍ i d-yeqqimen</item>
         <item quantity="other">Yir tangalt PIN,%d n uɛraḍ i d-yeqqimen</item>
@@ -384,8 +384,8 @@
     <string name="error">Tuccḍa</string>
     <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
-        <item quantity="one">%d Embedded Image</item>
-        <item quantity="other">%d Embedded Images</item>
+        <item quantity="one">%d tugna tusliɣt</item>
+        <item quantity="other">%d tugniwin tusliɣin</item>
     </plurals>
     <string name="warning">Ɣur-k</string>
     <string name="available_addresses">Tansiwin yellan</string>
@@ -494,14 +494,14 @@
     <string name="update_folder">Leqqem akaram</string>
     <string name="spam_score_100">Imayl-agi yettban d akken yekka-d seg tansa n Proton Mail, acu kan yussa-d si beṛṛa n unagraw ihi ur iɛedda ara asekyed n usesteb. Ahat beddlen-t neɣ win-t s tuccḍa aniɣer nniḍen!</string>
     <string name="spam_score_101">Imayl-agi yecceḍ deg usekyed n usesteb n taɣult-is. Ahat beddlen-t neɣ wwin-t s tuccḍa aniɣer nniḍen!</string>
-    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://proton.me/blog/prevent-phishing-attacks">LEARN MORE</a></string>
+    <string name="spam_score_102">Izen-agi yezmer ad yili d aneɛruḍ n ukellex. Ttxil-k senqed amazan akked ugbur iwakken ad tḥeqqqeḍ belli d izerfanen. <a href="https://proton.me/blog/prevent-phishing-attacks">ISSIN UGAR</a></string>
     <string name="print_from_template">Si: %s</string>
     <string name="print_to_template">I: %s;  </string>
     <string name="print_cc_template">Anɣ. I.: %s;  </string>
     <string name="print_bcc_template">Anɣ. Uffi. I.: %s;  </string>
     <string name="address">Tansa: </string>
     <string name="address_street">Abrid</string>
-    <string name="address_extended_street">Extended street</string>
+    <string name="address_extended_street">Tansa-nniḍen</string>
     <string name="address_city">Tamdint</string>
     <string name="address_region">Tamnaḍt (tawilayt neɣ agezdu)</string>
     <string name="address_postcode">Tangalt n lpusta</string>
@@ -570,7 +570,7 @@
     <string name="expiration_error_add_msg_password">Ttxil-k rnu awal n uɛeddi n yizen i iɣerwaḍn-agi:</string>
     <string name="expiration_error_disable_pgp_sending">Ttxil-k sexsi tuzzna PGP iwakken ad tesremdeḍ afati i iɣerwaḍen-agi:</string>
     <string name="expiration_error_proceed">Sit akken ibɣu yili iwakken ad tazneḍ s war afati i iɣerwaḍen-agi.</string>
-    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">LEARN MORE</a></string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">ISSIN UGAR</a></string>
     <string name="channel_name_attachments">Imseddayen</string>
     <string name="channel_description_attachments">Ad d-yefk talɣut ɣef waddad n usider n ufaylu yeddan</string>
     <string name="channel_name_emails">Imaylen</string>
@@ -617,8 +617,8 @@
     <string name="contact_group_saved">Agraw yettwasekles</string>
     <string name="no_recipients">Ulac iɣerwaḍen</string>
     <plurals name="contact_group_selected">
-        <item quantity="one">%d Selected</item>
-        <item quantity="other">%d Selected</item>
+        <item quantity="one">%d yettwafernen</item>
+        <item quantity="other">%d yettwafernen</item>
     </plurals>
     <string name="paid_plan_needed">Sali aswir ar uɣawas s lexlaṣ akken ad tkecmeḍ ar timahilin-agi premium</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d iεeggalen)</string>
@@ -791,7 +791,7 @@
     <string name="connections_via_third_parties">Aseglu amlellay</string>
     <string name="allow_secure_connections_via_third_parties">Rnu aseglu amlellay</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Learn more</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. [Issin ugar]<a href="https://proton.me/blog/anti-censorship-alternative-routing"> Issin ugar</a></string>
     <string name="app_language">Tutlayt n usnas</string>
     <string name="custom_language_dialog_title">Fren tutlayt n usnas</string>
     <string name="auto_detect">Tifin tawurmant</string>
@@ -839,7 +839,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Tasarut API i Firebase d mačči d tameɣtut. Ilɣuten push ur tteddun ara.</string>
     <string name="failed_saving_draft_online">Yecceḍ usekles n urewway deg uẓeṭṭa i yizen: \"%s\"</string>
-    <string name="failed_draft_does_not_exist">Message \"%s\" does not exist.</string>
+    <string name="failed_draft_does_not_exist">Izen \"%s\" ulac-it.</string>
     <string name="failed_uploading_attachment_online">Tuccḍa n ufaylu yeddan i yizen: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Ur izmir ara ad ildi izen-a mi ara yettwazen</string>
     <string name="enable_conversation_mode">Rmed askar n udiwenni</string>
