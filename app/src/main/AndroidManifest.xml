@@ -428,9 +428,6 @@
             android:name="me.proton.core.auth.presentation.ui.ChooseAddressActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="me.proton.core.auth.presentation.ui.CreateAddressActivity"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name="me.proton.core.auth.presentation.ui.AddAccountActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ProtonTheme.Mail.AddAccount"
