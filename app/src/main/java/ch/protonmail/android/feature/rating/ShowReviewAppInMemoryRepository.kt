@@ -17,22 +17,20 @@
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.testdata
+package ch.protonmail.android.feature.rating
 
-import ch.protonmail.android.domain.entity.user.Addresses
-import ch.protonmail.android.domain.entity.user.User
-import io.mockk.every
-import io.mockk.mockk
+import androidx.annotation.VisibleForTesting
 import me.proton.core.domain.entity.UserId
+import me.proton.core.featureflag.domain.entity.FeatureFlag
+import javax.inject.Inject
 
-object UserTestData {
+class ShowReviewAppInMemoryRepository @Inject constructor() {
 
-    private const val RAW_ID = "user_id"
-    private const val RAW_SECONDARY_USER_ID = "secondary_user_id"
-    val userId = UserId(RAW_ID)
-    val secondaryUserId = UserId(RAW_SECONDARY_USER_ID)
+    @VisibleForTesting
+    val featureFlags: MutableMap<UserId, Boolean> = mutableMapOf()
 
-    fun withAddresses(addressesList: Addresses): User = mockk {
-        every { addresses } returns addressesList
+    fun save(featureFlag: FeatureFlag) {
+        val userId = featureFlag.userId ?: return
+        featureFlags[userId] = featureFlag.value
     }
 }
