@@ -21,6 +21,7 @@ package ch.protonmail.android.feature.rating
 
 import ch.protonmail.android.testdata.UserTestData
 import kotlinx.coroutines.test.runTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.featureflag.domain.entity.FeatureFlag
 import me.proton.core.featureflag.domain.entity.FeatureId
 import me.proton.core.featureflag.domain.entity.Scope
@@ -44,6 +45,79 @@ class ShowReviewAppInMemoryRepositoryTest {
         // then
         val expected = mapOf(UserTestData.userId to true)
         assertEquals(expected, showReviewAppRepository.featureFlags)
+    }
+
+    @Test
+    fun increaseMailboxScreenViewsCounterWhenRecordMailboxScreenViewIsCalled() = runTest {
+        // when
+        showReviewAppRepository.recordMailboxScreenView()
+
+        // then
+        assertEquals(1, showReviewAppRepository.mailboxScreenViews)
+    }
+
+    @Test
+    fun shouldShowRateAppDialogIsTrueWhenFeatureFlagIsTrueAndMailboxScreenHasBeenSeenMoreTimesThanThreshold() =
+        runTest {
+            // given
+            val userId = UserTestData.userId
+            mockFeatureFlagValue(userId, true)
+            mockScreenViews(2)
+
+            // when
+            val actual = showReviewAppRepository.shouldShowRateAppDialog(userId)
+
+            // then
+            assertEquals(true, actual)
+        }
+
+    @Test
+    fun shouldShowRateAppDialogIsFalseWhenFeatureFlagIsFalse() = runTest {
+        // given
+        val userId = UserTestData.userId
+        mockFeatureFlagValue(userId, false)
+        mockScreenViews(2)
+
+        // when
+        val actual = showReviewAppRepository.shouldShowRateAppDialog(userId)
+
+        // then
+        assertEquals(false, actual)
+    }
+
+    @Test
+    fun shouldShowRateAppDialogIsFalseWhenNoFeatureFlagExistsForThisUser() = runTest {
+        // given
+        val userId = UserTestData.userId
+        mockScreenViews(2)
+
+        // when
+        val actual = showReviewAppRepository.shouldShowRateAppDialog(userId)
+
+        // then
+        assertEquals(false, actual)
+    }
+
+    @Test
+    fun shouldShowRateAppDialogIsFalseWhenMailboxScreenHaveNotBeenSeenUpToThresholdTimes() = runTest {
+        // given
+        val userId = UserTestData.userId
+        mockFeatureFlagValue(userId, true)
+        mockScreenViews(1)
+
+        // when
+        val actual = showReviewAppRepository.shouldShowRateAppDialog(userId)
+
+        // then
+        assertEquals(false, actual)
+    }
+
+    private fun mockScreenViews(count: Int) {
+        showReviewAppRepository.mailboxScreenViews = count
+    }
+
+    private fun mockFeatureFlagValue(userId: UserId, isEnabled: Boolean) {
+        showReviewAppRepository.featureFlags[userId] = isEnabled
     }
 
 }

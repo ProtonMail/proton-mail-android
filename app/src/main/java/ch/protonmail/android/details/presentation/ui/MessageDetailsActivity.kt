@@ -62,6 +62,7 @@ import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.feature.rating.ShowReviewAppInMemoryRepository
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -121,6 +122,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     @Inject
     lateinit var accountSettingsRepository: AccountSettingsRepository
+
+    @Inject
+    lateinit var showReviewAppRepository: ShowReviewAppInMemoryRepository
 
     private lateinit var messageOrConversationId: String
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
@@ -356,6 +360,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         super.onStop()
         mApp.bus.unregister(viewModel)
         mApp.bus.unregister(this)
+    }
+
+    override fun onBackPressed() {
+        showReviewAppRepository.recordMailboxScreenView()
+        super.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
