@@ -5,7 +5,7 @@ before_script:
   - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
   - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
 
-image: ${CI_REGISTRY}/android/shared/docker-android:v1.0.0
+image: ${CI_REGISTRY}/android/shared/docker-android:v1.1.0
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
