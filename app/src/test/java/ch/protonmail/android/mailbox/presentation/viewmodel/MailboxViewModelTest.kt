@@ -41,6 +41,7 @@ import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.feature.NotLoggedIn
+import ch.protonmail.android.feature.rating.ShowReviewAppInMemoryRepository
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -109,6 +110,8 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class MailboxViewModelTest : ArchTest by ArchTest(),
     CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
@@ -122,6 +125,7 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
     private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory = mockk {
         every { create(any()) } returns messageDetailsRepository
     }
+    private val showReviewAppRepository: ShowReviewAppInMemoryRepository = mockk()
 
     private val labelRepository: LabelRepository = mockk()
 
@@ -272,7 +276,8 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
             getMailSettings = getMailSettings,
             mailboxItemUiModelMapper = mailboxItemUiModelMapper,
             fetchEventsAndReschedule = fetchEventsAndReschedule,
-            clearNotificationsForUser = clearNotificationsForUser
+            clearNotificationsForUser = clearNotificationsForUser,
+            showReviewAppRepository = showReviewAppRepository
         )
     }
 
@@ -604,6 +609,45 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
                 userIdFlow.emit(UserTestData.userId)
                 assertEquals(resultSuccess, awaitItem())
             }
+        }
+
+    @Test
+    fun `show rate app dialog is true when repository returns true`() =
+        runTest(dispatchers.Main) {
+            // given
+            every { showReviewAppRepository.shouldShowRateAppDialog(testUserId) } returns true
+
+            // when
+            val showDialog = viewModel.shouldShowRateAppDialog()
+
+            // then
+            assertTrue(showDialog)
+        }
+
+    @Test
+    fun `show rate app dialog is false when repository returns false`() =
+        runTest(dispatchers.Main) {
+            // given
+            every { showReviewAppRepository.shouldShowRateAppDialog(testUserId) } returns false
+
+            // when
+            val showDialog = viewModel.shouldShowRateAppDialog()
+
+            // then
+            assertFalse(showDialog)
+        }
+
+    @Test
+    fun `show rate app dialog is false when current user id is invalid`() =
+        runTest(dispatchers.Main) {
+            // given
+            every { userManager.currentUserId } returns null
+
+            // when
+            val showDialog = viewModel.shouldShowRateAppDialog()
+
+            // then
+            assertFalse(showDialog)
         }
 
     private fun List<MailboxItemUiModel>.toMailboxState(): MailboxListState.Data =
