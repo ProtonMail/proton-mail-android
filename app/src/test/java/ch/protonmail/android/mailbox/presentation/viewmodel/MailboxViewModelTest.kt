@@ -42,6 +42,7 @@ import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.feature.NotLoggedIn
 import ch.protonmail.android.feature.rating.ShowReviewAppInMemoryRepository
+import ch.protonmail.android.feature.rating.StartRateAppFlow
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -74,6 +75,7 @@ import ch.protonmail.android.usecase.delete.EmptyFolder
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import dagger.hilt.EntryPoints
+import io.mockk.Called
 import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -83,6 +85,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.unmockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -110,8 +113,6 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class MailboxViewModelTest : ArchTest by ArchTest(),
     CoroutinesTest by CoroutinesTest({ TestDispatcherProvider(UnconfinedTestDispatcher()) }) {
@@ -182,6 +183,8 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
     private val fetchEventsAndReschedule: FetchEventsAndReschedule = mockk {
         coEvery { this@mockk.invoke() } just runs
     }
+
+    private val startRateAppFlow: StartRateAppFlow = mockk(relaxUnitFun = true)
 
     private lateinit var viewModel: MailboxViewModel
 
@@ -277,7 +280,8 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
             mailboxItemUiModelMapper = mailboxItemUiModelMapper,
             fetchEventsAndReschedule = fetchEventsAndReschedule,
             clearNotificationsForUser = clearNotificationsForUser,
-            showReviewAppRepository = showReviewAppRepository
+            showReviewAppRepository = showReviewAppRepository,
+            startRateAppFlow = startRateAppFlow
         )
     }
 
@@ -612,42 +616,42 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
         }
 
     @Test
-    fun `show rate app dialog is true when repository returns true`() =
+    fun `rate app flow is started when should show rate app dialog`() =
         runTest(dispatchers.Main) {
             // given
             every { showReviewAppRepository.shouldShowRateAppDialog(testUserId) } returns true
 
             // when
-            val showDialog = viewModel.shouldShowRateAppDialog()
+            viewModel.startRateAppFlowIfNeeded()
 
             // then
-            assertTrue(showDialog)
+            verify { startRateAppFlow() }
         }
 
     @Test
-    fun `show rate app dialog is false when repository returns false`() =
+    fun `rate app flow is not started when should not show rate app dialog`() =
         runTest(dispatchers.Main) {
             // given
             every { showReviewAppRepository.shouldShowRateAppDialog(testUserId) } returns false
 
             // when
-            val showDialog = viewModel.shouldShowRateAppDialog()
+            viewModel.startRateAppFlowIfNeeded()
 
             // then
-            assertFalse(showDialog)
+            verify { startRateAppFlow wasNot Called }
         }
 
     @Test
-    fun `show rate app dialog is false when current user id is invalid`() =
+    fun `rate app flow is not started when current user id is invalid`() =
         runTest(dispatchers.Main) {
             // given
             every { userManager.currentUserId } returns null
 
             // when
-            val showDialog = viewModel.shouldShowRateAppDialog()
+            viewModel.startRateAppFlowIfNeeded()
 
             // then
-            assertFalse(showDialog)
+            verify { startRateAppFlow wasNot Called }
         }
 
     private fun List<MailboxItemUiModel>.toMailboxState(): MailboxListState.Data =

@@ -131,7 +131,6 @@ import ch.protonmail.android.views.messageDetails.BottomActionsView
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
@@ -780,13 +779,7 @@ internal class MailboxActivity :
             userManager.currentUserId?.let { mailboxViewModel.clearNotifications(it) }
         }
 
-        if (mailboxViewModel.shouldShowRateAppDialog()) {
-            Timber.d("Rate app dialog should be shown to user")
-            val manager = ReviewManagerFactory.create(this)
-            manager.requestReviewFlow().addOnCompleteListener {
-                Timber.d("App review finished. Success = ${it.isSuccessful}")
-            }
-        }
+        mailboxViewModel.startRateAppFlowIfNeeded()
     }
 
     override fun onPause() {
