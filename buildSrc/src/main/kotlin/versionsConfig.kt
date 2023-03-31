@@ -90,6 +90,7 @@ const val `flexbox version` =                   "2.0.1"         // Released: Jan
 const val `lifecycle-extensions version` =      "2.2.0"         // Released: Jan 22, 2020
 const val `googleServices version` =            "4.3.3"         // Released: Nov 11, 2019
 const val `playServices version` =              "17.0.0"        // Released: Jun 19, 2019
+const val `google-play-core-libs` =             "2.0.1"
 
 // Other
 const val `apache-commons-lang version` =       "3.4"           // Released: Apr 03, 2015

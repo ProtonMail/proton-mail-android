@@ -13,6 +13,7 @@
     <option name="configurationPath" value="" />
     <option name="exclusions">
       <set>
+        <option value="kotlin/libraries.kt" />
         <option value="versionsConfig.kt" />
       </set>
     </option>
