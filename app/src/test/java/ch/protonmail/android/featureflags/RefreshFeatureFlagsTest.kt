@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.featureflags
 
-import ch.protonmail.android.feature.rating.ShowReviewAppInMemoryRepository
 import ch.protonmail.android.testdata.AccountTestData
 import ch.protonmail.android.testdata.UserTestData
 import io.mockk.Called
@@ -37,7 +36,6 @@ import me.proton.core.featureflag.domain.entity.Scope
 import me.proton.core.util.kotlin.DefaultCoroutineScopeProvider
 import me.proton.core.util.kotlin.DefaultDispatcherProvider
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class RefreshFeatureFlagsTest {
 
@@ -45,13 +43,10 @@ class RefreshFeatureFlagsTest {
 
     private val accountManager: AccountManager = mockk()
 
-    private val showReviewAppRepository = ShowReviewAppInMemoryRepository()
-
     private val refreshFeatureFlags = RefreshFeatureFlags(
         DefaultCoroutineScopeProvider(DefaultDispatcherProvider()),
         featureFlagManager,
-        accountManager,
-        showReviewAppRepository
+        accountManager
     )
 
     @Test
@@ -70,7 +65,7 @@ class RefreshFeatureFlagsTest {
     fun refreshShowRatingFeatureFlagForEachExistingUser() = runTest {
         // given
         showRatingsFlagForUserMocked(UserTestData.userId, false)
-        showRatingsFlagForUserMocked(UserTestData.secondaryUserId, false)
+        showRatingsFlagForUserMocked(UserTestData.secondaryUserId, true)
         coEvery { accountManager.getAccounts() } returns flowOf(AccountTestData.accounts)
 
         // when
@@ -81,24 +76,6 @@ class RefreshFeatureFlagsTest {
             showRatingsFlagFetchedForUser(UserTestData.userId)
             showRatingsFlagFetchedForUser(UserTestData.secondaryUserId)
         }
-    }
-
-    @Test
-    fun saveRatingsFeatureFlagValueInRepository() = runTest {
-        // given
-        showRatingsFlagForUserMocked(UserTestData.userId, true)
-        showRatingsFlagForUserMocked(UserTestData.secondaryUserId, false)
-        coEvery { accountManager.getAccounts() } returns flowOf(AccountTestData.accounts)
-
-        // when
-        refreshFeatureFlags.refresh()
-
-        // then
-        val expected = mapOf(
-            UserTestData.userId to true,
-            UserTestData.secondaryUserId to false
-        )
-        assertEquals(expected, showReviewAppRepository.featureFlags)
     }
 
     private fun showRatingsFlagForUserMocked(userId: UserId, isEnabled: Boolean) {

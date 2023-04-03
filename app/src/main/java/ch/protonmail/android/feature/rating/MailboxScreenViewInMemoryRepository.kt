@@ -19,42 +19,21 @@
 
 package ch.protonmail.android.feature.rating
 
-import androidx.annotation.VisibleForTesting
-import me.proton.core.domain.entity.UserId
-import me.proton.core.featureflag.domain.entity.FeatureFlag
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ShowReviewAppInMemoryRepository @Inject constructor() {
+class MailboxScreenViewInMemoryRepository @Inject constructor() {
 
-    @VisibleForTesting
-    var mailboxScreenViews: Int = 0
+    public val screenViewCount: Int
+        get() = mailboxScreenViews
 
-    @VisibleForTesting
-    val featureFlags: MutableMap<UserId, Boolean> = mutableMapOf()
+    private var mailboxScreenViews: Int = 0
 
-    fun save(featureFlag: FeatureFlag) {
-        val userId = featureFlag.userId ?: return
-        featureFlags[userId] = featureFlag.value
-    }
-
-    fun recordMailboxScreenView() {
+    fun recordScreenView() {
         mailboxScreenViews++
         Timber.d("Recording mailbox screen view: count $mailboxScreenViews")
     }
 
-    fun shouldShowRateAppDialog(userId: UserId): Boolean {
-        val isFlagEnabled = featureFlags[userId] ?: false
-        if (!isFlagEnabled) {
-            return false
-        }
-        return mailboxScreenViews >= MailboxScreenViewsThreshold
-    }
-
-    companion object {
-
-        private const val MailboxScreenViewsThreshold = 2
-    }
 }

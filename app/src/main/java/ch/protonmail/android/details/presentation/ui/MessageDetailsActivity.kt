@@ -62,7 +62,7 @@ import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.feature.rating.ShowReviewAppInMemoryRepository
+import ch.protonmail.android.feature.rating.MailboxScreenViewInMemoryRepository
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -124,7 +124,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     lateinit var accountSettingsRepository: AccountSettingsRepository
 
     @Inject
-    lateinit var showReviewAppRepository: ShowReviewAppInMemoryRepository
+    lateinit var mailboxScreenViewRepository: MailboxScreenViewInMemoryRepository
 
     private lateinit var messageOrConversationId: String
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
@@ -363,7 +363,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     override fun onBackPressed() {
-        showReviewAppRepository.recordMailboxScreenView()
+        mailboxScreenViewRepository.recordScreenView()
         super.onBackPressed()
     }
 

@@ -41,8 +41,7 @@ import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.feature.NotLoggedIn
-import ch.protonmail.android.feature.rating.ShowReviewAppInMemoryRepository
-import ch.protonmail.android.feature.rating.StartRateAppFlow
+import ch.protonmail.android.feature.rating.usecase.StartRateAppFlowIfNeeded
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -126,7 +125,6 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
     private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory = mockk {
         every { create(any()) } returns messageDetailsRepository
     }
-    private val showReviewAppRepository: ShowReviewAppInMemoryRepository = mockk()
 
     private val labelRepository: LabelRepository = mockk()
 
@@ -183,8 +181,7 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
     private val fetchEventsAndReschedule: FetchEventsAndReschedule = mockk {
         coEvery { this@mockk.invoke() } just runs
     }
-
-    private val startRateAppFlow: StartRateAppFlow = mockk(relaxUnitFun = true)
+    private val startRateAppFlowIfNeeded: StartRateAppFlowIfNeeded = mockk()
 
     private lateinit var viewModel: MailboxViewModel
 
@@ -280,8 +277,7 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
             mailboxItemUiModelMapper = mailboxItemUiModelMapper,
             fetchEventsAndReschedule = fetchEventsAndReschedule,
             clearNotificationsForUser = clearNotificationsForUser,
-            showReviewAppRepository = showReviewAppRepository,
-            startRateAppFlow = startRateAppFlow
+            startRateAppFlowIfNeeded = startRateAppFlowIfNeeded
         )
     }
 
@@ -616,43 +612,28 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
         }
 
     @Test
-    fun `rate app flow is started when should show rate app dialog`() =
-        runTest(dispatchers.Main) {
-            // given
-            every { showReviewAppRepository.shouldShowRateAppDialog(testUserId) } returns true
+    fun `calls to start rate app flow if needed delegates to use case`() = runTest {
+        // given
+        coEvery { startRateAppFlowIfNeeded.invoke(testUserId) } returns Unit
 
-            // when
-            viewModel.startRateAppFlowIfNeeded()
+        // when
+        viewModel.startRateAppFlowIfNeeded()
 
-            // then
-            verify { startRateAppFlow() }
-        }
-
-    @Test
-    fun `rate app flow is not started when should not show rate app dialog`() =
-        runTest(dispatchers.Main) {
-            // given
-            every { showReviewAppRepository.shouldShowRateAppDialog(testUserId) } returns false
-
-            // when
-            viewModel.startRateAppFlowIfNeeded()
-
-            // then
-            verify { startRateAppFlow wasNot Called }
-        }
+        // then
+        coVerify { startRateAppFlowIfNeeded.invoke(testUserId) }
+    }
 
     @Test
-    fun `rate app flow is not started when current user id is invalid`() =
-        runTest(dispatchers.Main) {
-            // given
-            every { userManager.currentUserId } returns null
+    fun `start rate app flow if needed is not called when current user id is invalid`() = runTest {
+        // given
+        every { userManager.currentUserId } returns null
 
-            // when
-            viewModel.startRateAppFlowIfNeeded()
+        // when
+        viewModel.startRateAppFlowIfNeeded()
 
-            // then
-            verify { startRateAppFlow wasNot Called }
-        }
+        // then
+        verify { startRateAppFlowIfNeeded wasNot Called }
+    }
 
     private fun List<MailboxItemUiModel>.toMailboxState(): MailboxListState.Data =
         MailboxListState.Data(this, isFreshData = false, shouldResetPosition = true)

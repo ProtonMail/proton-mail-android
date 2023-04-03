@@ -41,8 +41,7 @@ import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
 import ch.protonmail.android.feature.NotLoggedIn
-import ch.protonmail.android.feature.rating.ShowReviewAppInMemoryRepository
-import ch.protonmail.android.feature.rating.StartRateAppFlow
+import ch.protonmail.android.feature.rating.usecase.StartRateAppFlowIfNeeded
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -139,8 +138,7 @@ internal class MailboxViewModel @Inject constructor(
     private val mailboxItemUiModelMapper: MailboxItemUiModelMapper,
     private val fetchEventsAndReschedule: FetchEventsAndReschedule,
     private val clearNotificationsForUser: ClearNotificationsForUser,
-    private val showReviewAppRepository: ShowReviewAppInMemoryRepository,
-    private val startRateAppFlow: StartRateAppFlow
+    private val startRateAppFlowIfNeeded: StartRateAppFlowIfNeeded
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     private val _manageLimitReachedWarning = MutableLiveData<Event<Boolean>>()
@@ -727,16 +725,10 @@ internal class MailboxViewModel @Inject constructor(
         }
 
     fun startRateAppFlowIfNeeded() {
-        Timber.d("Checking whether rate app dialog should be shown to user")
-        if (shouldShowRateAppDialog()) {
-            Timber.d("Rate app dialog should be shown to user")
-            startRateAppFlow()
+        val userId = userManager.currentUserId ?: return
+        viewModelScope.launch {
+            startRateAppFlowIfNeeded.invoke(userId)
         }
-    }
-
-    private fun shouldShowRateAppDialog(): Boolean {
-        val userId = userManager.currentUserId ?: return false
-        return showReviewAppRepository.shouldShowRateAppDialog(userId)
     }
 
     data class GetMailboxItemsParameters(

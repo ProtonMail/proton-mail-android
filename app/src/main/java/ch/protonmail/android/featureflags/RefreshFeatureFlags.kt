@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.featureflags
 
-import ch.protonmail.android.feature.rating.ShowReviewAppInMemoryRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -34,8 +33,7 @@ import javax.inject.Inject
 class RefreshFeatureFlags @Inject constructor(
     private val scopeProvider: CoroutineScopeProvider,
     private val featureFlagManager: FeatureFlagManager,
-    private val accountManager: AccountManager,
-    private val showReviewAppRepository: ShowReviewAppInMemoryRepository
+    private val accountManager: AccountManager
 ) {
 
     private val scope get() = scopeProvider.GlobalIOSupervisedScope
@@ -44,17 +42,18 @@ class RefreshFeatureFlags @Inject constructor(
         val accounts = accountManager.getAccounts().firstOrNull() ?: return@launch
         Timber.d("Refreshing feature flags for ${accounts.count()} accounts")
         accounts.map { it.userId }.forEach { userId ->
-            val featureFlag = getShowRatingsFeatureFlag(userId)
-            showReviewAppRepository.save(featureFlag)
+            refreshCachedShowRatingsFeatureFlag(userId)
+            Timber.d("Rating feature flag refreshed for user $userId")
         }
     }
 
-    private suspend fun getShowRatingsFeatureFlag(userId: UserId) =
+    private suspend fun refreshCachedShowRatingsFeatureFlag(userId: UserId) {
         featureFlagManager.getOrDefault(
             userId = userId,
             featureId = MailFeatureFlags.ShowReviewAppDialog.featureId,
             default = FeatureFlag.default(MailFeatureFlags.ShowReviewAppDialog.featureId.id, false),
             refresh = true
         )
+    }
 
 }
