@@ -34,23 +34,31 @@ class StartRateAppFlowIfNeeded @Inject constructor(
 ) {
 
     suspend operator fun invoke(userId: UserId) {
-        if (!showReviewFeatureFlag(userId)) {
+        if (!isShowReviewFeatureFlagEnabled(userId)) {
             return
         }
         if (mailboxScreenViewsRepository.screenViewCount < MailboxScreenViewsThreshold) {
             return
         }
         startRateAppFlow()
+        recordReviewFlowStarted(userId)
     }
 
-    private suspend fun showReviewFeatureFlag(userId: UserId): Boolean {
-        val featureId = MailFeatureFlags.ShowReviewAppDialog.featureId
-        return featureFlagManager.getOrDefault(
-            userId,
-            featureId,
-            FeatureFlag.default(featureId.id, false)
-        ).value
+    private suspend fun recordReviewFlowStarted(userId: UserId) {
+        val featureFlag = getShowReviewFeatureFlag(userId)
+        val offFeatureFlag = featureFlag.copy(defaultValue = false, value = false)
+        featureFlagManager.update(offFeatureFlag)
     }
+
+    private suspend fun isShowReviewFeatureFlagEnabled(userId: UserId) = getShowReviewFeatureFlag(userId).value
+
+    private suspend fun getShowReviewFeatureFlag(
+        userId: UserId
+    ) = featureFlagManager.getOrDefault(
+        userId,
+        MailFeatureFlags.ShowReviewAppDialog.featureId,
+        FeatureFlag.default(MailFeatureFlags.ShowReviewAppDialog.featureId.id, false)
+    )
 
     companion object {
         private const val MailboxScreenViewsThreshold = 2

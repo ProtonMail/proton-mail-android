@@ -25,6 +25,7 @@ import ch.protonmail.android.featureflags.MailFeatureFlags
 import ch.protonmail.android.testdata.UserTestData
 import io.mockk.Called
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -37,8 +38,10 @@ import org.junit.Test
 
 class StartRateAppFlowIfNeededTest {
 
+    private val userId = UserTestData.userId
+
     private val mailboxScreenViewsRepository: MailboxScreenViewInMemoryRepository = mockk()
-    private val featureFlagManager: FeatureFlagManager = mockk()
+    private val featureFlagManager: FeatureFlagManager = mockk(relaxUnitFun = true)
     private val startRateAppFlow: StartRateAppFlow = mockk(relaxUnitFun = true)
 
     private val startRateAppFlowIfNeeded = StartRateAppFlowIfNeeded(
@@ -50,7 +53,6 @@ class StartRateAppFlowIfNeededTest {
     @Test
     fun `rate app flow is started when feature flag is true and mailbox screen views reached threshold`() = runTest {
         // given
-        val userId = UserTestData.userId
         mockFeatureFlagValue(userId, true)
         mockScreenViews(2)
 
@@ -64,7 +66,6 @@ class StartRateAppFlowIfNeededTest {
     @Test
     fun `rate app flow is not started when feature flag is false`() = runTest {
         // given
-        val userId = UserTestData.userId
         mockFeatureFlagValue(userId, false)
         mockScreenViews(2)
 
@@ -78,7 +79,6 @@ class StartRateAppFlowIfNeededTest {
     @Test
     fun `rate app flow is not started when mailbox screen views are less than threshold`() = runTest {
         // given
-        val userId = UserTestData.userId
         mockFeatureFlagValue(userId, true)
         mockScreenViews(1)
 
@@ -87,6 +87,21 @@ class StartRateAppFlowIfNeededTest {
 
         // then
         verify { startRateAppFlow wasNot Called }
+    }
+
+    @Test
+    fun `notify backend that the rate flow was started by disabling feature flag`() = runTest {
+        // given
+        mockFeatureFlagValue(userId, true)
+        mockScreenViews(2)
+
+        // when
+        startRateAppFlowIfNeeded(userId)
+
+        // then
+        val featureId = MailFeatureFlags.ShowReviewAppDialog.featureId
+        val featureFlag = FeatureFlag(userId, featureId, Scope.User, defaultValue = false, value = false)
+        coVerify { featureFlagManager.update(featureFlag) }
     }
 
     private suspend fun mockFeatureFlagValue(userId: UserId, isEnabled: Boolean) {
