@@ -435,6 +435,7 @@ dependencies {
         `uiautomator`,
         `android-activation`,
         `Proton-android-instrumented-test`,
+        `Proton-auth-test`,
         `Proton-payment-iap`,
         `junit-ext`,
         `mock-web-server`,
