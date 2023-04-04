@@ -61,7 +61,7 @@ class OnboardingViewHolder(val binding: LayoutOnboardingItemBinding) :
         if (onboardingItemUiModel.onboardingImageBackground != null) {
             binding.onboardingBackgroundView.setBackgroundResource(onboardingItemUiModel.onboardingImageBackground)
             binding.onboardingImageView.isVisible = false
-            binding.onboardingLogoImageView.isVisible = true
+            binding.onboardingLogoImageView.isVisible = false
         } else {
             binding.onboardingBackgroundView.setBackgroundResource(R.color.onboarding_image_background)
             binding.onboardingImageView.isVisible = true
