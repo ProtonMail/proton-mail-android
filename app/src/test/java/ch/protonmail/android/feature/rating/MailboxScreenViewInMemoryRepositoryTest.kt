@@ -28,7 +28,7 @@ class MailboxScreenViewInMemoryRepositoryTest {
     private val showReviewAppRepository = MailboxScreenViewInMemoryRepository()
 
     @Test
-    fun increaseMailboxScreenViewsCounterWhenRecordMailboxScreenViewIsCalled() = runTest {
+    fun `increase mailbox screen views counter when record mailbox screen view is called`() = runTest {
         // given
         check(showReviewAppRepository.screenViewCount == 0)
 

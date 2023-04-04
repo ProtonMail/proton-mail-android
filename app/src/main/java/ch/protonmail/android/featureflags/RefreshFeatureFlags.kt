@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.featureflags
 
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
@@ -38,12 +37,14 @@ class RefreshFeatureFlags @Inject constructor(
 
     private val scope get() = scopeProvider.GlobalIOSupervisedScope
 
-    fun refresh(): Job = scope.launch {
-        val accounts = accountManager.getAccounts().firstOrNull() ?: return@launch
-        Timber.d("Refreshing feature flags for ${accounts.count()} accounts")
-        accounts.map { it.userId }.forEach { userId ->
-            refreshCachedShowRatingsFeatureFlag(userId)
-            Timber.d("Rating feature flag refreshed for user $userId")
+    fun refresh() {
+        scope.launch {
+            val accounts = accountManager.getAccounts().firstOrNull() ?: return@launch
+            Timber.d("Refreshing feature flags for ${accounts.count()} accounts")
+            accounts.map { it.userId }.forEach { userId ->
+                refreshCachedShowRatingsFeatureFlag(userId)
+                Timber.d("Rating feature flag refreshed for user $userId")
+            }
         }
     }
 

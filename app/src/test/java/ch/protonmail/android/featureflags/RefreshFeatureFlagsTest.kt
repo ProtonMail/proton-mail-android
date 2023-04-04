@@ -50,7 +50,7 @@ class RefreshFeatureFlagsTest {
     )
 
     @Test
-    fun doesNothingWhenThereAreNoAccounts() = runTest {
+    fun `does nothing when there are no accounts`() = runTest {
         // given
         coEvery { accountManager.getAccounts() } returns flowOf()
 
@@ -62,7 +62,7 @@ class RefreshFeatureFlagsTest {
     }
 
     @Test
-    fun refreshShowRatingFeatureFlagForEachExistingUser() = runTest {
+    fun `refresh show rating feature flag for each existing user`() = runTest {
         // given
         showRatingsFlagForUserMocked(UserTestData.userId, false)
         showRatingsFlagForUserMocked(UserTestData.secondaryUserId, true)

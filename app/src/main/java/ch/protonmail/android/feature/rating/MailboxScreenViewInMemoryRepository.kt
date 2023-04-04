@@ -20,6 +20,7 @@
 package ch.protonmail.android.feature.rating
 
 import timber.log.Timber
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,12 +28,12 @@ import javax.inject.Singleton
 class MailboxScreenViewInMemoryRepository @Inject constructor() {
 
     public val screenViewCount: Int
-        get() = mailboxScreenViews
+        get() = mailboxScreenViews.get()
 
-    private var mailboxScreenViews: Int = 0
+    private var mailboxScreenViews = AtomicInteger(0)
 
     fun recordScreenView() {
-        mailboxScreenViews++
+        mailboxScreenViews.incrementAndGet()
         Timber.d("Recording mailbox screen view: count $mailboxScreenViews")
     }
 
