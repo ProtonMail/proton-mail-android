@@ -429,21 +429,8 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="me.proton.core.auth.presentation.ui.AddAccountActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/ProtonTheme.Mail.AddAccount"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name="me.proton.core.auth.presentation.ui.LoginActivity"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name="me.proton.core.auth.presentation.ui.signup.SignupActivity"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name="me.proton.core.auth.presentation.ui.TwoPassModeActivity"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name="me.proton.core.auth.presentation.ui.SecondFactorActivity"
-            android:windowSoftInputMode="adjustResize" />
+            tools:replace="theme" />
         <activity
             android:name="me.proton.core.crypto.validator.presentation.ui.CryptoValidatorErrorDialogActivity"
             android:theme="@style/ProtonTheme.Transparent" />
