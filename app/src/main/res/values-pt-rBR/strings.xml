@@ -81,7 +81,7 @@
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
-    <string name="composer_cc">Cc:</string>
+    <string name="composer_cc">CC:</string>
     <string name="composer_compose_email">Escrever e-mail</string>
     <string name="composer_from">De:</string>
     <string name="composer_subject">Assunto:</string>
@@ -242,8 +242,8 @@
     <string name="selected">Selecionado</string>
     <string name="no_labels">Sem marcadores</string>
     <string name="to">Para</string>
-    <string name="cc">Cc</string>
-    <string name="bcc">Bcc</string>
+    <string name="cc">CC</string>
+    <string name="bcc">Cco</string>
     <string name="to_prefix">Para:</string>
     <string name="reply">Responder</string>
     <string name="reply_all">Responder a todos</string>
@@ -260,9 +260,9 @@
     <string name="max_labels_exceeded">A mensagem %1$s não pode conter mais de %2$d marcadores.</string>
     <string name="max_attachments_reached">O limite máximo de anexos por mensagem foi atingido.</string>
     <string name="max_attachments_size_reached">O limite máximo de anexos por mensagem foi atingido</string>
-    <string name="expiration_days">%dD</string>
-    <string name="expiration_hours">%dH</string>
-    <string name="expiration_minutes">%dM</string>
+    <string name="expiration_days">%d d</string>
+    <string name="expiration_hours">%d h</string>
+    <string name="expiration_minutes">%d min</string>
     <plurals name="attachments">
         <item quantity="one">%d Anexo</item>
         <item quantity="other">%d Anexos</item>
@@ -369,7 +369,7 @@
     <string name="sync_attachments">Sincronizando anexos</string>
     <string name="processing_attachment">Processando anexo</string>
     <string name="hyperlink_confirmation_dialog_text_html">Você está prestes a ser redirecionado para:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Você deseja continuar?</string>
-    <string name="dont_ask_again">Não perguntar novamente</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorreto, %d tentativa restante</item>
         <item quantity="other">PIN incorreto, %d tentativas restantes</item>
@@ -378,11 +378,11 @@
         <item quantity="one">%d tentativa até a limpeza segura dos dados!</item>
         <item quantity="other">%d tentativas até a limpeza segura dos dados!</item>
     </plurals>
-    <string name="logout">Encerrar sessão</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Você tem certeza que deseja encerrar a sessão da conta atual e continuar usando %s?</string>
-    <string name="upgrade">Upgrade</string>
+    <string name="upgrade">Fazer upgrade</string>
     <string name="error">Erro</string>
-    <string name="inline_prefix">[Incorporado]</string>
+    <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
         <item quantity="one">%d Imagem incorporada</item>
         <item quantity="other">%d imagens incorporadas</item>
@@ -406,10 +406,10 @@
         <item>Vibração e som</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Gratuito</item>
+        <item>Free</item>
         <item>Plus</item>
-        <item>Visionário</item>
-        <item>Profissional</item>
+        <item>Visionary</item>
+        <item>Professional</item>
     </string-array>
     <string name="contact_details">Detalhes do contato</string>
     <string name="email_type_home">Casa</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Sessão encerrada</string>
-    <string name="logged_out_description">Você foi desconectado. Por favor, digite sua senha de acesso para conectar novamente.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Erro de Impressão</string>
     <string name="download_complete">Download concluído</string>
     <string name="message_expires_in">Esta mensagem expirará em %s</string>
@@ -493,7 +493,7 @@
     <string name="saving">Salvando...</string>
     <string name="update_folder">Atualizar pasta</string>
     <string name="spam_score_100">Este e-mail parece ser de um endereço Proton Mail, mas veio de fora do nosso sistema e não atendeu aos nossos requisitos de autenticação. Ele pode ter sido falsificado ou encaminhado indevidamente!</string>
-    <string name="spam_score_101">Este e-mail falhou nos requisitos de autenticação de domínio. Ele pode ser falsificado ou encaminhado incorretamente!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Esta mensagem pode ser uma tentativa de phishing. Por favor, verifique o remetente e seu conteúdo para certificar-se de que são legítimos. <a href="https://proton.me/blog/prevent-phishing-attacks">SAIBA MAIS</a></string>
     <string name="print_from_template">De: %s</string>
     <string name="print_to_template">Para: %s  </string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Caixa de correio</string>
     <string name="privacy">Privacidade</string>
     <string name="auto_download_messages_title">Baixar mensagens automaticamente</string>
-    <string name="auto_download_messages_subtitle">Quando essa opção é ativada, os corpos da mensagens serão baixados automaticamente de tempos em tempos (isso consumirá mais dados). Se essa opção não estiver habilitada, os corpos das mensagens só serão baixados quando você abrir um e-mail. (Nota: com qualquer opção, se você limpar o cache ou efetuar logout, não poderá ler os corpos das mensagens enquanto estiver offline.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Sincronização em segundo plano</string>
     <string name="settings_auto_show_images">Mostrar imagens remotas automaticamente</string>
     <string name="settings_auto_show_embedded_images">Mostrar imagens incorporadas automaticamente</string>
@@ -790,13 +790,13 @@
     <string name="auto_lock_timer">Tempo de bloqueio automático</string>
     <string name="connections_via_third_parties">Roteamento alternativo</string>
     <string name="allow_secure_connections_via_third_parties">Permitir o roteamento alternativo</string>
-    <string name="allow_secure_connections_via_third_parties_settings_description">Caso os sites da Proton estejam bloqueados, esta configuração permite que o aplicativo tente um roteamento de rede alternativo para alcançar o Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos manter esta configuração para maior confiabilidade.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">No caso dos sites da Proton estarem bloqueados, esta configuração permite que o aplicativo tente um roteamento de rede alternativo para alcançar o Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos manter esta configuração ativa para uma maior confiabilidade. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Saiba mais</a></string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">Caso os sites do Proton estejam bloqueados, esta configuração permite que o aplicativo tente um roteamento de rede alternativo para alcançar o Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos manter esta configuração para maior confiabilidade.</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">No caso dos sites do Proton estarem bloqueados, esta configuração permite que o aplicativo tente um roteamento de rede alternativo para alcançar o Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos manter esta configuração ativa para uma maior confiabilidade. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Saiba mais</a></string>
     <string name="app_language">Idioma do aplicativo</string>
     <string name="custom_language_dialog_title">Selecionar o idioma do aplicativo</string>
     <string name="auto_detect">Detectar automaticamente</string>
     <string name="combined_contacts">Contatos combinados</string>
-    <string name="turn_combined_contacts_on">Ative este recurso para preencher automaticamente endereços de e-mail usando os contatos de todas as suas contas conectadas.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Cache local</string>
     <string name="cache_cleared">O cache local está atualizado</string>
     <string name="empty_data">Limpar dados</string>

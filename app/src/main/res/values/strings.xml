@@ -371,7 +371,7 @@
     <string name="sync_attachments">Syncing attachments</string>
     <string name="processing_attachment">Processing attachment</string>
     <string name="hyperlink_confirmation_dialog_text_html">You are about to launch the web browser and navigate to:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Do you want to continue?</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Incorrect PIN, %d attempt remaining</item>
         <item quantity="other">Incorrect PIN, %d attempts remaining</item>
@@ -380,7 +380,7 @@
         <item quantity="one">%d attempt until secure data wipe!</item>
         <item quantity="other">%d attempts until secure data wipe!</item>
     </plurals>
-    <string name="logout">Logout</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">You will be switched to %s.</string>
     <string name="upgrade">Upgrade</string>
     <string name="error">Error</string>
@@ -468,8 +468,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Logged out</string>
-    <string name="logged_out_description">You have been logged out. Please login again.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Printing Error</string>
     <string name="download_complete">Download complete</string>
     <string name="message_expires_in">This message will expire in %s</string>
@@ -495,7 +495,7 @@
     <string name="saving">Saving...</string>
     <string name="update_folder">Update Folder</string>
     <string name="spam_score_100">This email seems to be from a Proton Mail address but came from outside our system and failed our authentication requirements. It may be spoofed or improperly forwarded!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://proton.me/blog/prevent-phishing-attacks">LEARN MORE</a></string>
     <string name="print_from_template">From: %s</string>
     <string name="print_to_template">To: %s;  </string>
@@ -750,7 +750,7 @@
     <string name="mailbox">Mailbox</string>
     <string name="privacy">Privacy</string>
     <string name="auto_download_messages_title">Auto-download messages</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, messaged bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or log out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Background Sync</string>
     <string name="settings_auto_show_images">Auto Show Remote Images</string>
     <string name="settings_auto_show_embedded_images">Auto Show Embedded Images</string>
@@ -800,7 +800,7 @@
     <string name="custom_language_dialog_title">Select App Language</string>
     <string name="auto_detect">Auto-detect</string>
     <string name="combined_contacts">Combined contacts</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Local cache</string>
     <string name="cache_cleared">Local cache is Refreshed</string>
     <string name="empty_data">Clear data</string>

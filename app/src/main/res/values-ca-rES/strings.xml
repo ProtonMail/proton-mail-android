@@ -44,8 +44,8 @@
     <string name="drawer_report_bug">Notifica un problema</string>
     <string name="drawer_settings">Preferències</string>
     <string name="drawer_sign_out">Tanca la sessió</string>
-    <string name="drawer_create_folder_description">Crea carpeta</string>
-    <string name="drawer_create_label_description">Crea etiqueta</string>
+    <string name="drawer_create_folder_description">Crea una carpeta</string>
+    <string name="drawer_create_label_description">Crea una etiqueta</string>
     <!-- endregion -->
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Aquesta carpeta és buida.</string>
@@ -53,7 +53,7 @@
     <string name="mailbox_empty_spam_subtitle">La carpeta de correu brossa és buida.</string>
     <string name="mailbox_empty_trash_subtitle">La paperera és buida.</string>
     <string name="mailbox_empty_state_no_results_found">No s\'han trobat resultats.</string>
-    <string name="mailbox_empty_state_try_a_different_term">Proveu una altra cerca.</string>
+    <string name="mailbox_empty_state_try_a_different_term">Proveu un altre terme de cerca.</string>
     <string name="mailbox_no_messages">Cap missatge</string>
     <plurals name="mailbox_unread_count">
         <item quantity="one">%d sense llegir</item>
@@ -62,7 +62,7 @@
     <string name="mailbox_updated_just_now">Actualitzat ara mateix</string>
     <string name="mailbox_updated_recently">Actualitzat fa poc</string>
     <string name="mailbox_updating">S\'està actualitzant…</string>
-    <string name="is_proton">Aquest és un missatge de Proton</string>
+    <string name="is_proton">Aquest és un missatge de Proton.</string>
     <string name="is_proton_official_badge">Oficial</string>
     <!-- endregion -->
     <!-- region Details -->
@@ -70,18 +70,18 @@
     <string name="details_open_in_proton_calendar_subtitle">Calendari segur xifrat</string>
     <string name="details_open_in_proton_calendar_icon_desc">Icona de Proton Calendar</string>
     <string name="details_play_store_error">No es pot obrir Play Store</string>
-    <string name="details_hyperlink_phishing_dialog_title">Avís: pressumpte lloc web fals</string>
+    <string name="details_hyperlink_phishing_dialog_title">Avís: lloc web sospitós de ser fals</string>
     <string name="details_hyperlink_phishing_dialog_content">Aquest enllaç porta a un lloc web que podria intentar robar-vos la vostra informació, com contrasenyes i detalls de la targeta de crèdit.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Per a la vostra seguretat, no continueu.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Torna (recomanat)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignora l\'avís i continua</string>
-    <string name="scheduled_message_info">Aquest missatge s\'enviarà el %s</string>
+    <string name="scheduled_message_info">Aquest missatge s\'enviarà el %s.</string>
     <string name="scheduled_message_edit_info">Els missatges programats només poden ser modificats des de la web i l\'aplicació iOS actualment.</string>
-    <string name="scheduled_message_moved_to_trash_title">El missatge no s\'enviarà</string>
+    <string name="scheduled_message_moved_to_trash_title">El missatge no s\'enviarà.</string>
     <string name="scheduled_message_moved_to_trash_desc">Movent aquest missatge a la brossa es cancel·larà la seva programació.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
-    <string name="composer_cc">Cc:</string>
+    <string name="composer_cc">CC:</string>
     <string name="composer_compose_email">Escriure un correu electrònic</string>
     <string name="composer_from">De:</string>
     <string name="composer_subject">Assumpte:</string>
@@ -112,7 +112,7 @@
     <string name="set_msg_expiration_1_week">1 setmana</string>
     <string name="set_msg_expiration_custom">Personalitzat</string>
     <string name="set_msg_expiration_check_description">S\'ha comprovat aquest element</string>
-    <string name="composer_invalid_sender_saving_draft_failed">L\'adreça \"De: \" no és vàlida. Canvieu-la per una de vàlida</string>
+    <string name="composer_invalid_sender_saving_draft_failed">L\'adreça \"De: \" no és vàlida. Canvieu-la per una de vàlida.</string>
     <string name="composer_invalid_subject_saving_draft_failed">L\'assumpte no és vàlid.</string>
     <!-- endregion -->
     <!-- region Settings -->
@@ -168,10 +168,10 @@
     <string name="existing_user_onboarding_new_features_headline">Noves funcionalitats</string>
     <string name="existing_user_onboarding_new_features_description">Gaudiu de noves característiques com mode fosc, notificacions millorades, un filtre de missatges no llegits, i subcarpetes.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualitzat, protecció unificada</string>
-    <string name="existing_user_onboarding_updated_proton_description">Presentem el nou aspecte de Proton. Molts serveis, una missió. Li donem la benvinguda a l\'internet on tenim la privacitat per defecte. <a href="https://proton.me/news/updated-proton">Més informació</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Presentem el nou aspecte de Proton. Molts serveis, una missió. Us donem la benvinguda a l\'internet on tenim la privacitat per defecte. <a href="https://proton.me/news/updated-proton">Més informació</a></string>
     <string name="onboarding_next">Següent</string>
     <string name="onboarding_get_started">Comença</string>
-    <string name="onboarding_got_it">Entesos</string>
+    <string name="onboarding_got_it">D\'acord</string>
     <string name="onboarding_image_view_content_description">Ilustració de Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -195,7 +195,7 @@
     <string name="update_app_title">Actualització requerida</string>
     <string name="update_app">L\'aplicació de Proton Mail no es pot utilitzar fins que no l\'actualitzes</string>
     <string name="you_are_offline">Esteu fora de línia</string>
-    <string name="api_offline">Proton Mail està fora de línia ara mateix, comproveu https://protonstatus.com o el nostre twitter per saber l\'estat actual: https://twitter.com/ProtonPrivacy</string>
+    <string name="api_offline">Proton Mail està fora de línia ara mateix. Comproveu https://protonstatus.com o el nostre twitter per saber l\'estat actual: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Contacte desat</string>
     <string name="contact_saved_offline">Contacte desat, es sincronitzarà quan hi hagi una connexió disponible</string>
     <string name="contact_exist">L\'adreça electrònica del contacte ja existeix</string>
@@ -242,17 +242,17 @@
     <string name="selected">Seleccionat</string>
     <string name="no_labels">Sense etiquetes</string>
     <string name="to">Per a</string>
-    <string name="cc">Cc</string>
+    <string name="cc">CC</string>
     <string name="bcc">Cco</string>
     <string name="to_prefix">Per a:</string>
-    <string name="reply">Respondre</string>
+    <string name="reply">Respon</string>
     <string name="reply_all">Respon a tothom</string>
-    <string name="forward">Reenviar</string>
+    <string name="forward">Reenvia</string>
     <string name="email_subject">Assumpte del correu electrònic</string>
     <string name="define_message_password">Contrasenya del missatge</string>
-    <string name="confirm_message_password">Confirmar contrasenya</string>
+    <string name="confirm_message_password">Confirma la contrasenya</string>
     <string name="define_password_hint">Defineix pista (opcional)</string>
-    <string name="eo_passwords_do_not_match">Les contrasenyes no coincideixen</string>
+    <string name="eo_passwords_do_not_match">Les contrasenyes no coincideixen.</string>
     <string name="define_expiration_period">Defineix data d\'expiració</string>
     <string name="set_message_expiration">Estableix l\'expiració del missatge</string>
     <string name="days">Dies</string>
@@ -260,9 +260,9 @@
     <string name="max_labels_exceeded">El missatge %1$s no pot tenir més de %2$d etiquetes.</string>
     <string name="max_attachments_reached">S\'ha assolit el nombre màxim d\'arxius adjunts per missatge</string>
     <string name="max_attachments_size_reached">S\'ha aconseguit el màxim de fitxers adjunts per missatge</string>
-    <string name="expiration_days">%dD</string>
-    <string name="expiration_hours">%dH</string>
-    <string name="expiration_minutes">%dM</string>
+    <string name="expiration_days">%d d</string>
+    <string name="expiration_hours">%d h</string>
+    <string name="expiration_minutes">%d min</string>
     <plurals name="attachments">
         <item quantity="one">%d adjunt</item>
         <item quantity="other">%d adjunts</item>
@@ -283,7 +283,7 @@
     <string name="problem_selecting_file">Ha hagut un problema en afegir l\'arxiu seleccionat</string>
     <string name="add_contact">Afegeix contacte</string>
     <string name="delete_contact">Suprimir %s dels seus contactes?</string>
-    <string name="confirm">Confirmar</string>
+    <string name="confirm">Confirma</string>
     <string name="confirm_destructive_action">N\'esteu segur? Aquesta acció no es pot desfer.</string>
     <string name="create">Crear</string>
     <string name="email">Correu electrònic</string>
@@ -292,8 +292,8 @@
     <string name="no_subject">Enviar missatge sense assumpte?</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
-    <string name="ok">D\'acord</string>
-    <string name="forward_prefix">Fw:</string>
+    <string name="ok">OK</string>
+    <string name="forward_prefix">RV:</string>
     <string name="original_message_divider">-------- Missatge Original --------</string>
     <string name="invalid_email_address">La direcció \'%s\' no és vàlida</string>
     <string name="invalid_email_address_removed">La adreça \'%s\' es invàlida i ha estat esborrada</string>
@@ -307,7 +307,7 @@
     <string name="storage_limit">Límit d\'emmagatzematge</string>
     <string name="edit_settings">Edita la configuració</string>
     <string name="share">Compartir</string>
-    <string name="cancel">Cancel·lar</string>
+    <string name="cancel">Cancel·la</string>
     <string name="close">Tanca</string>
     <string name="eo_password_title">Establir contrasenya</string>
     <string name="eo_password_subtitle">Definiu una contrasenya per xifrar aquest missatge per a usuaris que no siguin de Proton Mail</string>
@@ -322,7 +322,7 @@
     <string name="undo">Desfés</string>
     <string name="label_apply">Aplicar</string>
     <string name="label_add">Afegir</string>
-    <string name="no_browser_found">Instal·leu una aplicació del navegador per finalitzar aquesta acció.</string>
+    <string name="no_browser_found">Instal·leu un navegador per finalitzar aquesta acció</string>
     <string name="no_application_found">No s\'ha trobat cap aplicació per a gestionar aquesta acció</string>
     <string name="no_application_found_or_link_invalid">No s’ha trobat cap aplicació que actuï aquesta acció ni URL vàlida</string>
     <string name="label_deleted">Etiqueta esborrada</string>
@@ -337,7 +337,7 @@
     <string name="attaching_photo_failed">No ha sigut possible adjuntar la foto</string>
     <string name="empty_message">Missatge buit</string>
     <string name="display_images">Mostra el contingut remot</string>
-    <string name="retry">Reintentar</string>
+    <string name="retry">Reintenta</string>
     <string name="saving_failed_no_conn">Error al desar, sense connexió</string>
     <string name="attachment_exists">Fitxer adjunt ja adjuntat</string>
     <string name="eo_password_not_completed">La contrasenya del missatge no s\'ha completat.</string>
@@ -369,7 +369,7 @@
     <string name="sync_attachments">Sincronització de fitxers adjunts</string>
     <string name="processing_attachment">Processament adjunt</string>
     <string name="hyperlink_confirmation_dialog_text_html">Esteu a punt d\'obrir el navegador web i anar a:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Voleu continuar?</string>
-    <string name="dont_ask_again">No tornar a preguntar-ho</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Codi PIN incorrecte, %d intent restant</item>
         <item quantity="other">Codi PIN incorrecte, %d intents restants</item>
@@ -378,14 +378,14 @@
         <item quantity="one">%d intent fins un esborrat de dades de seguretat!</item>
         <item quantity="other">%d intents fins un esborrat de dades de seguretat!</item>
     </plurals>
-    <string name="logout">Tanca sessió</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Es canviarà a %s.</string>
     <string name="upgrade">Millora</string>
     <string name="error">Error</string>
     <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
-        <item quantity="one">%d Imatge incrustada</item>
-        <item quantity="other">%d Imatges incrustades</item>
+        <item quantity="one">%d imatge incrustada</item>
+        <item quantity="other">%d imatges incrustades</item>
     </plurals>
     <string name="warning">Advertència</string>
     <string name="available_addresses">Adreces disponibles</string>
@@ -406,10 +406,10 @@
         <item>Vibració i so</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Gratuït</item>
+        <item>Free</item>
         <item>Plus</item>
-        <item>Visionari</item>
-        <item>Profesional</item>
+        <item>Visionary</item>
+        <item>Professional</item>
     </string-array>
     <string name="contact_details">Detalls de contacte</string>
     <string name="email_type_home">Inici</string>
@@ -421,9 +421,9 @@
     <string name="contact_vcard_hint_address">Introduïu adreça</string>
     <string name="contact_vcard_hint_other">Introduïu la informació</string>
     <string name="contact_vcard_hint_note">Introduïu la nota</string>
-    <string name="contact_vcard_new_row_email">afegiu adreça de correu electrònic</string>
+    <string name="contact_vcard_new_row_email">afegir una adreça de correu electrònic</string>
     <string name="contact_vcard_new_row_phone">afegiu el número de telèfon</string>
-    <string name="contact_vcard_new_row_address">afegir adreça</string>
+    <string name="contact_vcard_new_row_address">afegir una adreça</string>
     <string name="contact_vcard_new_row_other">afegiu informació</string>
     <string name="vcard_other_option_org">Organització</string>
     <string name="vcard_other_option_title">Títol</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Desconnectat</string>
-    <string name="logged_out_description">Heu tancat la sessió. Torneu a iniciar sessió.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Error d\'impressió</string>
     <string name="download_complete">Descàrrega completa</string>
     <string name="message_expires_in">Aquest missatge expirarà en %s</string>
@@ -487,13 +487,13 @@
     <string name="no_contacts">Sense contactes</string>
     <string name="sender_name_address">%1$s&lt;%2$s&gt; va escriure:</string>
     <string name="update_label">Actualitza l\'etiqueta</string>
-    <string name="delete">Esborra</string>
+    <string name="delete">Elimina</string>
     <string name="subject_copied">Assumpte copiat al porta-retalls</string>
     <string name="details_copied">Detalls copiats al porta-retalls</string>
     <string name="saving">Desant...</string>
     <string name="update_folder">Actualitza la carpeta</string>
     <string name="spam_score_100">Aquest correu sembla que sigui d\'una adreça de Proton Mail però ha arribat des de fora del nostre sistema i no ha passat els requisits d\'autenticació. És possible que es tracti d\'un correu falsejat o reenviat indegudament!</string>
-    <string name="spam_score_101">Aquest correu no ha superat els requisits d\'autentificació del domini. Pot ser que estigui falsejat o reenviat indegudament!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Aquest missatge pot ser un intent de pesca de credencials. Comproveu el remitent i el contingut per assegurar-vos que són legítims. <a href="https://proton.me/blog/prevent-phishing-attacks">MÉS INFORMACIÓ</a></string>
     <string name="print_from_template">Des de: %s</string>
     <string name="print_to_template">Per a: %s;  </string>
@@ -526,7 +526,7 @@
     <string name="print_date_template">Data: %s</string>
     <string name="print_attachment_template">Adjunt: %s;  </string>
     <string name="pm_me_changed">L\'enviament de missatges des de l\'adreça @ pm.me és una funció de pagament. El vostre missatge s\'enviarà des de la vostra adreça per defecte %s.</string>
-    <string name="pm_me_can_not_be_default">Actualitzeu-lo a un pla de pagament per configurar la vostra adreça %s com per defecte.</string>
+    <string name="pm_me_can_not_be_default">Actualitzeu-lo a un pla de pagament per configurar la vostra adreça %s com a predeterminada</string>
     <string name="dont_remind_again">No em tornis a recordar</string>
     <string name="load_embedded_images">Carrega imatges incrustades</string>
     <string name="remove_password">Suprimeix la contrasenya</string>
@@ -581,7 +581,7 @@
     <string name="channel_description_ongoing_operations">Mostra totes les operacions en curs com la baixada en segon pla d\'un missatge nou</string>
     <string name="retrieving_notifications">Recuperant notificacions</string>
     <string name="report_phishing">Informar de phishing</string>
-    <string name="print">Imprimir</string>
+    <string name="print">imprimeix</string>
     <string name="phishing_dialog_title">Confirma l\'informe de phising</string>
     <string name="phishing_dialog_message">Si es reporta un missatge com a intent de phishing, s\'enviarà el missatge
  ens envieu un missatge, per poder analitzar-lo i millorar-ne els filtres. Això significa que podrem
@@ -616,8 +616,8 @@
     <string name="contact_group_saved">Grup desat</string>
     <string name="no_recipients">Cap Destinatari</string>
     <plurals name="contact_group_selected">
-        <item quantity="one">%d Seleccionat</item>
-        <item quantity="other">%d Seleccionat</item>
+        <item quantity="one">%d seleccionat</item>
+        <item quantity="other">%d seleccionat</item>
     </plurals>
     <string name="paid_plan_needed">Passeu a un pla de pagament per disposar d\'aquestes funcions prèmium.</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Membres)</string>
@@ -642,7 +642,7 @@
     <string name="contacts_add_photo_title">Afegir una foto</string>
     <string name="contacts_add_photo_select_gallery">Selecciona de la galeria</string>
     <string name="contacts_add_photo_select_camera">Captura des de la càmara</string>
-    <string name="save_group_validation_error">Indiqueu un nom per al grup.</string>
+    <string name="save_group_validation_error">Indiqueu un nom de grup</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Límit d\'emmagatzematge assolit. No es poden enviar o rebre missatges de correu electrònic.
         Premeu per a més informació.</string>
@@ -745,7 +745,7 @@
     <string name="mailbox">Bústia de correu</string>
     <string name="privacy">Privacitat</string>
     <string name="auto_download_messages_title">Baixa els missatges automàticament</string>
-    <string name="auto_download_messages_subtitle">Quan aquesta opció està habilitada, els cossos enviats es descarregaràn automàticament cada vegada que rebeu una notificació nova de correu electrònic (això consumirà més dades). Si aquesta opció no està habilitada, els cossos de missatges només es descarregaràn quan obreixi un correu electrònic. (Nota: amb qualsevol de les dues opcions, si netequeu la memòria cau o es tanquen la sessió, no podreu llegir els cossos del missatge sense connexió.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Sincronització en segon pla</string>
     <string name="settings_auto_show_images">Mostrar automàticament les imatges incrustades</string>
     <string name="settings_auto_show_embedded_images">Mostra automàticament les imatges incrustades</string>
@@ -760,7 +760,7 @@
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Tria l\'acció de lliscar</string>
     <string name="swipe_action_trash">Missatge mogut a la paperera</string>
-    <string name="swipe_action_trash_short">Moure a la paperera</string>
+    <string name="swipe_action_trash_short">Mou a la paperera</string>
     <string name="swipe_action_star">Missatge destacat actualitzat</string>
     <string name="swipe_action_star_short">Actualitzar destacat</string>
     <string name="swipe_action_spam">Missatge marcat com a spam</string>
@@ -788,17 +788,17 @@
     <string name="change_pin_code">Canviar codi PIN</string>
     <string name="auto_lock_timer">Temps de bloqueig automàtic</string>
     <string name="connections_via_third_parties">Encaminament alternatiu</string>
-    <string name="allow_secure_connections_via_third_parties">Permetre encaminament alternatiu</string>
+    <string name="allow_secure_connections_via_third_parties">Permet encaminament alternatiu</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">En cas que es bloquegin els llocs de Proton, aquest paràmetre permet a l\'aplicació provar l\'encaminament de xarxa alternatiu per arribar a Proton, cosa que pot ser útil per evitar els tallafocs o problemes de xarxa. Recomanem mantenir aquesta configuració per a una major fiabilitat.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">En cas que es bloquegin els llocs de Proton, aquest paràmetre permet a l\'aplicació provar un encaminament de xarxa alternatiu per arribar a Proton, cosa que pot ser útil per evitar tallafocs o problemes de xarxa. Recomanem mantenir aquesta configuració per a una major fiabilitat. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Més informació</a></string>
     <string name="app_language">Idioma de l\'aplicació</string>
     <string name="custom_language_dialog_title">Trieu la llengua de l\'aplicació</string>
     <string name="auto_detect">Detectar automàticament</string>
     <string name="combined_contacts">Contactes combinats</string>
-    <string name="turn_combined_contacts_on">Activeu aquesta funcionalitat per completar automàticament les adreces de correu electrònic utilitzant els contactes de tots els vostres comptes amb sessió iniciada.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Memòria cau local</string>
     <string name="cache_cleared">La memòria cau local s\'ha netejat</string>
-    <string name="empty_data">Neteja</string>
+    <string name="empty_data">Neteja les dades</string>
     <!-- endregion -->
     <string name="enabled">Activat</string>
     <string name="disabled">Desactivat</string>
@@ -833,7 +833,7 @@
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Han canviat els gestos de lliscament</string>
     <string name="swipe_gestures_changed_message">Amb darrera actualització s’han canviat els gestos de lliscament. Si voleu, podeu restablir-los a la configuració.</string>
-    <string name="go_to_settings">Anar a configuració</string>
+    <string name="go_to_settings">Aneu a les preferències</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">La clau de l\'API de Firebase no és vàlida. Les notificacions Push no funcionaran.</string>
     <string name="failed_saving_draft_online">Error en desar un borrador en línia pel missatge: \"%s\"</string>
@@ -844,13 +844,13 @@
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="star">Destacar</string>
+    <string name="star">Destaca</string>
     <string name="unstar">Treure de destacats</string>
-    <string name="star_unstar">Destacar/no destacar</string>
+    <string name="star_unstar">Destaca/no destaca</string>
     <string name="send_to_archive">Enviar a l\'arxiu?</string>
-    <string name="label_as">Etiquetar com a…</string>
-    <string name="mark_as_unread">Marcar com a no llegit</string>
-    <string name="mark_as_read">Marcar com a llegit</string>
+    <string name="label_as">Etiqueta com a…</string>
+    <string name="mark_as_unread">Marca com a no llegit</string>
+    <string name="mark_as_read">Marca com a llegit</string>
     <string name="move_message">Mou el missatge</string>
     <string name="manage">Gestionar</string>
     <string name="message_from">Missatge de %s</string>

@@ -80,9 +80,9 @@
     <string name="scheduled_message_moved_to_trash_desc">Att flytta detta meddelande till papperskorgen kommer avbryta dess schema.</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">Bcc:</string>
-    <string name="composer_cc">Cc:</string>
-    <string name="composer_compose_email">Nytt meddelande</string>
+    <string name="composer_bcc">Hemlig kopia:</string>
+    <string name="composer_cc">Kopia:</string>
+    <string name="composer_compose_email">Skriv e-post</string>
     <string name="composer_from">Från:</string>
     <string name="composer_subject">Ämne:</string>
     <string name="composer_to">Till:</string>
@@ -92,7 +92,7 @@
     <string name="composer_quote_sender_header">Den %s, %s &lt; %s&gt; skrev:</string>
     <string name="set_msg_password_title">Ställ in lösenord</string>
     <string name="set_msg_password_info">Ställ in ett lösenord för att kryptera detta meddelande för icke Proton Mail användare. <a href="https://proton.me/support/password-protected-emails">Lär dig mer</a></string>
-    <string name="set_msg_password_info_icon_description">Info</string>
+    <string name="set_msg_password_info_icon_description">Information</string>
     <string name="set_msg_password_msg_password_title">Meddelandelösenord</string>
     <string name="set_msg_password_msg_password_hint">4 till 21 tecken långt</string>
     <string name="set_msg_password_repeat_password_title">Upprepa lösenord</string>
@@ -145,7 +145,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nya meddelanden</string>
-    <string name="notification_invalid_sender_sending_failed">Ditt meddelande kan hittas som ett utkast. Kontrollera att e-post ”Från:” i meddelandet är aktivt.</string>
+    <string name="notification_invalid_sender_sending_failed">Ditt meddelande kan hittas som ett utkast. Verifiera att e-post “Från:“ i meddelandet är aktivt.</string>
     <string name="notification_invalid_subject_sending_failed">Ditt meddelande kan hittas som ett utkast. Ämnet är inte giltigt.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
@@ -226,7 +226,7 @@
     <string name="fetching_contacts">Hämtar Proton Mail-kontakter...</string>
     <string name="fetching_contacts_success">Kontakterna har uppdaterats</string>
     <string name="fetching_contacts_failure">Kan inte inte att uppdatera kontakter</string>
-    <string name="compose">Skriv nytt</string>
+    <string name="compose">Skriv</string>
     <string name="compose_message">Skriv meddelande</string>
     <string name="empty_folder">Töm mapp</string>
     <string name="view_headers">Visa rubriker</string>
@@ -242,8 +242,8 @@
     <string name="selected">Valda</string>
     <string name="no_labels">Inga etiketter</string>
     <string name="to">Till</string>
-    <string name="cc">Cc</string>
-    <string name="bcc">Bcc</string>
+    <string name="cc">Kopia</string>
+    <string name="bcc">Hemlig kopia</string>
     <string name="to_prefix">Till:</string>
     <string name="reply">Svara</string>
     <string name="reply_all">Svara alla</string>
@@ -260,9 +260,9 @@
     <string name="max_labels_exceeded">Meddelandet %1$s kan inte ha mer än %2$d etiketter.</string>
     <string name="max_attachments_reached">Maximalt antal bilagor per meddelande har uppnåtts</string>
     <string name="max_attachments_size_reached">Maximal storlek för bilagor per meddelande har uppnåtts</string>
-    <string name="expiration_days">%dD</string>
-    <string name="expiration_hours">%dT</string>
-    <string name="expiration_minutes">%dM</string>
+    <string name="expiration_days">%d d</string>
+    <string name="expiration_hours">%d t</string>
+    <string name="expiration_minutes">%d min</string>
     <plurals name="attachments">
         <item quantity="one">%d bilaga</item>
         <item quantity="other">%d bilagor</item>
@@ -310,7 +310,7 @@
     <string name="cancel">Avbryt</string>
     <string name="close">Stäng</string>
     <string name="eo_password_title">Ställ in lösenord</string>
-    <string name="eo_password_subtitle">Ange ett lösenord för att kryptera detta meddelande för icke-ProtonMail-användare</string>
+    <string name="eo_password_subtitle">Ställ in ett lösenord för att kryptera detta meddelande för icke-Proton Mail-användare</string>
     <string name="eo_password_more_info">Få mer information</string>
     <string name="no_attachments">0 bilagor</string>
     <string name="display_name_banned_chars">Ogiltigt visningsnamn. \'&gt;\' och \'&lt;\' är inte tillåtna</string>
@@ -369,16 +369,16 @@
     <string name="sync_attachments">Synkroniserar bilagor</string>
     <string name="processing_attachment">Bearbetar bilaga</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du är på väg att starta webbläsaren och navigera till:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vill du fortsätta?</string>
-    <string name="dont_ask_again">Fråga inte igen</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Felaktig PIN-kod, %d försök återstår</item>
         <item quantity="other">Felaktig PIN-kod, %d försök återstår</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
-        <item quantity="one">%d försök tills datat raderas!</item>
-        <item quantity="other">%d försök tills datat raderas!</item>
+        <item quantity="one">%d attempt until secure data wipe!</item>
+        <item quantity="other">%d attempts until secure data wipe!</item>
     </plurals>
-    <string name="logout">Logga ut</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Du kommer att växlas till %s.</string>
     <string name="upgrade">Uppgradera</string>
     <string name="error">Fel</string>
@@ -406,7 +406,7 @@
         <item>Vibration och ljud</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Gratis</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
         <item>Professional</item>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Utloggad</string>
-    <string name="logged_out_description">Du har blivit utloggad. Logga in igen.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Utskriftsfel</string>
     <string name="download_complete">Nedladdning slutförd</string>
     <string name="message_expires_in">Detta meddelande kommer löpa ut om %s</string>
@@ -493,12 +493,12 @@
     <string name="saving">Sparar...</string>
     <string name="update_folder">Uppdatera mapp</string>
     <string name="spam_score_100">Denna e-post verkar komma från en Proton Mail-adress, men det kom utanför vårt system och misslyckades med våra autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefordrat!</string>
-    <string name="spam_score_101">Denna e-post har misslyckats med domänens autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefordrat!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Detta meddelande kan vara ett nätfiskeförsök. Kontrollera avsändaren och innehållet för att säkerställa att de är legitima. <a href="https://proton.me/blog/prevent-phishing-attacks">LÄR DIG MERr</a></string>
     <string name="print_from_template">Från: %s</string>
     <string name="print_to_template">Till: %s,  </string>
-    <string name="print_cc_template">CC: %s;  </string>
-    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="print_cc_template">Kopia: %s;  </string>
+    <string name="print_bcc_template">Hemlig kopia: %s;  </string>
     <string name="address">Adress: </string>
     <string name="address_street">Gata</string>
     <string name="address_extended_street">Utökad gata</string>
@@ -513,14 +513,14 @@
     <string name="empty_recipients">(Inga mottagare)</string>
     <string name="contacts_unknown">Okänd</string>
     <string name="learn_more"><u>Lär dig mer</u></string>
-    <string name="info">Info</string>
+    <string name="info">Information</string>
     <string name="error_can_not_send_from_this_address">Uppgradera till ett betalt paket för att skicka från din %s-adress.</string>
     <string name="email_empty">E-postadressen saknas</string>
     <string name="encrypted_contact_details">Krypterade kontaktdetaljer</string>
     <string name="convert_question">Ladda upp lokala kontakter</string>
     <string name="convert_question_subtitle">Detta kommer ladda upp de lokala kontakterna på din enhet till din Proton Mail-kontaktkatalog. Du kommer sedan att kunna komma åt dessa kontakter på dina andra enheter via Proton Mail.</string>
     <string name="refresh_contacts">Uppdatera</string>
-    <string name="invalid_email_some_contacts">E-postadress är inte giltig för vissa av dina kontakter</string>
+    <string name="invalid_email_some_contacts">E-postadress är inte giltig för några av dina kontakter</string>
     <string name="protonmail_contacts">Proton Mail-kontakter</string>
     <string name="device_contacts">Enhetens kontakter</string>
     <string name="print_date_template">Datum: %s</string>
@@ -560,7 +560,7 @@
     <string name="sender_lock_internal_verified">End-to-end-krypterat meddelande från verifierad adress</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end-krypterat</string>
-    <string name="composer_lock_internal_pinned">End-to-end krypterad till verifierad adress</string>
+    <string name="composer_lock_internal_pinned">End-to-end-krypterad till verifierad adress</string>
     <string name="composer_lock_pgp_encrypted_pinned">PGP-krypterad till verifierad mottagare</string>
     <string name="composer_lock_pgp_signed">PGP-signerat</string>
     <string name="recipient_not_found_and_removed">Mottagare kunde inte hittas: %s och den har tagits bort</string>
@@ -651,7 +651,8 @@ av nya meddelanden i bakgrunden</string>
     <string name="storage_limit_reached_text">Du har uppnått 100% av ditt lagringsutrymme. Du
         kommer inte att kunna skicka eller ta emot e-post om du inte permanent tar bort några e-postmeddelanden eller köper mer
         utrymme.</string>
-    <string name="storage_limit_approaching_text">Du har uppnåt 90 % av ditt lagringsutrymme. Du bör överväga att frigöra plats eller köpa mer lagringsutrymme innan den tar slut.</string>
+    <string name="storage_limit_approaching_text">Du har uppnåt 90 % av ditt lagringsutrymme.
+        Du bör överväga att frigöra plats eller köpa mer lagringsutrymme innan den tar slut.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Behörigheter</string>
     <string name="need_storage_permissions_add_attachment_text">För att lägga till bilagor måste du tillåta
@@ -745,7 +746,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="mailbox">Brevlåda</string>
     <string name="privacy">Integritet</string>
     <string name="auto_download_messages_title">Automatisk nedladdning av meddelanden</string>
-    <string name="auto_download_messages_subtitle">När det här alternativet är aktiverat laddas meddelandets innehåll automatiskt ner varje gång du får ett nytt e-postmeddelande (detta kommer att konsumera mer data). Om det här alternativet inte är aktiverat kommer meddelandets innehåll endast att laddas ner när du öppnar ett e-postmeddelande. (Observera: om du antingen rensar cachen eller loggar ut kommer du inte att kunna läsa meddelandets innehåll när du är offline.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Bakgrundssynkronisering</string>
     <string name="settings_auto_show_images">Visa externa bilder automatiskt</string>
     <string name="settings_auto_show_embedded_images">Visa inbäddade bilder automatiskt</string>
@@ -795,7 +796,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="custom_language_dialog_title">Välj app-språk</string>
     <string name="auto_detect">Identifiera automatiskt</string>
     <string name="combined_contacts">Kombinerade kontakter</string>
-    <string name="turn_combined_contacts_on">Aktivera denna funktion för att automatiskt slutföra e-postadresser med hjälp av kontakter från alla dina inloggade konton.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Lokal cache</string>
     <string name="cache_cleared">Lokal cache är uppdaterad</string>
     <string name="empty_data">Rensa data</string>
@@ -806,7 +807,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="app_version">App-version</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="signed_in_with">Inloggad med %s</string>
+    <string name="signed_in_with">Loggade in med %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Skriv</string>
@@ -832,7 +833,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="denied">Nekad</string>
     <string name="more">Mer</string>
     <!-- region Swipe gestures changed dialog -->
-    <string name="swipe_gestures_changed">Svepgester har ändrats</string>
+    <string name="swipe_gestures_changed">Svepgester ändrade</string>
     <string name="swipe_gestures_changed_message">Efter senaste uppdateringen har svepgester ändrats. Om du vill kan du återställa dem i inställningarna.</string>
     <string name="go_to_settings">Gå till inställningar</string>
     <!-- endregion -->
@@ -844,7 +845,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="enable_conversation_mode">Aktivera konversationsläge</string>
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
-    <string name="recipient_name_email_format">%s&lt;%s&gt;</string>
+    <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
     <string name="star">Stjärnmärk</string>
     <string name="unstar">Ta bort stjärnmärkning</string>
     <string name="star_unstar">Stjärnmärk/ta bort stjärnmärking</string>

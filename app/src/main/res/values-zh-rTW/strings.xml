@@ -365,14 +365,14 @@
     <string name="sync_attachments">正在同步附件</string>
     <string name="processing_attachment">正在處理附件</string>
     <string name="hyperlink_confirmation_dialog_text_html">您即將啟動網頁瀏覽器並導航到:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;您想繼續嗎？</string>
-    <string name="dont_ask_again">請勿再問</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PIN 碼不正確，剩下 %d 次嘗試</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">%d 次嘗試無效後將安全抹除資料！</item>
     </plurals>
-    <string name="logout">登出</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">您將切換為 %s。</string>
     <string name="upgrade">升級</string>
     <string name="error">錯誤</string>
@@ -399,7 +399,7 @@
         <item>震動及響鈴</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>免費</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
         <item>Professional</item>
@@ -459,8 +459,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">已登出</string>
-    <string name="logged_out_description">您已登出。請再次登入。</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">列印錯誤</string>
     <string name="download_complete">下載已完成</string>
     <string name="message_expires_in">此郵件的有效期限尚餘 %s</string>
@@ -486,7 +486,7 @@
     <string name="saving">正在儲存……</string>
     <string name="update_folder">更新資料夾</string>
     <string name="spam_score_100">此電郵似乎來自一個 Proton Mail 電郵位址，卻並非由我們的系統寄出，而且未能通過我們的認證需求。這可能是偽造或不當轉寄的郵件！</string>
-    <string name="spam_score_101">此電郵無法通過網域驗證。這可能是詐騙郵件或是轉發不當導致，請再三留意！</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">此郵件可能為釣魚郵件。請檢查寄件者與內容以確認其為正當的。 <a href="https://proton.me/blog/prevent-phishing-attacks"> 更多資訊 </a></string>
     <string name="print_from_template">寄件者：%s</string>
     <string name="print_to_template">收件者：%s;  </string>
@@ -731,7 +731,7 @@
     <string name="mailbox">信箱</string>
     <string name="privacy">隱私</string>
     <string name="auto_download_messages_title">自動下載郵件</string>
-    <string name="auto_download_messages_subtitle">開啟此選項時，每次當您收到新郵件通知，將會自動下載郵件內容（會消耗更多數據）。如果關閉此選項，則只會在您打開郵件時下載郵件內容。（注意：不論此選項為何，清除快取或登出帳號後，您將無法在離線狀態下查看郵件內容。）</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">背景同步</string>
     <string name="settings_auto_show_images">自動顯示遠端圖像</string>
     <string name="settings_auto_show_embedded_images">自動顯示嵌入圖像</string>
@@ -780,7 +780,7 @@
     <string name="custom_language_dialog_title">選擇應用程式語言</string>
     <string name="auto_detect">自動偵測</string>
     <string name="combined_contacts">合併聯絡人</string>
-    <string name="turn_combined_contacts_on">啟用此功能以使用您所有已登入的帳號中的聯絡人來自動完成電郵位址。</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">本機快取</string>
     <string name="cache_cleared">本機快取已重新整理</string>
     <string name="empty_data">清除資料</string>

@@ -19,7 +19,7 @@
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Adăugare folder</string>
     <string name="x_add_label">Adăugare etichetă</string>
     <string name="x_days">zile</string>
@@ -181,7 +181,7 @@
     <string name="snackbar_action_discard">Anulare</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">Proton Mail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Deconectare</string>
     <string name="sign_out_question">Sigur doriți să vă deconectați?</string>
     <string name="processing_request">Solicitarea este în curs de procesare</string>
@@ -220,7 +220,7 @@
     <string name="sent">Trimise</string>
     <string name="archive">Arhivă</string>
     <string name="trash">Gunoi</string>
-    <string name="spam">Spam</string>
+    <string name="spam">Nedorite</string>
     <string name="all_mail">Toate mesajele</string>
     <string name="contacts">Contacte</string>
     <string name="search_contacts">Căutare contacte</string>
@@ -261,9 +261,9 @@
     <string name="max_labels_exceeded">Mesajul %1$s nu poate avea mai mult de %2$d etichete.</string>
     <string name="max_attachments_reached">S-a atins maximum permis de fișiere atașate unui mesaj</string>
     <string name="max_attachments_size_reached">Dimensiunea maximă a atașamentelor per mesaj a fost atinsă</string>
-    <string name="expiration_days">%dZ</string>
-    <string name="expiration_hours">%dH</string>
-    <string name="expiration_minutes">%dL</string>
+    <string name="expiration_days">%d z</string>
+    <string name="expiration_hours">%d h</string>
+    <string name="expiration_minutes">%d min</string>
     <plurals name="attachments">
         <item quantity="one">Un atașament</item>
         <item quantity="few">%d atașamente</item>
@@ -373,7 +373,7 @@
     <string name="sync_attachments">Sincronizare fișiere atașate</string>
     <string name="processing_attachment">Procesare fișier atașat</string>
     <string name="hyperlink_confirmation_dialog_text_html">Se va lansa navigatorul web la pagina: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;. Continuați?</string>
-    <string name="dont_ask_again">Nu mai întreba</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorect, o încercare rămasă</item>
         <item quantity="few">PIN incorect, %d încercări rămase</item>
@@ -384,7 +384,7 @@
         <item quantity="few">%d încercări până la distrugerea sigură a datelor!</item>
         <item quantity="other">%d de încercări până la distrugerea sigură a datelor!</item>
     </plurals>
-    <string name="logout">Deconectare</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Veți fi comutat la %s.</string>
     <string name="upgrade">Modernizare</string>
     <string name="error">Eroare</string>
@@ -413,10 +413,10 @@
         <item>Vibrație și sunet</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Gratuit</item>
+        <item>Free</item>
         <item>Plus</item>
-        <item>Vizionar</item>
-        <item>Profesional</item>
+        <item>Visionary</item>
+        <item>Professional</item>
     </string-array>
     <string name="contact_details">Detalii contact</string>
     <string name="email_type_home">Acasă</string>
@@ -473,8 +473,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Deconectat</string>
-    <string name="logged_out_description">Ați fost deconectat. Vă rugăm reautentificați-vă.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Eroare la tipărire</string>
     <string name="download_complete">Descărcare finalizată</string>
     <string name="message_expires_in">Acest mesaj va expira peste %s</string>
@@ -500,7 +500,7 @@
     <string name="saving">Se salvează...</string>
     <string name="update_folder">Actualizare folder</string>
     <string name="spam_score_100">Acest e-mail pare să fie de la o adresă Proton Mail, dar a venit din afara sistemului nostru și nu respectă cerințele de autenticitate. Ar putea fi falsificat sau redirecționat eronat!</string>
-    <string name="spam_score_101">Acest e-mail nu respectă cerințele de autentificare ale domeniul său. Ar putea fi falsificat sau redirecționat eronat!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Acest mesaj poate fi o încercare de înșelăciune. Verificați expeditorul și conținutul pentru a vă asigura că acestea sunt legitime. <a href="https://proton.me/blog/prevent-phishing-attacks">Detalii</a></string>
     <string name="print_from_template">De la: %s</string>
     <string name="print_to_template">Către: %s;  </string>
@@ -596,7 +596,7 @@ descărcarea în fundal a mesajelor noi</string>
 		că vom putea vedea conținutul complet al mesajului.</string>
     <string name="phishing_report_send_message_moved_to_spam">Raport trimis. Mesajul a fost mutat în «Spam».</string>
     <string name="cannot_send_report_send">Raportul nu poate fi trimis</string>
-    <string name="title_activity_contact_group_details">Detalii activitate grupuri contacte</string>
+    <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Adăugare fotografie</string>
     <string name="contact_display_name">Nume afișat</string>
@@ -738,7 +738,7 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="set_custom_quick_snooze">Setare valoare personală amânare rapidă</string>
     <string name="turn_off">Oprește</string>
     <string name="work_days">Zile de lucru</string>
-    <string name="weekends">Weekend</string>
+    <string name="weekends">Sfârșit de săptămână</string>
     <string name="every_day">Zilnic</string>
     <string-array name="snooze_repeat_values">
         <item>Lu</item>
@@ -759,7 +759,7 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="mailbox">Căsuță poștală</string>
     <string name="privacy">Confidențialitate</string>
     <string name="auto_download_messages_title">Descărcare automată mesaje</string>
-    <string name="auto_download_messages_subtitle">Dacă această opțiune este activată, corpul mesajelor va fi în mod automat descărcat de fiecare dată când primiți o nouă notificare de e-mail (se vor consuma mai multe date). Dacă este dezactivată, corpul mesajelor v-a fi descărcat doar când deschideți un e-mail. (Notă: indiferent de setare, dacă ieșiți din cont sau goliți memoria aplicației, nu veți putea citii corpul mesajelor deconectați.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Sincronizare în fundal</string>
     <string name="settings_auto_show_images">Afișare automată imagini externe</string>
     <string name="settings_auto_show_embedded_images">Afișare automată imagini incluse</string>
@@ -810,7 +810,7 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="custom_language_dialog_title">Selectare limbă</string>
     <string name="auto_detect">Autodetectare</string>
     <string name="combined_contacts">Contacte combinate</string>
-    <string name="turn_combined_contacts_on">Activați funcția pentru autocompletarea adreselor de e-mail folosind contactele din toate conturile conectate.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Buffer local</string>
     <string name="cache_cleared">Buffer local actualizat</string>
     <string name="empty_data">Ștergere date</string>

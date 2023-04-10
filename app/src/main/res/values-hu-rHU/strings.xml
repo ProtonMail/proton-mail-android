@@ -62,8 +62,8 @@
     <string name="mailbox_updated_just_now">Most frissítve</string>
     <string name="mailbox_updated_recently">Mostanában frissítve</string>
     <string name="mailbox_updating">Frissítés…</string>
-    <string name="is_proton">This is a Proton message</string>
-    <string name="is_proton_official_badge">Official</string>
+    <string name="is_proton">Ez egy Proton üzenet</string>
+    <string name="is_proton_official_badge">Hivatalos</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Megnyitás a Proton Calendarban</string>
@@ -194,7 +194,7 @@
     <string name="no_network_queued">Nincs hálózat, az üzenet várólistára került</string>
     <string name="update_app_title">Frissítés szükséges</string>
     <string name="update_app">A Proton Mail alkalmazás nem használható, amíg nincs frissítve</string>
-    <string name="you_are_offline">Offline vagy</string>
+    <string name="you_are_offline">Nincs internetkapcsolat</string>
     <string name="api_offline">A Proton Mail nem érhető el. Kérjük, nézze meg a https://protonstatus.com oldalt, vagy Twitter profilunkat a friss hírekért: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Névjegy elmentve</string>
     <string name="contact_saved_offline">Névjegy elmentve. A kapcsolat helyreállásakor lesz szinkronizálva.</string>
@@ -260,9 +260,9 @@
     <string name="max_labels_exceeded">Az üzenetnek (%1$s) nem lehet több, mint %2$d címkéje.</string>
     <string name="max_attachments_reached">Az üzenethez csatolható mellékletek száma elérte a maximumot.</string>
     <string name="max_attachments_size_reached">Az üzenethez csatolható mellékletek mérete elérte a maximumot</string>
-    <string name="expiration_days">%dnap</string>
-    <string name="expiration_hours">%dóra</string>
-    <string name="expiration_minutes">%dperc</string>
+    <string name="expiration_days">%d nap</string>
+    <string name="expiration_hours">%d óra</string>
+    <string name="expiration_minutes">%d perc</string>
     <plurals name="attachments">
         <item quantity="one">%d melléklet</item>
         <item quantity="other">%d melléklet</item>
@@ -304,7 +304,7 @@
     <string name="sending_message_offline">Nincs hálózat, az üzenet várólistára került...</string>
     <string name="message_sent">Üzenet elküldve</string>
     <string name="message_failed">Üzenet elküldése sikertelen</string>
-    <string name="storage_limit">A tárhely kapacitása</string>
+    <string name="storage_limit">Tárhely korlát</string>
     <string name="edit_settings">Beállítások módosítása</string>
     <string name="share">Megosztás</string>
     <string name="cancel">Mégsem</string>
@@ -327,7 +327,7 @@
     <string name="no_application_found_or_link_invalid">Nincs alkalmazás ehhez a művelethez vagy erénytelen URL</string>
     <string name="label_deleted">Címke törölve</string>
     <string name="label_deleted_error">Hiba a címke törlése közben</string>
-    <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
+    <string name="message_deleted_error">Hiba történt néhány üzenet törlése folyamán. A kijelölt üzenetek közül esetleg néhány még elküldés alatt van?!</string>
     <string name="respond_inline">Válaszolás az eredeti levélben</string>
     <string name="server_not_reachable_troubleshoot">A szerver nem elérhető (<u>Hibaelhárítás</u>)</string>
     <string name="connectivity_checking">Várakozás a kapcsolatra...</string>
@@ -353,7 +353,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Törli a kiválasztott címkéket?</string>
     <string name="delete_folder_confirmation_title">Törli a kiválasztott mappákat?</string>
-    <string name="delete_label_confirmation_message">Ezek a levelek meg fognak jelenni az <b>Összes levél</b> mappában</string>
+    <string name="delete_label_confirmation_message">Az benne lévő levelek az <b>Összes levél</b> mappában lesznek megtalálhatóak</string>
     <string name="pin_invalid">PIN-kód érvénytelen, adja meg a helyes 4 számjegyű PIN-kódot</string>
     <string name="pin_not_match">PIN kód nem egyezik</string>
     <string name="new_pin_saved">Új PIN beállítva</string>
@@ -369,7 +369,7 @@
     <string name="sync_attachments">Mellékletek szinkronizálása</string>
     <string name="processing_attachment">Melléklet feldolgozása</string>
     <string name="hyperlink_confirmation_dialog_text_html">Megnyitja a következő címet a böngészőben:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Kívánja folytatni?</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Érvénytelen PIN, %d próbálkozás maradt</item>
         <item quantity="other">Érvénytelen PIN, %d próbálkozás maradt</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d próbálkozás az adattörlésig!</item>
         <item quantity="other">%d próbálkozás az adattörlésig!</item>
     </plurals>
-    <string name="logout">Kijelentkezés</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Biztos benne, hogy kijelentkezik az aktuális fiókból és a következőt használja: %s?</string>
     <string name="upgrade">Csomagváltás</string>
     <string name="error">Hiba</string>
@@ -406,7 +406,7 @@
         <item>Rezgés és hang</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Ingyenes</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
         <item>Professional</item>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Kijelentkezve</string>
-    <string name="logged_out_description">Kijelentkezett. Kérjük, jelentkezzen be újra.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Nyomtatási hiba</string>
     <string name="download_complete">A letöltés befejeződött</string>
     <string name="message_expires_in">Ez az üzenet lejár %s belül</string>
@@ -493,7 +493,7 @@
     <string name="saving">Mentés...</string>
     <string name="update_folder">Mappa frissítése</string>
     <string name="spam_score_100">Ez az e-mail a Proton Mailról feladottnak tűnik, de külső rendszerből érkezett és nem felelt meg az ellenőrzési követelményeknek. Lehet becsapós üzenet vagy hibásan továbbított!</string>
-    <string name="spam_score_101">Az e-mail nem felelt meg a domain név ellenőrzési követelményeinek. Lehet becsapós üzenet vagy hibásan továbbított!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Ez az üzenet lehetséges, hogy egy adathalászati kísérlet! Kérjük, alaposan ellenőrizze, hogy a feladó és az üzenet szövege megbízható-e. <a href="https://proton.me/blog/prevent-phishing-attacks">TOVÁBBI INFORMÁCIÓK</a></string>
     <string name="print_from_template">Feladó: %s</string>
     <string name="print_to_template">Címzett: %s;  </string>
@@ -533,7 +533,7 @@
     <string name="remove_password_question">Jelszó eltávolítása?</string>
     <string name="attachment_storage_value_current">Jelenleg kiválasztva: %d MB</string>
     <string name="attachment_storage_value_current_unlimited">Jelenleg kiválasztva: Korlátlan</string>
-    <string name="attachment_offline_max_storage">Beállítja a Proton Mail által, az eszközön helyileg használható maximális tárterületet.</string>
+    <string name="attachment_offline_max_storage">Megadhatja a Proton Mail által, az eszközön helyileg használható maximális tárterületet.</string>
     <string name="load_embedded_images_failed_no_network">Hiba a beágyazott képek betöltésekor. Ellenőrizze a kapcsolatot.</string>
     <string name="load_embedded_images_failed">Hiba a beágyazott képek betöltésekor.</string>
     <string name="unlimited">Korlátlan</string>
@@ -617,8 +617,8 @@
     <string name="contact_group_saved">Csoport elmentve</string>
     <string name="no_recipients">Nincs címzett</string>
     <plurals name="contact_group_selected">
-        <item quantity="one">%d Selected</item>
-        <item quantity="other">%d Selected</item>
+        <item quantity="one">%d Kiválasztva</item>
+        <item quantity="other">%d Kiválasztva</item>
     </plurals>
     <string name="paid_plan_needed">Kérjük, váltson fizetős csomagra, hogy ezt a prémium szolgáltatást használhassa</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d tag)</string>
@@ -660,7 +660,7 @@
     <string name="need_storage_permissions_download_attachment_text">Melléklet letöltéséhez engedélyeznie kell 
         a tárhely elérését.</string>
     <string name="need_contacts_permissions_text">A névjegyek importálásához engedélyeznie kell a névjegyek elérését.</string>
-    <string name="need_notification_permissions_to_receive_notifications">In order to receive notifications from the app you need to enable permissions for notifications.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Ahhoz, hogy értesítéseket kapjon az alkalmazásból, engedélyeznie kell az értesítések megjelenítését.</string>
     <string name="push_notifications_alert_title">Push értesítés riasztás</string>
     <string name="push_notifications_alert_subtitle">A Proton Mail push értesítések nem működnek a legújabb Google Play szolgáltatások nélkül.</string>
     <string name="app_locked">Az alkalmazás zárolt</string>
@@ -685,9 +685,9 @@
     <string name="storage">Postafiók mérete</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Címek</string>
-    <string name="default_mail_address">Alapértelmezett email cím</string>
+    <string name="default_mail_address">Alapértelmezett e-mail cím</string>
     <string name="default_address">Alapértelmezett cím</string>
-    <string name="display_name_n_signature">Megjelenítendő név és aláírás</string>
+    <string name="display_name_n_signature">Megjelenített név és aláírás</string>
     <string name="display_name">Megjelenített név</string>
     <string name="edit_display_name">Megjelenített név szerkesztése</string>
     <string name="signature">Aláírás</string>
@@ -695,7 +695,7 @@
     <string name="edit_mobile_footer">Mobil aláírás bekapcsolása</string>
     <string name="default_mobile_footer">Proton Mail mobil alkalmazásból küldve</string>
     <string name="mobile_footer_is_premium">A mobil láblécet csak elfőzető felhasználók módosíthatják</string>
-    <string name="mobile_footer_info">A lábléc az aláírás után jelenik meg</string>
+    <string name="mobile_footer_info">Ez a lábléc az aláírása után jelenik meg</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Szüneteltetés</string>
     <string name="notifications_snooze">Értesítések szüneteltetése</string>
@@ -736,22 +736,22 @@
         <item>Szo</item>
         <item>V</item>
     </string-array>
-    <string name="quick_and_scheduled_enabled">Gyors szüneteltetés és ütemezett szüneteltetés aktív</string>
+    <string name="quick_and_scheduled_enabled">A gyors szüneteltetés és az ütemezett szüneteltetés aktív</string>
     <string name="quick_only_enabled">Gyors szüneteltetés aktív</string>
     <string name="scheduled_only_enabled">Ütemezett szüneteltetés aktív</string>
-    <string name="quick_and_scheduled_disabled">Gyors szüneteltetés és ütemezett szüneteltetés kikapcsolt</string>
+    <string name="quick_and_scheduled_disabled">A gyors szüneteltetés és az ütemezett szüneteltetés ki van kapcsolva</string>
     <string name="scheduled_snooze_on">Ütemezve (Be)</string>
     <string name="scheduled_snooze_off">Ütemezve (Ki)</string>
     <!-- endregion -->
     <string name="mailbox">Postafiók</string>
     <string name="privacy">Adatvédelem</string>
     <string name="auto_download_messages_title">Üzenetek automatikus letöltése</string>
-    <string name="auto_download_messages_subtitle">Bekapcsolásakor a ProtonMail a háttérben automatikusan letölti az új üzenetek törzsét (több adatforgalmat igényel). Ha ki van kapcsolva, a ProtonMail az üzenet törzsét csak az üzenet megnyitásakor tölti le. (Megjegyzés: ha törli a gyorstárat vagy kijelentkezik, akkor egyik esetben sem tudja elolvasni a levelet, amikor nincs internetkapcsolat.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Szinkronizálás háttérben</string>
     <string name="settings_auto_show_images">Távoli képek automatikus megjelenítése</string>
     <string name="settings_auto_show_embedded_images">Beágyazott képek automatikus megjelenítése</string>
     <string name="settings_prevent_taking_screenshots">Képernyőkép készítés megakadályozása</string>
-    <string name="hyperlink_confirmation">Kérés link megerősítése</string>
+    <string name="hyperlink_confirmation">Hivatkozás megnyitásának megerősítése</string>
     <string name="labels_and_folders">Címkék és mappák </string>
     <string name="folders">Mappák</string>
     <string name="labels">Címkék</string>
@@ -781,25 +781,25 @@
     <!-- region App Settings -->
     <string name="push_notifications">Push értesítések</string>
     <string name="extended_notifications">Bővített értesítések</string>
-    <string name="extended_notifications_description">Kapcsolja be ezt a funkciót, hogy az e-mailek feladóját\nláthassa a push értesítésekben.</string>
+    <string name="extended_notifications_description">Kapcsolja be ezt a funkciót, az e-mailek feladójának megjelenítéséhez az értesítésekben.</string>
     <string name="notification_settings">Értesítési beállítások</string>
     <string name="auto_lock">Automatikus lezárás</string>
     <string name="auto_lock_app">Alkalmazás automatikus lezárása</string>
-    <string name="auto_lock_description">Kapcsolja be ezt a funkciót\naz alkalmazás automatikus lezárásához\nés PIN-kód vagy ujjlenyomat segítségével oldja fel.</string>
+    <string name="auto_lock_description">Kapcsolja be ezt a funkciót, az alkalmazás automatikus lezárásához, és PIN-kóddal vagy ujjlenyomattal való feloldásához.</string>
     <string name="change_pin_code">PIN kód megváltoztatása</string>
     <string name="auto_lock_timer">Automatikus lezárás időzítése</string>
     <string name="connections_via_third_parties">Alternatív útválasztás</string>
     <string name="allow_secure_connections_via_third_parties">Alternatív útválasztás engedélyezése</string>
-    <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">Ha a Proton szolgáltatásai le vannak tiltva, ezzel a beállítással az alkalmazás alternatív hálózati útvonalakat próbál meg használni, ami hasznos lehet tűzfalak megkerüléséhez vagy hálózati problémák megoldásához. Javasolt ezt a beállítást bekapcsolva tartani a nagyobb megbízhatóság érdekében.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Ha a Proton szolgáltatásai le vannak tiltva, ezzel a beállítással az alkalmazás alternatív hálózati útvonalakat próbál meg használni, ami hasznos lehet tűzfalak megkerüléséhez vagy hálózati problémák megoldásához. Javasolt ezt a beállítást bekapcsolva a tartani nagyobb megbízhatóság érdekében. <a href="https://proton.me/blog/anti-censorship-alternative-routing">További információk</a></string>
     <string name="app_language">Alkalmazás nyelve</string>
-    <string name="custom_language_dialog_title">Alkalmazás nyelv választása</string>
+    <string name="custom_language_dialog_title">Válassza ki a nyelvet</string>
     <string name="auto_detect">Automatikus-észlelés</string>
     <string name="combined_contacts">Kombinált névjegyek</string>
-    <string name="turn_combined_contacts_on">Kapcsolja be ezt a funkciót az automatikus e-mail címek kitöltéséhez az összes bejelentkezett fiók névjegyei alapján.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Helyi gyorsítótár</string>
     <string name="cache_cleared">Helyi gyorsítótár frissítve</string>
-    <string name="empty_data">Adatok törlése</string>
+    <string name="empty_data">Törlés</string>
     <!-- endregion -->
     <string name="enabled">Engedélyezve</string>
     <string name="disabled">Letiltva</string>

@@ -377,7 +377,7 @@
     <string name="sync_attachments">Synchronizace příloh</string>
     <string name="processing_attachment">Zpracování přílohy</string>
     <string name="hyperlink_confirmation_dialog_text_html">Chystáte se spustit webový prohlížeč a přejít na&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Chcete pokračovat?</string>
-    <string name="dont_ask_again">Příště se neptat</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Nesprávný kód PIN, zbývá %d pokus</item>
         <item quantity="few">Nesprávný kód PIN, zbývají %d pokusy</item>
@@ -390,7 +390,7 @@
         <item quantity="many">Počet pokusů před bezpečným smazáním dat: %d!</item>
         <item quantity="other">Počet pokusů před bezpečným smazáním dat: %d!</item>
     </plurals>
-    <string name="logout">Odhlásit se</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Opravdu se chcete odhlásit z aktuálního účtu a pokračovat s %s?</string>
     <string name="upgrade">Rozšířit</string>
     <string name="error">Chyba</string>
@@ -420,7 +420,7 @@
         <item>Zvuk i vibrace</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Zdarma</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
         <item>Professional</item>
@@ -448,7 +448,7 @@
     <string name="vcard_other_option_role">Role</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="contacts_import_contact">Importovat kontakty</string>
-    <string name="contacts_import">Import</string>
+    <string name="contacts_import">Importovat</string>
     <string name="upload_contacts">Nahrát kontakty</string>
     <string name="uploading_contacts">Nahrávání kontaktů…</string>
     <string-array name="vcard_option_phone">
@@ -480,8 +480,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Odhlášen(a)</string>
-    <string name="logged_out_description">Byli jste odhlášeni. Přihlaste se prosím znovu.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Chyba tisku</string>
     <string name="download_complete">Stahování dokončeno</string>
     <string name="message_expires_in">Tato zpráva vyprší za %s</string>
@@ -507,7 +507,7 @@
     <string name="saving">Ukládání...</string>
     <string name="update_folder">Aktualizace složky</string>
     <string name="spam_score_100">Zdá se, že e-mail byl odeslán z adresy Proton Mail, ale pochází z externího systému a požadavky na ověření selhaly. E-mail může být falešný, nebo špatně přeposlaný!</string>
-    <string name="spam_score_101">Zpráva nesplňuje požadavky na ověření domény odesílatele. Může být falešná, nebo špatně přeposlaná!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Tato zpráva může být pokusem o phishing. Zkontrolujte odesílatele a obsah, abyste se ujistili, že jsou legitimní. <a href="https://proton.me/blog/prevent-phishing-attacks">VÍCE INFORMACÍ</a></string>
     <string name="print_from_template">Od: %s</string>
     <string name="print_to_template">Komu: %s;  </string>
@@ -690,7 +690,7 @@
     <string name="app_locked">Aplikace uzamčena</string>
     <string name="use_pin_instead">Použít raději PIN</string>
     <!-- strings used for biometric enrollment -->
-    <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
+    <string name="no_biometric_data_enrolled">Nebyly zapsány žádné biometrické údaje</string>
     <string name="log_in_using_biometric_credential">Odemknout pomocí Vašich biometrických údajů</string>
     <string name="unlock_using_biometrics">Odemknout pomocí biometrie</string>
     <string name="biometric_error_hw_not_available">Biometrický hardware není k dispozici.</string>
@@ -772,7 +772,7 @@
     <string name="mailbox">E-mailová schránka</string>
     <string name="privacy">Ochrana soukromí</string>
     <string name="auto_download_messages_title">Automaticky stahovat zprávy</string>
-    <string name="auto_download_messages_subtitle">Jakmile je tato volba povolena, tělo zpráv bude automaticky staženo pokaždé když obdržíte e-mailové oznámení (větší spotřeba dat). Pokud tato volba není povolena, tělo zpráv bude stahováno pouze když otevřete e-mail. (Upozornění: s každou možností, jestliže vyčistíte mezipaměť nebo se odhlásíte, nebudete moci číst tělo zpráv, jakmile budete offline)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Synchronizace na pozadí</string>
     <string name="settings_auto_show_images">Automaticky zobrazovat externí obrázky</string>
     <string name="settings_auto_show_embedded_images">Automaticky zobrazovat vnořené obrázky</string>
@@ -803,7 +803,7 @@
         <item quantity="other">Zprávy byly přesunuty do koše</item>
     </plurals>
     <!-- endregion -->
-    <string name="local_storage">Local storage limit</string>
+    <string name="local_storage">Limit místního úložiště</string>
     <!-- endregion -->
     <string name="app_settings">Nastavení aplikace</string>
     <!-- region App Settings -->
@@ -824,7 +824,7 @@
     <string name="custom_language_dialog_title">Vybrat jazyk aplikace</string>
     <string name="auto_detect">Automatická detekce</string>
     <string name="combined_contacts">Sloučené kontakty</string>
-    <string name="turn_combined_contacts_on">Zapněte tuto funkci pro automatické vyplňování e-mailových adres pomocí kontaktů ze všech vašich přihlášených účtů.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Místní mezipaměť</string>
     <string name="cache_cleared">Mezipaměť byla obnovena</string>
     <string name="empty_data">Smazat data</string>

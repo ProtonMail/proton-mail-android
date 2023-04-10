@@ -262,9 +262,9 @@
     <string name="max_labels_exceeded">Wiadomość %1$s nie może posiadać więcej niż %2$d etykiet.</string>
     <string name="max_attachments_reached">Limit załączników w jednej wiadomości został osiągnięty</string>
     <string name="max_attachments_size_reached">Limit rozmiaru załączników w jednej wiadomości został osiągnięty</string>
-    <string name="expiration_days">%dd</string>
-    <string name="expiration_hours">%dg</string>
-    <string name="expiration_minutes">%dmin</string>
+    <string name="expiration_days">%d d</string>
+    <string name="expiration_hours">%d godz.</string>
+    <string name="expiration_minutes">%d min</string>
     <plurals name="attachments">
         <item quantity="one">%d załącznik</item>
         <item quantity="few">%d załączniki</item>
@@ -377,7 +377,7 @@
     <string name="sync_attachments">Synchronizowanie załączników</string>
     <string name="processing_attachment">Przetwarzanie załączników</string>
     <string name="hyperlink_confirmation_dialog_text_html">Masz zamiar uruchomić przeglądarkę i przejść do:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Czy chcesz kontynuować?</string>
-    <string name="dont_ask_again">Nie pytaj ponownie</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Kod PIN jest nieprawidłowy, pozostała %d próba</item>
         <item quantity="few">Kod PIN jest nieprawidłowy, pozostały %d próby</item>
@@ -390,7 +390,7 @@
         <item quantity="many">Pozostało %d prób do bezpiecznego wymazania danych!</item>
         <item quantity="other">Pozostało %d prób do bezpiecznego wymazania danych!</item>
     </plurals>
-    <string name="logout">Wyloguj</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Zostaniesz przełączony na konto %s.</string>
     <string name="upgrade">Ulepsz</string>
     <string name="error">Błąd</string>
@@ -480,8 +480,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Wylogowano</string>
-    <string name="logged_out_description">Zostałeś wylogowany. Zaloguj się ponownie.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Błąd wydruku</string>
     <string name="download_complete">Pobieranie zostało zakończone</string>
     <string name="message_expires_in">Wiadomość wygaśnie za %s</string>
@@ -507,7 +507,7 @@
     <string name="saving">Zapisywanie...</string>
     <string name="update_folder">Zaktualizuj folder</string>
     <string name="spam_score_100">Ta wiadomość wydaje się pochodzić z adresu Proton Mail, ale pochodzi spoza naszego systemu i nie spełnia kryteriów uwierzytelniania. Może być sfałszowana lub nieprawidłowo przesłana!</string>
-    <string name="spam_score_101">Ta wiadomość nie spełnia wymogów weryfikacyjnych domeny nadawcy. Może być sfałszowana lub nieprawidłowo przesłana!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Ta wiadomość może być próbą wyłudzenia informacji. Upewnij się, czy nadawca wiadomości i jej treść są wiarygodne. <a href="https://proton.me/blog/prevent-phishing-attacks">DOWIEDZ SIĘ WIĘCEJ</a></string>
     <string name="print_from_template">Od: %s</string>
     <string name="print_to_template">Do: %s;  </string>
@@ -769,7 +769,7 @@
     <string name="mailbox">Skrzynka pocztowa</string>
     <string name="privacy">Prywatność</string>
     <string name="auto_download_messages_title">Automatyczne pobieranie wiadomości</string>
-    <string name="auto_download_messages_subtitle">Włączenie tej opcji spowoduje automatyczne pobieranie treści e-maila po otrzymaniu powiadomienia o nowej wiadomości (zwiększa zużycie danych). W innym wypadku treść wiadomości będzie pobierana dopiero po jej otwarciu. (Uwaga: w obu przypadkach, po usunięciu pamięci podręcznej lub wylogowaniu, przeczytanie wiadomości w trybie offline nie będzie możliwe.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Synchronizacja w tle</string>
     <string name="settings_auto_show_images">Automatycznie pokazuj zdalne obrazy</string>
     <string name="settings_auto_show_embedded_images">Automatycznie pokazuj osadzone obrazy</string>
@@ -821,7 +821,7 @@
     <string name="custom_language_dialog_title">Wybierz język aplikacji</string>
     <string name="auto_detect">Automatyczne wykrywanie</string>
     <string name="combined_contacts">Połączone kontakty</string>
-    <string name="turn_combined_contacts_on">Włączenie tej funkcji spowoduje uzupełnianie adresów e-mail przy użyciu wszystkich kontaktów na Twoich zalogowanych kontach.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Pamięć podręczna</string>
     <string name="cache_cleared">Pamięć podręczna została odświeżona</string>
     <string name="empty_data">Usuń dane</string>

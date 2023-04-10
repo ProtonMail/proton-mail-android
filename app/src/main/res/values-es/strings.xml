@@ -81,7 +81,7 @@
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
-    <string name="composer_cc">Cc:</string>
+    <string name="composer_cc">CC:</string>
     <string name="composer_compose_email">Redactar un correo</string>
     <string name="composer_from">De:</string>
     <string name="composer_subject">Asunto:</string>
@@ -168,7 +168,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nuevas funciones</string>
     <string name="existing_user_onboarding_new_features_description">Disfruta de nuevas funciones como el modo oscuro, notificaciones mejoradas, un filtro de mensajes sin leer y carpetas secundarias.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualizado, protección unificada</string>
-    <string name="existing_user_onboarding_updated_proton_description">Presentamos el nuevo aspecto de Proton. Muchos servicios, una sola misión. Te damos la bienvenida a una Internet donde la privacidad es la norma. <a href="https://proton.me/news/updated-proton">Más información</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Presentamos el nuevo aspecto de Proton. Muchos servicios, una sola misión. Te damos la bienvenida a una internet donde la privacidad es la norma. <a href="https://proton.me/news/updated-proton">Más información</a></string>
     <string name="onboarding_next">Siguiente</string>
     <string name="onboarding_get_started">Comenzar</string>
     <string name="onboarding_got_it">Entendido</string>
@@ -242,7 +242,7 @@
     <string name="selected">Seleccionado</string>
     <string name="no_labels">No hay etiquetas.</string>
     <string name="to">Para</string>
-    <string name="cc">Cc</string>
+    <string name="cc">CC</string>
     <string name="bcc">Cco</string>
     <string name="to_prefix">Para:</string>
     <string name="reply">Responder</string>
@@ -260,9 +260,9 @@
     <string name="max_labels_exceeded">El mensaje %1$s no puede tener más de %2$d etiquetas.</string>
     <string name="max_attachments_reached">Se ha alcanzado el límite máximo de archivos adjuntos por mensaje.</string>
     <string name="max_attachments_size_reached">Se ha alcanzado el tamaño máximo de archivos adjuntos por mensaje.</string>
-    <string name="expiration_days">%dd</string>
-    <string name="expiration_hours">%dh</string>
-    <string name="expiration_minutes">%dm</string>
+    <string name="expiration_days">%d d</string>
+    <string name="expiration_hours">%d h</string>
+    <string name="expiration_minutes">%d min</string>
     <plurals name="attachments">
         <item quantity="one">%d archivo adjunto</item>
         <item quantity="other">%d archivos adjuntos</item>
@@ -292,7 +292,7 @@
     <string name="no_subject">¿Enviar mensaje sin asunto?</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
-    <string name="ok">OK</string>
+    <string name="ok">Aceptar</string>
     <string name="forward_prefix">Rv:</string>
     <string name="original_message_divider">-------- Mensaje original --------</string>
     <string name="invalid_email_address">La dirección \'%s\' no es válida.</string>
@@ -313,7 +313,7 @@
     <string name="eo_password_subtitle">Establece una contraseña para cifrar este mensaje para usuarios que no sean de Proton Mail.</string>
     <string name="eo_password_more_info">Obtener más información</string>
     <string name="no_attachments">0 archivos adjuntos</string>
-    <string name="display_name_banned_chars">Nombre a mostrar no válido. \'&gt;\' y \'&lt;\' no están permitidos.</string>
+    <string name="display_name_banned_chars">Nombre para mostrar no válido. \'&gt;\' y \'&lt;\' no están permitidos.</string>
     <string name="cont">Continuar</string>
     <string name="reply_prefix_on">El</string>
     <string name="label_name">Nombre de la etiqueta</string>
@@ -329,7 +329,7 @@
     <string name="label_deleted_error">Error al eliminar la etiqueta</string>
     <string name="message_deleted_error">Error al eliminar algunos mensajes. Algunos de los mensajes seleccionados están en proceso de envío.</string>
     <string name="respond_inline">Responder en línea</string>
-    <string name="server_not_reachable_troubleshoot">Servidor no accesible... (<u>Solución de problemas</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Servidor no accesible… (<u>Resolución de problemas</u>)</string>
     <string name="connectivity_checking">Comprobando la conexión...</string>
     <string name="draft_label_attachments_uploading">cargando archivos adjuntos…</string>
     <string name="draft_label_message_uploading">enviando mensaje…</string>
@@ -369,7 +369,7 @@
     <string name="sync_attachments">Sincronizando archivos adjuntos</string>
     <string name="processing_attachment">Procesando archivo adjunto</string>
     <string name="hyperlink_confirmation_dialog_text_html">Estás a punto de iniciar el navegador e ir a:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;¿Quieres continuar?</string>
-    <string name="dont_ask_again">No preguntar de nuevo</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorrecto. %d intento restante.</item>
         <item quantity="other">PIN incorrecto. %d intentos restantes.</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d intento antes de borrar los datos seguros</item>
         <item quantity="other">%d intentos antes de borrar los datos seguros</item>
     </plurals>
-    <string name="logout">Cerrar sesión</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Serás redirigido por %s.</string>
     <string name="upgrade">Cambiar de plan</string>
     <string name="error">Error</string>
@@ -466,12 +466,12 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Desconectado</string>
-    <string name="logged_out_description">Has sido desconectado. Inicia sesión nuevamente.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Error de impresión</string>
     <string name="download_complete">Descarga completada</string>
     <string name="message_expires_in">Este mensaje expirará en %s.</string>
-    <string name="unsaved_changes_title">Cambios sin guardar</string>
+    <string name="unsaved_changes_title">Cambios no guardados</string>
     <string name="unsaved_changes_subtitle">Hay entradas sin guardar en el formulario. ¿Estás seguro de querer descartarlas?</string>
     <string name="request_timeout">Tiempo de espera agotado. Inténtalo de nuevo.</string>
     <string name="no_folders">Sin carpetas</string>
@@ -493,7 +493,7 @@
     <string name="saving">Guardando...</string>
     <string name="update_folder">Actualizar carpeta</string>
     <string name="spam_score_100">Este correo parece llegar de una dirección de Proton Mail pero viene de fuera de nuestro sistema y no ha superado los requisitos de autenticación. Puede haber sido falsificado o reenviado incorrectamente.</string>
-    <string name="spam_score_101">Se ha producido un error con los requisitos de autenticación del dominio. Puede haber sido falsificado o reenviado incorrectamente.</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Este mensaje puede ser un intento de suplantación de identidad. Verifica que el remitente y el contenido sean legítimos. <a href="https://proton.me/blog/prevent-phishing-attacks">MÁS INFORMACIÓN</a></string>
     <string name="print_from_template">De: %s</string>
     <string name="print_to_template">Para: %s;  </string>
@@ -524,7 +524,7 @@
     <string name="protonmail_contacts">Contactos de Proton Mail</string>
     <string name="device_contacts">Contactos del dispositivo</string>
     <string name="print_date_template">Fecha: %s</string>
-    <string name="print_attachment_template">Adjunto: %s;  </string>
+    <string name="print_attachment_template">Archivo adjunto: %s;  </string>
     <string name="pm_me_changed">El envío de mensajes desde la dirección @pm.me es una función de pago. Tu mensaje será enviado desde tu dirección por defecto %s.</string>
     <string name="pm_me_can_not_be_default">Actualiza a un plan de pago para establecer %s como dirección por defecto.</string>
     <string name="dont_remind_again">No volver a recordarme</string>
@@ -572,7 +572,7 @@
     <string name="expiration_error_proceed">Pulsa enviar de todos modos para enviar sin expiración a estos destinatarios.</string>
     <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">MÁS INFORMACIÓN</a></string>
     <string name="channel_name_attachments">Archivos adjuntos</string>
-    <string name="channel_description_attachments">Informa sobre el estado de descarga del archivo adjunto</string>
+    <string name="channel_description_attachments">Informa sobre el estado de descarga del archivo adjunto.</string>
     <string name="channel_name_emails">Correos electrónicos</string>
     <string name="channel_description_emails">Notificaciones entrantes de correo electrónico</string>
     <string name="channel_name_account">Cuenta</string>
@@ -592,7 +592,7 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Añadir foto</string>
-    <string name="contact_display_name">Nombre a mostrar</string>
+    <string name="contact_display_name">Nombre para mostrar</string>
     <string name="add_new_email">Añadir dirección de correo electrónico</string>
     <string name="no_groups">Ningún grupo</string>
     <string name="contact_vcard_note">Nota</string>
@@ -600,7 +600,7 @@
     <string name="create_contact_group">Crear grupo de contactos</string>
     <string name="edit_contact_group">Editar grupo de contactos</string>
     <string name="contact_groups_manage_members">Gestionar miembros</string>
-    <string name="contact_group_display_name">Nombre a mostrar</string>
+    <string name="contact_group_display_name">Nombre para mostrar</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="title_activity_address_chooser">Gestionar miembros</string>
     <string name="default_error_message">Se ha producido un error.</string>
@@ -687,9 +687,9 @@ compres más
     <string name="addresses">Direcciones</string>
     <string name="default_mail_address">Dirección de correo por defecto</string>
     <string name="default_address">Dirección por defecto</string>
-    <string name="display_name_n_signature">Nombre a mostrar y firma</string>
-    <string name="display_name">Nombre a mostrar</string>
-    <string name="edit_display_name">Editar el nombre a mostrar</string>
+    <string name="display_name_n_signature">Nombre para mostrar y firma</string>
+    <string name="display_name">Nombre para mostrar</string>
+    <string name="edit_display_name">Editar el nombre para mostrar</string>
     <string name="signature">Firma</string>
     <string name="mobile_footer">Pie de página para móvil</string>
     <string name="edit_mobile_footer">Habilitar pie de página para móvil</string>
@@ -746,7 +746,7 @@ compres más
     <string name="mailbox">Buzón</string>
     <string name="privacy">Privacidad</string>
     <string name="auto_download_messages_title">Descargar mensajes automáticamente</string>
-    <string name="auto_download_messages_subtitle">Cuando esta opción está activada, los cuerpos de los mensajes se descargarán automáticamente cada vez que recibas una notificación nueva (esto consumirá más datos). Si la opción no está activada, los cuerpos de los mensajes solo se descargarán cuando abras el mensaje. (Nota: con cualquier opción, si vacías la caché o cierras la sesión, no podrás leer el cuerpo de los mensajes mientras no estés conectado).</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Sincronizar en segundo plano</string>
     <string name="settings_auto_show_images">Mostrar imágenes remotas automáticamente</string>
     <string name="settings_auto_show_embedded_images">Mostrar automáticamente las imágenes incrustadas</string>
@@ -789,14 +789,14 @@ compres más
     <string name="change_pin_code">Cambiar código PIN</string>
     <string name="auto_lock_timer">Tiempo de bloqueo automático</string>
     <string name="connections_via_third_parties">Enrutado alternativo</string>
-    <string name="allow_secure_connections_via_third_parties">Permitir el enrutado alternativo</string>
+    <string name="allow_secure_connections_via_third_parties">Permitir el enrutamiento alternativo</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">En caso de que los sitios de Proton estén bloqueados, esta configuración permite a la aplicación intentar un enrutamiento de red alternativo para llegar a Proton, lo que puede ser útil para evitar los cortafuegos o los problemas de red. Recomendamos mantener esta configuración activada para una mayor fiabilidad.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">En caso de que los sitios de Proton estén bloqueados, esta configuración permitirá a la aplicación intentar un enrutamiento de red alternativo para llegar a Proton, lo cual puede ser útil para evitar los cortafuegos o los problemas de red. Recomendamos mantener esta opción activada para una mayor fiabilidad. <a href="https://proton.me/blog/anti-censorship-alternative-routing">Más información</a></string>
     <string name="app_language">Idioma de la aplicación</string>
     <string name="custom_language_dialog_title">Seleccionar idioma de la aplicación</string>
     <string name="auto_detect">Detectar automáticamente</string>
     <string name="combined_contacts">Contactos combinados</string>
-    <string name="turn_combined_contacts_on">Activa esta función para completar automáticamente las direcciones usando los contactos de todas tus cuentas conectadas.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Caché local</string>
     <string name="cache_cleared">La caché local está actualizada.</string>
     <string name="empty_data">Limpiar datos</string>
@@ -819,9 +819,9 @@ compres más
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema del proveedor de servicios de internet (ISP)&lt;/i&gt; - Prueba a conectarte a Proton desde una red diferente (o usa &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueo gubernamental&lt;/i&gt; - Tu país puede estar bloqueando el acceso a Proton. Prueba &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o cualquier otra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para acceder a Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de antivirus&lt;/i&gt; - Deshabilita temporalmente o elimina tu software antivirus.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de Proxy/Firewall&lt;/i&gt; - Deshabilita cualquier proxy o cortafuegos, o contacta con tu administrador de red.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está caído&lt;/i&gt; - Accede a &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; para comprobar el estado de nuestro sistema.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aún no se pudo encontrar una solución&lt;/i&gt; - Contáctanos directamente a través de nuestro &lt;a href=\"https://protonmail.com/support-form\"&gt;formulario de apoyo&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correo electrónico&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de proxy/cortafuego&lt;/i&gt; - Deshabilita cualquier proxy o cortafuegos, o contacta con tu administrador de red.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está fuera de servicio.&lt;/i&gt; - Accede a &lt;a href=\"http://protonstatus.com/\"&gt;Estado de Proton&lt;/a&gt; para comprobar el estado de nuestro sistema.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aún no se pudo encontrar una solución&lt;/i&gt; - Contáctanos directamente a través de nuestro &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;formulario de apoyo&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correo electrónico&lt;/a&gt; (support@protonmail.zendesk.com) o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagen no encontrada</string>
@@ -839,7 +839,7 @@ compres más
     <string name="invalid_firebase_api_key_message">La clave de la API de Firebase no es válida. Las notificaciones Push no funcionarán.</string>
     <string name="failed_saving_draft_online">Error al guardar el borrador en línea para el mensaje: \"%s\"</string>
     <string name="failed_draft_does_not_exist">El mensaje \"%s\" no existe.</string>
-    <string name="failed_uploading_attachment_online">Error al adjuntar archivo para el mensaje: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Error con el archivo adjunto para el mensaje: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">No se puede abrir este mensaje mientras está siendo enviado.</string>
     <string name="enable_conversation_mode">Habilitar modo de conversación</string>
     <!-- endregion -->
