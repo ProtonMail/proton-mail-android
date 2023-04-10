@@ -50,7 +50,7 @@
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Αυτός ο φάκελος είναι κενός</string>
     <string name="mailbox_empty_inbox_subtitle">Η τελευταία ενημέρωση έγινε σήμερα</string>
-    <string name="mailbox_empty_spam_subtitle">Ο φάκελος ενοχλητικών είναι κενός</string>
+    <string name="mailbox_empty_spam_subtitle">Ο φάκελος ανεπιθύμητων είναι κενός</string>
     <string name="mailbox_empty_trash_subtitle">Ο φάκελος διαγραμμένων είναι κενός</string>
     <string name="mailbox_empty_state_no_results_found">Δεν βρέθηκαν αποτελέσματα</string>
     <string name="mailbox_empty_state_try_a_different_term">Δοκιμάστε διαφορετικό όρο αναζήτησης</string>
@@ -62,7 +62,7 @@
     <string name="mailbox_updated_just_now">Ενημερώθηκε μόλις τώρα</string>
     <string name="mailbox_updated_recently">Ενημερώθηκε πρόσφατα</string>
     <string name="mailbox_updating">Γίνεται ενημέρωση…</string>
-    <string name="is_proton">Αυτό είναι ένα μήνυμα από το Proton</string>
+    <string name="is_proton">Αυτό είναι ένα μήνυμα από την Proton</string>
     <string name="is_proton_official_badge">Επίσημο</string>
     <!-- endregion -->
     <!-- region Details -->
@@ -113,7 +113,7 @@
     <string name="set_msg_expiration_custom">Προσαρμοσμένο</string>
     <string name="set_msg_expiration_check_description">Αυτό το στοιχείο είναι επιλεγμένο</string>
     <string name="composer_invalid_sender_saving_draft_failed">Η διεύθυνση του αποστολέα δεν είναι έγκυρη. Αλλάξτε την σε μία έγκυρη</string>
-    <string name="composer_invalid_subject_saving_draft_failed">Ο τίτλος δεν είναι έγκυρος.</string>
+    <string name="composer_invalid_subject_saving_draft_failed">Το θέμα δεν είναι έγκυρο.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Θέμα</string>
@@ -146,7 +146,7 @@
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Νέα μηνύματα</string>
     <string name="notification_invalid_sender_sending_failed">Το μήνυμά σας μπορεί να χαρακτηριστεί σαν πρόχειρο. Βεβαιωθείτε ότι το ηλεκτρονικό ταχυδρομείο του αποστολέα στο μήνυμα είναι ενεργό.</string>
-    <string name="notification_invalid_subject_sending_failed">Το μήνυμά σας υπάρχει στο πρόχειρο. Ο τίτλος δεν είναι έγκυρος.</string>
+    <string name="notification_invalid_subject_sending_failed">Το μήνυμά σας υπάρχει ως πρόχειρο. Το θέμα δεν είναι έγκυρο.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
     <string name="contacts_empty_state_no_contacts">Δεν υπάρχουν επαφές</string>
@@ -162,7 +162,7 @@
     <string name="new_user_onboarding_privacy_for_all_headline">Ιδιωτικότητα για όλους</string>
     <string name="new_user_onboarding_privacy_for_all_description">Προσκαλέστε τις επαφές σας στο Proton Mail να απολαύσουν την end-to-end κρυπτογράφηση ή προσθέστε κωδικό πρόσβασης στα μηνύματα που τους στέλνετε.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Τακτοποιημένες</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">Προσαρμόστε τα εισερχόμενα σας χρησιμοποιώντας αρχεία, ετικέτες και κωδικούς χρωμάτων για να δημιουργήσετε τα δικά σας τέλεια εισερχόμενα.</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Αρχειοθετήστε, εφαρμόσετε ετικέτες και χρώματα στα μηνύματά σας, για να δημιουργήσετε τα τέλεια, προσαρμοσμένα εισερχόμενά σας.</string>
     <string name="existing_user_onboarding_new_look_headline">Νέα εμφάνιση, ίδια προστασία</string>
     <string name="existing_user_onboarding_new_look_description">Το κρυπτογραφημένο email σας έχει επανασχεδιαστεί για ευκολότερη χρήση.</string>
     <string name="existing_user_onboarding_new_features_headline">Νέα χαρακτηριστικά</string>
@@ -191,7 +191,7 @@
     <string name="messages_load_failure">Δεν είναι δυνατή η ανάκτηση μηνυμάτων</string>
     <string name="message_details_load_failure">Αδυναμία ανάκτησης λεπτομερειών μηνύματος</string>
     <string name="no_more_messages">Όχι άλλα μηνύματα</string>
-    <string name="no_network_queued">Δεν υπάρχει δίκτυο, το μήνυμα τέθηκε σε σειρά</string>
+    <string name="no_network_queued">Δεν υπάρχει δίκτυο, το μήνυμα τέθηκε σε σειρά αναμονής</string>
     <string name="update_app_title">Απαιτείται ενημέρωση</string>
     <string name="update_app">Η εφαρμογή Proton Mail δεν μπορεί να χρησιμοποιηθεί μέχρι να ενημερωθεί</string>
     <string name="you_are_offline">Βρίσκεστε εκτός σύνδεσης</string>
@@ -234,7 +234,7 @@
     <string name="delete_messages">Διαγραφή μηνυμάτων</string>
     <string name="move_to_archive">Μετακίνηση στα αρχειοθετημένα</string>
     <string name="move_to_trash">Μετακίνηση στον κάδο απορριμμάτων</string>
-    <string name="move_to_spam">Μετακίνηση στα Ενοχλητικά</string>
+    <string name="move_to_spam">Μετακίνηση στα ανεπιθύμητα</string>
     <string name="move_to_inbox">Μετακίνηση στα Εισερχόμενα</string>
     <string name="move_to">Μετακίνηση σε…</string>
     <string name="are_you_sure_empty">Είστε σίγουροι ότι θέλετε να διαγράψετε όλα τα μηνύματα από αυτόν τον φάκελο;</string>
@@ -260,17 +260,15 @@
     <string name="max_labels_exceeded">Το μήνυμα %1$s δεν μπορεί να έχει παραπάνω απο %2$d ετικέτες.</string>
     <string name="max_attachments_reached">Έχει συμπληρωθεί ο μέγιστος αριθμός συνημμένων ανά μήνυμα</string>
     <string name="max_attachments_size_reached">Εξάντληση μέγιστου μεγέθους συνημμένων ανά μήνυμα</string>
-    <string name="expiration_days">%dD</string>
-    <string name="expiration_hours">%dH</string>
-    <string name="expiration_minutes">%dM</string>
+    <string name="expiration_days">%d η</string>
+    <string name="expiration_hours">%d ω</string>
+    <string name="expiration_minutes">%d λ</string>
     <plurals name="attachments">
         <item quantity="one">%d Συνημμένο</item>
         <item quantity="other">%d Συνημμένα</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
-        <item quantity="one">\u0020 %d Συνημμένο
-
-\u0020 %d Συνημμένα</item>
+        <item quantity="one">\u0020 %d Συνημμένο</item>
         <item quantity="other">\u0020 %d Συνημμένα</item>
     </plurals>
     <plurals name="attachments_number">
@@ -303,7 +301,7 @@
     <string name="no_password_specified">Τα χρονικά όρια λήξης μπορούν να οριστούν μόνο σε πλήρως κρυπτογραφημένα μηνύματα. Παρακαλώ ορίστε έναν κωδικό για τους παραλήπτες που δεν χρησιμοποιούν ProtonMail.</string>
     <string name="attachment_limit">Τα συνημμένα είναι περιορισμένα σε %1$s. Συνολικά τα συνημμένα θα πρέπει να είναι %2$s.</string>
     <string name="sending_message">Αποστολή μηνύματος...</string>
-    <string name="sending_message_offline">Εκτός σύνδεσης, τέθηκε σε αναμονή για αποστολή αργότερα...</string>
+    <string name="sending_message_offline">Εκτός σύνδεσης, τέθηκε σε σειρά αναμονή για αποστολή αργότερα...</string>
     <string name="message_sent">Το μήνυμα εστάλη</string>
     <string name="message_failed">Η αποστολή μηνύματος απέτυχε</string>
     <string name="storage_limit">Όρια αποθηκευτικού χώρου</string>
@@ -343,7 +341,7 @@
     <string name="saving_failed_no_conn">Η αποθήκευση απέτυχε, δεν υπάρχει σύνδεση</string>
     <string name="attachment_exists">Το συνημμένο έχει ήδη επισυναφθεί</string>
     <string name="eo_password_not_completed">Το κείμενο κωδικού δεν ολοκληρώθηκε.</string>
-    <string name="delinquency_subtitle">Η πρόσβαση σε αυτόν τον λογαριασμό είναι απενεργοποιημένη, λόγω μη πληρωμής. Παρακαλούμε συνδεθείτε από το proton.me προς εξόφληση του απλήρωτου τιμολόγιού σας.</string>
+    <string name="delinquency_subtitle">Η πρόσβαση σε αυτόν τον λογαριασμό είναι απενεργοποιημένη, λόγω μη πληρωμής. Παρακαλούμε συνδεθείτε από το proton.me προς εξόφληση του απλήρωτου τιμολογίου σας.</string>
     <string name="downloading">Γίνεται λήψη...</string>
     <string name="cant_download_attachment">Δεν ήταν δυνατή η λήψη του συννημένου</string>
     <string-array name="auto_logout_options_array">
@@ -355,7 +353,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Διαγραφή επιλεγμένων ετικετών;</string>
     <string name="delete_folder_confirmation_title">Διαγραφή επιλεγμένων φακέλων;</string>
-    <string name="delete_label_confirmation_message">Τα email που περιέχονται εδώ θα βρεθούν στο &lt;b&gt; Όλα τα μηνύματα &lt;/ b&gt;</string>
+    <string name="delete_label_confirmation_message">Τα email που περιέχονται εδώ θα βρεθούν στο φάκελο &lt;b&gt; Όλα τα μηνύματα &lt;b&gt;</string>
     <string name="pin_invalid">Το PIN δεν είναι έγκυρο, εισάγετε ένα σωστό 4 ψήφιο PIN</string>
     <string name="pin_not_match">Το PIN δεν ταιριάζει</string>
     <string name="new_pin_saved">Αποθηκεύτηκε Νέο PIN</string>
@@ -371,7 +369,7 @@
     <string name="sync_attachments">Συγχρονισμός συνημμένων</string>
     <string name="processing_attachment">Επεξεργασία συνημμένου</string>
     <string name="hyperlink_confirmation_dialog_text_html">Πρόκειται να ξεκινήσει το πρόγραμμα περιήγησης ιστού και να περιηγηθείτε στο &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;;br/Θα θέλατε να συνεχίσετε;</string>
-    <string name="dont_ask_again">Να μην ερωτηθώ ξανά</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Λανθασμένος κωδικός PIN, απομένει %d προσπάθεια</item>
         <item quantity="other">Λανθασμένος κωδικός PIN, απομένουν %d προσπάθειες</item>
@@ -380,7 +378,7 @@
         <item quantity="one">%d προσπάθεια μέχρι την ασφαλή διαγραφή δεδομένων!</item>
         <item quantity="other">%d προσπάθειες μέχρι την ασφαλή διαγραφή δεδομένων!</item>
     </plurals>
-    <string name="logout">Αποσύνδεση</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Θα μεταβείτε στο %s.</string>
     <string name="upgrade">Αναβάθμιση</string>
     <string name="error">Σφάλμα</string>
@@ -408,7 +406,7 @@
         <item>Δόνηση και ήχος</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Δωρεάν</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
         <item>Professional</item>
@@ -416,7 +414,7 @@
     <string name="contact_details">Στοιχεία Επαφής</string>
     <string name="email_type_home">Οικία</string>
     <string name="type_title">Επιλογή Τύπου</string>
-    <string name="sync_local_contacts">Μεταφόρτωση στο ProtonMail</string>
+    <string name="sync_local_contacts">Ανέβασμα στο ProtonMail</string>
     <string name="please_select_only_phone_contacts">Παρακαλώ επιλέξτε μόνο τοπικές επαφές τηλεφώνου</string>
     <string name="contact_vcard_hint_email">Εισαγωγή Email</string>
     <string name="contact_vcard_hint_phone">Εισαγωγή Αριθμού Τηλεφώνου</string>
@@ -434,11 +432,11 @@
     <string name="vcard_other_option_anniversary">Επέτειος</string>
     <string name="vcard_other_option_gender">Φύλο</string>
     <string name="vcard_other_option_role">Ρόλος</string>
-    <string name="vcard_other_option_url">URL</string>
+    <string name="vcard_other_option_url">Διεύθυνση URL</string>
     <string name="contacts_import_contact">Εισαγωγή Επαφής</string>
     <string name="contacts_import">Εισαγωγή</string>
-    <string name="upload_contacts">Μεταφόρτωση Επαφών</string>
-    <string name="uploading_contacts">Μεταφόρτωση επαφών...</string>
+    <string name="upload_contacts">Ανέβασμα Επαφών</string>
+    <string name="uploading_contacts">Ανέβασμα επαφών...</string>
     <string-array name="vcard_option_phone">
         <item>Τηλέφωνο</item>
         <item>Κινητό</item>
@@ -468,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Αποσυνδεδεμένος</string>
-    <string name="logged_out_description">Έχετε αποσυνδεθεί. Παρακαλούμε συνδεθείτε ξανά.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Σφάλμα Εκτύπωσης</string>
     <string name="download_complete">Η λήψη ολοκληρώθηκε</string>
     <string name="message_expires_in">Αυτό το μήνυμα θα λήξει σε %s</string>
@@ -495,7 +493,7 @@
     <string name="saving">Αποθήκευση...</string>
     <string name="update_folder">Ενημέρωση φακέλου</string>
     <string name="spam_score_100">Αυτό το email φαίνεται να προέρχεται από μια διεύθυνση αλληλογραφίας Proton, αλλά δεν προήλθε από το σύστημά μας και απέτυχε στον έλεγχο μας για αυθεντικοποίηση. Μπορεί να πλαστογραφήθηκε ή να προωθήθηκε εσφαλμένα!</string>
-    <string name="spam_score_101">Αυτό το μήνυμα απέτυχε στις απαιτήσεις ταυτοποίησης του τομέα του. Ίσως έχει πλαστογραφηθεί ή προωθηθεί ακατάλληλα!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Αυτό το μήνυμα μπορεί να είναι απόπειρα ηλεκτρονικού \"ψαρέματος\". Ελέγξτε τον αποστολέα και το περιεχόμενο του για να βεβαιωθείτε ότι είναι αυθεντικό. <a href="https://proton.me/blog/prevent-phishing-attacks">ΜΑΘΕΤΕ ΠΕΡΙΣΣΟΤΕΡΑ</a></string>
     <string name="print_from_template">Από: %s</string>
     <string name="print_to_template">Προς: %s </string>
@@ -520,9 +518,7 @@
     <string name="email_empty">Η διεύθυνση E-mail λείπει</string>
     <string name="encrypted_contact_details">Κρυπτογραφημένα στοιχεία επαφής</string>
     <string name="convert_question">Ανέβασμα τοπικών επαφών</string>
-    <string name="convert_question_subtitle">Αυτό θα μεταφορτώσει τις τοπικές επαφές της συσκευή σας στον κατάλογο επαφών ProtonMail. Στη συνέχεια, θα έχετε πρόσβαση σε αυτές τις επαφές από τις υπόλοιπες συσκευές σας μέσω του ProtonMail.
-
-Αυτό θα μεταφορτώσει τις τοπικές επαφές της συσκευή σας στον κατάλογο επαφών του Proton Mail. Στη συνέχεια, θα μπορείτε να έχετε πρόσβαση στις επαφές αυτές στις υπόλοιπες συσκευές σας μέσω του Proton Mail.</string>
+    <string name="convert_question_subtitle">Αυτό θα μεταφορτώσει τις τοπικές επαφές της συσκευή σας στον κατάλογο επαφών του Proton Mail. Στη συνέχεια, θα μπορείτε να έχετε πρόσβαση στις επαφές αυτές στις υπόλοιπες συσκευές σας μέσω του Proton Mail.</string>
     <string name="refresh_contacts">Ανανέωση</string>
     <string name="invalid_email_some_contacts">Η διεύθυνση E-mail δεν είναι έγκυρη για ορισμένες από τις επαφές σας</string>
     <string name="protonmail_contacts">Επαφές Proton Mail</string>
@@ -582,7 +578,7 @@
     <string name="channel_name_account">Λογαριασμός</string>
     <string name="channel_description_account">Κατάσταση λογαριασμού</string>
     <string name="channel_name_ongoing_operations">Τρέχουσες εργασίες</string>
-    <string name="channel_description_ongoing_operations">Εμφανίζει όλες τις τρέχουσες λειτουργίες όπως τη \"νέα
+    <string name="channel_description_ongoing_operations">Εμφανίζει όλες τις τρέχουσες λειτουργίες όπως \"νέα
 		λήψη μηνύματος\" στο παρασκήνιο</string>
     <string name="retrieving_notifications">Ανάκτηση ειδοποιήσεων</string>
     <string name="report_phishing">Αναφορά ηλεκτρονικού «ψαρέματος»</string>
@@ -591,7 +587,7 @@
     <string name="phishing_dialog_message">Η αναφορά ενός μηνύματος ως προσπάθεια ηλεκτρονικού \"ψαρέματος\", θα στείλει το μήνυμα
 		σε εμάς, ώστε να το αναλύσουμε και να βελτιώσουμε τα φίλτρα μας. Αυτό σημαίνει ότι θα 										 
  		μπορέσουμε να δούμε το πλήρες περιεχόμενο όλου του μηνύματος.</string>
-    <string name="phishing_report_send_message_moved_to_spam">Η αναφορά στάλθηκε. Το μήνυμα μετακινήθηκε στα ενοχλητικά.</string>
+    <string name="phishing_report_send_message_moved_to_spam">Η αναφορά στάλθηκε. Το μήνυμα μετακινήθηκε στα ανεπιθύμητα.</string>
     <string name="cannot_send_report_send">Δεν είναι δυνατή η αποστολή αναφοράς</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
@@ -645,8 +641,8 @@
     <string name="fab_add_contact">Προσθήκη νεάς επαφής</string>
     <string name="fab_add_contact_group">Προσθήκη νέας ομάδας επαφών</string>
     <string name="contacts_add_photo_title">Προσθήκη Φωτογραφίας</string>
-    <string name="contacts_add_photo_select_gallery">Επιλογή από Συλλογή</string>
-    <string name="contacts_add_photo_select_camera">Λήψη από Κάμερα</string>
+    <string name="contacts_add_photo_select_gallery">Επιλογή από τη Συλλογή</string>
+    <string name="contacts_add_photo_select_camera">Λήψη με την Κάμερα</string>
     <string name="save_group_validation_error">Παρακαλώ καταχωρίστε ένα όνομα ομάδας</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Το όριο αποθήκευσης επιτεύχθηκε. Δεν είναι δυνατή η αποστολή ή λήψη μηνυμάτων ηλεκτρονικού ταχυδρομείου.
@@ -664,9 +660,9 @@
     <string name="need_storage_permissions_download_attachment_text">Για να κάνετε λήψη συνημμένων πρέπει να επιτρέψετε
          πρόσβαση στο χώρο αποθήκευσης.</string>
     <string name="need_contacts_permissions_text">Για να εισάγετε επαφές πρέπει να επιτρέψετε την πρόσβαση σε επαφές.</string>
-    <string name="need_notification_permissions_to_receive_notifications">Για να λαμβάνετε ειδοποιήσεις από την εφαρμογή, πρέπει να ενεργοποιήσετε τις άδειες για ειδοποιήσεις.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Για να λαμβάνετε ειδοποιήσεις από την εφαρμογή, πρέπει να επιτρέψετε τα δικαιώματα για ειδοποιήσεις.</string>
     <string name="push_notifications_alert_title">Ειδοποιήσεις Push</string>
-    <string name="push_notifications_alert_subtitle">Οι ειδοποιήσεις Push για το Proton Mail δεν λειτουργούν χωρίς ενημερωμένες υπηρεσίες Google Play.</string>
+    <string name="push_notifications_alert_subtitle">Οι ειδοποιήσεις Push για το Proton Mail δεν λειτουργούν χωρίς ενημερωμένες υπηρεσίες Google Play services.</string>
     <string name="app_locked">Η εφαρμογή είναι κλειδωμένη</string>
     <string name="use_pin_instead">Εναλλακτικά, χρησιμοποιήστε PIN</string>
     <!-- strings used for biometric enrollment -->
@@ -697,7 +693,7 @@
     <string name="signature">Υπογραφή</string>
     <string name="mobile_footer">Υποσέλιδο κινητού</string>
     <string name="edit_mobile_footer">Ενεργοποίηση υποσέλιδου κινητού</string>
-    <string name="default_mobile_footer">Στάλθηκε από Proton Mail mobile</string>
+    <string name="default_mobile_footer">Στάλθηκε από το Proton Mail mobile</string>
     <string name="mobile_footer_is_premium">Η αλλαγή του Υποσέλιδου σε Κινητό επιτρέπεται μόνο σε χρήστες επί Πληρωμή</string>
     <string name="mobile_footer_info">Αυτό το υποσέλιδο προστέθηκε μετά την υπογραφή σας</string>
     <!-- region Snooze Settings -->
@@ -750,7 +746,7 @@
     <string name="mailbox">Γραμματοκιβώτιο</string>
     <string name="privacy">Ιδιωτικότητα</string>
     <string name="auto_download_messages_title">Αυτόματη λήψη μηνυμάτων</string>
-    <string name="auto_download_messages_subtitle">Όταν αυτή η επιλογή είναι ενεργοποιημένη, τα αρχεία μηνυμάτων θα κατεβάζει αυτόματα κάθε φορά που θα λάβετε μια νέα ειδοποίηση μέσω E-mail (αυτό θα καταναλώνει περισσότερα δεδομένα). Εάν η επιλογή είναι απενεργοποιημένη, τα αρχεία μηνυμάτων θα μεταφορτωθούν μόνο όταν ανοίγετε ένα E-mail. (Σημείωση: με οποιαδήποτε από τις επιλογές, εάν διαγράψετε την προσωρινή μνήμη ή αποσυνδεθείτε, δεν θα μπορείτε να διαβάσετε τα μηνύματα όταν είστε εκτός σύνδεσης.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Συγχρονισμός στο παρασκήνιο</string>
     <string name="settings_auto_show_images">Αυτόματη Εμφάνιση Απομακρυσμένων Εικόνων</string>
     <string name="settings_auto_show_embedded_images">Αυτόματη Εμφάνιση Ενσωματωμένων Εικόνων</string>
@@ -768,8 +764,8 @@
     <string name="swipe_action_trash_short">Μετακίνηση στα Διαγραμμένα</string>
     <string name="swipe_action_star">Το μήνυμα με Αστέρι ενημερώθηκε</string>
     <string name="swipe_action_star_short">Ενημέρωση αστεριού</string>
-    <string name="swipe_action_spam">Το μήνυμα σημάνθηκε ως ενοχλητικό</string>
-    <string name="swipe_action_spam_short">Ενοχλητικά</string>
+    <string name="swipe_action_spam">Το μήνυμα σημάνθηκε ως ανεπιθύμητο</string>
+    <string name="swipe_action_spam_short">Ανεπιθύμητα</string>
     <string name="swipe_action_archive">Το μήνυμα αρχειοθετήθηκε</string>
     <string name="swipe_action_archive_short">Αρχειοθέτηση</string>
     <string name="swipe_action_mark_read">Το μήνυμα επισημάνθηκε ως αναγνωσμένο</string>
@@ -800,7 +796,7 @@
     <string name="custom_language_dialog_title">Επιλέξτε γλώσσα εφαρμογής</string>
     <string name="auto_detect">Αυτόματος εντοπισμός</string>
     <string name="combined_contacts">Συνδυασμένες Επαφές</string>
-    <string name="turn_combined_contacts_on">Ενεργοποιήστε αυτή τη λειτουργία για να συμπληρώνετε αυτόματα τα E-mail χρησιμοποιώντας επαφές από όλους τους συνδεδεμένους λογαριασμούς σας.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Τοπική προσωρινή μνήμη</string>
     <string name="cache_cleared">Η τοπική προσωρινή μνήμη ανανεώνεται</string>
     <string name="empty_data">Εκκαθάριση δεδομένων</string>
@@ -819,7 +815,7 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Κοινά προβλήματα σύνδεσης και λύσεις</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Δεν υπάρχει σύνδεση στο διαδύκτιο&lt;/i&gt; - Βεβαιωθείτε ότι η σύνδεσή σας στο διαδίκτυο λειτουργεί.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Δεν υπάρχει σύνδεση στο διαδίκτυο&lt;/i&gt; - Βεβαιωθείτε ότι η σύνδεσή σας στο διαδίκτυο λειτουργεί.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Πρόβλημα Παρόχου Internet (ISP)&lt;/i&gt; - Δοκιμάστε να συνδεθείτε στο Proton από διαφορετικό δίκτυο (ή χρησιμοποιήστε το &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; ή &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Η χώρα σας ενδέχεται να μπλοκάρει την πρόσβαση στο Proton. Δοκιμάστε το &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (ή οποιοδήποτε άλλο VPN) ή &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; για να αποκτήστε πρόσβαση στο Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Εμπλοκή Antivirus&lt;/i&gt; - Απενεργοποιήστε προσωρινά ή καταργήστε το λογισμικό προστασίας από ιούς.

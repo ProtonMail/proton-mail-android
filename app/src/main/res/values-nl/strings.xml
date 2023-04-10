@@ -66,7 +66,7 @@
     <string name="is_proton_official_badge">Officieel</string>
     <!-- endregion -->
     <!-- region Details -->
-    <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_title">Openen in Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Veilig versleutelde agenda</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton Calender pictogram</string>
     <string name="details_play_store_error">Kan Play Store niet openen</string>
@@ -92,7 +92,7 @@
     <string name="composer_quote_sender_header">Op %s, schreef %s &lt;%s&gt;:</string>
     <string name="set_msg_password_title">Wachtwoord instellen</string>
     <string name="set_msg_password_info">Stel een wachtwoord in om dit bericht te versleutelen voor niet-Proton Mail gebruikers. <a href="https://proton.me/support/password-protected-emails">Meer informatie</a></string>
-    <string name="set_msg_password_info_icon_description">Info</string>
+    <string name="set_msg_password_info_icon_description">Informatie</string>
     <string name="set_msg_password_msg_password_title">Wachtwoord van bericht</string>
     <string name="set_msg_password_msg_password_hint">4 tot 21 tekens lang</string>
     <string name="set_msg_password_repeat_password_title">Wachtwoord herhalen</string>
@@ -260,9 +260,9 @@
     <string name="max_labels_exceeded">Het bericht %1$s kan niet meer dan %2$d labels hebben.</string>
     <string name="max_attachments_reached">Maximum aantal bijlagen per bericht is bereikt.</string>
     <string name="max_attachments_size_reached">Maximale grootte van bijlagen per bericht is bereikt</string>
-    <string name="expiration_days">%dD</string>
-    <string name="expiration_hours">%du</string>
-    <string name="expiration_minutes">%dM</string>
+    <string name="expiration_days">%d d</string>
+    <string name="expiration_hours">%d u</string>
+    <string name="expiration_minutes">%d min</string>
     <plurals name="attachments">
         <item quantity="one">%d Bijlage</item>
         <item quantity="other">%d Bijlagen</item>
@@ -369,7 +369,7 @@
     <string name="sync_attachments">Bijlagen synchroniseren</string>
     <string name="processing_attachment">Bijlage verwerken</string>
     <string name="hyperlink_confirmation_dialog_text_html">U staat op het punt om de webbrowser te starten en te navigeren naar:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Wilt u doorgaan?</string>
-    <string name="dont_ask_again">Niet opnieuw vragen</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Onjuiste PIN-code, %d poging resterend</item>
         <item quantity="other">Onjuiste PIN-code, %d pogingen resterend</item>
@@ -378,9 +378,9 @@
         <item quantity="one">%d poging tot het vernietigen van alle gegevens!</item>
         <item quantity="other">%d pogingen tot het vernietigen van alle gegevens!</item>
     </plurals>
-    <string name="logout">Afmelden</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Weet u zeker dat u wilt uitloggen met huidige account en verder wilt gaan met %s?</string>
-    <string name="upgrade">Upgrade</string>
+    <string name="upgrade">Upgraden</string>
     <string name="error">Fout</string>
     <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
@@ -406,10 +406,10 @@
         <item>Trilling en geluid</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Gratis</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
-        <item>Professioneel</item>
+        <item>Professional</item>
     </string-array>
     <string name="contact_details">Contactgegevens</string>
     <string name="email_type_home">Thuis</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Uitgelogd</string>
-    <string name="logged_out_description">U bent uitgelogd. Log opnieuw in.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Afdrukfout</string>
     <string name="download_complete">Download voltooid</string>
     <string name="message_expires_in">Dit bericht verloopt over %s</string>
@@ -493,12 +493,12 @@
     <string name="saving">Opslaan...</string>
     <string name="update_folder">Map bijwerken</string>
     <string name="spam_score_100">Deze e-mail lijkt afkomstig van een Proton Mail-adres maar kwam van buiten ons systeem en voldoet niet aan onze authenticatie-vereisten. Mogelijk werd deze gespoofed of onjuist doorgestuurd!</string>
-    <string name="spam_score_101">Deze e-mail voldoet niet aan de authenticatievereisten van de domainnaam. Mogelijk is de e-mail vals of onjuist doorgestuurd!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Dit bericht kan een poging tot phishing zijn. Controleer de afzender en de inhoud om u ervan te verzekeren dat ze legitiem zijn. <a href="https://proton.me/blog/prevent-phishing-attacks">MEER INFORMATIE</a></string>
     <string name="print_from_template">Van: %s</string>
     <string name="print_to_template">Aan: %s;  </string>
-    <string name="print_cc_template">CC: %s;  </string>
-    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="print_cc_template">Cc: %s;  </string>
+    <string name="print_bcc_template">Bcc: %s;  </string>
     <string name="address">Adres:</string>
     <string name="address_street">Straat</string>
     <string name="address_extended_street">Straat (uitgebreid)</string>
@@ -513,7 +513,7 @@
     <string name="empty_recipients">(Geen geadresseerden)</string>
     <string name="contacts_unknown">Onbekend</string>
     <string name="learn_more"><u>Meer informatie</u></string>
-    <string name="info">Info</string>
+    <string name="info">Informatie</string>
     <string name="error_can_not_send_from_this_address">Upgrade naar een betaald abonnement om te verzenden vanaf uw adres %s.</string>
     <string name="email_empty">E-mailadres ontbreekt</string>
     <string name="encrypted_contact_details">Versleutelde contactpersoonsgegevens</string>
@@ -589,7 +589,7 @@
 		om de volledige inhoud van de e-mail te zien.</string>
     <string name="phishing_report_send_message_moved_to_spam">Rapport verzonden. Bericht naar spam verplaatst.</string>
     <string name="cannot_send_report_send">Kan rapport niet versturen</string>
-    <string name="title_activity_contact_group_details">Activiteit van contactgroepen</string>
+    <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Foto toevoegen</string>
     <string name="contact_display_name">Weergavenaam</string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Mailbox</string>
     <string name="privacy">Privacy</string>
     <string name="auto_download_messages_title">Automatisch berichten downloaden</string>
-    <string name="auto_download_messages_subtitle">Wanneer deze optie is ingeschakeld, worden de berichten automatisch gedownload elke keer dat u een nieuwe e-mail melding ontvangt (dit zal meer gegevens verbruiken). Als deze optie niet is ingeschakeld, worden de berichten alleen gedownload wanneer u een e-mail opent. (Let op: met elke optie, als u de cache verwijdert of uitlogt, kunt u de berichten niet lezen terwijl u offline bent.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Achtergrondsynchronisatie</string>
     <string name="settings_auto_show_images">Automatisch externe afbeeldingen weergeven</string>
     <string name="settings_auto_show_embedded_images">Automatisch ingesloten afbeeldingen weergeven</string>
@@ -796,7 +796,7 @@
     <string name="custom_language_dialog_title">Selecteer de taal van de app</string>
     <string name="auto_detect">Automatisch detecteren</string>
     <string name="combined_contacts">Gecombineerde contacten</string>
-    <string name="turn_combined_contacts_on">Schakel deze functie in om e-mailadressen automatisch aan te vullen met behulp van contacten van al uw ingelogde accounts.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Lokale cache</string>
     <string name="cache_cleared">Lokale cache is ververst</string>
     <string name="empty_data">Gegevens wissen</string>

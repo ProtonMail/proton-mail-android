@@ -259,8 +259,8 @@
     <string name="max_labels_exceeded">邮件 %1$s 的标签数不能超过 %2$d 个。</string>
     <string name="max_attachments_reached">附件数量已达上限</string>
     <string name="max_attachments_size_reached">单封邮件的附件总大小已达上限</string>
-    <string name="expiration_days">%d天</string>
-    <string name="expiration_hours">%d小时</string>
+    <string name="expiration_days">%d 天</string>
+    <string name="expiration_hours">%d 小时</string>
     <string name="expiration_minutes">%d分钟</string>
     <plurals name="attachments">
         <item quantity="other">%d 个附件</item>
@@ -365,14 +365,14 @@
     <string name="sync_attachments">正在同步附件</string>
     <string name="processing_attachment">正在处理附件</string>
     <string name="hyperlink_confirmation_dialog_text_html">您即将在浏览器中打开：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;确定要继续吗？</string>
-    <string name="dont_ask_again">Do not ask again</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">口令错误，还可尝试 %d 次</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">若再输错 %d 次数据将被清除！</item>
     </plurals>
-    <string name="logout">退出账户</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">确定退出当前账户并转到 %s 吗？</string>
     <string name="upgrade">升级</string>
     <string name="error">错误</string>
@@ -399,10 +399,10 @@
         <item>声音提示并振动</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>免费版</item>
-        <item>增强版</item>
-        <item>尊享版</item>
-        <item>专业版</item>
+        <item>Free</item>
+        <item>Plus</item>
+        <item>Visionary</item>
+        <item>Professional</item>
     </string-array>
     <string name="contact_details">联系人详情</string>
     <string name="email_type_home">家庭</string>
@@ -459,8 +459,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">退出账户</string>
-    <string name="logged_out_description">您已退出，请重新登录。</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">打印失败</string>
     <string name="download_complete">下载完成</string>
     <string name="message_expires_in">此邮件将在%s后过期</string>
@@ -486,7 +486,7 @@
     <string name="saving">保存中...</string>
     <string name="update_folder">更改文件夹</string>
     <string name="spam_score_100">这封邮件看似来自 Proton Mail 地址，但却是从我们的系统外部发来的，并且没能通过我们的验证。这可能是欺诈邮件，也可能是投递过程出现了问题。</string>
-    <string name="spam_score_101">不能确定此邮件是否来自该域名，这可能是欺诈邮件，也可能是投递过程出现了问题。</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">此邮件可能具有欺诈性质，请检查发件人身份和邮件内容，确认信息真实性。<a href="https://proton.me/blog/prevent-phishing-attacks">了解详情</a></string>
     <string name="print_from_template">发件人：%s</string>
     <string name="print_to_template">收件人：%s;</string>
@@ -725,7 +725,7 @@
     <string name="mailbox">邮箱</string>
     <string name="privacy">隐私</string>
     <string name="auto_download_messages_title">自动下载邮件</string>
-    <string name="auto_download_messages_subtitle">开启后新邮件内容将在后台自动下载（会耗费更多流量），否则打开邮件时才会开始下载。（注意：无论是否开启此选项，清理缓存或退出账户后都不能在离线状态下查看邮件内容。）</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">后台同步</string>
     <string name="settings_auto_show_images">自动显示外链图像</string>
     <string name="settings_auto_show_embedded_images">自动显示嵌入图像</string>
@@ -774,7 +774,7 @@
     <string name="custom_language_dialog_title">选择语言</string>
     <string name="auto_detect">自动检测</string>
     <string name="combined_contacts">共用通讯录</string>
-    <string name="turn_combined_contacts_on">开启后您登录的所有账户通讯录中的邮箱都可自动补全。</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">本机缓存</string>
     <string name="cache_cleared">本机缓存已清理</string>
     <string name="empty_data">清除数据</string>

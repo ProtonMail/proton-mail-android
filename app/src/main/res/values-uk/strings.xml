@@ -65,7 +65,7 @@
     <string name="mailbox_updated_recently">Недавно оновлено</string>
     <string name="mailbox_updating">Оновлення…</string>
     <string name="is_proton">Це повідомлення Proton</string>
-    <string name="is_proton_official_badge">Офіційне</string>
+    <string name="is_proton_official_badge">Офіційний</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Відкрити у Proton Calendar</string>
@@ -262,9 +262,9 @@
     <string name="max_labels_exceeded">Повідомлення %1$s не може мати більше %2$d міток.</string>
     <string name="max_attachments_reached">Досягнуто максимальну кількість вкладень для одного повідомлення</string>
     <string name="max_attachments_size_reached">Досягнуто максимальний розмір вкладень для повідомлення</string>
-    <string name="expiration_days">%dД</string>
-    <string name="expiration_hours">%dГОД</string>
-    <string name="expiration_minutes">%dХВ</string>
+    <string name="expiration_days">%d д</string>
+    <string name="expiration_hours">%d год</string>
+    <string name="expiration_minutes">%d хв</string>
     <plurals name="attachments">
         <item quantity="one">%d вкладення</item>
         <item quantity="few">%d вкладення</item>
@@ -377,7 +377,7 @@
     <string name="sync_attachments">Синхронізація вкладень</string>
     <string name="processing_attachment">Обробка вкладення</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ви збираєтеся запустити браузер і перейти до:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Хочете продовжити?</string>
-    <string name="dont_ask_again">Не питати знову</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Неправильний ПІН. Залишилась %d спроба</item>
         <item quantity="few">Неправильний ПІН. Залишилось %d спроби</item>
@@ -390,7 +390,7 @@
         <item quantity="many">%d спроб до стирання захищених даних!</item>
         <item quantity="other">%d спроб до стирання захищених даних!</item>
     </plurals>
-    <string name="logout">Вихiд</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Ви перемкнетеся на %s.</string>
     <string name="upgrade">Покращити</string>
     <string name="error">Помилка</string>
@@ -420,7 +420,7 @@
         <item>Вібрація та звук</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Безплатний</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
         <item>Professional</item>
@@ -446,7 +446,7 @@
     <string name="vcard_other_option_anniversary">Річниця</string>
     <string name="vcard_other_option_gender">Стать</string>
     <string name="vcard_other_option_role">Роль</string>
-    <string name="vcard_other_option_url">URL</string>
+    <string name="vcard_other_option_url">URL-адреса</string>
     <string name="contacts_import_contact">Імпортувати контакт</string>
     <string name="contacts_import">Імпорт</string>
     <string name="upload_contacts">Вивантажити контакти</string>
@@ -480,8 +480,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Ви вийшли</string>
-    <string name="logged_out_description">Ви вийшли з системи. Будь ласка, увійдіть знову.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Помилка друку</string>
     <string name="download_complete">Завантаження завершено</string>
     <string name="message_expires_in">Термін дії цього повідомлення завершується через %s</string>
@@ -507,7 +507,7 @@
     <string name="saving">Збереження...</string>
     <string name="update_folder">Оновити теку</string>
     <string name="spam_score_100">Схоже, цей лист надіслано з адреси Proton Mail, але він надійшов з-за меж нашої системи та не відповідає нашим вимогам перевірки. Він може бути підроблений або неправильно пересланий!</string>
-    <string name="spam_score_101">Цей лист не пройшов вимоги перевірки свого домену. Він міг бути підроблений або неправильно пересланий!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Це повідомлення може бути спробою шахрайства. Перевірте відправника і вміст, щоб переконатися в його справжності. <a href="https://proton.me/blog/prevent-phishing-attacks">ДОКЛАДНІШЕ</a></string>
     <string name="print_from_template">Від: %s</string>
     <string name="print_to_template">Кому: %s;  </string>
@@ -772,7 +772,7 @@
     <string name="mailbox">Поштова скринька</string>
     <string name="privacy">Приватність</string>
     <string name="auto_download_messages_title">Автозавантаження повідомлень</string>
-    <string name="auto_download_messages_subtitle">Коли цей параметр увімкнено, зміст повідомлень автоматично завантажуватиметься щоразу, коли ви отримаєте нове повідомлення електронною поштою (споживатиметься більше даних). Якщо цей параметр вимкнено, зміст повідомлень завантажуватиметься лише якщо ви відкриєте лист. (Примітка: якщо очистите кеш або вийдете, то не зможете прочитати вміст в автономному режимі.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Фонова синхронізація</string>
     <string name="settings_auto_show_images">Показувати зовнішні зображення</string>
     <string name="settings_auto_show_embedded_images">Показувати вбудовані зображення</string>
@@ -824,7 +824,7 @@
     <string name="custom_language_dialog_title">Вибір мови програми</string>
     <string name="auto_detect">Автовизначення</string>
     <string name="combined_contacts">Об\'єднані контакти</string>
-    <string name="turn_combined_contacts_on">Увімкніть цю функцію для автозавершення адрес з використанням контактів з усіх ваших під\'єднаних облікових записів.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Локальний кеш</string>
     <string name="cache_cleared">Локальний кеш оновлено</string>
     <string name="empty_data">Очистити дані</string>

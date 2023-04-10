@@ -80,7 +80,7 @@
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc：</string>
-    <string name="composer_cc">Cc:</string>
+    <string name="composer_cc">CC:</string>
     <string name="composer_compose_email">Eメールの作成</string>
     <string name="composer_from">差出人:</string>
     <string name="composer_subject">件名:</string>
@@ -241,8 +241,8 @@
     <string name="selected">選択済</string>
     <string name="no_labels">ラベルはありません。</string>
     <string name="to">宛先</string>
-    <string name="cc">Cc</string>
-    <string name="bcc">Bcc</string>
+    <string name="cc">CC</string>
+    <string name="bcc">BCC</string>
     <string name="to_prefix">宛先：</string>
     <string name="reply">返信</string>
     <string name="reply_all">全員に返信</string>
@@ -365,14 +365,14 @@
     <string name="sync_attachments">添付ファイルを同期しています...</string>
     <string name="processing_attachment">添付ファイルの処理中</string>
     <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次のURLを開こうとしています：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
-    <string name="dont_ask_again">今後表示しない</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PINコードが間違っています。 あと%d回試すことができます。</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">完全なデータ抹消まで残り%d回です。</item>
     </plurals>
-    <string name="logout">ログアウト</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">%s に切り替えます。</string>
     <string name="upgrade">アップグレード</string>
     <string name="error">エラー</string>
@@ -399,7 +399,7 @@
         <item>振動と音</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>無料</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
         <item>Professional</item>
@@ -459,8 +459,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">ログアウトしました。</string>
-    <string name="logged_out_description">ログアウトされています。もう一度ログインをしてください。</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">印刷エラー</string>
     <string name="download_complete">ダウンロード完了</string>
     <string name="message_expires_in">このメッセージは %s後に失効します</string>
@@ -486,12 +486,12 @@
     <string name="saving">保存中...</string>
     <string name="update_folder">フォルダーを更新</string>
     <string name="spam_score_100">このメールは Proton Mail のアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
-    <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。差出人と内容を疑い、正当なものかどうかを確認してください。 <a href="https://proton.me/blog/prevent-phishing-attacks">詳細</a></string>
     <string name="print_from_template">差出人: %s</string>
     <string name="print_to_template">宛先: %s;  </string>
-    <string name="print_cc_template">CC: %s;  </string>
-    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="print_cc_template">CC: %s;</string>
+    <string name="print_bcc_template">BCC: %s;</string>
     <string name="address">アドレス: </string>
     <string name="address_street">番地</string>
     <string name="address_extended_street">通り (広範囲)</string>
@@ -640,7 +640,7 @@
     <string name="need_storage_permissions_add_attachment_text">添付ファイルを追加するには、ストレージへのアクセスを許可する必要があります。</string>
     <string name="need_storage_permissions_download_attachment_text">添付ファイルをダウンロードするには、ストレージへのアクセスを許可する必要があります。</string>
     <string name="need_contacts_permissions_text">この連絡先をインポートするには、連絡先へのアクセスを許可する必要があります。</string>
-    <string name="need_notification_permissions_to_receive_notifications">In order to receive notifications from the app you need to enable permissions for notifications.</string>
+    <string name="need_notification_permissions_to_receive_notifications">アプリから通知を受け取るには、通知の受信を有効にする必要があります。</string>
     <string name="push_notifications_alert_title">プッシュ通知警告</string>
     <string name="push_notifications_alert_subtitle">Proton Mail のプッシュ通知は、Google Play サービスを更新しないと機能しません。</string>
     <string name="app_locked">アプリはロックされています。</string>
@@ -725,7 +725,7 @@
     <string name="mailbox">受信トレイ</string>
     <string name="privacy">プライバシー</string>
     <string name="auto_download_messages_title">メッセージの自動ダウンロード</string>
-    <string name="auto_download_messages_subtitle">このオプションが有効な場合、メールを受信するたびに、本文が自動的にダウンロードされます（より多くの通信量を消費します）。このオプションが無効な場合、メールを開いたときにのみ本文がダウンロードされます。（注: どちらのオプションでも、キャッシュをクリアするかログアウトすると、オフライン中にメッセージ本文を読むことができなくなります）</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">バックグラウンド同期</string>
     <string name="settings_auto_show_images">外部画像の自動表示</string>
     <string name="settings_auto_show_embedded_images">埋め込み画像の自動表示</string>
@@ -774,7 +774,7 @@
     <string name="custom_language_dialog_title">アプリの言語を選択してください</string>
     <string name="auto_detect">自動検出</string>
     <string name="combined_contacts">連絡先の相互利用</string>
-    <string name="turn_combined_contacts_on">この機能を有効にすると、ログイン済みアカウントの連絡先をメールアドレスの自動補完に利用することができます。</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">ローカルキャッシュ</string>
     <string name="cache_cleared">端末のキャッシュが更新されました。</string>
     <string name="empty_data">データをクリア</string>

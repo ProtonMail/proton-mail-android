@@ -261,9 +261,9 @@
     <string name="max_labels_exceeded">Poruka %1$s ne može imati više od %2$d oznaka.</string>
     <string name="max_attachments_reached">Dosegnut je maksimalan broj privitaka po poruci</string>
     <string name="max_attachments_size_reached">Dosegnuta je maksimalna veličina privitaka po poruci</string>
-    <string name="expiration_days">%dD</string>
-    <string name="expiration_hours">%dH</string>
-    <string name="expiration_minutes">%dM</string>
+    <string name="expiration_days">%d d</string>
+    <string name="expiration_hours">%d s</string>
+    <string name="expiration_minutes">%d min</string>
     <plurals name="attachments">
         <item quantity="one">%d privitak</item>
         <item quantity="few">%d privitka</item>
@@ -373,7 +373,7 @@
     <string name="sync_attachments">Sinkronizacija privitaka</string>
     <string name="processing_attachment">Obrada privitka</string>
     <string name="hyperlink_confirmation_dialog_text_html">Spremate se pokreniti web preglednik i ići na::&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Želite li nastaviti?</string>
-    <string name="dont_ask_again">Ne pitaj ponovno</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Neispravan PIN, %d pokušaj ostao</item>
         <item quantity="few">Neispravan PIN, %d pokušaja ostalo</item>
@@ -384,7 +384,7 @@
         <item quantity="few">%d pokušaja do sigurnog brisanja podataka!</item>
         <item quantity="other">%d pokušaja do sigurnog brisanja podataka!</item>
     </plurals>
-    <string name="logout">Odjava</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Biti će te prebačeni na %s.</string>
     <string name="upgrade">Nadogradnja</string>
     <string name="error">Pogreška</string>
@@ -473,8 +473,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Odjavljen</string>
-    <string name="logged_out_description">Odjavili ste se. Molimo prijavite se ponovno.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Pogreška u ispisu</string>
     <string name="download_complete">Preuzimanje završeno</string>
     <string name="message_expires_in">Ova poruka istječe za %s</string>
@@ -500,7 +500,7 @@
     <string name="saving">Spremanje...</string>
     <string name="update_folder">Ažuriraj mapu</string>
     <string name="spam_score_100">Ova poruka e-pošte izgleda kao da je od ProtonMail adrese, ali je došla izvan našeg sustava i nije ispunila naše zahtjeve autentikacije. Može biti lažna ili nepropisno proslijeđena!</string>
-    <string name="spam_score_101">Ova poruka e-pošte nije ispunila zahtjeve za provjeru autentičnosti svoje domene. Može biti lažna ili nepropisno proslijeđena!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Ova poruka može biti pokušaj krađe identiteta. Provjerite pošiljatelja i sadržaj kako biste bili sigurni da su legitimni. <a href="https://proton.me/blog/prevent-phishing-attacks">SAZNAJTE VIŠE</a></string>
     <string name="print_from_template">Od: %s</string>
     <string name="print_to_template">To: %s;  </string>
@@ -759,7 +759,7 @@
     <string name="mailbox">Poštanski sandučić</string>
     <string name="privacy">Privatnost</string>
     <string name="auto_download_messages_title">Automatsko preuzimanje poruka</string>
-    <string name="auto_download_messages_subtitle">Kada je ova opcija omogućena, tijela poruka bit će automatski preuzeta svaki put kada primite obavijest o novoj poruci e-pošte (to će trošiti više podataka). Ako ova opcija nije omogućena, tijela poruka bit će preuzeta samo kada otvorite e-poštu. (Napomena: kod obje opcije, ako očistite predmemoriju ili se odjavite, nećete moći čitati tijela poruke dok ste izvan mreže.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Sinkronizacija u pozadini</string>
     <string name="settings_auto_show_images">Automatsko prikazivanje udaljenih slika</string>
     <string name="settings_auto_show_embedded_images">Automatsko prikazivanje ugrađenih slika</string>
@@ -810,7 +810,7 @@
     <string name="custom_language_dialog_title">Odaberite jezik za aplikaciju</string>
     <string name="auto_detect">Automatsko otkrivanje</string>
     <string name="combined_contacts">Kombinirani kontakti</string>
-    <string name="turn_combined_contacts_on">Uključite ovu značajku za automatsko dovršavanje adresa e-pošte pomoću kontakata sa svih vaših prijavljenih računa.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Lokalna predmemorija</string>
     <string name="cache_cleared">Lokalna predmemorija je osvježena</string>
     <string name="empty_data">Obriši podatke</string>

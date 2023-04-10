@@ -19,7 +19,7 @@
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">Proton tölvupóstur %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Bæta við möppu</string>
     <string name="x_add_label">Bæta við merkingu</string>
     <string name="x_days">Dagar</string>
@@ -180,7 +180,7 @@
     <string name="snackbar_action_discard">Henda</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">Proton tölvupóstur</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Skrá út</string>
     <string name="sign_out_question">Ertu viss um að þú viljir skrá þig út?</string>
     <string name="processing_request">Beiðnin þín er þegar í vinnslu</string>
@@ -260,9 +260,9 @@
     <string name="max_labels_exceeded">Skilaboðin %1$s geta ekki verið með fleiri en %2$d merki.</string>
     <string name="max_attachments_reached">Hámarksfjölda viðhengja á hver skilaboð hefur verið náð.</string>
     <string name="max_attachments_size_reached">Hámarksstærð viðhengja á hver skilaboð hefur verið náð</string>
-    <string name="expiration_days">%dD</string>
-    <string name="expiration_hours">%dK</string>
-    <string name="expiration_minutes">%dM</string>
+    <string name="expiration_days">%d D</string>
+    <string name="expiration_hours">%d k</string>
+    <string name="expiration_minutes">%d Mín</string>
     <plurals name="attachments">
         <item quantity="one">%d viðhengi</item>
         <item quantity="other">%d viðhengi</item>
@@ -369,7 +369,7 @@
     <string name="sync_attachments">Samstilli viðhengi</string>
     <string name="processing_attachment">Vinn með viðhengi</string>
     <string name="hyperlink_confirmation_dialog_text_html">Þú ert í þann mund að fara að ræsa vafrann og fara á:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Viltu halda áfram?</string>
-    <string name="dont_ask_again">Ekki spyrja aftur</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Rangt PIN-númer, %d tilraun eftir</item>
         <item quantity="other">Rangt PIN-númer, %d tilraunir eftir</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d tilraun eftir þar til tækið verður hreinsað í öryggisskyni!</item>
         <item quantity="other">%d tilraunir eftir þar til tækið verður hreinsað í öryggisskyni!</item>
     </plurals>
-    <string name="logout">Útskráning</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Þér mun verða skipt yfir á %s.</string>
     <string name="upgrade">Uppfæra</string>
     <string name="error">Villa</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Skráður út</string>
-    <string name="logged_out_description">Þú hefur verið skráð(ur) út. Skráðu þig aftur inn.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Villa við prentun</string>
     <string name="download_complete">Niðurhali lokið</string>
     <string name="message_expires_in">Þessi skilaboð renna út eftir %s</string>
@@ -493,7 +493,7 @@
     <string name="saving">Vista...</string>
     <string name="update_folder">Uppfæra möppu</string>
     <string name="spam_score_100">Þessi tölvupóstur lítur út eins og hann komi frá Proton tölvupóst netfangi en kom í rauninni utan kerfisins og stóðst ekki auðkenningarkröfur okkar. Hann gæti verið falsaður eða áframsendur á rangan hátt!</string>
-    <string name="spam_score_101">Þessi tölvupóstur féll á auðkenningarprófunum lénsins. Hann gæti verið áframsendur á rangan hátt eða falsaður!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Þessi skilaboð gætu verið tilraun til gagnaveiði (phishing). Skoðaðu vel sendandann og efni þeirra til að ganga úr skugga um gildi þeirra. <a href="https://proton.me/blog/prevent-phishing-attacks">SKOÐA NÁNAR</a></string>
     <string name="print_from_template">Frá: %s</string>
     <string name="print_to_template">Til: %s;  </string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Pósthólf</string>
     <string name="privacy">Gagnaleynd</string>
     <string name="auto_download_messages_title">Sækja skilaboð sjálfvirkt</string>
-    <string name="auto_download_messages_subtitle">Þegar þessi möguleiki er virkur, mun meginmál skilaboða verða sótt sjálfkrafa í hvert skipti sem þú færð tilkynningu um nýjan póst (þetta krefst meira gagnamagns). Ef þessi möguleiki er ekki virkur, verður meginmál skilaboða aðeins verða sótt þegar þú opnar viðkomandi tölvupóst. (Athugaðu: með báðum valkostunum, ef þú hreinsar skyndiminnið eða skráir þig út, muntu ekki geta lesið meginmál skilaboða þegar þú ert án tengingar við netið.)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Samstilling í bakgrunni</string>
     <string name="settings_auto_show_images">Birta sjálfvirkt fjartengdar myndir</string>
     <string name="settings_auto_show_embedded_images">Birta sjálfvirkt ívafðar myndir</string>
@@ -796,7 +796,7 @@
     <string name="custom_language_dialog_title">Veldu tungumál forrits</string>
     <string name="auto_detect">Finna sjálfvirkt</string>
     <string name="combined_contacts">Sameinaðir tengiliðir</string>
-    <string name="turn_combined_contacts_on">Kveiktu á þessum eiginleika til að sjálfvirk klárun tölvupóstfanga noti tengiliði úr öllum þeim notendaaðgöngum sem þú ert skráður inn í.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Skyndiminni á tækinu</string>
     <string name="cache_cleared">Endurlas skyndiminni á tækinu</string>
     <string name="empty_data">Hreinsa gögn</string>

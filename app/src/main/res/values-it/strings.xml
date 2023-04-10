@@ -81,7 +81,7 @@
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Ccn:</string>
-    <string name="composer_cc">Cc:</string>
+    <string name="composer_cc">CC:</string>
     <string name="composer_compose_email">Componi email</string>
     <string name="composer_from">Da:</string>
     <string name="composer_subject">Oggetto:</string>
@@ -92,7 +92,7 @@
     <string name="composer_quote_sender_header">Il %s, %s &lt; %s&gt; ha scritto:</string>
     <string name="set_msg_password_title">Imposta password</string>
     <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per gli utenti che non usano Proton mail. <a href="https://proton.me/support/password-protected-emails">Per saperne di più</a></string>
-    <string name="set_msg_password_info_icon_description">Info</string>
+    <string name="set_msg_password_info_icon_description">Informazioni</string>
     <string name="set_msg_password_msg_password_title">Password messaggio</string>
     <string name="set_msg_password_msg_password_hint">da 4 a 21 caratteri</string>
     <string name="set_msg_password_repeat_password_title">Ripeti la password</string>
@@ -242,7 +242,7 @@
     <string name="selected">Selezionato</string>
     <string name="no_labels">Nessuna etichetta</string>
     <string name="to">A</string>
-    <string name="cc">Cc</string>
+    <string name="cc">CC</string>
     <string name="bcc">Ccn</string>
     <string name="to_prefix">A:</string>
     <string name="reply">Rispondi</string>
@@ -262,7 +262,7 @@
     <string name="max_attachments_size_reached">Peso massimo di allegati per messaggio raggiunto</string>
     <string name="expiration_days">%dD</string>
     <string name="expiration_hours">%dH</string>
-    <string name="expiration_minutes">%dM</string>
+    <string name="expiration_minutes">%d min</string>
     <plurals name="attachments">
         <item quantity="one">%d Allegato</item>
         <item quantity="other">%d Allegati</item>
@@ -293,7 +293,7 @@
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="ok">OK</string>
-    <string name="forward_prefix">Fw:</string>
+    <string name="forward_prefix">I:</string>
     <string name="original_message_divider">-------- Messaggio originale --------</string>
     <string name="invalid_email_address">L\'indirizzo \'%s\' non è valido</string>
     <string name="invalid_email_address_removed">L\'indirizzo \'%s\' non è valido ed è stato rimosso</string>
@@ -315,7 +315,7 @@
     <string name="no_attachments">0 allegati</string>
     <string name="display_name_banned_chars">Nome visualizzato non valido. \'&gt;\' and \'&lt;\' non sono ammessi</string>
     <string name="cont">Continua</string>
-    <string name="reply_prefix_on">On</string>
+    <string name="reply_prefix_on">Attivato</string>
     <string name="label_name">Nome etichetta</string>
     <string name="label_created">Etichetta creata</string>
     <string name="label_invalid">Etichetta non aggiunta a causa del nome non valido.</string>
@@ -369,7 +369,7 @@
     <string name="sync_attachments">Sincronizzando gli allegati</string>
     <string name="processing_attachment">Elaborando l\'allegato</string>
     <string name="hyperlink_confirmation_dialog_text_html">Stai per avviare il browser web e navigare in:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vuoi continuare?</string>
-    <string name="dont_ask_again">Non chiedermelo più</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN errato, %d tentativo rimasto</item>
         <item quantity="other">PIN errato, %d tentativi rimasti</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d tentativo rimasto prima dell\'eliminazione dei dati!</item>
         <item quantity="other">%d tentativi rimasti prima dell\'eliminazione dei dati!</item>
     </plurals>
-    <string name="logout">Esci</string>
+    <string name="logout">Sign out</string>
     <string name="logout_question_next_account">Sei sicuro di voler uscire con l\'account corrente e procedere utilizzando %s?</string>
     <string name="upgrade">Effettua l\'upgrade</string>
     <string name="error">Errore</string>
@@ -406,7 +406,7 @@
         <item>Vibrazione e suono</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Gratis</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
         <item>Professional</item>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Disconnesso</string>
-    <string name="logged_out_description">Sei stato disconnesso. Effettua nuovamente l\'accesso.</string>
+    <string name="logged_out">Signed out</string>
+    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">Errore di stampa</string>
     <string name="download_complete">Scaricamento completato</string>
     <string name="message_expires_in">Questo messaggio scadrà tra %s</string>
@@ -493,7 +493,7 @@
     <string name="saving">Salvataggio...</string>
     <string name="update_folder">Aggiorna cartella</string>
     <string name="spam_score_100">Questa email sembra provenire da un indirizzo Proton Mail, ma arriva dall\'esterno del nostro sistema e ha fallito la nostra prova di autenticazione. Potrebbe essere falsa o non correttamente inoltrata!</string>
-    <string name="spam_score_101">Questa email ha fallito l\'autenticazione del proprio dominio. Potrebbe essere falsa o non correttamente inoltrata!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
     <string name="spam_score_102">Questo messaggio potrebbe essere un tentativo di phishing. Per favore, controlla il mittente e il contenuto per verificare che siano veritieri. <a href="https://proton.me/blog/prevent-phishing-attacks">MAGGIORI INFORMAZIONI</a></string>
     <string name="print_from_template">Da: %s</string>
     <string name="print_to_template">A: %s;  </string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Casella email</string>
     <string name="privacy">Privacy</string>
     <string name="auto_download_messages_title">Scaricamento automatico dei messaggi</string>
-    <string name="auto_download_messages_subtitle">Quando l\'opzione è attivata, i corpi dei messaggi verranno scaricati automaticamente ogni volta che riceverai una nuova notifica via email (questo consumerà più dati). Se l\'opzione non è attivata, i corpi dei messaggi verranno scaricati solo quando si apre un\'email. (Nota: con entrambe le opzioni, se si svuota la cache o si effettua il logout, non sarà possibile leggere i corpi dei messaggi mentre si è offline)</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Sincronizzazione in background</string>
     <string name="settings_auto_show_images">Mostra automaticamente le immagini remote</string>
     <string name="settings_auto_show_embedded_images">Mostra automaticamente le immagini incorporate</string>
@@ -796,7 +796,7 @@
     <string name="custom_language_dialog_title">Seleziona la lingua dell\'app</string>
     <string name="auto_detect">Riconoscimento automatico</string>
     <string name="combined_contacts">Contatti combinati</string>
-    <string name="turn_combined_contacts_on">Attiva questa funzione per completare automaticamente gli indirizzi email utilizzando i contatti da tutti i tuoi account collegati.</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
     <string name="local_cache_management">Cache locale</string>
     <string name="cache_cleared">La cache locale è Ricaricata</string>
     <string name="empty_data">Cancella dati</string>
