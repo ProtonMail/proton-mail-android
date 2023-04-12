@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    val android =       "7.4.1"
+    val android =       "7.4.2"
     val easyGradle =    "2.8"
 
     // Needed for setup Android config

@@ -29,7 +29,7 @@ fun initVersions() {
     // endregion
 
     // region Android
-    `android-gradle-plugin version` =           "7.4.1"
+    `android-gradle-plugin version` =           "7.4.2"
 
     `android-annotation version` =              "1.1.0"         // Released: Jun 05, 2019
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
