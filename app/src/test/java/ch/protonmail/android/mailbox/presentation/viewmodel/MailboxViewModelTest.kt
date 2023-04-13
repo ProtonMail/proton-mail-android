@@ -41,6 +41,7 @@ import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.feature.NotLoggedIn
+import ch.protonmail.android.feature.rating.usecase.StartRateAppFlowIfNeeded
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -73,6 +74,7 @@ import ch.protonmail.android.usecase.delete.EmptyFolder
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import dagger.hilt.EntryPoints
+import io.mockk.Called
 import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -82,6 +84,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.unmockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -178,6 +181,7 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
     private val fetchEventsAndReschedule: FetchEventsAndReschedule = mockk {
         coEvery { this@mockk.invoke() } just runs
     }
+    private val startRateAppFlowIfNeeded: StartRateAppFlowIfNeeded = mockk()
 
     private lateinit var viewModel: MailboxViewModel
 
@@ -272,7 +276,8 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
             getMailSettings = getMailSettings,
             mailboxItemUiModelMapper = mailboxItemUiModelMapper,
             fetchEventsAndReschedule = fetchEventsAndReschedule,
-            clearNotificationsForUser = clearNotificationsForUser
+            clearNotificationsForUser = clearNotificationsForUser,
+            startRateAppFlowIfNeeded = startRateAppFlowIfNeeded
         )
     }
 
@@ -605,6 +610,30 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
                 assertEquals(resultSuccess, awaitItem())
             }
         }
+
+    @Test
+    fun `calls to start rate app flow if needed delegates to use case`() = runTest {
+        // given
+        coEvery { startRateAppFlowIfNeeded.invoke(testUserId) } returns Unit
+
+        // when
+        viewModel.startRateAppFlowIfNeeded()
+
+        // then
+        coVerify { startRateAppFlowIfNeeded.invoke(testUserId) }
+    }
+
+    @Test
+    fun `start rate app flow if needed is not called when current user id is invalid`() = runTest {
+        // given
+        every { userManager.currentUserId } returns null
+
+        // when
+        viewModel.startRateAppFlowIfNeeded()
+
+        // then
+        verify { startRateAppFlowIfNeeded wasNot Called }
+    }
 
     private fun List<MailboxItemUiModel>.toMailboxState(): MailboxListState.Data =
         MailboxListState.Data(this, isFreshData = false, shouldResetPosition = true)

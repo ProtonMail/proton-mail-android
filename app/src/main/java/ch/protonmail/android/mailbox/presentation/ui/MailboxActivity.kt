@@ -778,6 +778,8 @@ internal class MailboxActivity :
         if (mailboxLocation == MessageLocationType.INBOX) {
             userManager.currentUserId?.let { mailboxViewModel.clearNotifications(it) }
         }
+
+        mailboxViewModel.startRateAppFlowIfNeeded()
     }
 
     override fun onPause() {

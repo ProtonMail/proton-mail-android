@@ -41,6 +41,7 @@ import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
 import ch.protonmail.android.feature.NotLoggedIn
+import ch.protonmail.android.feature.rating.usecase.StartRateAppFlowIfNeeded
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -136,7 +137,8 @@ internal class MailboxViewModel @Inject constructor(
     private val getMailSettings: GetMailSettings,
     private val mailboxItemUiModelMapper: MailboxItemUiModelMapper,
     private val fetchEventsAndReschedule: FetchEventsAndReschedule,
-    private val clearNotificationsForUser: ClearNotificationsForUser
+    private val clearNotificationsForUser: ClearNotificationsForUser,
+    private val startRateAppFlowIfNeeded: StartRateAppFlowIfNeeded
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     private val _manageLimitReachedWarning = MutableLiveData<Event<Boolean>>()
@@ -721,6 +723,13 @@ internal class MailboxViewModel @Inject constructor(
 
             getMailSettings(userId).map(::Right)
         }
+
+    fun startRateAppFlowIfNeeded() {
+        val userId = userManager.currentUserId ?: return
+        viewModelScope.launch {
+            startRateAppFlowIfNeeded.invoke(userId)
+        }
+    }
 
     data class GetMailboxItemsParameters(
         val userId: UserId,

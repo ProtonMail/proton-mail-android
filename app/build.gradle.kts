@@ -357,6 +357,7 @@ dependencies {
         `constraint-layout`,
         `material`,
         `paging-runtime`,
+        `google-play-review`,
 
         // Lifecycle
         `lifecycle-extensions`,

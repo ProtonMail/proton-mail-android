@@ -17,22 +17,26 @@
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.testdata
+package ch.protonmail.android.feature.rating
 
-import ch.protonmail.android.domain.entity.user.Addresses
-import ch.protonmail.android.domain.entity.user.User
-import io.mockk.every
-import io.mockk.mockk
-import me.proton.core.domain.entity.UserId
+import kotlinx.coroutines.test.runTest
+import org.junit.Test
+import kotlin.test.assertEquals
 
-object UserTestData {
+class MailboxScreenViewInMemoryRepositoryTest {
 
-    private const val RAW_ID = "user_id"
-    private const val RAW_SECONDARY_USER_ID = "secondary_user_id"
-    val userId = UserId(RAW_ID)
-    val secondaryUserId = UserId(RAW_SECONDARY_USER_ID)
+    private val showReviewAppRepository = MailboxScreenViewInMemoryRepository()
 
-    fun withAddresses(addressesList: Addresses): User = mockk {
-        every { addresses } returns addressesList
+    @Test
+    fun `increase mailbox screen views counter when record mailbox screen view is called`() = runTest {
+        // given
+        check(showReviewAppRepository.screenViewCount == 0)
+
+        // when
+        showReviewAppRepository.recordScreenView()
+
+        // then
+        assertEquals(1, showReviewAppRepository.screenViewCount)
     }
+
 }

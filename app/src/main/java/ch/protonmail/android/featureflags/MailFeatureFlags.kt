@@ -17,22 +17,10 @@
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.testdata
+package ch.protonmail.android.featureflags
 
-import ch.protonmail.android.domain.entity.user.Addresses
-import ch.protonmail.android.domain.entity.user.User
-import io.mockk.every
-import io.mockk.mockk
-import me.proton.core.domain.entity.UserId
+import me.proton.core.featureflag.domain.entity.FeatureId
 
-object UserTestData {
-
-    private const val RAW_ID = "user_id"
-    private const val RAW_SECONDARY_USER_ID = "secondary_user_id"
-    val userId = UserId(RAW_ID)
-    val secondaryUserId = UserId(RAW_SECONDARY_USER_ID)
-
-    fun withAddresses(addressesList: Addresses): User = mockk {
-        every { addresses } returns addressesList
-    }
+enum class MailFeatureFlags(val featureId: FeatureId) {
+    ShowReviewAppDialog(FeatureId("RatingAndroidMail"))
 }

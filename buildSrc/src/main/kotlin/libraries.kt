@@ -82,6 +82,7 @@ val DependencyHandler.`android-startup-runtime` get() =     androidx("startup", 
 val DependencyHandler.`lifecycle-extensions` get() =        androidxLifecycle("extensions") version `lifecycle-extensions version`
 val DependencyHandler.`room-rxJava` get() =                 androidxRoom("rxjava2")
 val DependencyHandler.`safetyNet` get() =                   playServices("safetynet")
+val DependencyHandler.`google-play-review` get() = google("android.play", "review") version `google-play-core-libs`
 
 fun DependencyHandler.googleServices(moduleSuffix: String? = null, version: String = `googleServices version`) =
     google("gms", "google-services", moduleSuffix, version)

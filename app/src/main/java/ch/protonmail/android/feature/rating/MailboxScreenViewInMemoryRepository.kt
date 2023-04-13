@@ -17,22 +17,24 @@
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.testdata
+package ch.protonmail.android.feature.rating
 
-import ch.protonmail.android.domain.entity.user.Addresses
-import ch.protonmail.android.domain.entity.user.User
-import io.mockk.every
-import io.mockk.mockk
-import me.proton.core.domain.entity.UserId
+import timber.log.Timber
+import java.util.concurrent.atomic.AtomicInteger
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object UserTestData {
+@Singleton
+class MailboxScreenViewInMemoryRepository @Inject constructor() {
 
-    private const val RAW_ID = "user_id"
-    private const val RAW_SECONDARY_USER_ID = "secondary_user_id"
-    val userId = UserId(RAW_ID)
-    val secondaryUserId = UserId(RAW_SECONDARY_USER_ID)
+    public val screenViewCount: Int
+        get() = mailboxScreenViews.get()
 
-    fun withAddresses(addressesList: Addresses): User = mockk {
-        every { addresses } returns addressesList
+    private var mailboxScreenViews = AtomicInteger(0)
+
+    fun recordScreenView() {
+        mailboxScreenViews.incrementAndGet()
+        Timber.d("Recording mailbox screen view: count $mailboxScreenViews")
     }
+
 }

@@ -31,6 +31,7 @@ import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserViewMode
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
+import ch.protonmail.android.feature.rating.usecase.StartRateAppFlowIfNeeded
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.labels.domain.usecase.ObserveLabelsAndFoldersWithChildren
@@ -117,7 +118,8 @@ internal class ViewModelModule {
         getMailSettings: GetMailSettings,
         mailboxItemUiModelMapper: MailboxItemUiModelMapper,
         fetchEventsAndReschedule: FetchEventsAndReschedule,
-        clearNotificationsForUser: ClearNotificationsForUser
+        clearNotificationsForUser: ClearNotificationsForUser,
+        startRateAppFlowIfNeeded: StartRateAppFlowIfNeeded
     ) = MailboxViewModel(
         messageDetailsRepositoryFactory = messageDetailsRepositoryFactory,
         userManager = userManager,
@@ -143,6 +145,7 @@ internal class ViewModelModule {
         getMailSettings = getMailSettings,
         mailboxItemUiModelMapper = mailboxItemUiModelMapper,
         fetchEventsAndReschedule = fetchEventsAndReschedule,
-        clearNotificationsForUser = clearNotificationsForUser
+        clearNotificationsForUser = clearNotificationsForUser,
+        startRateAppFlowIfNeeded = startRateAppFlowIfNeeded
     )
 }

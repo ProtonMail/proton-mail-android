@@ -16,23 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
+package ch.protonmail.android.feature.rating
 
-package ch.protonmail.android.testdata
+import android.content.Context
+import com.google.android.play.core.review.ReviewManagerFactory
+import dagger.hilt.android.qualifiers.ApplicationContext
+import timber.log.Timber
+import javax.inject.Inject
 
-import ch.protonmail.android.domain.entity.user.Addresses
-import ch.protonmail.android.domain.entity.user.User
-import io.mockk.every
-import io.mockk.mockk
-import me.proton.core.domain.entity.UserId
+class StartRateAppFlow @Inject constructor(
+    @ApplicationContext
+    private val context: Context
+) {
 
-object UserTestData {
+    operator fun invoke() {
+        val manager = ReviewManagerFactory.create(context)
+        manager.requestReviewFlow().addOnCompleteListener {
+            Timber.d("App review finished. Success = ${it.isSuccessful}")
+        }
 
-    private const val RAW_ID = "user_id"
-    private const val RAW_SECONDARY_USER_ID = "secondary_user_id"
-    val userId = UserId(RAW_ID)
-    val secondaryUserId = UserId(RAW_SECONDARY_USER_ID)
-
-    fun withAddresses(addressesList: Addresses): User = mockk {
-        every { addresses } returns addressesList
     }
 }
