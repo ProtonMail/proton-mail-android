@@ -20,12 +20,12 @@
 <network-security-config>
 
     <domain-config>
-        <domain includeSubdomains="true">api.protonmail.ch</domain>
+        <domain includeSubdomains="true">mail-api.proton.me</domain>
 
         <trustkit-config
             disableDefaultReportUri="true"
             enforcePinning="true">
-            <report-uri>https://reports.protonmail.ch/reports/tls</report-uri>
+            <report-uri>https://reports.proton.me/reports/tls</report-uri>
         </trustkit-config>
 
         <!-- Valid pins -->
