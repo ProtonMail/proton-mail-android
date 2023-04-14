@@ -20,47 +20,41 @@
 package ch.protonmail.android.feature.rating.usecase
 
 import ch.protonmail.android.feature.rating.MailboxScreenViewInMemoryRepository
-import ch.protonmail.android.feature.rating.StartRateAppFlow
 import ch.protonmail.android.featureflags.MailFeatureFlags
 import ch.protonmail.android.testdata.UserTestData
-import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.featureflag.domain.FeatureFlagManager
 import me.proton.core.featureflag.domain.entity.FeatureFlag
 import me.proton.core.featureflag.domain.entity.Scope
 import org.junit.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-class StartRateAppFlowIfNeededTest {
+class ShouldStartRateAppFlowTest {
 
     private val userId = UserTestData.userId
 
     private val mailboxScreenViewsRepository: MailboxScreenViewInMemoryRepository = mockk()
     private val featureFlagManager: FeatureFlagManager = mockk(relaxUnitFun = true)
-    private val startRateAppFlow: StartRateAppFlow = mockk(relaxUnitFun = true)
 
-    private val startRateAppFlowIfNeeded = StartRateAppFlowIfNeeded(
-        mailboxScreenViewsRepository,
-        featureFlagManager,
-        startRateAppFlow
-    )
+    private val shouldStartRateAppFlow = ShouldStartRateAppFlow(mailboxScreenViewsRepository, featureFlagManager)
 
     @Test
-    fun `rate app flow is started when feature flag is true and mailbox screen views reached threshold`() = runTest {
+    fun `start rate app flow is true when feature flag is true and mailbox screen views reached threshold`() = runTest {
         // given
         mockFeatureFlagValue(userId, true)
         mockScreenViews(2)
 
         // when
-        startRateAppFlowIfNeeded(userId)
+        val result = shouldStartRateAppFlow(userId)
 
         // then
-        verify { startRateAppFlow() }
+        assertTrue(result)
     }
 
     @Test
@@ -70,10 +64,10 @@ class StartRateAppFlowIfNeededTest {
         mockScreenViews(2)
 
         // when
-        startRateAppFlowIfNeeded(userId)
+        val result = shouldStartRateAppFlow(userId)
 
         // then
-        verify { startRateAppFlow wasNot Called }
+        assertFalse(result)
     }
 
     @Test
@@ -83,10 +77,10 @@ class StartRateAppFlowIfNeededTest {
         mockScreenViews(1)
 
         // when
-        startRateAppFlowIfNeeded(userId)
+        val result = shouldStartRateAppFlow(userId)
 
         // then
-        verify { startRateAppFlow wasNot Called }
+        assertFalse(result)
     }
 
     @Test
@@ -96,13 +90,31 @@ class StartRateAppFlowIfNeededTest {
         mockScreenViews(2)
 
         // when
-        startRateAppFlowIfNeeded(userId)
+        shouldStartRateAppFlow(userId)
 
         // then
         val featureId = MailFeatureFlags.ShowReviewAppDialog.featureId
         val featureFlag = FeatureFlag(userId, featureId, Scope.User, defaultValue = false, value = false)
         coVerify { featureFlagManager.update(featureFlag) }
     }
+
+    @Test
+    fun `rate app feature flag is not refreshed from network each time`() = runTest {
+        // This is explicitly checked as it'd be expensive due to high frequency of calls to this use case.
+        // Refresh from network happens at app launch through RefreshFeatureFlags use case
+        // given
+        mockFeatureFlagValue(userId, true)
+        mockScreenViews(2)
+
+        // when
+        shouldStartRateAppFlow(userId)
+
+        // then
+        val featureId = MailFeatureFlags.ShowReviewAppDialog.featureId
+        val default = FeatureFlag.default(featureId.id, false)
+        coVerify { featureFlagManager.getOrDefault(userId, featureId, default, false) }
+    }
+
 
     private suspend fun mockFeatureFlagValue(userId: UserId, isEnabled: Boolean) {
         val featureId = MailFeatureFlags.ShowReviewAppDialog.featureId

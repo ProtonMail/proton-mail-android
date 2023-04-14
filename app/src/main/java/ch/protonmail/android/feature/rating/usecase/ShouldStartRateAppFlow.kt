@@ -20,33 +20,31 @@
 package ch.protonmail.android.feature.rating.usecase
 
 import ch.protonmail.android.feature.rating.MailboxScreenViewInMemoryRepository
-import ch.protonmail.android.feature.rating.StartRateAppFlow
 import ch.protonmail.android.featureflags.MailFeatureFlags
 import me.proton.core.domain.entity.UserId
 import me.proton.core.featureflag.domain.FeatureFlagManager
 import me.proton.core.featureflag.domain.entity.FeatureFlag
 import javax.inject.Inject
 
-class StartRateAppFlowIfNeeded @Inject constructor(
+class ShouldStartRateAppFlow @Inject constructor(
     private val mailboxScreenViewsRepository: MailboxScreenViewInMemoryRepository,
-    private val featureFlagManager: FeatureFlagManager,
-    private val startRateAppFlow: StartRateAppFlow
+    private val featureFlagManager: FeatureFlagManager
 ) {
 
-    suspend operator fun invoke(userId: UserId) {
+    suspend operator fun invoke(userId: UserId) : Boolean {
         if (!isShowReviewFeatureFlagEnabled(userId)) {
-            return
+            return false
         }
         if (mailboxScreenViewsRepository.screenViewCount < MailboxScreenViewsThreshold) {
-            return
+            return false
         }
-        startRateAppFlow()
-        recordReviewFlowStarted(userId)
+        recordShowReviewFlowConditionsMet(userId)
+        return true
     }
 
-    private suspend fun recordReviewFlowStarted(userId: UserId) {
+    private suspend fun recordShowReviewFlowConditionsMet(userId: UserId) {
         val featureFlag = getShowReviewFeatureFlag(userId)
-        val offFeatureFlag = featureFlag.copy(defaultValue = false, value = false)
+        val offFeatureFlag = featureFlag.copy(value = false)
         featureFlagManager.update(offFeatureFlag)
     }
 
@@ -55,9 +53,9 @@ class StartRateAppFlowIfNeeded @Inject constructor(
     private suspend fun getShowReviewFeatureFlag(
         userId: UserId
     ) = featureFlagManager.getOrDefault(
-        userId,
-        MailFeatureFlags.ShowReviewAppDialog.featureId,
-        FeatureFlag.default(MailFeatureFlags.ShowReviewAppDialog.featureId.id, false)
+        userId = userId,
+        featureId = MailFeatureFlags.ShowReviewAppDialog.featureId,
+        default = FeatureFlag.default(MailFeatureFlags.ShowReviewAppDialog.featureId.id, false)
     )
 
     companion object {

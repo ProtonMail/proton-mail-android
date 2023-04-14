@@ -41,7 +41,7 @@ import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.feature.NotLoggedIn
-import ch.protonmail.android.feature.rating.usecase.StartRateAppFlowIfNeeded
+import ch.protonmail.android.feature.rating.usecase.ShouldStartRateAppFlow
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -181,7 +181,7 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
     private val fetchEventsAndReschedule: FetchEventsAndReschedule = mockk {
         coEvery { this@mockk.invoke() } just runs
     }
-    private val startRateAppFlowIfNeeded: StartRateAppFlowIfNeeded = mockk()
+    private val shouldStartRateAppFlow: ShouldStartRateAppFlow = mockk()
 
     private lateinit var viewModel: MailboxViewModel
 
@@ -277,7 +277,7 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
             mailboxItemUiModelMapper = mailboxItemUiModelMapper,
             fetchEventsAndReschedule = fetchEventsAndReschedule,
             clearNotificationsForUser = clearNotificationsForUser,
-            startRateAppFlowIfNeeded = startRateAppFlowIfNeeded
+            shouldStartRateAppFlow = shouldStartRateAppFlow
         )
     }
 
@@ -612,19 +612,35 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
         }
 
     @Test
-    fun `calls to start rate app flow if needed delegates to use case`() = runTest {
+    fun `emit start rate app flow event when use case return true`() = runTest(dispatchers.Main) {
         // given
-        coEvery { startRateAppFlowIfNeeded.invoke(testUserId) } returns Unit
+        coEvery { shouldStartRateAppFlow.invoke(testUserId) } returns true
 
-        // when
-        viewModel.startRateAppFlowIfNeeded()
+        viewModel.startRateAppFlow.test {
+            // when
+            viewModel.startRateAppFlowIfNeeded()
 
-        // then
-        coVerify { startRateAppFlowIfNeeded.invoke(testUserId) }
+            // then
+            awaitItem()
+        }
     }
 
     @Test
-    fun `start rate app flow if needed is not called when current user id is invalid`() = runTest {
+    fun `does not emit start rate app flow event when use case returns false`() = runTest(dispatchers.Main) {
+        // given
+        coEvery { shouldStartRateAppFlow.invoke(testUserId) } returns false
+
+        viewModel.startRateAppFlow.test {
+            // when
+            viewModel.startRateAppFlowIfNeeded()
+
+            // then
+            ensureAllEventsConsumed()
+        }
+    }
+
+    @Test
+    fun `start rate app flow if needed is not called when current user id is invalid`() = runTest(dispatchers.Main) {
         // given
         every { userManager.currentUserId } returns null
 
@@ -632,7 +648,7 @@ class MailboxViewModelTest : ArchTest by ArchTest(),
         viewModel.startRateAppFlowIfNeeded()
 
         // then
-        verify { startRateAppFlowIfNeeded wasNot Called }
+        verify { shouldStartRateAppFlow wasNot Called }
     }
 
     private fun List<MailboxItemUiModel>.toMailboxState(): MailboxListState.Data =

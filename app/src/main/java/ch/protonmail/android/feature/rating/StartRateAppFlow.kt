@@ -18,22 +18,22 @@
  */
 package ch.protonmail.android.feature.rating
 
-import android.content.Context
-import com.google.android.play.core.review.ReviewManagerFactory
-import dagger.hilt.android.qualifiers.ApplicationContext
+import android.app.Activity
+import com.google.android.play.core.review.ReviewManager
 import timber.log.Timber
 import javax.inject.Inject
 
 class StartRateAppFlow @Inject constructor(
-    @ApplicationContext
-    private val context: Context
+    private val reviewManager: ReviewManager
 ) {
 
-    operator fun invoke() {
-        val manager = ReviewManagerFactory.create(context)
-        manager.requestReviewFlow().addOnCompleteListener {
-            Timber.d("App review finished. Success = ${it.isSuccessful}")
+    operator fun invoke(activity: Activity) {
+        val request = reviewManager.requestReviewFlow()
+        request.addOnSuccessListener { reviewInfo ->
+            reviewManager.launchReviewFlow(activity, reviewInfo)
         }
-
+        request.addOnFailureListener {
+            Timber.d("Rate app flow request failed ")
+        }
     }
 }

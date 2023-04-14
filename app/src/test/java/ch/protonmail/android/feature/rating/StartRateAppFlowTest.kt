@@ -19,41 +19,69 @@
 
 package ch.protonmail.android.feature.rating
 
-import android.content.Context
+import android.app.Activity
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
+import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
-import com.google.android.play.core.review.ReviewManagerFactory
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import io.mockk.verify
-import org.junit.After
 import org.junit.Test
 
 class StartRateAppFlowTest {
 
-    private val context: Context = mockk(relaxed = true)
+    private val activity: Activity = mockk(relaxed = true)
+    private val reviewInfo: ReviewInfo = mockk()
+    private val requestMock: Task<ReviewInfo> = mockk {
+        every { result } returns reviewInfo
+        every { addOnSuccessListener(any()) } answers {
+            if (this@mockk.isSuccessful) {
+                val successListener = firstArg<OnSuccessListener<ReviewInfo>>()
+                successListener.onSuccess(reviewInfo)
+            }
+            Tasks.forResult(reviewInfo)
+        }
+        every { addOnFailureListener(any()) } answers {
+            val exception = Exception("Failed")
+            if (!this@mockk.isSuccessful) {
+                val failureListener = firstArg<OnFailureListener>()
+                failureListener.onFailure(exception)
+            }
+            Tasks.forException(exception)
+        }
+    }
+    private val reviewManagerMock: ReviewManager = mockk {
+        every { requestReviewFlow() } returns requestMock
+    }
 
-    private val startRateAppFlow = StartRateAppFlow(context)
+    private val startRateAppFlow = StartRateAppFlow(reviewManagerMock)
 
-    @After
-    fun tearDown() {
-        unmockkStatic(ReviewManagerFactory::class)
+    @Test
+    fun `succeeds when review flow request is successful`() {
+        // given
+        every { requestMock.isSuccessful } returns true
+        every { reviewManagerMock.launchReviewFlow(activity, reviewInfo) } returns mockk()
+
+        // when
+        startRateAppFlow(activity)
+
+        // then
+        verify { reviewManagerMock.launchReviewFlow(activity, reviewInfo) }
     }
 
     @Test
-    fun `request review flow from google play review manager`() {
+    fun `fails when review flow request is not successful`() {
         // given
-        val reviewMangerMock = mockk<ReviewManager> {
-            every { this@mockk.requestReviewFlow() } returns mockk(relaxed = true)
-        }
-        mockkStatic(ReviewManagerFactory::class)
-        every { ReviewManagerFactory.create(context) } returns reviewMangerMock
+        every { requestMock.isSuccessful } returns false
+        every { reviewManagerMock.launchReviewFlow(activity, reviewInfo) } returns mockk()
 
         // when
-        startRateAppFlow()
+        startRateAppFlow(activity)
 
         // then
-        verify { reviewMangerMock.requestReviewFlow() }
+        verify(exactly = 0) { reviewManagerMock.launchReviewFlow(any(), any()) }
     }
 }
