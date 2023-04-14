@@ -463,12 +463,7 @@ internal abstract class NavigationActivity : BaseActivity() {
         when (type) {
             Type.SIGNOUT -> onSignOutSelected()
             Type.CONTACTS -> startContactsLauncher.launch(Unit)
-            Type.REPORT_BUGS -> reportOrchestrator.startBugReport(
-                BugReportInput(
-                    email = requireNotNull(userManager.requireCurrentUser().addresses.primary).email.s,
-                    username = userManager.requireCurrentUser().name.s
-                )
-            )
+            Type.REPORT_BUGS -> lifecycleScope.launch { reportOrchestrator.startBugReport() }
             Type.SETTINGS -> startSettingsLauncher.launch(
                 StartSettings.Input(currentMailboxLocation, currentLabelId)
             )
