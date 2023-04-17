@@ -369,7 +369,7 @@
     <string name="sync_attachments">Synkroniserar bilagor</string>
     <string name="processing_attachment">Bearbetar bilaga</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du är på väg att starta webbläsaren och navigera till:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vill du fortsätta?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Fråga inte igen</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Felaktig PIN-kod, %d försök återstår</item>
         <item quantity="other">Felaktig PIN-kod, %d försök återstår</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d attempt until secure data wipe!</item>
         <item quantity="other">%d attempts until secure data wipe!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Logga ut</string>
     <string name="logout_question_next_account">Du kommer att växlas till %s.</string>
     <string name="upgrade">Uppgradera</string>
     <string name="error">Fel</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Utloggad</string>
+    <string name="logged_out_description">Du har blivit utloggad. Logga in igen.</string>
     <string name="print_error">Utskriftsfel</string>
     <string name="download_complete">Nedladdning slutförd</string>
     <string name="message_expires_in">Detta meddelande kommer löpa ut om %s</string>

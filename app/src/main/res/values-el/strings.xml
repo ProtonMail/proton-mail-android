@@ -50,7 +50,7 @@
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Αυτός ο φάκελος είναι κενός</string>
     <string name="mailbox_empty_inbox_subtitle">Η τελευταία ενημέρωση έγινε σήμερα</string>
-    <string name="mailbox_empty_spam_subtitle">Ο φάκελος ανεπιθύμητων είναι κενός</string>
+    <string name="mailbox_empty_spam_subtitle">Ο φάκελος ενοχλητικών είναι κενός</string>
     <string name="mailbox_empty_trash_subtitle">Ο φάκελος διαγραμμένων είναι κενός</string>
     <string name="mailbox_empty_state_no_results_found">Δεν βρέθηκαν αποτελέσματα</string>
     <string name="mailbox_empty_state_try_a_different_term">Δοκιμάστε διαφορετικό όρο αναζήτησης</string>
@@ -234,7 +234,7 @@
     <string name="delete_messages">Διαγραφή μηνυμάτων</string>
     <string name="move_to_archive">Μετακίνηση στα αρχειοθετημένα</string>
     <string name="move_to_trash">Μετακίνηση στον κάδο απορριμμάτων</string>
-    <string name="move_to_spam">Μετακίνηση στα ανεπιθύμητα</string>
+    <string name="move_to_spam">Μετακίνηση στα Ενοχλητικά</string>
     <string name="move_to_inbox">Μετακίνηση στα Εισερχόμενα</string>
     <string name="move_to">Μετακίνηση σε…</string>
     <string name="are_you_sure_empty">Είστε σίγουροι ότι θέλετε να διαγράψετε όλα τα μηνύματα από αυτόν τον φάκελο;</string>
@@ -764,8 +764,8 @@
     <string name="swipe_action_trash_short">Μετακίνηση στα Διαγραμμένα</string>
     <string name="swipe_action_star">Το μήνυμα με Αστέρι ενημερώθηκε</string>
     <string name="swipe_action_star_short">Ενημέρωση αστεριού</string>
-    <string name="swipe_action_spam">Το μήνυμα σημάνθηκε ως ανεπιθύμητο</string>
-    <string name="swipe_action_spam_short">Ανεπιθύμητα</string>
+    <string name="swipe_action_spam">Το μήνυμα σημάνθηκε ως ενοχλητικό</string>
+    <string name="swipe_action_spam_short">Ενοχλητικά</string>
     <string name="swipe_action_archive">Το μήνυμα αρχειοθετήθηκε</string>
     <string name="swipe_action_archive_short">Αρχειοθέτηση</string>
     <string name="swipe_action_mark_read">Το μήνυμα επισημάνθηκε ως αναγνωσμένο</string>

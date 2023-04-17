@@ -98,9 +98,9 @@
     <string name="set_msg_password_repeat_password_hint">Kata sandi harus cocok</string>
     <string name="set_msg_password_password_hint_title">Petunjuk kata sandi</string>
     <string name="set_msg_password_password_hint_hint">Tentukan petunjuk (Opsional)</string>
-    <string name="set_msg_password_apply_password">Terapkan sandi</string>
-    <string name="set_msg_password_remove_password">Hapus sandi</string>
-    <string name="set_msg_password_error_too_short">Sandi terlalu pendek</string>
+    <string name="set_msg_password_apply_password">Terapkan kata sandi</string>
+    <string name="set_msg_password_remove_password">Hapus kata sandi</string>
+    <string name="set_msg_password_error_too_short">Kata sandi terlalu pendek</string>
     <string name="set_msg_password_error_too_long">Kata sandi terlalu panjang</string>
     <string name="set_msg_password_error_mismatch">Kata sandi tidak cocok</string>
     <string name="set_msg_expiration_title">Waktu kedaluwarsa pesan</string>
@@ -168,7 +168,7 @@
     <string name="existing_user_onboarding_new_features_description">Nikmati berbagai fitur baru seperti mode gelap, sistem notifikasi yang telah disempurnakan, filter untuk pesan-pesan yang belum dibaca, dan subfolder.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton yang baru, dengan perlindungan yang tersatukan</string>
     <string name="existing_user_onboarding_updated_proton_description">Memperkenalkan tampilan baru Proton. Beragam layanan, satu misi. Selamat datang di internet yang menjunjung privasi sebagai hal yang baku. <a href="https://proton.me/news/updated-proton">Pelajari lebih lanjut</a></string>
-    <string name="onboarding_next">Berikutnya</string>
+    <string name="onboarding_next">Selanjutnya</string>
     <string name="onboarding_get_started">Mulai</string>
     <string name="onboarding_got_it">Dimengerti</string>
     <string name="onboarding_image_view_content_description">Ilustrasi Proton Mail</string>
@@ -365,14 +365,14 @@
     <string name="sync_attachments">Menyinkronkan lampiran</string>
     <string name="processing_attachment">Memproses lampiran</string>
     <string name="hyperlink_confirmation_dialog_text_html">Anda akan membuka aplikasi browser dan mengunjungi:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda ingin melanjutkan?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Jangan tanyakan lagi</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PIN salah, %d upaya tersisa</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">%d upaya tersisa sebelum penghapusan data!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Keluar</string>
     <string name="logout_question_next_account">Anda akan dialihkan ke %s.</string>
     <string name="upgrade">Tingkatkan</string>
     <string name="error">Kesalahan</string>
@@ -459,8 +459,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Keluar</string>
+    <string name="logged_out_description">Anda telah keluar dari layanan. Silakan masuk kembali.</string>
     <string name="print_error">Mencetak Kesalahan</string>
     <string name="download_complete">Unduhan selesai</string>
     <string name="message_expires_in">Pesan ini akan kedaluwarsa dalam %s</string>
@@ -486,7 +486,7 @@
     <string name="saving">Menyimpan...</string>
     <string name="update_folder">Perbarui Folder</string>
     <string name="spam_score_100">Walaupun email ini sekilas terlihat seperti dikirim dari alamat Proton Mail, email ini sepertinya berasal dari luar sistem kami dan tidak memenuhi persyaratan autentikasi yang kami miliki. Email ini mungkin palsu atau tidak diteruskan dengan benar!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Email ini telah gagal memenuhi syarat autentikasi domainnya. Email ini mungkin telah dipalsukan atau tidak diteruskan dengan benar.</string>
     <string name="spam_score_102">Pesan ini mungkin merupakan sebuah upaya phishing. Mohon periksa nama pengirim dan konten yang tertera secara seksama untuk memastikan keabsahan email ini. <a href="https://proton.me/blog/prevent-phishing-attacks">PELAJARI LEBIH LANJUT</a></string>
     <string name="print_from_template">Dari: %s</string>
     <string name="print_to_template">Kepada: %s;  </string>
@@ -733,7 +733,7 @@
     <string name="mailbox">Kotak Surat</string>
     <string name="privacy">Privasi</string>
     <string name="auto_download_messages_title">Unduh pesan secara otomatis</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Pada saat opsi ini diaktifkan, isi pesan akan diunduh secara otomatis setiap kali Anda menerima notifikasi email baru (yang akan menggunakan lebih banyak data). Apabila tidak, isi pesan hanya akan diunduh pada saat Anda membuka email. (Catatan: terlepas dari opsi yang Anda pilih, apabila Anda menghapus cache atau keluar dari akun, Anda tidak akan dapat membaca pesan saat offline.)</string>
     <string name="settings_background_sync">Sinkronkan di Latar Belakang</string>
     <string name="settings_auto_show_images">Tampilkan Otomatis Gambar Jarak Jauh</string>
     <string name="settings_auto_show_embedded_images">Muat Gambar yang Tersemat Secara Otomatis</string>
@@ -782,7 +782,7 @@
     <string name="custom_language_dialog_title">Pilih Bahasa Aplikasi</string>
     <string name="auto_detect">Deteksi otomatis</string>
     <string name="combined_contacts">Kontak gabungan</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Aktifkan fitur ini agar alamat email yang Anda ketik dapat dilengkapi secara otomatis dengan data kontak dari seluruh akun aktif yang Anda miliki.</string>
     <string name="local_cache_management">Cache lokal</string>
     <string name="cache_cleared">Cache lokal telah dikosongkan</string>
     <string name="empty_data">Bersihkan data</string>

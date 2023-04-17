@@ -369,7 +369,7 @@
     <string name="sync_attachments">Sincronització de fitxers adjunts</string>
     <string name="processing_attachment">Processament adjunt</string>
     <string name="hyperlink_confirmation_dialog_text_html">Esteu a punt d\'obrir el navegador web i anar a:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Voleu continuar?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">No tornis a preguntar</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Codi PIN incorrecte, %d intent restant</item>
         <item quantity="other">Codi PIN incorrecte, %d intents restants</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d intent fins un esborrat de dades de seguretat!</item>
         <item quantity="other">%d intents fins un esborrat de dades de seguretat!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Tanca la sessió</string>
     <string name="logout_question_next_account">Es canviarà a %s.</string>
     <string name="upgrade">Millora</string>
     <string name="error">Error</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Desconnectat</string>
+    <string name="logged_out_description">Heu tancat la sessió. Torneu a iniciar sessió.</string>
     <string name="print_error">Error d\'impressió</string>
     <string name="download_complete">Descàrrega completa</string>
     <string name="message_expires_in">Aquest missatge expirarà en %s</string>
@@ -493,7 +493,7 @@
     <string name="saving">Desant...</string>
     <string name="update_folder">Actualitza la carpeta</string>
     <string name="spam_score_100">Aquest correu sembla que sigui d\'una adreça de Proton Mail però ha arribat des de fora del nostre sistema i no ha passat els requisits d\'autenticació. És possible que es tracti d\'un correu falsejat o reenviat indegudament!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Aquest correu no ha superat els requisits d\'autentificació del domini. Pot ser que estigui falsejat o reenviat indegudament.</string>
     <string name="spam_score_102">Aquest missatge pot ser un intent de pesca de credencials. Comproveu el remitent i el contingut per assegurar-vos que són legítims. <a href="https://proton.me/blog/prevent-phishing-attacks">MÉS INFORMACIÓ</a></string>
     <string name="print_from_template">Des de: %s</string>
     <string name="print_to_template">Per a: %s;  </string>
@@ -745,7 +745,7 @@
     <string name="mailbox">Bústia de correu</string>
     <string name="privacy">Privacitat</string>
     <string name="auto_download_messages_title">Baixa els missatges automàticament</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Quan aquesta opció està habilitada, els cossos del missatge enviats es descarregaràn automàticament cada vegada que rebeu una notificació nova de correu electrònic (això consumirà més dades). Si aquesta opció no està habilitada, els cossos de missatges només es descarregaràn quan obreixi un correu electrònic. (Nota: amb qualsevol de les dues opcions, si netequeu la memòria cau o es tanquen la sessió, no podreu llegir els cossos del missatge sense connexió.)</string>
     <string name="settings_background_sync">Sincronització en segon pla</string>
     <string name="settings_auto_show_images">Mostrar automàticament les imatges incrustades</string>
     <string name="settings_auto_show_embedded_images">Mostra automàticament les imatges incrustades</string>
@@ -795,7 +795,7 @@
     <string name="custom_language_dialog_title">Trieu la llengua de l\'aplicació</string>
     <string name="auto_detect">Detectar automàticament</string>
     <string name="combined_contacts">Contactes combinats</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Activeu aquesta funcionalitat per completar automàticament les adreces de correu electrònic utilitzant els contactes de tots els vostres comptes amb sessió iniciada.</string>
     <string name="local_cache_management">Memòria cau local</string>
     <string name="cache_cleared">La memòria cau local s\'ha netejat</string>
     <string name="empty_data">Neteja les dades</string>

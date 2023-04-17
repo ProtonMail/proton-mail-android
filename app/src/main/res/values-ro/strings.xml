@@ -373,7 +373,7 @@
     <string name="sync_attachments">Sincronizare fișiere atașate</string>
     <string name="processing_attachment">Procesare fișier atașat</string>
     <string name="hyperlink_confirmation_dialog_text_html">Se va lansa navigatorul web la pagina: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;. Continuați?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Nu mai întreba</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorect, o încercare rămasă</item>
         <item quantity="few">PIN incorect, %d încercări rămase</item>
@@ -384,7 +384,7 @@
         <item quantity="few">%d încercări până la distrugerea sigură a datelor!</item>
         <item quantity="other">%d de încercări până la distrugerea sigură a datelor!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Deconectare</string>
     <string name="logout_question_next_account">Veți fi comutat la %s.</string>
     <string name="upgrade">Modernizare</string>
     <string name="error">Eroare</string>
@@ -473,8 +473,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Deconectat</string>
+    <string name="logged_out_description">Ați fost deconectat. Vă rugăm reautentificați-vă.</string>
     <string name="print_error">Eroare la tipărire</string>
     <string name="download_complete">Descărcare finalizată</string>
     <string name="message_expires_in">Acest mesaj va expira peste %s</string>
@@ -500,7 +500,7 @@
     <string name="saving">Se salvează...</string>
     <string name="update_folder">Actualizare folder</string>
     <string name="spam_score_100">Acest e-mail pare să fie de la o adresă Proton Mail, dar a venit din afara sistemului nostru și nu respectă cerințele de autenticitate. Ar putea fi falsificat sau redirecționat eronat!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Acest e-mail nu respectă cerințele de autentificare ale domeniul său. Ar putea fi falsificat sau redirecționat eronat.</string>
     <string name="spam_score_102">Acest mesaj poate fi o încercare de înșelăciune. Verificați expeditorul și conținutul pentru a vă asigura că acestea sunt legitime. <a href="https://proton.me/blog/prevent-phishing-attacks">Detalii</a></string>
     <string name="print_from_template">De la: %s</string>
     <string name="print_to_template">Către: %s;  </string>
@@ -759,7 +759,7 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="mailbox">Căsuță poștală</string>
     <string name="privacy">Confidențialitate</string>
     <string name="auto_download_messages_title">Descărcare automată mesaje</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Dacă această opțiune este activată, corpul mesajelor va fi în mod automat descărcat de fiecare dată când primiți o nouă notificare de e-mail (se vor consuma mai multe date). Dacă este dezactivată, corpul mesajelor v-a fi descărcat doar când deschideți un e-mail. (Notă: indiferent de setare, dacă ieșiți din cont sau goliți memoria aplicației, nu veți putea citii corpul mesajelor deconectați.)</string>
     <string name="settings_background_sync">Sincronizare în fundal</string>
     <string name="settings_auto_show_images">Afișare automată imagini externe</string>
     <string name="settings_auto_show_embedded_images">Afișare automată imagini incluse</string>
@@ -810,7 +810,7 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="custom_language_dialog_title">Selectare limbă</string>
     <string name="auto_detect">Autodetectare</string>
     <string name="combined_contacts">Contacte combinate</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Activați funcția pentru autocompletarea adreselor de e-mail folosind contactele din toate conturile conectate.</string>
     <string name="local_cache_management">Buffer local</string>
     <string name="cache_cleared">Buffer local actualizat</string>
     <string name="empty_data">Ștergere date</string>

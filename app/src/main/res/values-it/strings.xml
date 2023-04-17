@@ -369,7 +369,7 @@
     <string name="sync_attachments">Sincronizzando gli allegati</string>
     <string name="processing_attachment">Elaborando l\'allegato</string>
     <string name="hyperlink_confirmation_dialog_text_html">Stai per avviare il browser web e navigare in:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vuoi continuare?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Non chiederlo più</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN errato, %d tentativo rimasto</item>
         <item quantity="other">PIN errato, %d tentativi rimasti</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d tentativo rimasto prima dell\'eliminazione dei dati!</item>
         <item quantity="other">%d tentativi rimasti prima dell\'eliminazione dei dati!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Esci</string>
     <string name="logout_question_next_account">Sei sicuro di voler uscire con l\'account corrente e procedere utilizzando %s?</string>
     <string name="upgrade">Effettua l\'upgrade</string>
     <string name="error">Errore</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Disconnesso</string>
+    <string name="logged_out_description">Sei stato disconnesso. Effettua nuovamente l\'accesso.</string>
     <string name="print_error">Errore di stampa</string>
     <string name="download_complete">Scaricamento completato</string>
     <string name="message_expires_in">Questo messaggio scadrà tra %s</string>
@@ -493,7 +493,7 @@
     <string name="saving">Salvataggio...</string>
     <string name="update_folder">Aggiorna cartella</string>
     <string name="spam_score_100">Questa email sembra provenire da un indirizzo Proton Mail, ma arriva dall\'esterno del nostro sistema e ha fallito la nostra prova di autenticazione. Potrebbe essere falsa o non correttamente inoltrata!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Quest\'email ha fallito i requisiti d\'autenticazione del suo dominio. Potrebbe esser falsificata o inoltrata impropriamente.</string>
     <string name="spam_score_102">Questo messaggio potrebbe essere un tentativo di phishing. Per favore, controlla il mittente e il contenuto per verificare che siano veritieri. <a href="https://proton.me/blog/prevent-phishing-attacks">MAGGIORI INFORMAZIONI</a></string>
     <string name="print_from_template">Da: %s</string>
     <string name="print_to_template">A: %s;  </string>
@@ -796,7 +796,7 @@
     <string name="custom_language_dialog_title">Seleziona la lingua dell\'app</string>
     <string name="auto_detect">Riconoscimento automatico</string>
     <string name="combined_contacts">Contatti combinati</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Attiva questa funzionalità per il completamento automatico degli indirizzi email, usando i contatti di tutti i tuoi profili collegati.</string>
     <string name="local_cache_management">Cache locale</string>
     <string name="cache_cleared">La cache locale è Ricaricata</string>
     <string name="empty_data">Cancella dati</string>

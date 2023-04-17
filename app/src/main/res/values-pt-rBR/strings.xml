@@ -369,7 +369,7 @@
     <string name="sync_attachments">Sincronizando anexos</string>
     <string name="processing_attachment">Processando anexo</string>
     <string name="hyperlink_confirmation_dialog_text_html">Você está prestes a ser redirecionado para:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Você deseja continuar?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Não perguntar novamente</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorreto, %d tentativa restante</item>
         <item quantity="other">PIN incorreto, %d tentativas restantes</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d tentativa até a limpeza segura dos dados!</item>
         <item quantity="other">%d tentativas até a limpeza segura dos dados!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Encerrar sessão</string>
     <string name="logout_question_next_account">Você tem certeza que deseja encerrar a sessão da conta atual e continuar usando %s?</string>
     <string name="upgrade">Fazer upgrade</string>
     <string name="error">Erro</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Sessão encerrada</string>
+    <string name="logged_out_description">A sua sessão foi encerrada. Por favor, digite sua senha de acesso para iniciar sessão novamente.</string>
     <string name="print_error">Erro de Impressão</string>
     <string name="download_complete">Download concluído</string>
     <string name="message_expires_in">Esta mensagem expirará em %s</string>
@@ -493,7 +493,7 @@
     <string name="saving">Salvando...</string>
     <string name="update_folder">Atualizar pasta</string>
     <string name="spam_score_100">Este e-mail parece ser de um endereço Proton Mail, mas veio de fora do nosso sistema e não atendeu aos nossos requisitos de autenticação. Ele pode ter sido falsificado ou encaminhado indevidamente!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Este e-mail falhou nos requisitos de autenticação de domínio. Ele pode ser falsificado ou encaminhado incorretamente.</string>
     <string name="spam_score_102">Esta mensagem pode ser uma tentativa de phishing. Por favor, verifique o remetente e seu conteúdo para certificar-se de que são legítimos. <a href="https://proton.me/blog/prevent-phishing-attacks">SAIBA MAIS</a></string>
     <string name="print_from_template">De: %s</string>
     <string name="print_to_template">Para: %s  </string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Caixa de correio</string>
     <string name="privacy">Privacidade</string>
     <string name="auto_download_messages_title">Baixar mensagens automaticamente</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Quando esta opção estiver habilitada, os corpos das mensagens serão baixados automaticamente sempre que você receber uma nova notificação por e-mail (isso consumirá mais dados). Se esta opção não estiver habilitada, os corpos das mensagens serão baixados apenas quando você abrir um e-mail. (Observação: com qualquer uma das opções, se você limpar o cache ou sair, não poderá ler o corpo das mensagens enquanto estiver off-line.)</string>
     <string name="settings_background_sync">Sincronização em segundo plano</string>
     <string name="settings_auto_show_images">Mostrar imagens remotas automaticamente</string>
     <string name="settings_auto_show_embedded_images">Mostrar imagens incorporadas automaticamente</string>
@@ -796,7 +796,7 @@
     <string name="custom_language_dialog_title">Selecionar o idioma do aplicativo</string>
     <string name="auto_detect">Detectar automaticamente</string>
     <string name="combined_contacts">Contatos combinados</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Ative esse recurso para preencher automaticamente endereços de e-mail usando contatos de todas as suas contas conectadas.</string>
     <string name="local_cache_management">Cache local</string>
     <string name="cache_cleared">O cache local está atualizado</string>
     <string name="empty_data">Limpar dados</string>

@@ -377,7 +377,7 @@
     <string name="sync_attachments">Синхронизация вложений</string>
     <string name="processing_attachment">Обработка вложений</string>
     <string name="hyperlink_confirmation_dialog_text_html">Вы собираетесь запустить веб-браузер и перейти по адресу:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Вы хотите продолжить?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Больше не спрашивать</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Неправильный PIN-код, осталась %d попытка</item>
         <item quantity="few">Неправильный PIN-код, осталось %d попытки</item>
@@ -390,7 +390,7 @@
         <item quantity="many">%d попыток до полного удаления данных!</item>
         <item quantity="other">%d попыток до полного удаления данных!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Выйти</string>
     <string name="logout_question_next_account">Вы будете переключены на %s.</string>
     <string name="upgrade">Повысить</string>
     <string name="error">Ошибка</string>
@@ -480,8 +480,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Вы вышли</string>
+    <string name="logged_out_description">Вы вышли из системы. Пожалуйста, войдите заново.</string>
     <string name="print_error">Ошибка печати</string>
     <string name="download_complete">Скачивание завершено</string>
     <string name="message_expires_in">Срок действия сообщения истечёт через %s</string>
@@ -507,7 +507,7 @@
     <string name="saving">Сохранение...</string>
     <string name="update_folder">Обновить папку</string>
     <string name="spam_score_100">Это письмо, по-видимому, пришло с адреса Proton Mail, но было получено не из нашей системы и не прошло проверку подлинности. Это может быть поддельное или неправильно пересланное письмо!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Это письмо не соответствует требованиям подтверждения подлинности домена. Оно может быть поддельным, либо было переслано ненадлежащим образом.</string>
     <string name="spam_score_102">Это сообщение может быть попыткой фишинга. Пожалуйста, проверьте отправителя и содержимое, чтобы убедиться в их подлинности. <a href="https://proton.me/blog/prevent-phishing-attacks">Подробнее</a></string>
     <string name="print_from_template">От: %s</string>
     <string name="print_to_template">Кому: %s;  </string>
@@ -772,7 +772,7 @@
     <string name="mailbox">Почтовый ящик</string>
     <string name="privacy">Конфиденциальность</string>
     <string name="auto_download_messages_title">Автозагрузка сообщений</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Если данная опция включена, тексты сообщений будут скачиваться автоматически каждый раз при получении вами уведомлений о новых письмах (это израсходует больше трафика). Если данная опция выключена, тексты сообщений будут скачиваться только при их открытии вами. (Примечание: независимо от опции, если вы очистите кэш или выйдете, то не сможете читать тексты сообщений без подключения к Интернету.)</string>
     <string name="settings_background_sync">Фоновая синхронизация</string>
     <string name="settings_auto_show_images">Авто-показ внешних изображений</string>
     <string name="settings_auto_show_embedded_images">Авто-показ встроенных изображений</string>
@@ -824,7 +824,7 @@
     <string name="custom_language_dialog_title">Выберите язык приложения</string>
     <string name="auto_detect">Автоопределение</string>
     <string name="combined_contacts">Объединенные контакты</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Включите эту функцию для автозаполнения адресов электронной почты используя контакты из всех авторизованных аккаунтов.</string>
     <string name="local_cache_management">Локальный кэш</string>
     <string name="cache_cleared">Локальный кэш обновлен</string>
     <string name="empty_data">Очистить данные</string>

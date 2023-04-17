@@ -377,7 +377,7 @@
     <string name="sync_attachments">Synchronizace příloh</string>
     <string name="processing_attachment">Zpracování přílohy</string>
     <string name="hyperlink_confirmation_dialog_text_html">Chystáte se spustit webový prohlížeč a přejít na&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Chcete pokračovat?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Příště se neptat</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Nesprávný kód PIN, zbývá %d pokus</item>
         <item quantity="few">Nesprávný kód PIN, zbývají %d pokusy</item>
@@ -390,7 +390,7 @@
         <item quantity="many">Počet pokusů před bezpečným smazáním dat: %d!</item>
         <item quantity="other">Počet pokusů před bezpečným smazáním dat: %d!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Odhlásit se</string>
     <string name="logout_question_next_account">Opravdu se chcete odhlásit z aktuálního účtu a pokračovat s %s?</string>
     <string name="upgrade">Rozšířit</string>
     <string name="error">Chyba</string>
@@ -480,8 +480,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Odhlášen(a)</string>
+    <string name="logged_out_description">Byli jste odhlášeni. Přihlaste se prosím znovu.</string>
     <string name="print_error">Chyba tisku</string>
     <string name="download_complete">Stahování dokončeno</string>
     <string name="message_expires_in">Tato zpráva vyprší za %s</string>
@@ -507,7 +507,7 @@
     <string name="saving">Ukládání...</string>
     <string name="update_folder">Aktualizace složky</string>
     <string name="spam_score_100">Zdá se, že e-mail byl odeslán z adresy Proton Mail, ale pochází z externího systému a požadavky na ověření selhaly. E-mail může být falešný, nebo špatně přeposlaný!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">U tohoto e-mailu nebyly splněny požadavky na ověření domény odesílatele. E-mail může být podvržený a nebo nesprávně přeposlaný.</string>
     <string name="spam_score_102">Tato zpráva může být pokusem o phishing. Zkontrolujte odesílatele a obsah, abyste se ujistili, že jsou legitimní. <a href="https://proton.me/blog/prevent-phishing-attacks">VÍCE INFORMACÍ</a></string>
     <string name="print_from_template">Od: %s</string>
     <string name="print_to_template">Komu: %s;  </string>
@@ -772,7 +772,7 @@
     <string name="mailbox">E-mailová schránka</string>
     <string name="privacy">Ochrana soukromí</string>
     <string name="auto_download_messages_title">Automaticky stahovat zprávy</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Pokud je tato volba povolena, tělo zprávy bude automaticky stahováno pokaždé, když obdržíte oznámení o novém e-mailu (přenos dat bude vyšší). Pokud tato volba není povolena, tělo zprávy bude staženo pouze když otevřete e-mail. (Upozornění: pokud vyčistíte mezipaměť nebo se odhlásíte a budete v režimu offline, nebudete moci číst těla zpráv)</string>
     <string name="settings_background_sync">Synchronizace na pozadí</string>
     <string name="settings_auto_show_images">Automaticky zobrazovat externí obrázky</string>
     <string name="settings_auto_show_embedded_images">Automaticky zobrazovat vnořené obrázky</string>
@@ -824,7 +824,7 @@
     <string name="custom_language_dialog_title">Vybrat jazyk aplikace</string>
     <string name="auto_detect">Automatická detekce</string>
     <string name="combined_contacts">Sloučené kontakty</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Zapněte tuto funkci pro automatické vyplňování e-mailových adres pomocí kontaktů ze všech vašich přihlášených účtů.</string>
     <string name="local_cache_management">Místní mezipaměť</string>
     <string name="cache_cleared">Mezipaměť byla obnovena</string>
     <string name="empty_data">Smazat data</string>
