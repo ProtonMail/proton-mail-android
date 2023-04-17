@@ -27,14 +27,13 @@ import ch.protonmail.android.labels.domain.model.LabelId
 object Constants {
 
     // region Urls
-    const val HOST = "protonmail.ch"
-    const val API_HOST = "api.$HOST"
+    const val HOST = "proton.me"
+    const val API_HOST = "mail-api.$HOST"
     const val BASE_URL = "https://$API_HOST"
     const val DUMMY_URL_PREFIX = "http://androidlinksfix.protonmail.com"
     const val HUMAN_VERIFICATION_URL = "https://verify.proton.me"
 
     // Mail domains
-    const val MAIL_DOMAIN_COM = "protonmail.com"
     const val MAIL_DOMAIN_PM_ME = "pm.me"
     //endregion
 

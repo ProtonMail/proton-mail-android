@@ -20,12 +20,12 @@
 <network-security-config>
 
     <domain-config>
-        <domain includeSubdomains="true">api.protonmail.ch</domain>
+        <domain includeSubdomains="true">mail-api.proton.me</domain>
 
         <trustkit-config
             disableDefaultReportUri="true"
             enforcePinning="true">
-            <report-uri>https://reports.protonmail.ch/reports/tls</report-uri>
+            <report-uri>https://reports.proton.me/reports/tls</report-uri>
         </trustkit-config>
 
         <!-- Valid pins -->
@@ -33,11 +33,11 @@
             <!-- Before SwissSign cert -->
             <pin digest="SHA-256">+0dMG0qG2Ga+dNE8uktwMm7dv6RFEXwBoBjQ43GqsQ0=</pin>
             <!-- After SwissSign cert -->
-            <pin digest="SHA-256">drtmcR2kFkM8qJClsuWgUzxgBkePfRCkRpqUesyDmeE=</pin>
+            <pin digest="SHA-256">CT56BhOTmj5ZIPgb/xD5mH8rY3BLo/MlhP7oPyJUEDo=</pin>
             <!-- Hot backup -->
-            <pin digest="SHA-256">YRGlaY0jyJ4Jw2/4M8FIftwbDIQfh8Sdro96CeEel54=</pin>
+            <pin digest="SHA-256">35Dx28/uzN3LeltkCBQ8RHK0tlNSa2kCpCRGNp34Gxc=</pin>
             <!-- Cold backup -->
-            <pin digest="SHA-256">AfMENBVvOS8MnISprtvyPsjKlPooqh8nMB/pvCrpJpw=</pin>
+            <pin digest="SHA-256">qYIukVc63DEITct8sFT7ebIq5qsWmuscaIKeJx+5J5A=</pin>
         </pin-set>
 
     </domain-config>

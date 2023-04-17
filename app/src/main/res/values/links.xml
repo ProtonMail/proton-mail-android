@@ -18,7 +18,7 @@
   ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources>
-    <string name="support_protonmail" translatable="false">https://protonmail.com/upgrade</string>
-    <string name="eo_info" translatable="false">https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/</string>
-    <string name="limit_reached_learn_more" translatable="false">https://protonmail.com/support/knowledge-base/increase-my-storage-space/</string>
+    <string name="support_protonmail" translatable="false">https://proton.me/mail/pricing</string>
+    <string name="eo_info" translatable="false">https://proton.me/support/password-protected-emails</string>
+    <string name="limit_reached_learn_more" translatable="false">https://proton.me/support/increase-storage-space</string>
 </resources>
