@@ -369,7 +369,7 @@
     <string name="sync_attachments">Ek dosyalar eşitleniyor</string>
     <string name="processing_attachment">Ek dosya işleniyor</string>
     <string name="hyperlink_confirmation_dialog_text_html">Tarayıcıyı başlatarak gezinmek üzeresiniz: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;İlerlemek istiyor musunuz?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Bir daha sorma</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN kodu yanlış. %d deneme kaldı</item>
         <item quantity="other">PIN kodu yanlış. %d deneme kaldı</item>
@@ -378,7 +378,7 @@
         <item quantity="one">Güvenli verilerin silinmesine %d deneme kaldı!</item>
         <item quantity="other">Güvenli verilerin silinmesine %d deneme kaldı!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Oturumu kapat</string>
     <string name="logout_question_next_account">%s hesabına geçeceksiniz.</string>
     <string name="upgrade">Yükselt</string>
     <string name="error">Hata</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Oturum kapatıldı</string>
+    <string name="logged_out_description">Oturumunuzu kapattınız. Lütfen yeniden oturum açın.</string>
     <string name="print_error">Yazdırma sorunu</string>
     <string name="download_complete">İndirme tamamlandı</string>
     <string name="message_expires_in">Bu ileti %s içinde silinecek</string>
@@ -493,7 +493,7 @@
     <string name="saving">Kaydediliyor...</string>
     <string name="update_folder">Klasörü güncelle</string>
     <string name="spam_score_100">Bu e-posta bir Proton Mail adresinden gelmiş gibi görünüyor, ancak sistemimizin dışından geldi ve kimlik doğrulama gereksinimlerimiz başarısız oldu. Sahteciliğe yol açabilir veya yanlış yönlendirilebilir!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Bu e-posta, etki alanının kimlik doğrulama gereksinimlerini karşılayamadı. E-posta, sahte ya da hatalı iletilmiş olabilir.</string>
     <string name="spam_score_102">Bu ileti bir kimlik avı girişimi olabilir. Lütfen göründüğü gibi olduklarından emin olmak için gönderici adresini ve ileti içeriğini kontrol edin. <a href="https://proton.me/blog/prevent-phishing-attacks">AYRINTILI BİLGİ ALIN</a></string>
     <string name="print_from_template">Kimden: %s</string>
     <string name="print_to_template">Kime: %s;  </string>
@@ -745,7 +745,7 @@
     <string name="mailbox">Posta kutusu</string>
     <string name="privacy">Gizlilik</string>
     <string name="auto_download_messages_title">İletiler otomatik indirilsin</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Bu seçenek etkinleştirildiğinde, yeni bir e-posta bildirimi aldığınızda ileti gövdeleri otomatik olarak indirilir (daha fazla veri kullanılır). Devre dışı bırakıldığındaysa, ileti gövdeleri yalnızca e-posta açıldığında indirilir. (Not: Her iki seçenekte de ön belleği temizlerseniz veya oturumu kapatırsanız, çevrimdışı durumdayken ileti gövdelerini okuyamazsınız.)</string>
     <string name="settings_background_sync">Arka planda eşitlensin</string>
     <string name="settings_auto_show_images">Uzak görseller görüntülensin</string>
     <string name="settings_auto_show_embedded_images">Gömülü görseller görüntülensin</string>
@@ -795,7 +795,7 @@
     <string name="custom_language_dialog_title">Uygulama dilini seçin</string>
     <string name="auto_detect">Otomatik algılama</string>
     <string name="combined_contacts">Birleştirilmiş kişiler</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">E-posta adreslerinin, oturum açtığınız tüm hesaplardaki kişilerle otomatik olarak tamamlanması için bu özelliği etkinleştirin.</string>
     <string name="local_cache_management">Yerel ön bellek</string>
     <string name="cache_cleared">Yerel ön bellek yenilendi</string>
     <string name="empty_data">Verileri temizle</string>

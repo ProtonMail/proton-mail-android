@@ -378,7 +378,7 @@
         <item quantity="one">%d n uɛraḍ i d-yeqqimen arama d tukksa taɣelsant n isefka!</item>
         <item quantity="other">%d n uɛraḍ i d-yeqqimen arama d tukksa taɣelsant n isefka!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Senser</string>
     <string name="logout_question_next_account">Ad tɛeddiḍ ɣer %s.</string>
     <string name="upgrade">Leqqem</string>
     <string name="error">Tuccḍa</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Teffɣeḍ</string>
+    <string name="logged_out_description">Tuffɣeḍ. Ma ulac aɣilif, qqen tikelt-nniḍen.</string>
     <string name="print_error">Tuccḍa n tsiggezt</string>
     <string name="download_complete">A sider immed</string>
     <string name="message_expires_in">Izen-agi ad yemmet di %s</string>
@@ -493,7 +493,7 @@
     <string name="saving">Asekles...</string>
     <string name="update_folder">Leqqem akaram</string>
     <string name="spam_score_100">Imayl-agi yettban d akken yekka-d seg tansa n Proton Mail, acu kan yussa-d si beṛṛa n unagraw ihi ur iɛedda ara asekyed n usesteb. Ahat beddlen-t neɣ win-t s tuccḍa aniɣer nniḍen!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Imayl-agi yecceḍ deg usekyed n usesteb n taɣult-is. Ahat beddlen-t neɣ wwin-t s tuccḍa aniɣer nniḍen.</string>
     <string name="spam_score_102">Izen-agi yezmer ad yili d aneɛruḍ n ukellex. Ttxil-k senqed amazan akked ugbur iwakken ad tḥeqqqeḍ belli d izerfanen. <a href="https://proton.me/blog/prevent-phishing-attacks">ISSIN UGAR</a></string>
     <string name="print_from_template">Si: %s</string>
     <string name="print_to_template">I: %s;  </string>
@@ -796,7 +796,7 @@
     <string name="custom_language_dialog_title">Fren tutlayt n usnas</string>
     <string name="auto_detect">Tifin tawurmant</string>
     <string name="combined_contacts">Inermisen uddisen</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Sermed tawuri-agi i usemmed awurman n tansiwin imayl s useqdec n yinermisen n yal imiḍanen-inek•inem yeqqnen.</string>
     <string name="local_cache_management">Tuffirt tadigant</string>
     <string name="cache_cleared">Tuffirt tadigant tettwaleqqem</string>
     <string name="empty_data">Sfeḍ isefka</string>

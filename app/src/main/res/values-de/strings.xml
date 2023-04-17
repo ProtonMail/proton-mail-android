@@ -369,7 +369,7 @@
     <string name="sync_attachments">Anhänge synchronisieren</string>
     <string name="processing_attachment">Anhänge werden verarbeitet</string>
     <string name="hyperlink_confirmation_dialog_text_html">&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; wird in deinem Browser geöffnet. Möchtest du fortfahren?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Nicht erneut nachfragen</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Ungültiger PIN-Code, %d verbleibender Versuch</item>
         <item quantity="other">Ungültiger PIN-Code, %d verbleibende Versuche</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d Versuch bis zur sicheren Datenlöschung!</item>
         <item quantity="other">%d Versuche bis zur sicheren Datenlöschung!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Abmelden</string>
     <string name="logout_question_next_account">Du wirst zu %s weitergeleitet.</string>
     <string name="upgrade">Upgraden</string>
     <string name="error">Fehler</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Abgemeldet</string>
+    <string name="logged_out_description">Du wurdest abgemeldet. Bitte erneut anmelden.</string>
     <string name="print_error">Druckfehler</string>
     <string name="download_complete">Herunterladen abgeschlossen</string>
     <string name="message_expires_in">Diese Nachricht verfällt in %s</string>
@@ -493,7 +493,7 @@
     <string name="saving">Wird gespeichert...</string>
     <string name="update_folder">Ordner aktualisieren</string>
     <string name="spam_score_100">Diese Nachricht scheint von einer Proton Mail-Adresse zu stammen, kam aber von außerhalb unseres Systems und hat unsere Authentifizierungsanforderungen nicht erfüllt. Die E-Mail könnte gefälscht oder falsch weitergeleitet worden sein!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Diese E-Mail hat die Domain-Authentifizierungsanforderungen nicht bestanden. Sie könnte gefälscht oder unsachgemäß weitergeleitet worden sein.</string>
     <string name="spam_score_102">Diese Nachricht könnte ein Phishingversuch sein. Bitte überprüfe Absender und Inhalt auf deren Rechtmäßigkeit. <a href="https://proton.me/blog/prevent-phishing-attacks">MEHR ERFAHREN</a></string>
     <string name="print_from_template">Von: %s</string>
     <string name="print_to_template">An: %s;  </string>
@@ -738,7 +738,7 @@ Ziehe in Erwägung, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, b
     <string name="mailbox">Postfach</string>
     <string name="privacy">Datenschutz</string>
     <string name="auto_download_messages_title">Nachrichten automatisch herunterladen</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Wenn diese Option aktiviert ist, werden die Nachrichtentexte jedes Mal automatisch heruntergeladen, wenn du eine neue E-Mail-Benachrichtigung erhältst (dies verbraucht mehr Daten). Wenn diese Option deaktiviert ist, werden die Nachrichtentexte nur dann heruntergeladen, wenn du eine E-Mail öffnest. (Hinweis: Wenn du mit einer der beiden Optionen den Zwischenspeicher leerst oder dich abmeldest, kannst du keine Nachrichtentexte lesen, wenn keine Verbindung zum Internet besteht).</string>
     <string name="settings_background_sync">Im Hintergrund synchronisieren</string>
     <string name="settings_auto_show_images">Bilder aus externen Quellen automatisch laden</string>
     <string name="settings_auto_show_embedded_images">Eingebettete Grafiken automatisch anzeigen</string>
@@ -788,7 +788,7 @@ Ziehe in Erwägung, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, b
     <string name="custom_language_dialog_title">App-Sprache auswählen</string>
     <string name="auto_detect">Automatisch erkennen</string>
     <string name="combined_contacts">Zusammengeführte Kontakte</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Aktiviere diese Funktion, um E-Mail-Adressen aus Kontakten von all deinen angemeldeten Konten automatisch zu vervollständigen.</string>
     <string name="local_cache_management">Lokaler Zwischenspeicher</string>
     <string name="cache_cleared">Lokaler Zwischenspeicher wurde aktualisiert</string>
     <string name="empty_data">Leeren</string>

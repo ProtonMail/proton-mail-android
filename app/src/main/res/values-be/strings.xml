@@ -193,7 +193,7 @@
     <string name="messages_load_failure">Немагчыма атрымаць паведамленні</string>
     <string name="message_details_load_failure">Немагчыма атрымаць падрабязнасці паведамлення</string>
     <string name="no_more_messages">Больш паведамленняў няма</string>
-    <string name="no_network_queued">Няма злучэння з сеткай, паведамленне ў чарзе на адпраўку</string>
+    <string name="no_network_queued">Няма падключэння да сеткі, паведамленне ў чарзе на адпраўку</string>
     <string name="update_app_title">Патрабуецца абнаўленне</string>
     <string name="update_app">Праграму Proton Mail немагчыма выкарыстоўваць, пакуль яна не абновіцца</string>
     <string name="you_are_offline">Вы па-за сеткай</string>
@@ -377,7 +377,7 @@
     <string name="sync_attachments">Сінхранізацыя далучэнняў</string>
     <string name="processing_attachment">Апрацоўка далучэння</string>
     <string name="hyperlink_confirmation_dialog_text_html">Вы збіраецеся запусціць браўзер і перайсці па спасылцы:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Вы сапраўды хочаце працягнуць?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Больш не пытаць</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Няправільны PIN, засталася %d спроба</item>
         <item quantity="few">Няправільны PIN, засталося %d спробы</item>
@@ -390,7 +390,7 @@
         <item quantity="many">%d спроб, пакуль абароненыя даныя не будуць выцертыя!</item>
         <item quantity="other">%d спробы, пакуль абароненыя даныя не будуць выцертыя!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Выйсці</string>
     <string name="logout_question_next_account">Вы будзеце пераключаны на %s.</string>
     <string name="upgrade">Палепшыць</string>
     <string name="error">Памылка</string>
@@ -480,8 +480,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Вы выйшлі</string>
+    <string name="logged_out_description">Вы выйшлі з сістэмы. Увайдзіце яшчэ раз.</string>
     <string name="print_error">Памылка друку</string>
     <string name="download_complete">Спампоўванне завершана</string>
     <string name="message_expires_in">Тэрмін дзеяння гэтага паведамлення міне праз %s</string>
@@ -507,7 +507,7 @@
     <string name="saving">Захаванне...</string>
     <string name="update_folder">Абнавіць папку</string>
     <string name="spam_score_100">Верагодна, што крыніцай гэтага ліста з\'яўляецца адрас, які адносіцца да Proton Mail, але сам ліст прыйшоў не з нашай сістэмы і не прайшоў праверку на адпаведнасць нашым патрабаванням аўтэнтыфікацыі. Ён можа быць падроблены або перасланы неналежным чынам!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Гэты ліст не прайшоў праверку на адпаведнасць нашым патрабаванням аўтэнтыфікацыі дамена. Ён можа быць падроблены або перасланы неналежным чынам.</string>
     <string name="spam_score_102">Гэта паведамленне можа быць спробай фішынгу. Праверце адпраўніка і змесціва, каб пераканацца ў іх надзейнасці. <a href="https://proton.me/blog/prevent-phishing-attacks">ДАВЕДАЦЦА БОЛЬШ</a></string>
     <string name="print_from_template">Ад: %s</string>
     <string name="print_to_template">Каму: %s; </string>
@@ -772,7 +772,7 @@
     <string name="mailbox">Паштовая скрыня</string>
     <string name="privacy">Прыватнасць</string>
     <string name="auto_download_messages_title">Аўтаматычнае спампоўванне паведамленняў</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Калі дадзены параметр уключаны, целы паведамленняў будуць аўтаматычна спампоўвацца кожны раз калі вы атрымліваеце апавяшчэнні пра новыя лісты (гэта павялічыць спажыванне трафіку). Калі дадзены параметр выключаны, цела паведамлення будзе спампоўвацца толькі падчас яго адкрыцця. (Нататка: незалежна ад параметра, калі вы ачысціце кэш або выйдзеце, то не зможаце чытаць змесціва паведамленняў па-за сеткай.)</string>
     <string name="settings_background_sync">Фонавая сінхранізацыя</string>
     <string name="settings_auto_show_images">Аўтаматычны паказваць аддаленыя відарысы</string>
     <string name="settings_auto_show_embedded_images">Аўтаматычна паказваць убудаваныя відарысы</string>
@@ -824,7 +824,7 @@
     <string name="custom_language_dialog_title">Выберыце мову праграмы</string>
     <string name="auto_detect">Аўтаматычнае вызначэнне</string>
     <string name="combined_contacts">Камбінаваныя кантакты</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Уключыце гэту функцыю для аўтаматычнага запаўнення адрасоў электроннай пошты выкарыстоўваючы кантакты з усіх уліковых запісаў у якія вы ўвайшлі.</string>
     <string name="local_cache_management">Лакальны кэш</string>
     <string name="cache_cleared">Лакальны кэш абноўлены</string>
     <string name="empty_data">Ачысціць даныя</string>
@@ -842,8 +842,8 @@
     <string name="shortcut_compose_new_message">Напісаць новае паведамленне</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_dialog_title">Агульныя праблемы злучэння і шляхі іх вырашэння</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Няма падключэння да інтэрнэту&lt;/i&gt; - Пераканайцеся, што ваша злучэнне з інтэрнэтам актыўнае.
+    <string name="troubleshoot_dialog_title">Агульныя праблемы падключэння і шляхі іх вырашэння</string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Няма падключэння да інтэрнэту&lt;/i&gt; - Пераканайцеся, што ваша падключэнне з інтэрнэтам актыўнае.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Праблема з пастаўшчыком паслуг інтэрнэту (ISP)&lt;/i&gt; - Паспрабуйце падключыцца да Proton праз іншую сетку (або скарыстайцеся &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; або &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Блакіроўка дзяржаўнымі органамі&lt;/i&gt; - Магчыма, што ў вашай краіне заблакіраваны доступ да Proton. Паспрабуйце &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (або іншыя сэрвісы VPN) або &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; для атрымання доступу да Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Канфлікт з антывіруснай праграмай&lt;/i&gt; - Часова адключыце або выдаліце сваю антывірусную праграму.

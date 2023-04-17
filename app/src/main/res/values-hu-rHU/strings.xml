@@ -369,7 +369,7 @@
     <string name="sync_attachments">Mellékletek szinkronizálása</string>
     <string name="processing_attachment">Melléklet feldolgozása</string>
     <string name="hyperlink_confirmation_dialog_text_html">Megnyitja a következő címet a böngészőben:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Kívánja folytatni?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Ne kérdezze újra</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Érvénytelen PIN, %d próbálkozás maradt</item>
         <item quantity="other">Érvénytelen PIN, %d próbálkozás maradt</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d próbálkozás az adattörlésig!</item>
         <item quantity="other">%d próbálkozás az adattörlésig!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Kijelentkezés</string>
     <string name="logout_question_next_account">Biztos benne, hogy kijelentkezik az aktuális fiókból és a következőt használja: %s?</string>
     <string name="upgrade">Csomagváltás</string>
     <string name="error">Hiba</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Kijelentkezve</string>
+    <string name="logged_out_description">Kijelentkezett. Kérjük, jelentkezzen be újra.</string>
     <string name="print_error">Nyomtatási hiba</string>
     <string name="download_complete">A letöltés befejeződött</string>
     <string name="message_expires_in">Ez az üzenet lejár %s belül</string>
@@ -493,7 +493,7 @@
     <string name="saving">Mentés...</string>
     <string name="update_folder">Mappa frissítése</string>
     <string name="spam_score_100">Ez az e-mail a Proton Mailról feladottnak tűnik, de külső rendszerből érkezett és nem felelt meg az ellenőrzési követelményeknek. Lehet becsapós üzenet vagy hibásan továbbított!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Az e-mail nem felelt meg a domain név ellenőrzési követelményeinek. Lehet becsapós üzenet vagy hibásan továbbított.</string>
     <string name="spam_score_102">Ez az üzenet lehetséges, hogy egy adathalászati kísérlet! Kérjük, alaposan ellenőrizze, hogy a feladó és az üzenet szövege megbízható-e. <a href="https://proton.me/blog/prevent-phishing-attacks">TOVÁBBI INFORMÁCIÓK</a></string>
     <string name="print_from_template">Feladó: %s</string>
     <string name="print_to_template">Címzett: %s;  </string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Postafiók</string>
     <string name="privacy">Adatvédelem</string>
     <string name="auto_download_messages_title">Üzenetek automatikus letöltése</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Bekapcsolásakor a ProtonMail a háttérben automatikusan letölti az új üzenetek törzsét (több adatforgalmat igényel). Ha ki van kapcsolva, a ProtonMail az üzenet törzsét csak az üzenet megnyitásakor tölti le. (Megjegyzés: ha törli a gyorstárat vagy kijelentkezik, akkor egyik esetben sem tudja elolvasni a levelet, amikor nincs internetkapcsolat.)</string>
     <string name="settings_background_sync">Szinkronizálás háttérben</string>
     <string name="settings_auto_show_images">Távoli képek automatikus megjelenítése</string>
     <string name="settings_auto_show_embedded_images">Beágyazott képek automatikus megjelenítése</string>
@@ -796,7 +796,7 @@
     <string name="custom_language_dialog_title">Válassza ki a nyelvet</string>
     <string name="auto_detect">Automatikus-észlelés</string>
     <string name="combined_contacts">Kombinált névjegyek</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Kapcsolja be ezt a funkciót az automatikus e-mail címek kitöltéséhez az összes bejelentkezett fiók névjegyei alapján.</string>
     <string name="local_cache_management">Helyi gyorsítótár</string>
     <string name="cache_cleared">Helyi gyorsítótár frissítve</string>
     <string name="empty_data">Törlés</string>

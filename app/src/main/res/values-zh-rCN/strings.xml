@@ -365,7 +365,7 @@
     <string name="sync_attachments">正在同步附件</string>
     <string name="processing_attachment">正在处理附件</string>
     <string name="hyperlink_confirmation_dialog_text_html">您即将在浏览器中打开：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;确定要继续吗？</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">不再询问</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">口令错误，还可尝试 %d 次</item>
     </plurals>

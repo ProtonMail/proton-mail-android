@@ -372,7 +372,7 @@
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">完全なデータ抹消まで残り%d回です。</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">サインアウト</string>
     <string name="logout_question_next_account">%s に切り替えます。</string>
     <string name="upgrade">アップグレード</string>
     <string name="error">エラー</string>
@@ -459,7 +459,7 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
+    <string name="logged_out">サインアウトしました</string>
     <string name="logged_out_description">You have been signed out. Please sign in again.</string>
     <string name="print_error">印刷エラー</string>
     <string name="download_complete">ダウンロード完了</string>

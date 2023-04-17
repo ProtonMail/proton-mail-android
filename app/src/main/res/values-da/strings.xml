@@ -369,7 +369,7 @@
     <string name="sync_attachments">Synkroniserer vedhæftninger</string>
     <string name="processing_attachment">Behandler vedhæftninger</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du er ved at starte webbrowseren og navigere til:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Ønsker du at fortsætte?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Spørg ikke igen</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Forkert PIN-kode, %d forsøg tilbage</item>
         <item quantity="other">Forkert PIN-kode, %d forsøg tilbage</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d forsøg inden sikker datarydning!</item>
         <item quantity="other">%d forsøg inden sikker datarydning!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Log ud</string>
     <string name="logout_question_next_account">Sikker på, at du vil logge ud af den aktuelle konto og fortsætte ved brug af %s?</string>
     <string name="upgrade">Opgradér</string>
     <string name="error">Fejl</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Logget ud</string>
+    <string name="logged_out_description">Du er blevet logget ud. Log ind igen.</string>
     <string name="print_error">Udskrivningsfejl</string>
     <string name="download_complete">Download fuldført</string>
     <string name="message_expires_in">Denne besked udløber om %s</string>
@@ -493,7 +493,7 @@
     <string name="saving">Gemmer...</string>
     <string name="update_folder">Opdater mappe</string>
     <string name="spam_score_100">Denne e-mail ser ud til at være fra en Proton Mail-adresse, men den kom fra et sted uden for vores system og har ikke overholdt vores godkendelseskrav. Den kan være forfalsket eller ukorrekt videresendt!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Denne e-mail bestod ikke sit domænes godkendelseskrav. Den kan være falsk eller ukorrekt videresendt.</string>
     <string name="spam_score_102">Denne besked kan være et phishing-forsøg. Tjek afsenderen og indholdet for at sikre, at de er legitime. <a href="https://proton.me/blog/prevent-phishing-attacks">FÅ MERE AT VIDE</a></string>
     <string name="print_from_template">Fra: %s</string>
     <string name="print_to_template">Til: %s; </string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Postkasse</string>
     <string name="privacy">Fortrolighed</string>
     <string name="auto_download_messages_title">Auto-download beskeder</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Når denne indstilling er aktiveret, hentes beskedindhold automatisk, hver gang du modtager en ny e-mail-notifikation (dette vil forbruge flere data). Er indstillingen ikke aktiveret, downloades beskedindholdet kun ved åbning af en e-mail. (Bemærk: Rydder du cachen eller logger ud, kan du ikke med nogen af indstilllingerne læse beskedindhold, mens du er offline.)</string>
     <string name="settings_background_sync">Baggrundssynkronisering</string>
     <string name="settings_auto_show_images">Auto-vis eksterne billeder</string>
     <string name="settings_auto_show_embedded_images">Auto-vis indlejrede billeder</string>
@@ -796,7 +796,7 @@
     <string name="custom_language_dialog_title">Vælg App-sprog</string>
     <string name="auto_detect">Autoregistrér</string>
     <string name="combined_contacts">Kombinerede kontakter</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Slå denne funktion til for at autoudfylde e-mailadresser vha. kontakter fra alle de konti, hvor du er logget ind.</string>
     <string name="local_cache_management">Lokal cache</string>
     <string name="cache_cleared">Lokal cache er opfrisket</string>
     <string name="empty_data">Ryd data</string>
