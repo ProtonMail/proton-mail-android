@@ -89,6 +89,7 @@ import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.feature.account.AccountStateManager
+import ch.protonmail.android.feature.rating.StartRateAppFlow
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -188,6 +189,9 @@ internal class MailboxActivity :
 
     @Inject
     lateinit var isConversationModeEnabled: ConversationModeEnabled
+
+    @Inject
+    lateinit var startRateAppFlow: StartRateAppFlow
 
     @Inject
     @DefaultSharedPreferences
@@ -413,6 +417,7 @@ internal class MailboxActivity :
             exitSelectionModeSharedFlow
                 .onEach { if (it) actionMode?.finish() }
                 .launchIn(lifecycleScope)
+
         }
 
         setUpMailboxActionsView()
@@ -436,6 +441,10 @@ internal class MailboxActivity :
                 )
             }.launchIn(lifecycleScope)
         }
+
+        mailboxViewModel.startRateAppFlow
+            .onEach { startRateAppFlow(this) }
+            .launchIn(lifecycleScope)
     }
 
     private fun startObserving() {
