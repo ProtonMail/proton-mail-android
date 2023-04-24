@@ -168,7 +168,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nuove funzioni</string>
     <string name="existing_user_onboarding_new_features_description">Goditi le nuove funzionalità come la modalità oscura, le notifiche migliorate, un filtro per i messaggi non letti e le sottocartelle.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton Aggiornato, protezione unificata</string>
-    <string name="existing_user_onboarding_updated_proton_description">Ti presentiamo il nuovo look di Proton. Tanti servizi, una sola missione. Benvenuto in una versione di internet dove la privacy è alla base. <a href="https://proton.me/news/updated-proton">Scopri di più</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Ti presentiamo il nuovo look di Proton. Tanti servizi, una sola missione. Ti diamo il benvenuto in una versione di internet dove la privacy è alla base. <a href="https://proton.me/news/updated-proton">Scopri di più</a></string>
     <string name="onboarding_next">Successiva</string>
     <string name="onboarding_get_started">Per iniziare</string>
     <string name="onboarding_got_it">Ho capito</string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Casella email</string>
     <string name="privacy">Privacy</string>
     <string name="auto_download_messages_title">Scaricamento automatico dei messaggi</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Quando l\'opzione è attivata, i corpi dei messaggi verranno scaricati automaticamente ogni volta che riceverai una nuova notifica via email (questo consumerà più dati). Se l\'opzione non è attivata, i corpi dei messaggi verranno scaricati solo quando si apre un\'email. (Nota: con entrambe le opzioni, se si svuota la cache o si effettua il logout, non sarà possibile leggere i corpi dei messaggi mentre si è offline)</string>
     <string name="settings_background_sync">Sincronizzazione in background</string>
     <string name="settings_auto_show_images">Mostra automaticamente le immagini remote</string>
     <string name="settings_auto_show_embedded_images">Mostra automaticamente le immagini incorporate</string>

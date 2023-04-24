@@ -62,7 +62,7 @@
     <string name="mailbox_updated_just_now">Netop opdateret</string>
     <string name="mailbox_updated_recently">Opdateret for nylig</string>
     <string name="mailbox_updating">Opdaterer…</string>
-    <string name="is_proton">Dette er en Proton-besked.</string>
+    <string name="is_proton">Dette er en Proton-besked</string>
     <string name="is_proton_official_badge">Officiel</string>
     <!-- endregion -->
     <!-- region Details -->
@@ -95,13 +95,13 @@
     <string name="set_msg_password_info_icon_description">Information</string>
     <string name="set_msg_password_msg_password_title">Beskedadgangskode</string>
     <string name="set_msg_password_msg_password_hint">4 til 21 tegn lang</string>
-    <string name="set_msg_password_repeat_password_title">Gentag kodeord</string>
+    <string name="set_msg_password_repeat_password_title">Gentag adgangskode</string>
     <string name="set_msg_password_repeat_password_hint">Adgangskoder skal være ens</string>
     <string name="set_msg_password_password_hint_title">Adgangskodetip</string>
     <string name="set_msg_password_password_hint_hint">Angiv tip (valgfrit)</string>
     <string name="set_msg_password_apply_password">Anvend adgangskode</string>
     <string name="set_msg_password_remove_password">Fjern adgangskode</string>
-    <string name="set_msg_password_error_too_short">Adgangskode er for kort</string>
+    <string name="set_msg_password_error_too_short">Adgangskode for kort</string>
     <string name="set_msg_password_error_too_long">Adgangskode for lang</string>
     <string name="set_msg_password_error_mismatch">Adgangskode stemmer ikke overens</string>
     <string name="set_msg_expiration_title">Beskedudløb</string>

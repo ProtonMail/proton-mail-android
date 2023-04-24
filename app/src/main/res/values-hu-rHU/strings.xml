@@ -796,7 +796,7 @@
     <string name="custom_language_dialog_title">Válassza ki a nyelvet</string>
     <string name="auto_detect">Automatikus-észlelés</string>
     <string name="combined_contacts">Kombinált névjegyek</string>
-    <string name="turn_combined_contacts_on">Kapcsolja be ezt a funkciót az automatikus e-mail címek kitöltéséhez az összes bejelentkezett fiók névjegyei alapján.</string>
+    <string name="turn_combined_contacts_on">Kapcsolja be ezt a funkciót, az e-mail címek automatikus kitöltéséhez az összes bejelentkezett fiók névjegyei alapján.</string>
     <string name="local_cache_management">Helyi gyorsítótár</string>
     <string name="cache_cleared">Helyi gyorsítótár frissítve</string>
     <string name="empty_data">Törlés</string>
