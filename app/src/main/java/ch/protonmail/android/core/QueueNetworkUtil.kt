@@ -134,7 +134,7 @@ class QueueNetworkUtil @Inject constructor(
     private fun hasConn(checkReal: Boolean): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val netInfo = cm.activeNetworkInfo
-        var hasConnection = netInfo != null && netInfo.isConnectedOrConnecting
+        var hasConnection = netInfo != null && netInfo.isConnected
         val currentStatus = isServerAccessible
         if (checkReal) {
             hasConnection = hasConnection && isServerAccessible
