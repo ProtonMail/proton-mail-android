@@ -717,7 +717,7 @@
     <string name="signature">Подпіс</string>
     <string name="mobile_footer">Мабільны калонтытул</string>
     <string name="edit_mobile_footer">Уключыць мабільны калонтытул</string>
-    <string name="default_mobile_footer">Адпраўлена пры дапамозе мабільнага кліента Proton Mail</string>
+    <string name="default_mobile_footer">Адпраўлена з мабільнай праграмы Proton Mail</string>
     <string name="mobile_footer_is_premium">Змяняць мабільны калонтытул магчыма толькі на платных тарыфных планах</string>
     <string name="mobile_footer_info">Гэты калонтытул дадаецца пасля вашага подпісу</string>
     <!-- region Snooze Settings -->

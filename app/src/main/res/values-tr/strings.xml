@@ -298,7 +298,7 @@
     <string name="invalid_email_address">\'%s\' adresi geçersiz</string>
     <string name="invalid_email_address_removed">%s adresi geçersiz ve kaldırıldı</string>
     <string name="no_recipients_specified">Lütfen en az bir alıcı ekleyin</string>
-    <string name="no_password_specified">Geçerlilik süresi yalnızca tamamen şifrelenmiş iletiler için ayarlanabilir. Lütfen Proton Mail kullanmayan alıcılarınız için bir parola belirtin.</string>
+    <string name="no_password_specified">Geçerlilik süresi yalnızca tamamen şifrelenmiş iletiler için ayarlanabilir. Lütfen Proton Mail kullanmayan alıcılarınız için bir parola ayarlayın.</string>
     <string name="attachment_limit">Ek dosya sınırı %1$s. Toplam ek dosya boyutu en fazla %2$s olabilir.</string>
     <string name="sending_message">İleti gönderiliyor...</string>
     <string name="sending_message_offline">Çevrimdışı. Daha sonra gönderilmek üzere sıraya alındı...</string>
@@ -310,7 +310,7 @@
     <string name="cancel">İptal</string>
     <string name="close">Kapat</string>
     <string name="eo_password_title">Parola ayarla</string>
-    <string name="eo_password_subtitle">Proton Mail kullanmayan kişiler için bu iletiyi şifreleyecek bir parola belirtin</string>
+    <string name="eo_password_subtitle">Proton Mail kullanmayan kişiler için bu iletiyi şifreleyecek bir parola ayarlayın</string>
     <string name="eo_password_more_info">Ayrıntılı bilgi alın</string>
     <string name="no_attachments">0 ek dosya</string>
     <string name="display_name_banned_chars">Görüntülenecek ad geçersiz. \'&gt;\' ve \'&lt;\' kullanılamaz</string>

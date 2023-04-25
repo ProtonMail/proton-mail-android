@@ -369,7 +369,7 @@
     <string name="sync_attachments">Bijlagen synchroniseren</string>
     <string name="processing_attachment">Bijlage verwerken</string>
     <string name="hyperlink_confirmation_dialog_text_html">U staat op het punt om de webbrowser te starten en te navigeren naar:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Wilt u doorgaan?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Niet opnieuw vragen</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Onjuiste PIN-code, %d poging resterend</item>
         <item quantity="other">Onjuiste PIN-code, %d pogingen resterend</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d poging tot het vernietigen van alle gegevens!</item>
         <item quantity="other">%d pogingen tot het vernietigen van alle gegevens!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Uitloggen</string>
     <string name="logout_question_next_account">Weet u zeker dat u wilt uitloggen met huidige account en verder wilt gaan met %s?</string>
     <string name="upgrade">Upgraden</string>
     <string name="error">Fout</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Uitgelogd</string>
+    <string name="logged_out_description">U bent uitgelogd. Log opnieuw in.</string>
     <string name="print_error">Afdrukfout</string>
     <string name="download_complete">Download voltooid</string>
     <string name="message_expires_in">Dit bericht verloopt over %s</string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Mailbox</string>
     <string name="privacy">Privacy</string>
     <string name="auto_download_messages_title">Automatisch berichten downloaden</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Wanneer deze optie is ingeschakeld, wordt de berichtsinhoud automatisch gedownload elke keer dat u een nieuwe e-mail melding ontvangt (dit zal meer gegevens verbruiken). Als deze optie niet is ingeschakeld, worden de berichten alleen gedownload wanneer u een e-mail opent. (Let op: met elke optie, als u de cache verwijdert of uitlogt, kunt u de berichten niet lezen terwijl u offline bent.)</string>
     <string name="settings_background_sync">Achtergrondsynchronisatie</string>
     <string name="settings_auto_show_images">Automatisch externe afbeeldingen weergeven</string>
     <string name="settings_auto_show_embedded_images">Automatisch ingesloten afbeeldingen weergeven</string>
@@ -796,7 +796,7 @@
     <string name="custom_language_dialog_title">Selecteer de taal van de app</string>
     <string name="auto_detect">Automatisch detecteren</string>
     <string name="combined_contacts">Gecombineerde contacten</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Schakel deze functie in om e-mailadressen automatisch aan te vullen met behulp van contacten van al uw ingelogde accounts.</string>
     <string name="local_cache_management">Lokale cache</string>
     <string name="cache_cleared">Lokale cache is ververst</string>
     <string name="empty_data">Gegevens wissen</string>

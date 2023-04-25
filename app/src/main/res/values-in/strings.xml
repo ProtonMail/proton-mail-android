@@ -337,7 +337,7 @@
     <string name="saving_failed_no_conn">Gagal menyimpan, tidak ada koneksi</string>
     <string name="attachment_exists">Lampiran telah terlampir</string>
     <string name="eo_password_not_completed">Kata Sandi Pesan tidak lengkap.</string>
-    <string name="delinquency_subtitle">Akses ke akun ini telah dinonaktifkan karena adanya tagihan yang belum dibayar. Silakan masuk melalui proton.me untuk membayar tagihan Anda.</string>
+    <string name="delinquency_subtitle">Akses ke akun ini telah ditangguhkan karena adanya tagihan yang tertunggak. Silakan masuk melalui proton.me untuk melunasi tagihan Anda.</string>
     <string name="downloading">Mengunduh...</string>
     <string name="cant_download_attachment">Lampiran tidak dapat diunduh</string>
     <string-array name="auto_logout_options_array">
@@ -782,7 +782,7 @@
     <string name="custom_language_dialog_title">Pilih Bahasa Aplikasi</string>
     <string name="auto_detect">Deteksi otomatis</string>
     <string name="combined_contacts">Kontak gabungan</string>
-    <string name="turn_combined_contacts_on">Aktifkan fitur ini agar alamat email yang Anda ketik dapat dilengkapi secara otomatis dengan data kontak dari seluruh akun aktif yang Anda miliki.</string>
+    <string name="turn_combined_contacts_on">Aktifkan fitur ini agar alamat email yang Anda ketik dapat dilengkapi secara otomatis dengan data kontak dari seluruh akun yang terhubung masuk.</string>
     <string name="local_cache_management">Cache lokal</string>
     <string name="cache_cleared">Cache lokal telah dikosongkan</string>
     <string name="empty_data">Bersihkan data</string>
