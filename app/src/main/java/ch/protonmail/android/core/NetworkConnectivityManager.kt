@@ -23,6 +23,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
+import android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED
 import android.net.NetworkRequest
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
@@ -42,8 +43,10 @@ class NetworkConnectivityManager @Inject constructor(
 ) {
 
     fun isInternetConnectionPossible(): Boolean {
-        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        return capabilities?.hasCapability(NET_CAPABILITY_INTERNET) == true
+        return connectivityManager.allNetworks.any { network ->
+            val capabilities = connectivityManager.getNetworkCapabilities(network)
+            capabilities.hasVerifiedInternet()
+        }
     }
 
     /**
@@ -73,7 +76,7 @@ class NetworkConnectivityManager @Inject constructor(
                 network: Network,
                 networkCapabilities: NetworkCapabilities
             ) {
-                if (networkCapabilities.hasCapability(NET_CAPABILITY_INTERNET)) {
+                if (networkCapabilities.hasVerifiedInternet()) {
                     Timber.v("Network $network has internet capability")
                     trySend(Constants.ConnectionState.CONNECTED)
                 }
@@ -92,4 +95,7 @@ class NetworkConnectivityManager @Inject constructor(
         return connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
             ?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) ?: false
     }
+
+    private fun NetworkCapabilities?.hasVerifiedInternet(): Boolean =
+        this?.hasCapability(NET_CAPABILITY_INTERNET) == true && this.hasCapability(NET_CAPABILITY_VALIDATED)
 }
