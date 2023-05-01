@@ -282,7 +282,7 @@
     <string name="add_attachment">Adăugare atașament</string>
     <string name="select_file">Selectare fișier</string>
     <string name="attach_file">Atașare fișier</string>
-    <string name="take_photo">Faceți o fotografie</string>
+    <string name="take_photo">Fotografiere</string>
     <string name="problem_taking_photo">A apărut o problemă la fotografiere</string>
     <string name="problem_selecting_file">A apărut o problemă la adăugarea fișierului selectat</string>
     <string name="add_contact">Adăugare contact</string>

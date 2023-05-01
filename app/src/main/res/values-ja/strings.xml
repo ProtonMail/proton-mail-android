@@ -365,7 +365,7 @@
     <string name="sync_attachments">添付ファイルを同期しています...</string>
     <string name="processing_attachment">添付ファイルの処理中</string>
     <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次のURLを開こうとしています：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">今後表示しない</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PINコードが間違っています。 あと%d回試すことができます。</item>
     </plurals>
@@ -460,7 +460,7 @@
         <item>@string/vcard_other_option_url</item>
     </string-array>
     <string name="logged_out">サインアウトしました</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out_description">サインアウトされています。もう一度サインインしてください。</string>
     <string name="print_error">印刷エラー</string>
     <string name="download_complete">ダウンロード完了</string>
     <string name="message_expires_in">このメッセージは %s後に失効します</string>
@@ -486,7 +486,7 @@
     <string name="saving">保存中...</string>
     <string name="update_folder">フォルダーを更新</string>
     <string name="spam_score_100">このメールは Proton Mail のアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。差出人と内容を疑い、正当なものかどうかを確認してください。 <a href="https://proton.me/blog/prevent-phishing-attacks">詳細</a></string>
     <string name="print_from_template">差出人: %s</string>
     <string name="print_to_template">宛先: %s;  </string>
@@ -725,7 +725,7 @@
     <string name="mailbox">受信トレイ</string>
     <string name="privacy">プライバシー</string>
     <string name="auto_download_messages_title">メッセージの自動ダウンロード</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">このオプションを有効にすると、新しい電子メール通知を受信するたびにメッセージ本文が自動的にダウンロードされます (より多くのデータが消費されます)。 このオプションが有効になっていない場合、メールを開いたときにのみメッセージ本文がダウンロードされます。 (注: どちらのオプションでも、キャッシュをクリアするかサインアウトすると、オフラインでメッセージ本文を読むことができなくなります。)</string>
     <string name="settings_background_sync">バックグラウンド同期</string>
     <string name="settings_auto_show_images">外部画像の自動表示</string>
     <string name="settings_auto_show_embedded_images">埋め込み画像の自動表示</string>
@@ -774,7 +774,7 @@
     <string name="custom_language_dialog_title">アプリの言語を選択してください</string>
     <string name="auto_detect">自動検出</string>
     <string name="combined_contacts">連絡先の相互利用</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">この機能を有効にすると、ログイン済みアカウントの連絡先のメールアドレスの自動補完を利用することができます。</string>
     <string name="local_cache_management">ローカルキャッシュ</string>
     <string name="cache_cleared">端末のキャッシュが更新されました。</string>
     <string name="empty_data">データをクリア</string>
