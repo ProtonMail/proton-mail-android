@@ -43,10 +43,9 @@ class NetworkConnectivityManager @Inject constructor(
 ) {
 
     fun isInternetConnectionPossible(): Boolean {
-        return connectivityManager.allNetworks.any { network ->
-            val capabilities = connectivityManager.getNetworkCapabilities(network)
-            capabilities.hasVerifiedInternet()
-        }
+        val activeNetwork = connectivityManager.activeNetwork
+        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+        return capabilities.hasVerifiedInternet()
     }
 
     /**
