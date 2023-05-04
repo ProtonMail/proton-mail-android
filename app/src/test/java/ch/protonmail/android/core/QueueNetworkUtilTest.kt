@@ -67,7 +67,7 @@ internal open class QueueNetworkUtilTest {
         @Test
         fun `should call the listener as soon as the real connectivity is updated`() = with(testInput) {
             // given
-            every { networkInfoMock.isConnectedOrConnecting } returns isConnectedOrConnecting
+            every { networkInfoMock.isConnected } returns isConnected
             queueNetworkUtil.setListener(listenerMock)
 
             // when
@@ -82,25 +82,25 @@ internal open class QueueNetworkUtilTest {
             private val pingNeededStateInputs = listOf(
                 TestInput(
                     serverAccessible = true,
-                    isConnectedOrConnecting = true,
+                    isConnected = true,
                     connectionState = Constants.ConnectionState.PING_NEEDED,
                     expectedNetworkStatus = NetworkUtil.METERED
                 ),
                 TestInput(
                     serverAccessible = true,
-                    isConnectedOrConnecting = false,
+                    isConnected = false,
                     connectionState = Constants.ConnectionState.PING_NEEDED,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 ),
                 TestInput(
                     serverAccessible = false,
-                    isConnectedOrConnecting = true,
+                    isConnected = true,
                     connectionState = Constants.ConnectionState.PING_NEEDED,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 ),
                 TestInput(
                     serverAccessible = false,
-                    isConnectedOrConnecting = false,
+                    isConnected = false,
                     connectionState = Constants.ConnectionState.PING_NEEDED,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 )
@@ -109,25 +109,25 @@ internal open class QueueNetworkUtilTest {
             private val connectedStateInputs = listOf(
                 TestInput(
                     serverAccessible = true,
-                    isConnectedOrConnecting = true,
+                    isConnected = true,
                     connectionState = Constants.ConnectionState.CONNECTED,
                     expectedNetworkStatus = NetworkUtil.METERED
                 ),
                 TestInput(
                     serverAccessible = true,
-                    isConnectedOrConnecting = false,
+                    isConnected = false,
                     connectionState = Constants.ConnectionState.CONNECTED,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 ),
                 TestInput(
                     serverAccessible = false,
-                    isConnectedOrConnecting = true,
+                    isConnected = true,
                     connectionState = Constants.ConnectionState.CONNECTED,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 ),
                 TestInput(
                     serverAccessible = false,
-                    isConnectedOrConnecting = false,
+                    isConnected = false,
                     connectionState = Constants.ConnectionState.CONNECTED,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 )
@@ -136,25 +136,25 @@ internal open class QueueNetworkUtilTest {
             private val noInternetStateInputs = listOf(
                 TestInput(
                     serverAccessible = true,
-                    isConnectedOrConnecting = true,
+                    isConnected = true,
                     connectionState = Constants.ConnectionState.NO_INTERNET,
                     expectedNetworkStatus = NetworkUtil.METERED
                 ),
                 TestInput(
                     serverAccessible = true,
-                    isConnectedOrConnecting = false,
+                    isConnected = false,
                     connectionState = Constants.ConnectionState.NO_INTERNET,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 ),
                 TestInput(
                     serverAccessible = false,
-                    isConnectedOrConnecting = true,
+                    isConnected = true,
                     connectionState = Constants.ConnectionState.NO_INTERNET,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 ),
                 TestInput(
                     serverAccessible = false,
-                    isConnectedOrConnecting = false,
+                    isConnected = false,
                     connectionState = Constants.ConnectionState.NO_INTERNET,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 )
@@ -163,25 +163,25 @@ internal open class QueueNetworkUtilTest {
             private val cantReachServerInputs = listOf(
                 TestInput(
                     serverAccessible = true,
-                    isConnectedOrConnecting = true,
+                    isConnected = true,
                     connectionState = Constants.ConnectionState.CANT_REACH_SERVER,
                     expectedNetworkStatus = NetworkUtil.METERED
                 ),
                 TestInput(
                     serverAccessible = true,
-                    isConnectedOrConnecting = false,
+                    isConnected = false,
                     connectionState = Constants.ConnectionState.CANT_REACH_SERVER,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 ),
                 TestInput(
                     serverAccessible = false,
-                    isConnectedOrConnecting = true,
+                    isConnected = true,
                     connectionState = Constants.ConnectionState.CANT_REACH_SERVER,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 ),
                 TestInput(
                     serverAccessible = false,
-                    isConnectedOrConnecting = false,
+                    isConnected = false,
                     connectionState = Constants.ConnectionState.CANT_REACH_SERVER,
                     expectedNetworkStatus = NetworkUtil.DISCONNECTED
                 )
@@ -197,7 +197,7 @@ internal open class QueueNetworkUtilTest {
 
         internal data class TestInput(
             val serverAccessible: Boolean,
-            val isConnectedOrConnecting: Boolean,
+            val isConnected: Boolean,
             val connectionState: Constants.ConnectionState,
             val expectedNetworkStatus: Int
         )

@@ -26,11 +26,10 @@ import ch.protonmail.android.jobs.ProtonMailBaseJob
 import com.birbit.android.jobqueue.Params
 import timber.log.Timber
 import java.io.IOException
-import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 
 class FetchUpdatesJob internal constructor(private val eventManager: EventManager) : ProtonMailBaseJob(
-    Params(Priority.HIGH).requireNetwork()
+    Params(Priority.HIGH).addTags(FETCH_UPDATE_JOB_TAG).requireNetwork()
 ) {
 
     constructor() : this(ProtonMailApplication.getApplication().eventManager)
@@ -58,4 +57,9 @@ class FetchUpdatesJob internal constructor(private val eventManager: EventManage
     }
 
     override fun onProtonCancel(cancelReason: Int, throwable: Throwable?) {}
+
+    companion object {
+
+        internal const val FETCH_UPDATE_JOB_TAG = "FetchUpdateJobTag"
+    }
 }

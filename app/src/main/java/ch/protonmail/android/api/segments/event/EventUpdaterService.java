@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ProtonJobIntentService;
 
 import com.birbit.android.jobqueue.JobManager;
+import com.birbit.android.jobqueue.TagConstraint;
 
 import javax.inject.Inject;
 
@@ -70,6 +71,7 @@ public class EventUpdaterService extends ProtonJobIntentService {
 
 
     private void startService() {
+        mJobManager.cancelJobs(TagConstraint.ALL, FetchUpdatesJob.FETCH_UPDATE_JOB_TAG);
         mJobManager.addJob(new FetchUpdatesJob(eventManager));
         alarmReceiver.setAlarm(getApplicationContext());
     }
