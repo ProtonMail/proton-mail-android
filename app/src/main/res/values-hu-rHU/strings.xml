@@ -365,7 +365,7 @@
     <string name="ringtone_no_default">Nem sikerült az alapértelmezett értesítési hang betöltése</string>
     <string name="select_tone">Hang kiválasztása</string>
     <string name="copy_link">Hivatkozás másolása</string>
-    <string name="share_link">Link megosztása</string>
+    <string name="share_link">Hivatkozás megosztása</string>
     <string name="sync_attachments">Mellékletek szinkronizálása</string>
     <string name="processing_attachment">Melléklet feldolgozása</string>
     <string name="hyperlink_confirmation_dialog_text_html">Megnyitja a következő címet a böngészőben:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Kívánja folytatni?</string>

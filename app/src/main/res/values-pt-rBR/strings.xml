@@ -493,7 +493,7 @@
     <string name="saving">Salvando...</string>
     <string name="update_folder">Atualizar pasta</string>
     <string name="spam_score_100">Este e-mail parece ser de um endereço Proton Mail, mas veio de fora do nosso sistema e não atendeu aos nossos requisitos de autenticação. Ele pode ter sido falsificado ou encaminhado indevidamente!</string>
-    <string name="spam_score_101">Este e-mail falhou nos requisitos de autenticação de domínio. Ele pode ser falsificado ou encaminhado incorretamente.</string>
+    <string name="spam_score_101">Este e-mail falhou nos requisitos de autenticação de domínio. Pode ser falsificado ou encaminhado indevidamente.</string>
     <string name="spam_score_102">Esta mensagem pode ser uma tentativa de phishing. Por favor, verifique o remetente e seu conteúdo para certificar-se de que são legítimos. <a href="https://proton.me/blog/prevent-phishing-attacks">SAIBA MAIS</a></string>
     <string name="print_from_template">De: %s</string>
     <string name="print_to_template">Para: %s  </string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Caixa de correio</string>
     <string name="privacy">Privacidade</string>
     <string name="auto_download_messages_title">Baixar mensagens automaticamente</string>
-    <string name="auto_download_messages_subtitle">Quando esta opção estiver habilitada, os corpos das mensagens serão baixados automaticamente sempre que você receber uma nova notificação por e-mail (isso consumirá mais dados). Se esta opção não estiver habilitada, os corpos das mensagens serão baixados apenas quando você abrir um e-mail. (Observação: com qualquer uma das opções, se você limpar o cache ou sair, não poderá ler o corpo das mensagens enquanto estiver off-line.)</string>
+    <string name="auto_download_messages_subtitle">Quando esta opção estiver ativada, os corpos das mensagens serão baixados automaticamente sempre que você receber uma nova notificação por e-mail (isso consumirá mais dados). Se esta opção não estiver ativada, os corpos das mensagens serão baixados apenas quando você abrir um e-mail. (Observação: com qualquer uma das opções, se você limpar o cache ou sair, não poderá ler o corpo das mensagens enquanto estiver off-line.)</string>
     <string name="settings_background_sync">Sincronização em segundo plano</string>
     <string name="settings_auto_show_images">Mostrar imagens remotas automaticamente</string>
     <string name="settings_auto_show_embedded_images">Mostrar imagens incorporadas automaticamente</string>

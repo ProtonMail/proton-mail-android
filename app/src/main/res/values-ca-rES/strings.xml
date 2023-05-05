@@ -294,7 +294,7 @@
     <string name="no">No</string>
     <string name="ok">OK</string>
     <string name="forward_prefix">RV:</string>
-    <string name="original_message_divider">-------- Missatge Original --------</string>
+    <string name="original_message_divider">-------- Missatge original --------</string>
     <string name="invalid_email_address">La direcció \'%s\' no és vàlida</string>
     <string name="invalid_email_address_removed">La adreça \'%s\' es invàlida i ha estat esborrada</string>
     <string name="no_recipients_specified">Agregueu almenys un destinatari</string>

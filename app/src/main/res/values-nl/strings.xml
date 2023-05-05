@@ -493,7 +493,7 @@
     <string name="saving">Opslaan...</string>
     <string name="update_folder">Map bijwerken</string>
     <string name="spam_score_100">Deze e-mail lijkt afkomstig van een Proton Mail-adres maar kwam van buiten ons systeem en voldoet niet aan onze authenticatie-vereisten. Mogelijk werd deze gespoofed of onjuist doorgestuurd!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Dit e-mailadres gebruikt foutieve domeininstellingen. Het kan een nepbericht zijn, of het is op de verkeerde manier doorgestuurd.</string>
     <string name="spam_score_102">Dit bericht kan een poging tot phishing zijn. Controleer de afzender en de inhoud om u ervan te verzekeren dat ze legitiem zijn. <a href="https://proton.me/blog/prevent-phishing-attacks">MEER INFORMATIE</a></string>
     <string name="print_from_template">Van: %s</string>
     <string name="print_to_template">Aan: %s;  </string>

@@ -602,7 +602,7 @@
     <string name="contact_group_display_name">Görüntülenecek ad</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="title_activity_address_chooser">Üye yönetimi</string>
-    <string name="default_error_message">Hata oluştu</string>
+    <string name="default_error_message">Sorun çıktı</string>
     <string name="no_contact_groups">Henüz bir kişi grubu yok</string>
     <string name="search_contacts_inside_group">Kişi arama</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
@@ -770,8 +770,8 @@
     <string name="swipe_action_mark_read">İletiyi okunmuş olarak işaretlendi</string>
     <string name="swipe_action_mark_read_short">Oku</string>
     <plurals name="action_move_to_trash">
-        <item quantity="one">İleti çöpe taşındı</item>
-        <item quantity="other">İletiler çöpe taşındı</item>
+        <item quantity="one">İleti çöpe atıldı</item>
+        <item quantity="other">İletiler çöpe atıldı</item>
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Yerel depolama alanı sınırı</string>
@@ -839,7 +839,7 @@
     <string name="invalid_firebase_api_key_message">Firebase API anahtarı geçersiz. Anlık bildirimler çalışmayacak.</string>
     <string name="failed_saving_draft_online">Çevrimiçi ileti taslağı kaydedilemedi: \"%s\"</string>
     <string name="failed_draft_does_not_exist">\"%s\" iletisi bulunamadı.</string>
-    <string name="failed_uploading_attachment_online">İletide ek dosya hatası: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">İletiye dosya eklenirken sorun çıktı: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Bu ileti gönderilirken açılamaz</string>
     <string name="enable_conversation_mode">Yazışma kipini etkinleştir</string>
     <!-- endregion -->
@@ -874,5 +874,5 @@
     <string name="edit_draft">Taslağı düzenle</string>
     <string name="details_show_history">Geçmişi göster</string>
     <string name="could_not_complete_action">İşlem tamamlanamadı</string>
-    <string name="decryption_of_message_failed">Şifre çözme hatası: Bu iletinin şifrelenmiş içeriğinin şifresi çözülemedi.</string>
+    <string name="decryption_of_message_failed">Şifre çözme sorunu: Bu iletinin şifrelenmiş içeriğinin şifresi çözülemedi.</string>
 </resources>

@@ -85,7 +85,7 @@
     <string name="composer_from">Dari:</string>
     <string name="composer_subject">Subjek:</string>
     <string name="composer_to">Kepada:</string>
-    <string name="composer_removing_address_generic_error">Tidak dapat memverifikasi alamat: %s. Pengiriman berpotensi gagal.</string>
+    <string name="composer_removing_address_generic_error">Alamat tidak dapat diverifikasi: %s. Pengiriman berpotensi gagal.</string>
     <string name="composer_removing_address_server_error">Menghapus alamat: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Pada %s, %s &lt; %s&gt; menulis:</string>
@@ -543,7 +543,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Dikirim oleh Anda dengan enkripsi ujung ke ujung</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Dikirim oleh Proton Mail dengan teknologi enkripsi nol akses</string>
+    <string name="sender_lock_sent_autoresponder">Dikirim oleh Proton Mail dengan teknologi enkripsi zero access</string>
     <string name="sender_lock_verification_failed">Verifikasi pengirim gagal</string>
     <string name="sender_lock_pgp_encrypted">Pesan terenkripsi PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Pesan terenkripsi PGP dari alamat terverifikasi</string>
@@ -557,7 +557,7 @@
     <string name="composer_lock_pgp_encrypted_pinned">Terenkripsi PGP ke penerima terverifikasi</string>
     <string name="composer_lock_pgp_signed">Ditandatangani PGP</string>
     <string name="recipient_not_found_and_removed">Penerima tidak dapat ditemukan: %s dan telah dihapus</string>
-    <string name="recipient_error_and_removed">Kesalahan saat mengambil informasi penerima dan penerima telah dihapus: %s</string>
+    <string name="recipient_error_and_removed">Terdapat kesalahan pada saat mengambil informasi penerima. Penerima telah dihapus: %s</string>
     <string name="send_anyway">Tetap kirim</string>
     <string name="expiration_error_title">Anda mengaktifkan pesan yang dapat kedaluwarsa, namun tidak semua penerima mendukung fitur ini.</string>
     <string name="expiration_error_add_msg_password">Silakan tambahkan kata sandi pesan bagi para penerima berikut:</string>
