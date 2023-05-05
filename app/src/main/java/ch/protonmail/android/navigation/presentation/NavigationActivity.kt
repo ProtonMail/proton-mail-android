@@ -68,12 +68,12 @@ import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.presentation.view.AccountPrimaryView
 import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewModel
 import me.proton.core.domain.entity.UserId
+import me.proton.core.payment.domain.PaymentManager
 import me.proton.core.plan.presentation.PlansOrchestrator
 import me.proton.core.presentation.utils.setDarkStatusBar
 import me.proton.core.presentation.utils.setLightStatusBar
 import me.proton.core.presentation.utils.showToast
 import me.proton.core.report.presentation.ReportOrchestrator
-import me.proton.core.report.presentation.entity.BugReportInput
 import javax.inject.Inject
 
 // region constants
@@ -123,6 +123,9 @@ internal abstract class NavigationActivity : BaseActivity() {
 
     @Inject
     lateinit var plansOrchestrator: PlansOrchestrator
+
+    @Inject
+    lateinit var paymentManager: PaymentManager
 
     private val accountSwitcherViewModel by viewModels<AccountSwitcherViewModel>()
     private val navigationViewModel by viewModels<NavigationViewModel>()
@@ -412,22 +415,35 @@ internal abstract class NavigationActivity : BaseActivity() {
             )
         )
 
-        sideDrawer.setMoreItems(
-            R.string.x_more,
-            listOfNotNull(
-                Primary.Static(Type.SETTINGS, R.string.drawer_settings, R.drawable.ic_proton_cog_wheel),
-                Primary.Static(Type.SUBSCRIPTION, R.string.drawer_subscription, R.drawable.ic_proton_pencil),
-                Primary.Static(Type.CONTACTS, R.string.drawer_contacts, R.drawable.ic_proton_users),
-                Primary.Static(Type.REPORT_BUGS, R.string.drawer_report_bug, R.drawable.ic_proton_bug),
-                if (hasPin) Primary.Static(Type.LOCK, R.string.drawer_lock_the_app, R.drawable.ic_proton_lock)
-                else null,
-                Primary.Static(Type.SIGNOUT, R.string.drawer_sign_out, R.drawable.ic_proton_arrow_out_from_rectangle)
-            )
-        )
+        lifecycleScope.launch {
 
-        sideDrawer.setFooterText(
-            getString(R.string.x_app_version_name_code, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
-        )
+
+            val showSubscriptions = accountStateManager.getPrimaryUserId().value?.let { userId ->
+                paymentManager.isSubscriptionAvailable(userId)
+            } ?: false
+
+            sideDrawer.setMoreItems(
+                R.string.x_more,
+                listOfNotNull(
+                    Primary.Static(Type.SETTINGS, R.string.drawer_settings, R.drawable.ic_proton_cog_wheel),
+                    if (showSubscriptions) Primary.Static(
+                        Type.SUBSCRIPTION, R.string.drawer_subscription, R.drawable.ic_proton_pencil
+                    )
+                    else null,
+                    Primary.Static(Type.CONTACTS, R.string.drawer_contacts, R.drawable.ic_proton_users),
+                    Primary.Static(Type.REPORT_BUGS, R.string.drawer_report_bug, R.drawable.ic_proton_bug),
+                    if (hasPin) Primary.Static(Type.LOCK, R.string.drawer_lock_the_app, R.drawable.ic_proton_lock)
+                    else null,
+                    Primary.Static(
+                        Type.SIGNOUT, R.string.drawer_sign_out, R.drawable.ic_proton_arrow_out_from_rectangle
+                    )
+                )
+            )
+
+            sideDrawer.setFooterText(
+                getString(R.string.x_app_version_name_code, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+            )
+        }
     }
 
     private fun onDrawerStaticItemSelected(type: Type) {
