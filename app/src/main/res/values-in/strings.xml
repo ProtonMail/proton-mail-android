@@ -525,11 +525,11 @@
     <string name="remove_password">Hapus Kata Sandi</string>
     <string name="remove_password_question">Hapus Kata Sandi?</string>
     <string name="attachment_storage_value_current">Sedang dipilih: %dMB</string>
-    <string name="attachment_storage_value_current_unlimited">Sedang dipilih: Tidak terbatas</string>
+    <string name="attachment_storage_value_current_unlimited">Pilihan saat ini: Tak terbatas</string>
     <string name="attachment_offline_max_storage">Menentukan jumlah ruang penyimpanan maksimum yang dapat Proton Mail gunakan pada perangkat seluler Anda.</string>
     <string name="load_embedded_images_failed_no_network">Gagal memuat gambar yang tersemat. Mohon periksa koneksi internet Anda.</string>
     <string name="load_embedded_images_failed">Gagal memuat gambar yang tersemat.</string>
-    <string name="unlimited">Tanpa Batas</string>
+    <string name="unlimited">Tak terbatas</string>
     <string name="local_storage_cleared">Ruang penyimpanan lokal dikosongkan</string>
     <string name="recipient_popup_compose_to">Tulis untuk</string>
     <string name="recipient_popup_copy_address">Salin alamat</string>

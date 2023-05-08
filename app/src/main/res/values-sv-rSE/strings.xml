@@ -375,8 +375,8 @@
         <item quantity="other">Felaktig PIN-kod, %d försök återstår</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
-        <item quantity="one">%d attempt until secure data wipe!</item>
-        <item quantity="other">%d attempts until secure data wipe!</item>
+        <item quantity="one">%d försök återstår till säker data raderas!</item>
+        <item quantity="other">%d försök återstår till säker data raderas!</item>
     </plurals>
     <string name="logout">Logga ut</string>
     <string name="logout_question_next_account">Du kommer att växlas till %s.</string>
@@ -493,7 +493,7 @@
     <string name="saving">Sparar...</string>
     <string name="update_folder">Uppdatera mapp</string>
     <string name="spam_score_100">Denna e-post verkar komma från en Proton Mail-adress, men det kom utanför vårt system och misslyckades med våra autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefordrat!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Denna e-post har misslyckats med sin domäns autentiseringskrav. Den kan vara förfalskad eller felaktigt vidarebefordrad.</string>
     <string name="spam_score_102">Detta meddelande kan vara ett nätfiskeförsök. Kontrollera avsändaren och innehållet för att säkerställa att de är legitima. <a href="https://proton.me/blog/prevent-phishing-attacks">LÄR DIG MERr</a></string>
     <string name="print_from_template">Från: %s</string>
     <string name="print_to_template">Till: %s,  </string>
@@ -746,7 +746,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="mailbox">Brevlåda</string>
     <string name="privacy">Integritet</string>
     <string name="auto_download_messages_title">Automatisk nedladdning av meddelanden</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">När det här alternativet är aktiverat kommer meddelandetexter att laddas ned automatiskt varje gång du får ett nytt e-postmeddelande (detta kommer att förbruka mer data). Om det här alternativet inte är aktiverat kommer meddelandetexter bara att laddas ner när du öppnar ett e-postmeddelande. (Obs: med båda alternativen, om du rensar cacheminnet eller loggar ut, kommer du inte att kunna läsa meddelandetexter när du är offline.)</string>
     <string name="settings_background_sync">Bakgrundssynkronisering</string>
     <string name="settings_auto_show_images">Visa externa bilder automatiskt</string>
     <string name="settings_auto_show_embedded_images">Visa inbäddade bilder automatiskt</string>
@@ -796,7 +796,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="custom_language_dialog_title">Välj app-språk</string>
     <string name="auto_detect">Identifiera automatiskt</string>
     <string name="combined_contacts">Kombinerade kontakter</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Aktivera den här funktionen för att automatiskt fylla i e-postadresser med kontakter från alla dina inloggade konton.</string>
     <string name="local_cache_management">Lokal cache</string>
     <string name="cache_cleared">Lokal cache är uppdaterad</string>
     <string name="empty_data">Rensa data</string>

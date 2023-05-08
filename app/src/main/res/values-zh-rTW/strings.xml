@@ -35,7 +35,7 @@
     <!-- region Content descriptions: accessibility description for icons -->
     <string name="x_label_icon_description">標籤圖示</string>
     <string name="x_folder_icon_description">資料夾圖示</string>
-    <string name="x_parent_folder_icon_description">帶有兒童圖示的資料夾</string>
+    <string name="x_parent_folder_icon_description">子系圖示的資料夾</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_scheduled">已排程</string>
@@ -61,7 +61,7 @@
     <string name="mailbox_updated_just_now">剛剛更新</string>
     <string name="mailbox_updated_recently">最近更新</string>
     <string name="mailbox_updating">正在更新……</string>
-    <string name="is_proton">這是 Proton 訊息</string>
+    <string name="is_proton">此為一則 Proton 訊息</string>
     <string name="is_proton_official_badge">官方</string>
     <!-- endregion -->
     <!-- region Details -->
@@ -70,13 +70,13 @@
     <string name="details_open_in_proton_calendar_icon_desc">Proton 行事曆圖示</string>
     <string name="details_play_store_error">無法打開 Play 商店</string>
     <string name="details_hyperlink_phishing_dialog_title">警告：疑似假冒網站</string>
-    <string name="details_hyperlink_phishing_dialog_content">此連結指向的網站可能試圖竊取您的資訊，如密碼與信用卡詳細資訊等。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;為了您的安全，請不要繼續。</string>
+    <string name="details_hyperlink_phishing_dialog_content">這個連結通往到的網站，很可能會試圖竊取您的資訊，例如：密碼、信用卡詳細內容等。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;基於您的網路安全疑慮，請不要繼續前往該網站。</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">返回 (建議)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">忽略警語並繼續</string>
-    <string name="scheduled_message_info">此信息將於 %s 內送出</string>
+    <string name="scheduled_message_info">此郵件將在 %s 時送出</string>
     <string name="scheduled_message_edit_info">目前只能在網頁版和 iOS 應用程式中修改已排程的訊息。</string>
     <string name="scheduled_message_moved_to_trash_title">郵件不會被送出</string>
-    <string name="scheduled_message_moved_to_trash_desc">丟進垃圾桶的信息將被取消排程。</string>
+    <string name="scheduled_message_moved_to_trash_desc">郵件丟進垃圾桶時，會一併取消相關的排程。</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">密件副本：</string>
@@ -90,7 +90,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">在 %s，%s &lt; %s&gt; 寫道：</string>
     <string name="set_msg_password_title">設定密碼</string>
-    <string name="set_msg_password_info">請設置一組密碼，讓非 Proton Mail 用戶也能讀取加密信息<a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
+    <string name="set_msg_password_info">請設置一組密碼以便將訊息加密後傳送給非 Proton Mail 使用者<a href="https://proton.me/support/password-protected-emails">瞭解更多</a></string>
     <string name="set_msg_password_info_icon_description">資訊</string>
     <string name="set_msg_password_msg_password_title">郵件密碼</string>
     <string name="set_msg_password_msg_password_hint">長度為 4 至 21 個字元</string>
@@ -111,8 +111,8 @@
     <string name="set_msg_expiration_1_week">1 週</string>
     <string name="set_msg_expiration_custom">自定義</string>
     <string name="set_msg_expiration_check_description">已勾選此項目</string>
-    <string name="composer_invalid_sender_saving_draft_failed">寄件者電郵位址無效。請更換為有效的位址。</string>
-    <string name="composer_invalid_subject_saving_draft_failed">主旨無效。</string>
+    <string name="composer_invalid_sender_saving_draft_failed">寄件者電子郵件格式有誤。請更改為正確格式。</string>
+    <string name="composer_invalid_subject_saving_draft_failed">主旨欄並非為有效格式。</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">佈景主題</string>
@@ -121,7 +121,7 @@
     <string name="settings_pins_dont_match">PIN 碼必須相符！</string>
     <string name="settings_enter_pin_code_title">輸入 PIN 碼</string>
     <string name="settings_storage_limit_mb_value">%1$d MB (已使用 %2$.2f MB)</string>
-    <string name="settings_storage_limit_unlimited_value">無限 (已使用%1$.2f MB)</string>
+    <string name="settings_storage_limit_unlimited_value">吃到飽 (已使用%1$.2f MB)</string>
     <string name="settings_swipe_settings_info">設定滑動手勢以存取最常用動作。</string>
     <string name="settings_swipe_left_to_right">由左至右</string>
     <string name="settings_swipe_right_to_left">由右至左</string>

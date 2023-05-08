@@ -20,8 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
-    <string name="x_add_folder">Adicionar pasta</string>
-    <string name="x_add_label">Adicionar etiqueta</string>
+    <string name="x_add_folder">Adicionar Pasta</string>
+    <string name="x_add_label">Adicionar Etiqueta</string>
     <string name="x_days">Dias</string>
     <string name="x_done">Concluído</string>
     <string name="x_edit">Editar</string>

@@ -647,11 +647,11 @@
     <string name="storage_limit_alert">Depolama alanı sınırına ulaşıldı. E-posta gönderilemez veya alınamaz.
         Ayrıntılı bilgi almak için dokunun.</string>
     <string name="storage_limit_warning_title">Uyarı</string>
-    <string name="storage_limit_reached_text">Depolama alanı kapasiteniz %100 oranında kullanılıyor.
-        Bazı e-postaları kalıcı olarak silmediğiniz veya daha fazla depolama alanı satın almadığınız sürece 
+    <string name="storage_limit_reached_text">Depolama alanınız %100 oranında kullanılıyor.
+        Bazı e-postaları kalıcı olarak silmediğiniz ya da daha fazla depolama alanı satın almadığınız sürece 
         e-posta gönderemez veya alamazsınız.</string>
-    <string name="storage_limit_approaching_text">Depolama kapasiteniz %90 oranında kullanılıyor.
-        Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depolama alanı satın almayı değerlendirin.</string>
+    <string name="storage_limit_approaching_text">Depolama alanınız %90 oranında kullanılıyor.
+        Alanınız dolmadan önce bir miktar alan boşaltmayı ya da daha fazla depolama alanı satın almayı değerlendirin.</string>
     <!-- endregion -->
     <string name="need_permissions_title">İzinler</string>
     <string name="need_storage_permissions_add_attachment_text">Dosya eklemek için depolama alanına erişme

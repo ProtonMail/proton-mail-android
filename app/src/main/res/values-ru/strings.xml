@@ -318,7 +318,7 @@
     <string name="cancel">Отменить</string>
     <string name="close">Закрыть</string>
     <string name="eo_password_title">Задать пароль</string>
-    <string name="eo_password_subtitle">Установите пароль для шифрования этого сообщения для пользователей, не использующих Proton Mail</string>
+    <string name="eo_password_subtitle">Установите пароль шифрования этого сообщения для пользователей, не использующих Proton Mail</string>
     <string name="eo_password_more_info">Получить больше информации</string>
     <string name="no_attachments">Нет вложений</string>
     <string name="display_name_banned_chars">Недопустимое отображаемое имя. Символы \'&gt;\' и \'&lt;\' запрещены</string>
@@ -824,7 +824,7 @@
     <string name="custom_language_dialog_title">Выберите язык приложения</string>
     <string name="auto_detect">Автоопределение</string>
     <string name="combined_contacts">Объединенные контакты</string>
-    <string name="turn_combined_contacts_on">Включите эту функцию для автозаполнения адресов электронной почты используя контакты из всех авторизованных аккаунтов.</string>
+    <string name="turn_combined_contacts_on">Включите эту функцию для автозаполнения адресов электронной почты из контактов всех ваших авторизованных аккаунтов.</string>
     <string name="local_cache_management">Локальный кэш</string>
     <string name="cache_cleared">Локальный кэш обновлен</string>
     <string name="empty_data">Очистить данные</string>
@@ -843,12 +843,12 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Общие проблемы с подключением и их решения</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Нет подключения к Интернету&lt;/i&gt; - Убедитесь, что у вас есть подключение к Интернету.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема у интернет-провайдера (ISP)&lt;/i&gt; - Попробуйте подключиться к Proton из другой сети (или используйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Правительственная блокировка&lt;/i&gt; - Возможно, ваша страна блокирует доступ к Proton. Попробуйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (или любой другой VPN) или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; для доступа к Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Вмешательство антивируса&lt;/i&gt; - Временно отключте или удалите ваше антивирусное программное обеспечение.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Вмешательство прокси-сервера/брандмауэра&lt;/i&gt; - Отключите все прокси-серверы или брандмауэры или свяжитесь со своим сетевым администратором.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton не работает&lt;/i&gt; - Проверьте &lt;a href=\"http://protonstatus.com/\"&gt;состояние Proton&lt;/a&gt; для нашего системного состояния.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Нет подключения к Интернету&lt;/i&gt; - Убедитесь, что у Вас есть подключение к Интернету.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема у провайдера интернет (ISP)&lt;/i&gt; - Попробуйте подключиться к Proton из другой сети (или используйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Правительственная блокировка&lt;/i&gt; - Возможно, в Вашей стране заблокирован доступ к Proton. Попробуйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (или любую другую VPN) или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; для доступа к Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Вмешательство антивируса&lt;/i&gt; - Временно отключите или удалите ваше антивирусное программное обеспечение.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Вмешательство прокси/фаервола&lt;/i&gt; - Отключите прокси и фаерволы или обратитесь к администратору своей сети.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton не работает&lt;/i&gt; - Проверьте &lt;a href=\"http://protonstatus.com/\"&gt;системный статус Proton&lt;/a&gt;.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Решение до сих пор не найдено&lt;/i&gt; - Свяжитесь с нами напрямую через нашу &lt;a href=\"https://proton.me/support/contact\"&gt;форму поддержки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;электронную почту&lt;/a&gt; (support@protonmail.zendesk.com), или &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
@@ -861,7 +861,7 @@
     <string name="denied">Запрещена</string>
     <string name="more">Ещё</string>
     <!-- region Swipe gestures changed dialog -->
-    <string name="swipe_gestures_changed">Жесты пролистывания изменены</string>
+    <string name="swipe_gestures_changed">Свайп-жесты изменены</string>
     <string name="swipe_gestures_changed_message">В результате последнего обновления настройки жестов были изменены. Если хотите, их можно сбросить в настройках.</string>
     <string name="go_to_settings">Перейти в настройки</string>
     <!-- endregion -->
