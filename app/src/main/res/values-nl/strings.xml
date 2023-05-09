@@ -746,7 +746,7 @@
     <string name="mailbox">Mailbox</string>
     <string name="privacy">Privacy</string>
     <string name="auto_download_messages_title">Automatisch berichten downloaden</string>
-    <string name="auto_download_messages_subtitle">Wanneer deze optie is ingeschakeld, wordt de berichtsinhoud automatisch gedownload elke keer dat u een nieuwe e-mail melding ontvangt (dit zal meer gegevens verbruiken). Als deze optie niet is ingeschakeld, worden de berichten alleen gedownload wanneer u een e-mail opent. (Let op: met elke optie, als u de cache verwijdert of uitlogt, kunt u de berichten niet lezen terwijl u offline bent.)</string>
+    <string name="auto_download_messages_subtitle">Wanneer deze optie is ingeschakeld, wordt de berichtinhoud automatisch gedownload elke keer dat u een nieuwe e-mailmelding ontvangt (dit zal meer gegevens verbruiken). Als deze optie niet is ingeschakeld, worden de berichten alleen gedownload wanneer u een e-mail opent. (Let op: met elke optie, als u de cache verwijdert of uitlogt, kunt u de berichten niet lezen terwijl u offline bent.)</string>
     <string name="settings_background_sync">Achtergrondsynchronisatie</string>
     <string name="settings_auto_show_images">Automatisch externe afbeeldingen weergeven</string>
     <string name="settings_auto_show_embedded_images">Automatisch ingesloten afbeeldingen weergeven</string>

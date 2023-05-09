@@ -223,7 +223,7 @@
     <string name="all_mail">Tous les messages</string>
     <string name="contacts">Contacts</string>
     <string name="search_contacts">Rechercher des contacts</string>
-    <string name="fetching_contacts">Récupération des contacts Proton Mail...</string>
+    <string name="fetching_contacts">Récupération des contacts Proton Mail…</string>
     <string name="fetching_contacts_success">Les contacts ont été actualisés.</string>
     <string name="fetching_contacts_failure">Impossible d\'actualiser les contacts</string>
     <string name="compose">Rédiger</string>
@@ -301,7 +301,7 @@
     <string name="no_password_specified">Définir un délai d\'expiration n\'est possible que sur les messages entièrement chiffrés. Nous vous invitons à définir un mot de passe pour vos destinataires qui n\'utilisent pas Proton Mail.</string>
     <string name="attachment_limit">Les pièces jointes sont limitées à %1$s. Le poids total des pièces jointes est de %2$s.</string>
     <string name="sending_message">Envoi du message en cours...</string>
-    <string name="sending_message_offline">Hors-ligne, placé en file d\'attente pour un envoi différé...</string>
+    <string name="sending_message_offline">Hors-ligne, placé en file d\'attente pour un envoi différé…</string>
     <string name="message_sent">Message envoyé</string>
     <string name="message_failed">Le message n\'a pas pu être envoyé.</string>
     <string name="storage_limit">Limite de stockage</string>

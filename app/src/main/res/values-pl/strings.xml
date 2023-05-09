@@ -241,7 +241,7 @@
     <string name="move_to">Przenieś do…</string>
     <string name="are_you_sure_empty">Czy na pewno chcesz usunąć wszystkie wiadomości z tego folderu?</string>
     <string name="send">Wyślij</string>
-    <string name="selected">Zaznaczone</string>
+    <string name="selected">Selected</string>
     <string name="no_labels">Brak etykiet</string>
     <string name="to">Do</string>
     <string name="cc">Dw</string>

@@ -369,7 +369,7 @@
     <string name="sync_attachments">Συγχρονισμός συνημμένων</string>
     <string name="processing_attachment">Επεξεργασία συνημμένου</string>
     <string name="hyperlink_confirmation_dialog_text_html">Πρόκειται να ξεκινήσει το πρόγραμμα περιήγησης ιστού και να περιηγηθείτε στο &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;;br/Θα θέλατε να συνεχίσετε;</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Να μην ερωτηθώ ξανά</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Λανθασμένος κωδικός PIN, απομένει %d προσπάθεια</item>
         <item quantity="other">Λανθασμένος κωδικός PIN, απομένουν %d προσπάθειες</item>
@@ -378,7 +378,7 @@
         <item quantity="one">%d προσπάθεια μέχρι την ασφαλή διαγραφή δεδομένων!</item>
         <item quantity="other">%d προσπάθειες μέχρι την ασφαλή διαγραφή δεδομένων!</item>
     </plurals>
-    <string name="logout">Sign out</string>
+    <string name="logout">Αποσύνδεση</string>
     <string name="logout_question_next_account">Θα μεταβείτε στο %s.</string>
     <string name="upgrade">Αναβάθμιση</string>
     <string name="error">Σφάλμα</string>
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Signed out</string>
-    <string name="logged_out_description">You have been signed out. Please sign in again.</string>
+    <string name="logged_out">Αποσυνδεδεμένος</string>
+    <string name="logged_out_description">Έχετε αποσυνδεθεί. Παρακαλούμε συνδεθείτε ξανά.</string>
     <string name="print_error">Σφάλμα Εκτύπωσης</string>
     <string name="download_complete">Η λήψη ολοκληρώθηκε</string>
     <string name="message_expires_in">Αυτό το μήνυμα θα λήξει σε %s</string>
@@ -493,7 +493,7 @@
     <string name="saving">Αποθήκευση...</string>
     <string name="update_folder">Ενημέρωση φακέλου</string>
     <string name="spam_score_100">Αυτό το email φαίνεται να προέρχεται από μια διεύθυνση αλληλογραφίας Proton, αλλά δεν προήλθε από το σύστημά μας και απέτυχε στον έλεγχο μας για αυθεντικοποίηση. Μπορεί να πλαστογραφήθηκε ή να προωθήθηκε εσφαλμένα!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded.</string>
+    <string name="spam_score_101">Αυτό το μήνυμα απέτυχε στις απαιτήσεις ταυτοποίησης του τομέα του. Ίσως έχει πλαστογραφηθεί ή προωθηθεί ακατάλληλα.</string>
     <string name="spam_score_102">Αυτό το μήνυμα μπορεί να είναι απόπειρα ηλεκτρονικού \"ψαρέματος\". Ελέγξτε τον αποστολέα και το περιεχόμενο του για να βεβαιωθείτε ότι είναι αυθεντικό. <a href="https://proton.me/blog/prevent-phishing-attacks">ΜΑΘΕΤΕ ΠΕΡΙΣΣΟΤΕΡΑ</a></string>
     <string name="print_from_template">Από: %s</string>
     <string name="print_to_template">Προς: %s </string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Γραμματοκιβώτιο</string>
     <string name="privacy">Ιδιωτικότητα</string>
     <string name="auto_download_messages_title">Αυτόματη λήψη μηνυμάτων</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Όταν αυτή η επιλογή είναι ενεργοποιημένη, τα αρχεία μηνυμάτων θα κατεβάζει αυτόματα κάθε φορά που θα λάβετε μια νέα ειδοποίηση μέσω E-mail (αυτό θα καταναλώνει περισσότερα δεδομένα). Εάν η επιλογή είναι απενεργοποιημένη, τα αρχεία μηνυμάτων θα μεταφορτωθούν μόνο όταν ανοίγετε ένα E-mail. (Σημείωση: με οποιαδήποτε από τις επιλογές, εάν διαγράψετε την προσωρινή μνήμη ή αποσυνδεθείτε, δεν θα μπορείτε να διαβάσετε τα μηνύματα όταν είστε εκτός σύνδεσης.)</string>
     <string name="settings_background_sync">Συγχρονισμός στο παρασκήνιο</string>
     <string name="settings_auto_show_images">Αυτόματη Εμφάνιση Απομακρυσμένων Εικόνων</string>
     <string name="settings_auto_show_embedded_images">Αυτόματη Εμφάνιση Ενσωματωμένων Εικόνων</string>
@@ -796,7 +796,7 @@
     <string name="custom_language_dialog_title">Επιλέξτε γλώσσα εφαρμογής</string>
     <string name="auto_detect">Αυτόματος εντοπισμός</string>
     <string name="combined_contacts">Συνδυασμένες Επαφές</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your signed in accounts.</string>
+    <string name="turn_combined_contacts_on">Ενεργοποιήστε αυτή τη λειτουργία για να συμπληρώνετε αυτόματα τις διευθύνσεις e-mail χρησιμοποιώντας επαφές από όλους τους συνδεδεμένους λογαριασμούς σας.</string>
     <string name="local_cache_management">Τοπική προσωρινή μνήμη</string>
     <string name="cache_cleared">Η τοπική προσωρινή μνήμη ανανεώνεται</string>
     <string name="empty_data">Εκκαθάριση δεδομένων</string>
