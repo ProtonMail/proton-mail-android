@@ -1318,7 +1318,7 @@ internal class MailboxActivity :
                         PLAY_SERVICES_RESOLUTION_REQUEST
                     ) {
                         showToast("cancel", Toast.LENGTH_SHORT)
-                    }.show()
+                    }?.show()
                 }
             } else {
                 Timber.d("%s: This device is not GCM supported.", TAG_MAILBOX_ACTIVITY)
