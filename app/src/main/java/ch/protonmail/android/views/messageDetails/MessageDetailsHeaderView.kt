@@ -256,6 +256,9 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
             } else {
                 expandHeader()
             }
+            it.contentDescription = context?.getString(
+                if (isExpanded) R.string.expand_message_details else R.string.collapse_message_details
+            ) ?: ""
             isExpanded = isExpanded.not()
         }
         expandedHeaderGroup.isVisible = false

@@ -881,4 +881,7 @@
     <string name="details_show_history">Show history</string>
     <string name="could_not_complete_action">Could not complete the action</string>
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
+
+    <string name="expand_message_details">Expand Message Details</string>
+    <string name="collapse_message_details">Collapse Message Details</string>
 </resources>
