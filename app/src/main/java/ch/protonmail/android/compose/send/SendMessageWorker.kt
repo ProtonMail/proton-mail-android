@@ -209,7 +209,8 @@ class SendMessageWorker @AssistedInject constructor(
         tryWithRetry {
             messageDetailsRepository.getRemoteMessageDetails(messageId, userId)
         }.map { remoteDraft ->
-            localDraft.attachments = localDraft.attachments.plus(remoteDraft.attachments)
+            localDraft.attachments = remoteDraft.attachments
+            localDraft.numAttachments = remoteDraft.numAttachments
         }
         return localDraft
     }
