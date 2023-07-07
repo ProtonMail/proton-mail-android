@@ -57,6 +57,7 @@ import ch.protonmail.android.testdata.UserTestData.userId
 import ch.protonmail.android.testdata.WorkerTestData
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
+import ch.protonmail.android.utils.TryWithRetry
 import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.repository.WorkerRepository
 import io.mockk.Called
@@ -142,7 +143,8 @@ class SendMessageWorkerTest : CoroutinesTest by CoroutinesTest() {
         userNotifier = userNotifier,
         databaseProvider = databaseProvider,
         workerRepository = workerRepository,
-        getCleanUpPendingSendWorkName = provideUniqueCleanUpName
+        getCleanUpPendingSendWorkName = provideUniqueCleanUpName,
+        tryWithRetry = TryWithRetry()
     )
 
     @Test

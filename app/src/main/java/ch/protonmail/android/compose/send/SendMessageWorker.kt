@@ -68,6 +68,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.pendingaction.data.worker.CleanUpPendingSendWorker
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
+import ch.protonmail.android.utils.TryWithRetry
 import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.repository.WorkerRepository
 import dagger.assisted.Assisted
@@ -115,7 +116,8 @@ class SendMessageWorker @AssistedInject constructor(
     private val userNotifier: UserNotifier,
     private val databaseProvider: DatabaseProvider,
     private val workerRepository: WorkerRepository,
-    private val getCleanUpPendingSendWorkName: CleanUpPendingSendWorker.ProvideUniqueName
+    private val getCleanUpPendingSendWorkName: CleanUpPendingSendWorker.ProvideUniqueName,
+    private val tryWithRetry: TryWithRetry
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -145,7 +147,7 @@ class SendMessageWorker @AssistedInject constructor(
             is SaveDraftResult.Success -> {
                 val messageId = result.draftId
                 Timber.i("Send Message Worker saved draft successfully for messageId $messageId")
-                val savedDraftMessage = messageDetailsRepository.findMessageById(messageId).first()
+                val savedDraftMessage = getRefreshedDraft(messageId, userId)
                     ?: return retryOrFail(userId, SavedDraftMessageNotFound, message)
 
                 Timber.d("Send Message Worker fetching send preferences for messageId $messageId")
@@ -200,6 +202,17 @@ class SendMessageWorker @AssistedInject constructor(
                 failureWithError(DraftCreationFailed)
             }
         }
+    }
+
+    private suspend fun getRefreshedDraft(messageId: String, userId: UserId): Message? {
+        val localDraft = messageDetailsRepository.findMessageById(messageId).first() ?: return null
+        tryWithRetry {
+            messageDetailsRepository.getRemoteMessageDetails(messageId, userId)
+        }.map { remoteDraft ->
+            localDraft.attachments = remoteDraft.attachments
+            localDraft.numAttachments = remoteDraft.numAttachments
+        }
+        return localDraft
     }
 
     private suspend fun handleSendMessageResponse(

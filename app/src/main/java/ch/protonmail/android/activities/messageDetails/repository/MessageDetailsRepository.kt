@@ -24,6 +24,8 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.room.Transaction
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
+import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
@@ -71,7 +73,8 @@ class MessageDetailsRepository @Inject constructor(
     private val userManager: UserManager,
     private val databaseProvider: DatabaseProvider,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
-    private val labelRepository: LabelRepository
+    private val labelRepository: LabelRepository,
+    private val protonMailApiManager: ProtonMailApiManager
 ) {
     private var requestedUserId: UserId? = null
 
@@ -92,7 +95,8 @@ class MessageDetailsRepository @Inject constructor(
         attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
         labelRepository: LabelRepository,
         @Assisted userId: UserId,
-    ) : this(applicationContext, userManager, databaseProvider, attachmentsWorker, labelRepository) {
+        protonMailApiManager: ProtonMailApiManager
+    ) : this(applicationContext, userManager, databaseProvider, attachmentsWorker, labelRepository, protonMailApiManager) {
         requestedUserId = userId
     }
 
@@ -345,6 +349,9 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>> =
         pendingActionDao.findAllPendingUploadsAsync()
+
+    suspend fun getRemoteMessageDetails(messageId: String, userId: UserId): Message =
+        protonMailApiManager.fetchMessageDetails(messageId, UserIdTag(userId)).message
 
     @AssistedInject.Factory
     interface AssistedFactory {
