@@ -73,7 +73,7 @@
     <string name="details_open_in_proton_calendar_icon_desc">Ikona Proton kalendáře</string>
     <string name="details_play_store_error">Nelze otevřít obchod Google Play</string>
     <string name="details_hyperlink_phishing_dialog_title">Varování: podezření na falešnou webovou stránku</string>
-    <string name="details_hyperlink_phishing_dialog_content">Tento odkaz vede na webovou stránku, která se může pokoušet ukrást vaše údaje, například hesla a údaje o kreditní kartě.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Pro Vaší vlastní bezpečnost, nepokračujte.</string>
+    <string name="details_hyperlink_phishing_dialog_content">Tento odkaz vede na webovou stránku, která se může pokoušet ukrást vaše údaje, například hesla a údaje o platební kartě.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Pro vaši vlastní bezpečnost, nepokračujte.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Vrátit se zpět (doporučeno)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorovat varování a pokračovat</string>
     <string name="scheduled_message_info">Tato zpráva bude odeslána v %s</string>
@@ -222,7 +222,7 @@
     <string name="archive">Archiv</string>
     <string name="trash">Koš</string>
     <string name="spam">Spam</string>
-    <string name="all_mail">Všechny zprávy</string>
+    <string name="all_mail">Všechna pošta</string>
     <string name="contacts">Kontakty</string>
     <string name="search_contacts">Vyhledat kontakty</string>
     <string name="fetching_contacts">Načítání Proton Mail kontaktů...</string>
@@ -230,7 +230,7 @@
     <string name="fetching_contacts_failure">Nelze načíst kontakty</string>
     <string name="compose">Napsat</string>
     <string name="compose_message">Napsat zprávu</string>
-    <string name="empty_folder">Vyprázdnit složku</string>
+    <string name="empty_folder">Prázdná složka</string>
     <string name="view_headers">Zobrazit záhlaví</string>
     <string name="message_headers">Záhlaví zprávy</string>
     <string name="delete_messages">Odstranit zprávy</string>
@@ -908,4 +908,6 @@
     <string name="details_show_history">Zobrazit historii</string>
     <string name="could_not_complete_action">Nebylo možné dokončit akci</string>
     <string name="decryption_of_message_failed">Chyba dešifrování: dešifrování zašifrovaného obsahu této zprávy se nezdařilo.</string>
+    <string name="expand_message_details">Rozbalit podrobnosti zprávy</string>
+    <string name="collapse_message_details">Sbalit podrobnosti zprávy</string>
 </resources>

@@ -117,10 +117,10 @@
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Thema</string>
-    <string name="settings_create_pin_code_title">PIN-code instellen</string>
-    <string name="settings_confirm_pin_code_title">Herhaal PIN-code</string>
+    <string name="settings_create_pin_code_title">Pincode instellen</string>
+    <string name="settings_confirm_pin_code_title">Herhaal pincode</string>
     <string name="settings_pins_dont_match">De pincodes moeten overeen komen!</string>
-    <string name="settings_enter_pin_code_title">PIN-code invoeren</string>
+    <string name="settings_enter_pin_code_title">Pincode invoeren</string>
     <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB gebruikt)</string>
     <string name="settings_storage_limit_unlimited_value">Onbeperkt (%1$.2f MB gebruikt)</string>
     <string name="settings_swipe_settings_info">Stel veeg gebaren in om toegang te krijgen tot de meest gebruikte acties.</string>
@@ -354,9 +354,9 @@
     <string name="delete_label_confirmation_title">Geselecteerde labels verwijderen?</string>
     <string name="delete_folder_confirmation_title">Geselecteerde mappen verwijderen?</string>
     <string name="delete_label_confirmation_message">De e-mails die hier zijn opgenomen worden gevonden in <b>Alle e-mails</b></string>
-    <string name="pin_invalid">De PIN-code is ongeldig, voer de juiste 4-cijferige code in</string>
-    <string name="pin_not_match">PIN-codes komen niet overeen</string>
-    <string name="new_pin_saved">Nieuwe PIN-code opgeslagen</string>
+    <string name="pin_invalid">De pincode is ongeldig, voer de juiste 4-cijferige code in</string>
+    <string name="pin_not_match">Pincodes komen niet overeen</string>
+    <string name="new_pin_saved">Nieuwe pincode opgeslagen</string>
     <string name="attachment_download_success">%s succesvol gedownload naar bestandsbeheer</string>
     <string name="attachment_download_failed">%s downloaden is mislukt</string>
     <string name="ringtone">Berichttoon</string>
@@ -371,8 +371,8 @@
     <string name="hyperlink_confirmation_dialog_text_html">U staat op het punt om de webbrowser te starten en te navigeren naar:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Wilt u doorgaan?</string>
     <string name="dont_ask_again">Niet opnieuw vragen</string>
     <plurals name="incorrect_pin_remaining_attempts">
-        <item quantity="one">Onjuiste PIN-code, %d poging resterend</item>
-        <item quantity="other">Onjuiste PIN-code, %d pogingen resterend</item>
+        <item quantity="one">Onjuiste pincode, %d poging resterend</item>
+        <item quantity="other">Onjuiste pincode, %d pogingen resterend</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="one">%d poging tot het vernietigen van alle gegevens!</item>
@@ -396,7 +396,7 @@
     <string name="label_add_new">Nieuw label toevoegen</string>
     <string name="available_labels">Beschikbare labels</string>
     <string name="delete_selected">Verwijder geselecteerde</string>
-    <string name="pin_not_activated">PIN-code niet geactiveerd</string>
+    <string name="pin_not_activated">Pincode niet geactiveerd</string>
     <string name="available_options">Beschikbare opties</string>
     <string name="background_sync_subtitle">Als deze instelling ingeschakeld is, synchroniseert de app op de achtergrond met de server. Het uitschakelen van deze instelling schakelt pushmeldingen uit.</string>
     <string-array name="notification_options">
@@ -746,7 +746,7 @@
     <string name="mailbox">Mailbox</string>
     <string name="privacy">Privacy</string>
     <string name="auto_download_messages_title">Automatisch berichten downloaden</string>
-    <string name="auto_download_messages_subtitle">Wanneer deze optie is ingeschakeld, wordt de berichtinhoud automatisch gedownload elke keer dat u een nieuwe e-mailmelding ontvangt (dit zal meer gegevens verbruiken). Als deze optie niet is ingeschakeld, worden de berichten alleen gedownload wanneer u een e-mail opent. (Let op: met elke optie, als u de cache verwijdert of uitlogt, kunt u de berichten niet lezen terwijl u offline bent.)</string>
+    <string name="auto_download_messages_subtitle">Wanneer deze optie is ingeschakeld, wordt de berichtinhoud automatisch gedownload elke keer dat u een nieuwe e-mailmelding ontvangt (dit zal meer data verbruiken). Als deze optie niet is ingeschakeld, worden de berichten alleen gedownload wanneer u een e-mail opent. (Let op: met elke optie, als u de cache verwijdert of uitlogt, kunt u de berichten niet lezen terwijl u offline bent.)</string>
     <string name="settings_background_sync">Achtergrondsynchronisatie</string>
     <string name="settings_auto_show_images">Automatisch externe afbeeldingen weergeven</string>
     <string name="settings_auto_show_embedded_images">Automatisch ingesloten afbeeldingen weergeven</string>
@@ -785,8 +785,8 @@
     <string name="notification_settings">Notificatie-instellingen</string>
     <string name="auto_lock">Automatisch vergrendelen</string>
     <string name="auto_lock_app">Vergrendel app automatisch</string>
-    <string name="auto_lock_description">Schakel deze functie in om uw\napp automatisch te vergrendelen en gebruik te maken van een PIN-code of vingerafdruk\nom deze te ontgrendelen.</string>
-    <string name="change_pin_code">Wijzig PIN-code</string>
+    <string name="auto_lock_description">Schakel deze functie in om uw\napp automatisch te vergrendelen en gebruik te maken van een pincode of vingerafdruk\nom deze te ontgrendelen.</string>
+    <string name="change_pin_code">Wijzig pincode</string>
     <string name="auto_lock_timer">Tijd tot automatische vergrendeling</string>
     <string name="connections_via_third_parties">Alternatieve routing</string>
     <string name="allow_secure_connections_via_third_parties">Alternatieve routing toestaan</string>
@@ -876,4 +876,6 @@
     <string name="details_show_history">Toon geschiedenis</string>
     <string name="could_not_complete_action">Kon de actie niet voltooien</string>
     <string name="decryption_of_message_failed">Ontsleutelingsfout: decodering van de gecodeerde inhoud van dit bericht is mislukt.</string>
+    <string name="expand_message_details">Berichtgegevens uitklappen</string>
+    <string name="collapse_message_details">Berichtgegevens inklappen</string>
 </resources>

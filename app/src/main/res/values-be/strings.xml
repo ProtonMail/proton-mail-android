@@ -262,9 +262,9 @@
     <string name="max_labels_exceeded">Паведамленне %1$s не можа мець больш за %2$d метак.</string>
     <string name="max_attachments_reached">Дасягнута максімальная колькасць далучэнняў для аднаго паведамлення</string>
     <string name="max_attachments_size_reached">Дасягнуты максімальны памер далучэнняў для аднаго паведамлення</string>
-    <string name="expiration_days">%dДЗ</string>
-    <string name="expiration_hours">%dГ</string>
-    <string name="expiration_minutes">%dХВ</string>
+    <string name="expiration_days">%d дз</string>
+    <string name="expiration_hours">%d г</string>
+    <string name="expiration_minutes">%d ХВ</string>
     <plurals name="attachments">
         <item quantity="one">%d далучэнне</item>
         <item quantity="few">%d далучэнні</item>
@@ -908,4 +908,6 @@
     <string name="details_show_history">Паказаць гісторыю</string>
     <string name="could_not_complete_action">Немагчыма завяршыць дзеянне</string>
     <string name="decryption_of_message_failed">Памылка расшыфроўкі: не ўдалося расшыфраваць змесціва гэтага паведамлення.</string>
+    <string name="expand_message_details">Разгарнуць падрабязнасці паведамлення</string>
+    <string name="collapse_message_details">Згарнуць падрабязнасці паведамлення</string>
 </resources>

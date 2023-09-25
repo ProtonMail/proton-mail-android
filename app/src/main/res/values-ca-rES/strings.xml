@@ -52,7 +52,7 @@
     <string name="mailbox_empty_inbox_subtitle">Esteu al dia.</string>
     <string name="mailbox_empty_spam_subtitle">La carpeta de correu brossa és buida.</string>
     <string name="mailbox_empty_trash_subtitle">La paperera és buida.</string>
-    <string name="mailbox_empty_state_no_results_found">No s\'han trobat resultats.</string>
+    <string name="mailbox_empty_state_no_results_found">No s\'ha trobat cap resultat.</string>
     <string name="mailbox_empty_state_try_a_different_term">Proveu un altre terme de cerca.</string>
     <string name="mailbox_no_messages">Cap missatge</string>
     <plurals name="mailbox_unread_count">
@@ -201,7 +201,7 @@
     <string name="contact_exist">L\'adreça electrònica del contacte ja existeix</string>
     <string name="invalid_email">Adreça de correu electrònic invàlida</string>
     <string name="duplicate_email">Adreça de correu electrònic és un duplicat</string>
-    <string name="message_drafted">Ha fallat l\'enviament del missatge. Els teus missatges es desaran a la carpeta d\'esborranys</string>
+    <string name="message_drafted">No s\'ha pogut enviar el missatge. Els vostres missatges es desaran a la carpeta d\'esborranys.</string>
     <string name="attachment_failed_message_drafted">Traieu i torneu a afegir \"%s\" i envieu el missatge altra vegada. Podeu trobar-lo a la carpeta \"Esborranys\".</string>
     <string name="open_drawer">Obrir</string>
     <string name="close_drawer">Tanca</string>
@@ -224,8 +224,8 @@
     <string name="contacts">Contactes</string>
     <string name="search_contacts">Cercar contactes</string>
     <string name="fetching_contacts">Obtenint contactes de Proton Mail...</string>
-    <string name="fetching_contacts_success">Contactes actualitzats amb èxit</string>
-    <string name="fetching_contacts_failure">No es pot actualitzar els contactes</string>
+    <string name="fetching_contacts_success">S\'han refrescat els contactes</string>
+    <string name="fetching_contacts_failure">No s\'han pogut actualitzar els contactes</string>
     <string name="compose">Redactar</string>
     <string name="compose_message">Redactar missatge</string>
     <string name="empty_folder">Buida la carpeta</string>
@@ -250,9 +250,9 @@
     <string name="forward">Reenvia</string>
     <string name="email_subject">Assumpte del correu electrònic</string>
     <string name="define_message_password">Contrasenya del missatge</string>
-    <string name="confirm_message_password">Confirma la contrasenya</string>
+    <string name="confirm_message_password">Confirmeu la contrasenya</string>
     <string name="define_password_hint">Defineix pista (opcional)</string>
-    <string name="eo_passwords_do_not_match">Les contrasenyes no coincideixen.</string>
+    <string name="eo_passwords_do_not_match">Les contrasenyes no coincideixen</string>
     <string name="define_expiration_period">Defineix data d\'expiració</string>
     <string name="set_message_expiration">Estableix l\'expiració del missatge</string>
     <string name="days">Dies</string>
@@ -277,7 +277,7 @@
     </plurals>
     <string name="add_attachment">Afegeix adjunt</string>
     <string name="select_file">Seleccionar fitxer</string>
-    <string name="attach_file">Adjuntar arxiu</string>
+    <string name="attach_file">Adjunta un arxiu</string>
     <string name="take_photo">Fer foto</string>
     <string name="problem_taking_photo">Hi ha hagut un problema en fer una foto</string>
     <string name="problem_selecting_file">Ha hagut un problema en afegir l\'arxiu seleccionat</string>
@@ -421,9 +421,9 @@
     <string name="contact_vcard_hint_address">Introduïu adreça</string>
     <string name="contact_vcard_hint_other">Introduïu la informació</string>
     <string name="contact_vcard_hint_note">Introduïu la nota</string>
-    <string name="contact_vcard_new_row_email">afegir una adreça de correu electrònic</string>
+    <string name="contact_vcard_new_row_email">afegeix una adreça de correu electrònic</string>
     <string name="contact_vcard_new_row_phone">afegiu el número de telèfon</string>
-    <string name="contact_vcard_new_row_address">afegir una adreça</string>
+    <string name="contact_vcard_new_row_address">afegeix una adreça</string>
     <string name="contact_vcard_new_row_other">afegiu informació</string>
     <string name="vcard_other_option_org">Organització</string>
     <string name="vcard_other_option_title">Títol</string>
@@ -434,7 +434,7 @@
     <string name="vcard_other_option_role">Rol</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="contacts_import_contact">Importar contacte</string>
-    <string name="contacts_import">Importar</string>
+    <string name="contacts_import">Importa</string>
     <string name="upload_contacts">Pujar contactes</string>
     <string name="uploading_contacts">S\'estan pujant els contactes…</string>
     <string-array name="vcard_option_phone">
@@ -466,8 +466,8 @@
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Desconnectat</string>
-    <string name="logged_out_description">Heu tancat la sessió. Torneu a iniciar sessió.</string>
+    <string name="logged_out">Heu tancat la sessió</string>
+    <string name="logged_out_description">Heu tancat la sessió. Torneu a iniciar la sessió.</string>
     <string name="print_error">Error d\'impressió</string>
     <string name="download_complete">Descàrrega completa</string>
     <string name="message_expires_in">Aquest missatge expirarà en %s</string>
@@ -514,7 +514,7 @@
     <string name="contacts_unknown">Desconegut</string>
     <string name="learn_more"><u>Més informació</u></string>
     <string name="info">Informació</string>
-    <string name="error_can_not_send_from_this_address">Actualitzeu a un pla de pagament per enviar des de la vostra adreça %s.</string>
+    <string name="error_can_not_send_from_this_address">Milloreu a un pla de pagament per enviar des de la vostra adreça %s.</string>
     <string name="email_empty">Falta l\'adreça de correu electrònic</string>
     <string name="encrypted_contact_details">Dades de contacte xifrades</string>
     <string name="convert_question">Pujar contactes locals</string>
@@ -526,16 +526,16 @@
     <string name="print_date_template">Data: %s</string>
     <string name="print_attachment_template">Adjunt: %s;  </string>
     <string name="pm_me_changed">L\'enviament de missatges des de l\'adreça @ pm.me és una funció de pagament. El vostre missatge s\'enviarà des de la vostra adreça per defecte %s.</string>
-    <string name="pm_me_can_not_be_default">Actualitzeu-lo a un pla de pagament per configurar la vostra adreça %s com a predeterminada</string>
+    <string name="pm_me_can_not_be_default">Milloreu a un pla de pagament per configurar la vostra adreça %s com a predeterminada</string>
     <string name="dont_remind_again">No em tornis a recordar</string>
-    <string name="load_embedded_images">Carrega imatges incrustades</string>
+    <string name="load_embedded_images">Carrega les imatges incrustades</string>
     <string name="remove_password">Suprimeix la contrasenya</string>
     <string name="remove_password_question">Suprimeix la contrasenya?</string>
     <string name="attachment_storage_value_current">Actualment seleccionat: %d Mb</string>
     <string name="attachment_storage_value_current_unlimited">Actualment seleccionat: il·limitat</string>
     <string name="attachment_offline_max_storage">Defineix la quantitat màxima d\'espai d\'emmagatzematge que Proton Mail pot utilitzar en el vostre dispositiu mòbil.</string>
-    <string name="load_embedded_images_failed_no_network">Ha fallat la càrrega d\'imatges incrustades. Comproveu la vostra connexió de xarxa.</string>
-    <string name="load_embedded_images_failed">Ha fallat la càrrega d\'imatges incrustades.</string>
+    <string name="load_embedded_images_failed_no_network">No s\'han pogut carregar les imatges incrustades. Comproveu la connexió de xarxa.</string>
+    <string name="load_embedded_images_failed">No s\'han pogut carregar les imatges incrustades.</string>
     <string name="unlimited">Il·limitat</string>
     <string name="local_storage_cleared">S\'ha eliminat l\'emmagatzematge local</string>
     <string name="recipient_popup_compose_to">Enviar missatge a</string>
@@ -544,14 +544,14 @@
     <string name="send_with_untrusted_key_title">Voleu enviar amb una clau que no sigui de confiança?</string>
     <string name="send_with_untrusted_key_message">Heu activat la verificació d\'adreces amb claus de confiança per a %s, però no s\'han confiat claus de xifratge actives.</string>
     <string name="resign_contact_title">Voleu tornar a signar el contacte?</string>
-    <string name="resign_contact_message">La verificació de %s ha fallat: el contacte no està signat correctament. Heu de tornar a signar el contacte per enviar un missatge a aquesta adreça o editar el contacte. Això també pot passar quan heu recuperat la vostra contrasenya i restabliu les vostres claus.</string>
+    <string name="resign_contact_message">No s\'ha pogut verificar %s: el contacte no està signat correctament. Heu de tornar a signar el contacte per enviar un missatge a aquesta adreça o editar el contacte. Això també pot passar quan heu recuperat la vostra contrasenya i restabliu les vostres claus.</string>
     <!-- Sender locks -->
     <string name="sender_lock_zero_access">Emmagatzemat amb xifratge d\'accés zero</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Enviat per vostè amb xifrat d\'extrem a extrem</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_autoresponder">Enviat per Proton Mail amb xifrat d\'accés zero</string>
-    <string name="sender_lock_verification_failed">La verificació del remitent ha fallat</string>
+    <string name="sender_lock_verification_failed">No s\'ha pogut verificar el remitent.</string>
     <string name="sender_lock_pgp_encrypted">Missatge PGP-encriptat</string>
     <string name="sender_lock_pgp_encrypted_verified">Missatge PGP xifrat de direcció verificada</string>
     <string name="sender_lock_pgp_signed_verified_sender">Missatge signat per PGP d\'una adreça verificada</string>
@@ -617,9 +617,9 @@
     <string name="no_recipients">Cap Destinatari</string>
     <plurals name="contact_group_selected">
         <item quantity="one">%d seleccionat</item>
-        <item quantity="other">%d seleccionat</item>
+        <item quantity="other">%d seleccionats</item>
     </plurals>
-    <string name="paid_plan_needed">Passeu a un pla de pagament per disposar d\'aquestes funcions prèmium.</string>
+    <string name="paid_plan_needed">Milloreu a un pla de pagament per a disposar d\'aquestes característiques prèmium</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Membres)</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">Està segur que vol suprimir aquest grup?</item>
@@ -659,7 +659,7 @@
     <string name="need_storage_permissions_download_attachment_text">Per a poder descarregar adjunts heu de permetre 
         l\'accés a l\'emmagatzematge.</string>
     <string name="need_contacts_permissions_text">Per a poder importar contactes heu de permetre l\'accés als contactes.</string>
-    <string name="need_notification_permissions_to_receive_notifications">Per a poder rebre notificacions des de l\'aplicació necessiteu activar els permisos per a notificacions.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Per a poder rebre notificacions des de l\'aplicació, necessiteu activar els permisos per a notificacions.</string>
     <string name="push_notifications_alert_title">Alerta de notificacions push</string>
     <string name="push_notifications_alert_subtitle">Les notificacions push per a Proton Mail no funcionen sense els serveis de Google Play actualitzats.</string>
     <string name="app_locked">L\'aplicació està bloquejada</string>
@@ -745,7 +745,7 @@
     <string name="mailbox">Bústia de correu</string>
     <string name="privacy">Privacitat</string>
     <string name="auto_download_messages_title">Baixa els missatges automàticament</string>
-    <string name="auto_download_messages_subtitle">Quan aquesta opció està habilitada, els cossos del missatge enviats es descarregaràn automàticament cada vegada que rebeu una notificació nova de correu electrònic (això consumirà més dades). Si aquesta opció no està habilitada, els cossos de missatges només es descarregaràn quan obreixi un correu electrònic. (Nota: amb qualsevol de les dues opcions, si netequeu la memòria cau o es tanquen la sessió, no podreu llegir els cossos del missatge sense connexió.)</string>
+    <string name="auto_download_messages_subtitle">Quan aquesta opció està habilitada, els cossos de missatge es descarregaran automàticament cada vegada que rebeu una notificació nova de correu electrònic (això consumirà més dades). Si aquesta opció no està habilitada, els cossos de missatge només es descarregaran quan obriu un correu electrònic. (Nota: amb qualsevol de les dues opcions, si netegeu la memòria cau o tanqueu la sessió, no podreu llegir els cossos de missatge mentre estigueu fora de línia.)</string>
     <string name="settings_background_sync">Sincronització en segon pla</string>
     <string name="settings_auto_show_images">Mostrar automàticament les imatges incrustades</string>
     <string name="settings_auto_show_embedded_images">Mostra automàticament les imatges incrustades</string>
@@ -795,7 +795,7 @@
     <string name="custom_language_dialog_title">Trieu la llengua de l\'aplicació</string>
     <string name="auto_detect">Detectar automàticament</string>
     <string name="combined_contacts">Contactes combinats</string>
-    <string name="turn_combined_contacts_on">Activeu aquesta funcionalitat per completar automàticament les adreces de correu electrònic utilitzant els contactes de tots els vostres comptes amb sessió iniciada.</string>
+    <string name="turn_combined_contacts_on">Activeu aquesta característica per completar automàticament les adreces de correu electrònic utilitzant els contactes de tots els vostres comptes amb sessió iniciada.</string>
     <string name="local_cache_management">Memòria cau local</string>
     <string name="cache_cleared">La memòria cau local s\'ha netejat</string>
     <string name="empty_data">Neteja les dades</string>
@@ -814,13 +814,14 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemes de conexió comuns i solucions</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Sense conexió a Internet&lt;/i&gt; - Si us plau, revisi que la seva conexió funciona correctament.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema al seu Proveïdor de Servei d\'Internet (ISP)&lt;/i&gt; - Proveu de conectar-vos a Proton des d\'una altra xarxa (o utilitzi &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueig Guvernamental block&lt;/i&gt; - El seu país pot haber-hi bloquetjat d\'acces a Proton. Proveu &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o un altre servei VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; per accedir a Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia d\'Antivirus&lt;/i&gt; - Deshabiliti temporalment o esborri el seu software antivirus.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia Proxy/Firewall&lt;/i&gt; - Deshabiliti qualsevol proxy o firewall o contacti amb el seu administrador de xarxa. 
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton es caigut&lt;/i&gt; - Revisi &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; per saber el nostre estat del sistema.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Encara no hem trobat una solució&lt;/i&gt; - Contacti\'ns directament al nostre &lt;a href=\"https://protonmail.com/support-form\"&gt;Formulari de suport form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correu electrònic&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No hi ha connexió a Internet&lt;/i&gt; - Assegureu-vos que la vostra connexió a Internet funciona.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema amb el proveïdor de serveis d\'Internet (ISP)&lt;/i&gt; - Intenteu connectar-vos a Proton des d\'una xarxa diferent (o utilitzeu &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueig per part del govern&lt;/i&gt; - El vostre país pot estar bloquejant l\'accés a Proton. Proveu &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (o qualsevol altra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; per accedir a Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferència amb l\'antivirus&lt;/i&gt; - Desactiveu o suprimiu temporalment el programari antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferència amb el Proxy/tallafoc&lt;/i&gt; - Desactiveu qualsevol proxy o tallafocs, o contacteu amb l\'administrador de la xarxa.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton està caigut&lt;/i&gt; - Comproveu &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; per conèixer l\'estat del nostre sistema.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Encara no s\'ha pogut trobar una solució&lt;/i&gt; - Contacteu-nos directament a través del nostre &lt;a href=\"https://proton.me/support/contact\"&gt;formulari de contacte&lt;/a&gt;,&lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correu electrònic&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;.
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imatge no trobada</string>
@@ -833,7 +834,7 @@
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Han canviat els gestos de lliscament</string>
     <string name="swipe_gestures_changed_message">Amb darrera actualització s’han canviat els gestos de lliscament. Si voleu, podeu restablir-los a la configuració.</string>
-    <string name="go_to_settings">Aneu a les preferències</string>
+    <string name="go_to_settings">Ves a les preferències</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">La clau de l\'API de Firebase no és vàlida. Les notificacions Push no funcionaran.</string>
     <string name="failed_saving_draft_online">Error en desar un borrador en línia pel missatge: \"%s\"</string>
@@ -873,5 +874,7 @@
     <string name="edit_draft">Editar esborrany</string>
     <string name="details_show_history">Mostra l\'historial</string>
     <string name="could_not_complete_action">No s\'ha pogut completar l\'acció</string>
-    <string name="decryption_of_message_failed">Error de desxifrat: ha fallat el desxifrat del contingut xifrat d\'aquest missatge.</string>
+    <string name="decryption_of_message_failed">S\'ha produït un error de desxifratge: no s\'ha pogut desxifrar el contingut xifrat d\'aquest missatge.</string>
+    <string name="expand_message_details">Desplega els Detalls del Missatge</string>
+    <string name="collapse_message_details">Replega els detalls del missatge</string>
 </resources>

@@ -42,7 +42,7 @@
     <string name="drawer_contacts">聯絡人</string>
     <string name="drawer_lock_the_app">鎖定應用程式</string>
     <string name="drawer_report_bug">回報問題</string>
-    <string name="drawer_settings">設定</string>
+    <string name="drawer_settings">各項設定</string>
     <string name="drawer_sign_out">登出</string>
     <string name="drawer_create_folder_description">建立新資料夾</string>
     <string name="drawer_create_label_description">建立新標籤</string>
@@ -53,16 +53,16 @@
     <string name="mailbox_empty_spam_subtitle">您的垃圾郵件資料夾是空的</string>
     <string name="mailbox_empty_trash_subtitle">垃圾桶是空的</string>
     <string name="mailbox_empty_state_no_results_found">查無結果</string>
-    <string name="mailbox_empty_state_try_a_different_term">嘗試使用其他搜尋關鍵字</string>
+    <string name="mailbox_empty_state_try_a_different_term">嘗試使用其它搜尋關鍵字</string>
     <string name="mailbox_no_messages">沒有郵件</string>
     <plurals name="mailbox_unread_count">
         <item quantity="other">%d 則未讀</item>
     </plurals>
-    <string name="mailbox_updated_just_now">剛剛更新</string>
+    <string name="mailbox_updated_just_now">即時更新</string>
     <string name="mailbox_updated_recently">最近更新</string>
-    <string name="mailbox_updating">正在更新……</string>
-    <string name="is_proton">此為一則 Proton 訊息</string>
-    <string name="is_proton_official_badge">官方</string>
+    <string name="mailbox_updating">正在更新…</string>
+    <string name="is_proton">此為一則 Proton 官方訊息</string>
+    <string name="is_proton_official_badge">官方郵件</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">於 Proton 行事曆中打開</string>
@@ -74,30 +74,30 @@
     <string name="details_hyperlink_phishing_dialog_cancel_action">返回 (建議)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">忽略警語並繼續</string>
     <string name="scheduled_message_info">此郵件將在 %s 時送出</string>
-    <string name="scheduled_message_edit_info">目前只能在網頁版和 iOS 應用程式中修改已排程的訊息。</string>
-    <string name="scheduled_message_moved_to_trash_title">郵件不會被送出</string>
+    <string name="scheduled_message_edit_info">目前只能在網頁版和 iOS 應用程式中修改排程的訊息。</string>
+    <string name="scheduled_message_moved_to_trash_title">郵件將不會傳送出去</string>
     <string name="scheduled_message_moved_to_trash_desc">郵件丟進垃圾桶時，會一併取消相關的排程。</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">密件副本：</string>
-    <string name="composer_cc">副本：</string>
+    <string name="composer_cc">副本抄送：</string>
     <string name="composer_compose_email">撰寫電郵</string>
     <string name="composer_from">寄件人：</string>
     <string name="composer_subject">主旨：</string>
-    <string name="composer_to">收件人：</string>
-    <string name="composer_removing_address_generic_error">無法驗證電郵位址：%s。傳送可能會失敗。</string>
+    <string name="composer_to">收件者：</string>
+    <string name="composer_removing_address_generic_error">無法驗證電郵位址 : %s。郵件傳送可能會失敗。</string>
     <string name="composer_removing_address_server_error">正在移除電郵位址 : %s , %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">在 %s，%s &lt; %s&gt; 寫道：</string>
     <string name="set_msg_password_title">設定密碼</string>
-    <string name="set_msg_password_info">請設置一組密碼以便將訊息加密後傳送給非 Proton Mail 使用者<a href="https://proton.me/support/password-protected-emails">瞭解更多</a></string>
+    <string name="set_msg_password_info">請設定一組密碼，以提供未有 Proton Mail 使用者，也能讀取安全加密訊息<a href="https://proton.me/support/password-protected-emails">瞭解更多</a></string>
     <string name="set_msg_password_info_icon_description">資訊</string>
     <string name="set_msg_password_msg_password_title">郵件密碼</string>
     <string name="set_msg_password_msg_password_hint">長度為 4 至 21 個字元</string>
     <string name="set_msg_password_repeat_password_title">重複輸入密碼</string>
     <string name="set_msg_password_repeat_password_hint">密碼必須相符</string>
     <string name="set_msg_password_password_hint_title">密碼提示</string>
-    <string name="set_msg_password_password_hint_hint">自訂密碼提示 (可選)</string>
+    <string name="set_msg_password_password_hint_hint">自訂密碼提示 (可選項目)</string>
     <string name="set_msg_password_apply_password">套用密碼</string>
     <string name="set_msg_password_remove_password">移除密碼</string>
     <string name="set_msg_password_error_too_short">密碼太短</string>
@@ -109,16 +109,16 @@
     <string name="set_msg_expiration_1_day">1 天</string>
     <string name="set_msg_expiration_3_days">3 天</string>
     <string name="set_msg_expiration_1_week">1 週</string>
-    <string name="set_msg_expiration_custom">自定義</string>
+    <string name="set_msg_expiration_custom">個人化</string>
     <string name="set_msg_expiration_check_description">已勾選此項目</string>
     <string name="composer_invalid_sender_saving_draft_failed">寄件者電子郵件格式有誤。請更改為正確格式。</string>
     <string name="composer_invalid_subject_saving_draft_failed">主旨欄並非為有效格式。</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_theme_title">佈景主題</string>
+    <string name="settings_theme_title">布景視覺主題</string>
     <string name="settings_create_pin_code_title">設定 PIN 碼</string>
     <string name="settings_confirm_pin_code_title">重複輸入 PIN 碼</string>
-    <string name="settings_pins_dont_match">PIN 碼必須相符！</string>
+    <string name="settings_pins_dont_match">PIN 碼必須相符</string>
     <string name="settings_enter_pin_code_title">輸入 PIN 碼</string>
     <string name="settings_storage_limit_mb_value">%1$d MB (已使用 %2$.2f MB)</string>
     <string name="settings_storage_limit_unlimited_value">吃到飽 (已使用%1$.2f MB)</string>
@@ -129,53 +129,53 @@
     <string name="settings_swipe_generic_error">無法儲存滑動操作</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">App 主題</string>
+    <string name="app_theme_title">應用程式布景主題</string>
     <string name="app_theme_light">淺色</string>
     <string name="app_theme_dark">深色</string>
     <string name="app_theme_system">系統預設</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">選取上層資料夾 (選擇性)</string>
-    <string name="labels_manager_parent_folder_selected"><b>已選取上層資料夾</b>點擊以變更</string>
+    <string name="labels_manager_select_parent_folder">選取上層資料夾 (可選)</string>
+    <string name="labels_manager_parent_folder_selected"><b>已選取上層資料夾</b>點擊以進行變更</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
-    <string name="parent_picker_title">上層資料夾</string>
-    <string name="parent_picker_header">若你沒有選定上層資料夾，此資料夾將會以頂層資料夾建立。</string>
+    <string name="parent_picker_title">最上層資料夾</string>
+    <string name="parent_picker_header">若您未選擇最上層資料夾，此資料夾的創建將會視同為頂層資料夾。</string>
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">新郵件</string>
-    <string name="notification_invalid_sender_sending_failed">您的電子郵件可於草稿中尋回。 請確認 「Form」欄位的電子郵件地址是啟用中的。</string>
-    <string name="notification_invalid_subject_sending_failed">主旨無效，您的訊息已存為草稿。</string>
+    <string name="notification_invalid_sender_sending_failed">可於草稿中找到您的訊息。 請確認 「寄件者:」欄位的電郵位址為啟用狀態。</string>
+    <string name="notification_invalid_subject_sending_failed">主旨欄格式錯誤，可於草稿中找到您的訊息。</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
-    <string name="contacts_empty_state_no_contacts">無聯絡人</string>
-    <string name="contacts_empty_state_no_groups">無群組</string>
+    <string name="contacts_empty_state_no_contacts">通訊錄目前沒有任何聯絡人資訊</string>
+    <string name="contacts_empty_state_no_groups">目前還沒加入任何群組</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">不會匯入聯絡人群組。請升級至付費方案以享受進階功能。</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">無法匯入聯絡人群組。請升級至付費方案以享受進階功能。</string>
     <string name="contact_details_remote_content_dialog_title">遠端內容</string>
     <string name="contact_details_remote_content_dialog_message">此聯絡人包含遠端內容。</string>
     <string name="contact_details_remote_content_dialog_positive_button">載入內容</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">人人皆有隱私</string>
-    <string name="new_user_onboarding_privacy_for_all_description">邀請您的聯絡人使用 Proton Mail 享受毫無破綻的端對端加密，也可以使用密碼加密寄給他們的郵件。</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">隱私權不分你我</string>
+    <string name="new_user_onboarding_privacy_for_all_description">邀請您的親朋好友一同加入 Proton Mail，享有無縫接軌的端對端加密，也可以在您傳送給他們的郵件裡，加入密碼防護功能。</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">整齊俐落</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">歸檔、標籤與為郵件上色，讓您建立完美且專屬於您的收件匣。</string>
-    <string name="existing_user_onboarding_new_look_headline">煥然一新、保護如恆</string>
-    <string name="existing_user_onboarding_new_look_description">為了進一步提升易用性，您的加密電郵已重新設計，煥然一新。</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">歸檔、標籤與色彩編碼郵件，可創建您理想又可自訂的收件匣。</string>
+    <string name="existing_user_onboarding_new_look_headline">嶄新視覺、極度保護</string>
+    <string name="existing_user_onboarding_new_look_description">嶄新設計重新定義您的加密電郵服務，用起來更輕鬆更簡便。</string>
     <string name="existing_user_onboarding_new_features_headline">新功能</string>
-    <string name="existing_user_onboarding_new_features_description">享受深色模式、改善後的通知、未讀郵件過濾器與子資料夾等新功能。</string>
-    <string name="existing_user_onboarding_updated_proton_headline">Proton 再進化，保護更一統</string>
-    <string name="existing_user_onboarding_updated_proton_description">介紹 Proton 煥然一新的外貌。多樣服務，使命如一。歡迎來到以隱私為預設的網際網路。<a href="https://proton.me/news/updated-proton">瞭解更多</a></string>
+    <string name="existing_user_onboarding_new_features_description">盡情體驗深色版主題模式、進化版通知、未讀郵件專用過濾器，還有子資料夾等全新功能。</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Proton 再進化，保護力全面強</string>
+    <string name="existing_user_onboarding_updated_proton_description">為您介紹 Proton 煥然一新的外貌。多樣服務，使命如一。歡迎來到以隱私為預設的網際網路。<a href="https://proton.me/news/updated-proton">瞭解更多</a></string>
     <string name="onboarding_next">下一步</string>
     <string name="onboarding_get_started">入門指南</string>
-    <string name="onboarding_got_it">知道</string>
-    <string name="onboarding_image_view_content_description">Proton 電郵插圖</string>
+    <string name="onboarding_got_it">了解</string>
+    <string name="onboarding_image_view_content_description">Proton Mail 圖示</string>
     <!-- endregion -->
     <!-- region Snackbars -->
     <string name="snackbar_message_draft_saved">草稿已儲存</string>
-    <string name="snackbar_message_draft_moved_to_trash">草稿已移至「垃圾桶」</string>
+    <string name="snackbar_message_draft_moved_to_trash">草稿已丟進垃圾桶</string>
     <string name="snackbar_action_discard">捨棄</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
@@ -192,12 +192,12 @@
     <string name="no_more_messages">沒有其它郵件了</string>
     <string name="no_network_queued">無網際網路，郵件已排入佇列</string>
     <string name="update_app_title">需要更新</string>
-    <string name="update_app">Proton Mail 應用程式必須更新才可使用</string>
-    <string name="you_are_offline">您現正離線</string>
+    <string name="update_app">Proton Mail 應用程式必須更新後才可使用</string>
+    <string name="you_are_offline">您處於離線狀態</string>
     <string name="api_offline">Proton Mail 目前處於離線狀態，請前往 https://protonstatus.com 或我們的 Twitter 查看目前的狀態：https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">聯絡人已儲存</string>
     <string name="contact_saved_offline">聯絡人已儲存，將在連線到網際網路時同步</string>
-    <string name="contact_exist">聯絡人電郵位址已存在</string>
+    <string name="contact_exist">聯絡人的電郵位址已存在</string>
     <string name="invalid_email">電郵位址無效</string>
     <string name="duplicate_email">電郵位址是重複的</string>
     <string name="message_drafted">訊息傳送失敗。你的郵件已保存在「草稿」資料夾中</string>
@@ -208,7 +208,7 @@
     <string name="starred_option">已加星號</string>
     <string name="drafts_option">草稿</string>
     <string name="sent_option">傳送</string>
-    <string name="archive_option">封存</string>
+    <string name="archive_option">封存檔</string>
     <string name="trash_option">垃圾桶</string>
     <string name="spam_option">垃圾郵件</string>
     <string name="allmail_option">所有郵件</string>
@@ -222,7 +222,7 @@
     <string name="all_mail">所有郵件</string>
     <string name="contacts">通訊錄</string>
     <string name="search_contacts">搜尋聯絡人</string>
-    <string name="fetching_contacts">正在擷取 Proton Mail 聯絡人...</string>
+    <string name="fetching_contacts">正在提取 Proton Mail 通訊錄...</string>
     <string name="fetching_contacts_success">已成功更新聯絡人</string>
     <string name="fetching_contacts_failure">無法更新聯絡人</string>
     <string name="compose">撰寫</string>
@@ -233,8 +233,8 @@
     <string name="delete_messages">刪除郵件</string>
     <string name="move_to_archive">移至「封存」</string>
     <string name="move_to_trash">移至垃圾桶</string>
-    <string name="move_to_spam">移動到垃圾郵件</string>
-    <string name="move_to_inbox">移動到收件匣</string>
+    <string name="move_to_spam">移至垃圾郵件</string>
+    <string name="move_to_inbox">移至收件匣</string>
     <string name="move_to">移動至…</string>
     <string name="are_you_sure_empty">您確定要刪除此資料夾中的全部郵件？</string>
     <string name="send">送出</string>
@@ -258,7 +258,7 @@
     <string name="hours">小時</string>
     <string name="max_labels_exceeded">郵件 %1$s 不能有超過 %2$d 個標籤。</string>
     <string name="max_attachments_reached">已達到每封郵件的最大附件數</string>
-    <string name="max_attachments_size_reached">已達到每封郵件的最大附件容量</string>
+    <string name="max_attachments_size_reached">已達到每封郵件的最高附件大小</string>
     <string name="expiration_days">%d 日</string>
     <string name="expiration_hours">%d 時</string>
     <string name="expiration_minutes">%d 分</string>
@@ -277,8 +277,8 @@
     <string name="take_photo">拍照</string>
     <string name="problem_taking_photo">拍照時出現問題</string>
     <string name="problem_selecting_file">加入選定的檔案時出現問題</string>
-    <string name="add_contact">新增聯絡人</string>
-    <string name="delete_contact">是否把 %s 從聯絡人中刪除？</string>
+    <string name="add_contact">加入聯繫名片</string>
+    <string name="delete_contact">將 %s 從通訊錄裡移除？</string>
     <string name="confirm">確認</string>
     <string name="confirm_destructive_action">您確定要這麼做？此操作執行後即無法復原。</string>
     <string name="create">創建</string>
@@ -295,50 +295,50 @@
     <string name="invalid_email_address_removed">電郵位址 \'%s\' 無效，因此已被移除</string>
     <string name="no_recipients_specified">請輸入至少一位收件者</string>
     <string name="no_password_specified">到期時間只能在完全加密的郵件上設定。請為您的非 Proton Mail 收件者設定密碼。</string>
-    <string name="attachment_limit">附件限制為 %1$s。附件全部的大小為 %2$s。</string>
-    <string name="sending_message">傳送郵件中……</string>
-    <string name="sending_message_offline">離線，等待稍後傳送……</string>
+    <string name="attachment_limit">附件的數量限制為 %1$s。附件總和大小限制為 %2$s。</string>
+    <string name="sending_message">正在傳送郵件…</string>
+    <string name="sending_message_offline">目前仍離線，已佇列等候傳送…</string>
     <string name="message_sent">郵件已傳送</string>
-    <string name="message_failed">郵件傳送失敗</string>
+    <string name="message_failed">無法傳送郵件</string>
     <string name="storage_limit">儲存空間上限</string>
-    <string name="edit_settings">編輯設定</string>
-    <string name="share">分享</string>
+    <string name="edit_settings">編輯設定值</string>
+    <string name="share">共享</string>
     <string name="cancel">取消</string>
     <string name="close">關閉</string>
     <string name="eo_password_title">設定密碼</string>
-    <string name="eo_password_subtitle">為非 Proton Mail 使用者設定一個密碼以加密此郵件</string>
+    <string name="eo_password_subtitle">替沒有 Protonv Mail 使用者設定一組密碼以進行加密郵件。</string>
     <string name="eo_password_more_info">取得更多資訊</string>
     <string name="no_attachments">無附件</string>
-    <string name="display_name_banned_chars">顯示名稱無效。不允許使用 \'&gt;\' 和 \'&lt;\'</string>
+    <string name="display_name_banned_chars">無法使用的顯示名稱。 \'&gt;\' 和 \'&lt;\' 並非有效的用法</string>
     <string name="cont">繼續</string>
-    <string name="reply_prefix_on">在</string>
+    <string name="reply_prefix_on">開</string>
     <string name="label_name">標籤名稱</string>
     <string name="label_created">已建立標籤</string>
-    <string name="label_invalid">因為名稱無效，所以未加入標籤。</string>
+    <string name="label_invalid">無法加入標籤，名稱格式有誤。</string>
     <string name="undo">復原</string>
     <string name="label_apply">套用</string>
     <string name="label_add">加入</string>
     <string name="no_browser_found">請安裝瀏覽器應用程式以完成此操作</string>
-    <string name="no_application_found">找不到支援此動作的應用程式</string>
-    <string name="no_application_found_or_link_invalid">找不到應用程式可以處理此動作或無效的 URL</string>
+    <string name="no_application_found">未找到可處理此操作的程式</string>
+    <string name="no_application_found_or_link_invalid">未找到可處理此操作的程式，或者此 URL 為非有效格式</string>
     <string name="label_deleted">已刪除標籤</string>
     <string name="label_deleted_error">刪除標籤時發生錯誤</string>
-    <string name="message_deleted_error">刪除部分郵件時發生錯誤。一些選取的郵件在傳送過程?!</string>
+    <string name="message_deleted_error">刪除部分郵件時發生錯誤。一些選取的郵件正處於傳送過程。</string>
     <string name="respond_inline">在內文回覆</string>
-    <string name="server_not_reachable_troubleshoot">無法連線到伺服器……（<u>疑難排解</u>）</string>
-    <string name="connectivity_checking">正在檢查網際網路連線……</string>
-    <string name="draft_label_attachments_uploading">正在上載附件……</string>
-    <string name="draft_label_message_uploading">正在傳送郵件……</string>
-    <string name="attachment_failed">郵件附件上載失敗 </string>
-    <string name="attaching_photo_failed">附加圖像失敗</string>
+    <string name="server_not_reachable_troubleshoot">無法連線到伺服器… (<u>疑難排解</u>)</string>
+    <string name="connectivity_checking">正在檢查網路連線…</string>
+    <string name="draft_label_attachments_uploading">正在上載附件…</string>
+    <string name="draft_label_message_uploading">正在傳送郵件…</string>
+    <string name="attachment_failed">無法上載電郵的附件 </string>
+    <string name="attaching_photo_failed">無法附加圖像</string>
     <string name="empty_message">空白郵件</string>
     <string name="display_images">顯示遠端內容</string>
     <string name="retry">重試</string>
     <string name="saving_failed_no_conn">儲存失敗，無網際網路連線</string>
-    <string name="attachment_exists">附件已附加</string>
-    <string name="eo_password_not_completed">未完成郵件密碼設置。</string>
-    <string name="delinquency_subtitle">本帳號因有未付款項而被停用，請登入 https://proton.me 進行付款。</string>
-    <string name="downloading">正在下載……</string>
+    <string name="attachment_exists">已上載附件</string>
+    <string name="eo_password_not_completed">郵件密碼還未設定。</string>
+    <string name="delinquency_subtitle">此帳號因有逾期待繳款項暫時停用中，請儘速登入 https://proton.me 進行繳款。</string>
+    <string name="downloading">正在下載…</string>
     <string name="cant_download_attachment">無法下載附件</string>
     <string-array name="auto_logout_options_array">
         <item>立即</item>
@@ -349,28 +349,28 @@
     </string-array>
     <string name="delete_label_confirmation_title">刪除選定的標籤？</string>
     <string name="delete_folder_confirmation_title">刪除選定的資料夾？</string>
-    <string name="delete_label_confirmation_message">其中的郵件可以在<b>所有郵件</b>中找到</string>
-    <string name="pin_invalid">PIN 無效，輸入正確的 4 位數 PIN 碼</string>
+    <string name="delete_label_confirmation_message">在此包括的郵件亦可出現於<b>所有郵件</b></string>
+    <string name="pin_invalid">PIN 無效，請輸入正確的 4 位數 PIN 碼</string>
     <string name="pin_not_match">PIN 碼不相符</string>
-    <string name="new_pin_saved">已儲存新的 PIN</string>
-    <string name="attachment_download_success">%s 已成功下載到檔案管理員</string>
-    <string name="attachment_download_failed">%s 無法正確下載</string>
+    <string name="new_pin_saved">已儲存新個人識別碼</string>
+    <string name="attachment_download_success">%s 已成功下載至檔案管理員</string>
+    <string name="attachment_download_failed">%s 無法正確地下載</string>
     <string name="ringtone">鈴聲</string>
     <string name="ringtone_selected">鈴聲：</string>
-    <string name="ringtone_invalid">選擇鈴聲無效</string>
+    <string name="ringtone_invalid">選擇的鈴聲返回一個無效值</string>
     <string name="ringtone_no_default">無法載入預設鈴聲</string>
-    <string name="select_tone">選取鈴聲</string>
+    <string name="select_tone">選擇鈴聲</string>
     <string name="copy_link">複製連結</string>
-    <string name="share_link">分享連結</string>
-    <string name="sync_attachments">正在同步附件</string>
+    <string name="share_link">共享連結</string>
+    <string name="sync_attachments">正在同步化附件檔</string>
     <string name="processing_attachment">正在處理附件</string>
-    <string name="hyperlink_confirmation_dialog_text_html">您即將啟動網頁瀏覽器並導航到:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;您想繼續嗎？</string>
-    <string name="dont_ask_again">不要再詢問</string>
+    <string name="hyperlink_confirmation_dialog_text_html">您即將啟動網頁瀏覽器並導航至:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;您想繼續嗎？</string>
+    <string name="dont_ask_again">下次無需再詢問</string>
     <plurals name="incorrect_pin_remaining_attempts">
-        <item quantity="other">PIN 碼不正確，剩下 %d 次嘗試</item>
+        <item quantity="other">PIN 碼不正確，還剩下 %d 次嘗試</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
-        <item quantity="other">%d 次嘗試無效後將安全抹除資料！</item>
+        <item quantity="other">%d 次嘗試無效後將進行保護資料抹除。</item>
     </plurals>
     <string name="logout">登出</string>
     <string name="logout_question_next_account">您將切換為 %s。</string>
@@ -378,25 +378,25 @@
     <string name="error">錯誤</string>
     <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
-        <item quantity="other">%d 張內嵌圖片</item>
+        <item quantity="other">%d 張內嵌圖樣</item>
     </plurals>
-    <string name="warning">警告</string>
-    <string name="available_addresses">可用位址</string>
-    <string name="inactive_addresses">未啟用的位址</string>
+    <string name="warning">特別注意</string>
+    <string name="available_addresses">適用的位址</string>
+    <string name="inactive_addresses">待用的位址</string>
     <string name="not_set">未設定</string>
-    <string name="no_available_addresses">您沒有可用的位址</string>
-    <string name="no_inactive_addresses">您沒有未啟用的位址</string>
-    <string name="label_add_new">加入標籤</string>
-    <string name="available_labels">可用標籤</string>
-    <string name="delete_selected">刪除所選項目</string>
-    <string name="pin_not_activated">PIN 碼未啟動</string>
-    <string name="available_options">可用選項</string>
-    <string name="background_sync_subtitle">如果啟用這個選項，應用程式會在背景和伺服器同步。停止此項功能將會停用推送通知。</string>
+    <string name="no_available_addresses">您目前無適用的位址</string>
+    <string name="no_inactive_addresses">您目前未有待用的位址</string>
+    <string name="label_add_new">加入新標籤</string>
+    <string name="available_labels">可用的標籤</string>
+    <string name="delete_selected">刪除已選的項目</string>
+    <string name="pin_not_activated">個人識別碼未啟用</string>
+    <string name="available_options">可用的選項</string>
+    <string name="background_sync_subtitle">如果啟用這個選項，應用程式會在背景和伺服器同步。停止此項功能將會停用推播通知。</string>
     <string-array name="notification_options">
-        <item>無震動或聲音</item>
-        <item>響鈴但不震動</item>
-        <item>震動但不響鈴</item>
-        <item>震動及響鈴</item>
+        <item>無震動或音效</item>
+        <item>音效但無震動</item>
+        <item>震動但無音效</item>
+        <item>震動及音效</item>
     </string-array>
     <string-array name="account_type_names">
         <item>Free</item>
@@ -406,30 +406,30 @@
     </string-array>
     <string name="contact_details">聯絡人詳細資料</string>
     <string name="email_type_home">住家</string>
-    <string name="type_title">選擇類型</string>
-    <string name="sync_local_contacts">上載到 Proton Mail</string>
-    <string name="please_select_only_phone_contacts">請只選擇手機連絡人</string>
-    <string name="contact_vcard_hint_email">輸入電郵</string>
-    <string name="contact_vcard_hint_phone">輸入手機號碼</string>
-    <string name="contact_vcard_hint_address">輸入位址</string>
-    <string name="contact_vcard_hint_other">輸入資訊</string>
-    <string name="contact_vcard_hint_note">輸入備註</string>
+    <string name="type_title">選取類型</string>
+    <string name="sync_local_contacts">上載至 Proton Mail</string>
+    <string name="please_select_only_phone_contacts">請選擇本地電話通訊錄</string>
+    <string name="contact_vcard_hint_email">輸入電子郵件</string>
+    <string name="contact_vcard_hint_phone">輸入電話號碼</string>
+    <string name="contact_vcard_hint_address">輸入通訊地址</string>
+    <string name="contact_vcard_hint_other">輸入詳細資訊</string>
+    <string name="contact_vcard_hint_note">輸入備注</string>
     <string name="contact_vcard_new_row_email">加入電郵位址</string>
-    <string name="contact_vcard_new_row_phone">加入手機號碼</string>
-    <string name="contact_vcard_new_row_address">加入位址</string>
-    <string name="contact_vcard_new_row_other">加入資訊</string>
-    <string name="vcard_other_option_org">組織</string>
-    <string name="vcard_other_option_title">頭銜</string>
+    <string name="contact_vcard_new_row_phone">加入電話號碼</string>
+    <string name="contact_vcard_new_row_address">加入通訊位址</string>
+    <string name="contact_vcard_new_row_other">加入詳細資訊</string>
+    <string name="vcard_other_option_org">機構組織</string>
+    <string name="vcard_other_option_title">稱謂</string>
     <string name="vcard_other_option_nickname">暱稱</string>
     <string name="vcard_other_option_birthday">生日</string>
     <string name="vcard_other_option_anniversary">紀念日</string>
     <string name="vcard_other_option_gender">性別</string>
-    <string name="vcard_other_option_role">身份</string>
+    <string name="vcard_other_option_role">職稱</string>
     <string name="vcard_other_option_url">網址</string>
-    <string name="contacts_import_contact">匯入聯絡人</string>
+    <string name="contacts_import_contact">匯入通訊錄</string>
     <string name="contacts_import">匯入</string>
-    <string name="upload_contacts">上載聯絡人</string>
-    <string name="uploading_contacts">正在上載聯絡人…</string>
+    <string name="upload_contacts">上載通訊錄</string>
+    <string name="uploading_contacts">正在上載通訊錄…</string>
     <string-array name="vcard_option_phone">
         <item>電話</item>
         <item>手機</item>
@@ -444,7 +444,7 @@
         <item>其它</item>
     </string-array>
     <string-array name="vcard_option_address">
-        <item>位址</item>
+        <item>通訊地址</item>
         <item>私人</item>
         <item>工作</item>
         <item>其它</item>
@@ -461,133 +461,133 @@
     </string-array>
     <string name="logged_out">已登出</string>
     <string name="logged_out_description">您已登出。請再次登入。</string>
-    <string name="print_error">列印錯誤</string>
+    <string name="print_error">列印出現錯誤</string>
     <string name="download_complete">下載已完成</string>
     <string name="message_expires_in">此郵件的有效期限尚餘 %s</string>
     <string name="unsaved_changes_title">未儲存的變更</string>
-    <string name="unsaved_changes_subtitle">表單中有未儲存的項目。是否確定要丟棄它們？</string>
+    <string name="unsaved_changes_subtitle">表單中有未儲存的項目。您確定要捨棄嗎？</string>
     <string name="request_timeout">請求逾時，請重試</string>
-    <string name="no_folders">沒有資料夾</string>
-    <string name="folder_add_new">加入資料夾</string>
+    <string name="no_folders">暫無資料夾</string>
+    <string name="folder_add_new">加入新資料夾</string>
     <string name="folder_name">資料夾名稱</string>
     <string name="available_folders">可用的資料夾</string>
     <string name="folder_created">已建立資料夾</string>
-    <string name="folder_invalid">由於名稱無效而未加入資料夾。</string>
+    <string name="folder_invalid">無法加入資料夾，因其名稱格式有誤。</string>
     <string name="folder_deleted">已刪除資料夾</string>
     <string name="folder_deleted_error">刪除資料夾時發生錯誤</string>
-    <string name="empty_emails">沒有電郵</string>
-    <string name="empty_email_list">沒有電郵位址</string>
-    <string name="no_contacts">沒有聯絡人</string>
+    <string name="empty_emails">暫無電郵</string>
+    <string name="empty_email_list">暫無電郵位址</string>
+    <string name="no_contacts">暫無通訊錄</string>
     <string name="sender_name_address">%1$s &lt;%2$s&gt; 寫道：</string>
     <string name="update_label">更新標籤</string>
     <string name="delete">刪除</string>
-    <string name="subject_copied">主旨已複製到剪貼簿</string>
-    <string name="details_copied">詳細資訊已複製到剪貼簿</string>
-    <string name="saving">正在儲存……</string>
+    <string name="subject_copied">已複製主旨至剪貼簿</string>
+    <string name="details_copied">已複製詳細資訊至剪貼簿</string>
+    <string name="saving">儲存中...</string>
     <string name="update_folder">更新資料夾</string>
-    <string name="spam_score_100">此電郵似乎來自一個 Proton Mail 電郵位址，卻並非由我們的系統寄出，而且未能通過我們的認證需求。這可能是偽造或不當轉寄的郵件！</string>
-    <string name="spam_score_101">此電郵未能通過其網域的認證需求。可能是因為遭人假冒或不當轉寄！</string>
-    <string name="spam_score_102">此郵件可能為釣魚郵件。請檢查寄件者與內容以確認其為正當的。 <a href="https://proton.me/blog/prevent-phishing-attacks"> 更多資訊 </a></string>
+    <string name="spam_score_100">此電郵看似來自一組 Proton Mail 電郵位址，卻並非由我們的系統寄出，而且未能通過我們的認證需求。這可能是偽造或不當轉寄的郵件。</string>
+    <string name="spam_score_101">此電郵未能通過其網域的認證需求。可能是因為遭人假冒或不當轉寄。</string>
+    <string name="spam_score_102">此訊息可能為釣魚郵件。請檢查寄件者與內容以確認其為正當的。 <a href="https://proton.me/blog/prevent-phishing-attacks"> 更多資訊 </a></string>
     <string name="print_from_template">寄件者：%s</string>
     <string name="print_to_template">收件者：%s;  </string>
-    <string name="print_cc_template">副本：%s;  </string>
+    <string name="print_cc_template">副本抄送：%s;  </string>
     <string name="print_bcc_template">密件副本：%s;  </string>
-    <string name="address">位址： </string>
-    <string name="address_street">街道</string>
-    <string name="address_extended_street">延伸街道名稱</string>
+    <string name="address">通訊地址： </string>
+    <string name="address_street">街道名稱一</string>
+    <string name="address_extended_street">街道名稱二</string>
     <string name="address_city">城市</string>
-    <string name="address_region">地區（州或省）</string>
+    <string name="address_region">地區 (州或省)</string>
     <string name="address_postcode">郵遞區號</string>
     <string name="address_po_box">郵政信箱</string>
     <string name="address_country">國家</string>
     <string name="recheck_delinquency">再次檢查</string>
     <string name="close_app">關閉應用程式</string>
-    <string name="empty_subject">（無主旨）</string>
-    <string name="empty_recipients">(無收件人)</string>
-    <string name="contacts_unknown">未知</string>
+    <string name="empty_subject">(無主旨)</string>
+    <string name="empty_recipients">(無收件者)</string>
+    <string name="contacts_unknown">未知的</string>
     <string name="learn_more"><u>瞭解更多</u></string>
     <string name="info">資訊</string>
-    <string name="error_can_not_send_from_this_address">升級到付費方案後再從您的 %s 位址寄送。</string>
-    <string name="email_empty">電郵位址遺失</string>
+    <string name="error_can_not_send_from_this_address">升級為付費方案就可用您的 %s 位址寄送郵件。</string>
+    <string name="email_empty">缺少電郵位址</string>
     <string name="encrypted_contact_details">加密的聯絡人詳細資訊</string>
-    <string name="convert_question">上載本機聯絡人</string>
-    <string name="convert_question_subtitle">這將上載您的裝置上的本機聯絡人到您的 Proton Mail 聯絡人目錄。您便可於您其他的裝置上透過 Proton Mail 存取這些聯絡人。</string>
-    <string name="refresh_contacts">更新</string>
+    <string name="convert_question">上載裝置的通訊錄</string>
+    <string name="convert_question_subtitle">這將上載您裝置上的通訊錄至您 Proton Mail 聯絡人目錄。您便可於其它的裝置上透過 Proton Mail 存取這些通訊錄。</string>
+    <string name="refresh_contacts">重新整理</string>
     <string name="invalid_email_some_contacts">部分聯絡人的電郵位址無效</string>
-    <string name="protonmail_contacts">Proton Mail 聯絡人</string>
+    <string name="protonmail_contacts">Proton Mail 通訊錄</string>
     <string name="device_contacts">裝置通訊錄</string>
     <string name="print_date_template">日期：%s</string>
     <string name="print_attachment_template">附件：%s;  </string>
-    <string name="pm_me_changed">從 @pm.me 位址寄送郵件是付費功能，您的郵件將會從預設位址 %s 寄出</string>
+    <string name="pm_me_changed">從 @pm.me 位址寄送郵件是一項付費功能，您的郵件會從預設位址 %s 寄出</string>
     <string name="pm_me_can_not_be_default">升級至付費方案就能將您的 %s 位址設定為預設值</string>
-    <string name="dont_remind_again">不要再提醒我</string>
+    <string name="dont_remind_again">下次無需再詢問</string>
     <string name="load_embedded_images">載入內崁圖像</string>
     <string name="remove_password">移除密碼</string>
-    <string name="remove_password_question">移除密碼？</string>
-    <string name="attachment_storage_value_current">目前選取：%dMB</string>
-    <string name="attachment_storage_value_current_unlimited">目前選取：無限制</string>
-    <string name="attachment_offline_max_storage">設定 ProtonMail 在您的行動裝置上可使用的儲存空間上限。</string>
+    <string name="remove_password_question">要移除密碼？</string>
+    <string name="attachment_storage_value_current">目前已選取：%dMB</string>
+    <string name="attachment_storage_value_current_unlimited">目前已選：吃到飽</string>
+    <string name="attachment_offline_max_storage">設定 Proton Mail 在您的行動裝置上可使用的儲存空間上限。</string>
     <string name="load_embedded_images_failed_no_network">載入內嵌圖像失敗。請檢查您的網路連線。</string>
     <string name="load_embedded_images_failed">內崁圖像載入失敗。</string>
-    <string name="unlimited">無限制</string>
-    <string name="local_storage_cleared">已清除本機儲存空間</string>
-    <string name="recipient_popup_compose_to">撰寫給此收件人</string>
-    <string name="recipient_popup_copy_address">複製郵件位址</string>
+    <string name="unlimited">吃到飽</string>
+    <string name="local_storage_cleared">本機存儲使用空間已清除</string>
+    <string name="recipient_popup_compose_to">撰寫電郵給此聯絡人</string>
+    <string name="recipient_popup_copy_address">複製電郵位址</string>
     <string name="recipient_popup_see_details">檢視聯絡人詳細資料</string>
-    <string name="send_with_untrusted_key_title">是否要使用不受信任的金鑰傳送？</string>
+    <string name="send_with_untrusted_key_title">請問您是否要用未經信任的金鑰進行傳送？</string>
     <string name="send_with_untrusted_key_message">您已對 %s 啟用受信任金鑰的位址驗證，但目前並未有信任任何使用中的加密金鑰。</string>
     <string name="resign_contact_title">您想要重新簽署聯絡人嗎？</string>
-    <string name="resign_contact_message">驗證 %s 失敗：聯絡人未被正確的簽署。如果要向此位址傳送郵件或是編輯聯絡人，您必須重新簽署聯絡人。當您重新恢復密碼並且重設金鑰時，也會發生這種狀況。</string>
+    <string name="resign_contact_message">聯絡人 %s 的身分驗證失敗：未正確地簽署聯絡人。您必須重新簽署，才可傳送訊息至此位址或是進行編輯聯絡人。當您在復原密碼和重設金鑰時，也會發生這種狀況。</string>
     <!-- Sender locks -->
-    <string name="sender_lock_zero_access">以零存取加密儲存</string>
+    <string name="sender_lock_zero_access">零漏洞完美加密儲存</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">由您寄出的端到端加密訊息</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_autoresponder">由 Proton Mail 以零存取加密傳送</string>
-    <string name="sender_lock_verification_failed">寄件人驗證失敗</string>
-    <string name="sender_lock_pgp_encrypted">PGP 加密訊息</string>
+    <string name="sender_lock_verification_failed">寄件者身分驗證失敗</string>
+    <string name="sender_lock_pgp_encrypted">PGP 加密郵件</string>
     <string name="sender_lock_pgp_encrypted_verified">來自已驗證電郵位址的 PGP 加密郵件</string>
     <string name="sender_lock_pgp_signed_verified_sender">來自已驗證電郵位址的 PGP 簽署郵件</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">端對端加密並簽署郵件</string>
-    <string name="sender_lock_internal_verified">來自已驗證電郵位址的端到端加密郵件</string>
+    <string name="sender_lock_internal_verified">來自已驗證電郵位址的端對端加密郵件</string>
     <!-- Composer locks -->
-    <string name="composer_lock_internal">端到端加密</string>
-    <string name="composer_lock_internal_pinned">以端到端加密寄送到已驗證電郵位址</string>
-    <string name="composer_lock_pgp_encrypted_pinned">經 PGP 加密寄送給已驗證收件人</string>
-    <string name="composer_lock_pgp_signed">PGP 簽章</string>
-    <string name="recipient_not_found_and_removed">找不到收件者：%s 並且已被移除</string>
-    <string name="recipient_error_and_removed">取得收件者資訊時出錯，收件者已被移除：%s</string>
-    <string name="send_anyway">仍然要寄送</string>
-    <string name="expiration_error_title">您啟用了郵件效期功能，但並非所有收件者都可支援此功能。</string>
-    <string name="expiration_error_add_msg_password">請為以下收件者設定郵件密碼：</string>
-    <string name="expiration_error_disable_pgp_sending">請對下列收件者停用 PGP 傳送，以啟用郵件時效：</string>
-    <string name="expiration_error_proceed">點擊「仍然要寄送」，即使在沒有使用限時功能的情況下也直接寄給這些收件人。</string>
+    <string name="composer_lock_internal">端對端加密</string>
+    <string name="composer_lock_internal_pinned">驗證電郵位址端對端加密</string>
+    <string name="composer_lock_pgp_encrypted_pinned">驗證收件者 PGP 加密</string>
+    <string name="composer_lock_pgp_signed">PGP 簽署</string>
+    <string name="recipient_not_found_and_removed">無法找到 %s 收件者，已移除。</string>
+    <string name="recipient_error_and_removed">擷取收件者資訊時發生錯誤，已移除以下收件者：%s</string>
+    <string name="send_anyway">仍進行傳送</string>
+    <string name="expiration_error_title">您啟用了郵件效期功能，請注意並非所有收件者都可支援此功能。</string>
+    <string name="expiration_error_add_msg_password">請替下列收件者加入一組郵件密碼：</string>
+    <string name="expiration_error_disable_pgp_sending">請停用 PGP 傳送，以便為下列收件者啟用郵件時效：</string>
+    <string name="expiration_error_proceed">點擊「仍進行傳送」，即可傳送無時效的郵件給下列收件者。</string>
     <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">了解更多</a></string>
     <string name="channel_name_attachments">附件</string>
-    <string name="channel_description_attachments">通知附件下載狀態</string>
+    <string name="channel_description_attachments">回報附件下載狀態</string>
     <string name="channel_name_emails">電郵</string>
-    <string name="channel_description_emails">通知收到電郵</string>
+    <string name="channel_description_emails">接收電子郵件通知</string>
     <string name="channel_name_account">帳號</string>
     <string name="channel_description_account">帳號狀態</string>
     <string name="channel_name_ongoing_operations">正在進行的操作</string>
     <string name="channel_description_ongoing_operations">顯示所有進行中操作，例如
-		在背景中下載的新信息</string>
+		在背景下載的新郵件</string>
     <string name="retrieving_notifications">正在擷取通知</string>
-    <string name="report_phishing">回報網路釣魚</string>
+    <string name="report_phishing">提報釣魚郵件</string>
     <string name="print">列印</string>
-    <string name="phishing_dialog_title">確認回報為網路釣魚</string>
+    <string name="phishing_dialog_title">確認提報釣魚郵件</string>
     <string name="phishing_dialog_message">檢舉詐騙電郵會轉寄該郵件給我們，讓我們可以分析和改進篩選器。這意味我們可以完整閱讀郵件內容。</string>
-    <string name="phishing_report_send_message_moved_to_spam">提報已傳送。郵件移至垃圾郵件。</string>
-    <string name="cannot_send_report_send">無法傳送回報</string>
+    <string name="phishing_report_send_message_moved_to_spam">提報已傳送。訊息移至垃圾郵件。</string>
+    <string name="cannot_send_report_send">無法傳送提報</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">加入照片</string>
     <string name="contact_display_name">顯示名稱</string>
     <string name="add_new_email">加入電郵位址</string>
     <string name="no_groups">沒有群組</string>
-    <string name="contact_vcard_note">備註</string>
-    <string name="edit_contact">編輯聯絡人</string>
+    <string name="contact_vcard_note">備注</string>
+    <string name="edit_contact">編輯通訊錄</string>
     <string name="create_contact_group">建立聯絡人群組</string>
     <string name="edit_contact_group">編輯聯絡人群組</string>
     <string name="contact_groups_manage_members">管理群組成員</string>
@@ -599,12 +599,12 @@
     <string name="search_contacts_inside_group">搜尋聯絡人</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
-        <item quantity="other">%d 個成員</item>
+        <item quantity="other">%d 位成員</item>
     </plurals>
     <string name="groups">群組</string>
     <string name="tab_contacts">聯絡人 (%d)</string>
     <string name="tab_contact_groups">群組 (%d)</string>
-    <string name="contact_group_saved">群組已儲存</string>
+    <string name="contact_group_saved">已儲存群組</string>
     <string name="no_recipients">沒有收件者</string>
     <plurals name="contact_group_selected">
         <item quantity="other">已選取 %d 個</item>
@@ -625,66 +625,66 @@
     <string name="contact_group_name_hint">選擇群組名稱</string>
     <string name="contact_group_change_color">變更色彩</string>
     <string name="fab_add_contact">加入聯絡人</string>
-    <string name="fab_add_contact_group">加入聯絡人群組</string>
+    <string name="fab_add_contact_group">加入新的聯絡人群組</string>
     <string name="contacts_add_photo_title">加入照片</string>
     <string name="contacts_add_photo_select_gallery">從圖庫中選取</string>
     <string name="contacts_add_photo_select_camera">從相機拍攝</string>
     <string name="save_group_validation_error">請提供群組名稱</string>
     <!-- region Storage Limit Reached -->
-    <string name="storage_limit_alert">已達到儲存空間限制。無法傳送或接收電郵。
-        按一下瞭解更多資訊。</string>
-    <string name="storage_limit_warning_title">警告</string>
-    <string name="storage_limit_reached_text">您已經達到 100% 空間儲存限制。
-        您將無法繼續寄送或接收郵件，除非您永久刪除部分郵件
-        或是購買更多的儲存空間。</string>
-    <string name="storage_limit_approaching_text">您已達到儲存空間的 90%。
-        在您的空間耗盡之前，考慮釋出一些空間或購買更多的儲存空間。</string>
+    <string name="storage_limit_alert">儲存空間已達使用上限，無法傳送或接收電子郵件。
+        按下此處以了解更多。</string>
+    <string name="storage_limit_warning_title">注意</string>
+    <string name="storage_limit_reached_text">您已用鑿 100% 儲存容量。您
+       將無法傳送或接收電子郵件，除非採取永久刪除一些電子郵件。建議您可考慮購買更多
+        儲存空間。</string>
+    <string name="storage_limit_approaching_text">您已使用高達 90% 儲存容量。
+        在儲存空間用鑿之前，您可考慮釋出一些空間或購買更多的儲存空間。</string>
     <!-- endregion -->
     <string name="need_permissions_title">權限</string>
-    <string name="need_storage_permissions_add_attachment_text">為了加入附件，您需要允許
+    <string name="need_storage_permissions_add_attachment_text">為能加入附件，您需要允許
         存取儲存空間。</string>
-    <string name="need_storage_permissions_download_attachment_text">為了下載附件，您需要允許
+    <string name="need_storage_permissions_download_attachment_text">為能下載附件，您需要允許
         存取儲存空間。</string>
-    <string name="need_contacts_permissions_text">為了匯入聯絡人，您必須允許存取聯絡人。</string>
-    <string name="need_notification_permissions_to_receive_notifications">您需要啟用通知權限，才能從 app 獲取通知</string>
-    <string name="push_notifications_alert_title">推送通知提醒</string>
-    <string name="push_notifications_alert_subtitle">若 Google Play 服務尚未更新，Proton Mail 的推送通知將無法正常運作。</string>
+    <string name="need_contacts_permissions_text">為能匯入通訊錄，您需要允許存取通訊錄。</string>
+    <string name="need_notification_permissions_to_receive_notifications">您需要啟用通知權限，才能從應用程式接收通知。</string>
+    <string name="push_notifications_alert_title">推播通知提醒</string>
+    <string name="push_notifications_alert_subtitle">若 Google Play 服務尚未更新，Proton Mail 的推播通知將無法正常運作。</string>
     <string name="app_locked">應用程式已鎖定</string>
     <string name="use_pin_instead">改為使用 PIN 碼</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">未註冊任何生物特徵辨識資料</string>
     <string name="log_in_using_biometric_credential">使用您的生物特徵辨識認證解鎖</string>
     <string name="unlock_using_biometrics">使用生物特徵辨識解鎖</string>
-    <string name="biometric_error_hw_not_available">生物特徵辨識硬體不可用。</string>
+    <string name="biometric_error_hw_not_available">無適用的生物特徵辨識硬體</string>
     <!-- end strings used for biometric enrollment -->
-    <string name="undisclosed_recipients">不公開收件者</string>
+    <string name="undisclosed_recipients">隱名收件者</string>
     <!-- region Settings -->
-    <string name="settings">設定</string>
+    <string name="settings">各項設定</string>
     <string name="account_settings">帳號設定</string>
     <!-- region Acc Settings -->
     <string name="account">帳號</string>
-    <string name="drawer_subscription">訂閲</string>
+    <string name="drawer_subscription">訂購授權</string>
     <string name="password_manager">密碼管理</string>
     <string name="password_changed">密碼已變更。</string>
-    <string name="recovery_email">復原電郵</string>
-    <string name="recovery_email_changed">復原電郵位址已變更。</string>
-    <string name="storage">信箱大小</string>
+    <string name="recovery_email">復原用的電郵</string>
+    <string name="recovery_email_changed">復原用的電郵位址已變更</string>
+    <string name="storage">電郵信箱空間大小</string>
     <string name="storage_used">%1$s / %2$s</string>
-    <string name="addresses">位址</string>
+    <string name="addresses">聯絡位址</string>
     <string name="default_mail_address">預設電郵位址</string>
-    <string name="default_address">預設電郵位址</string>
-    <string name="display_name_n_signature">顯示名稱與簽名</string>
+    <string name="default_address">預設通訊地址</string>
+    <string name="display_name_n_signature">顯示名稱 &amp; 簽名檔</string>
     <string name="display_name">顯示名稱</string>
     <string name="edit_display_name">編輯顯示名稱</string>
-    <string name="signature">簽名</string>
-    <string name="mobile_footer">行動註腳</string>
-    <string name="edit_mobile_footer">啟用行動註腳</string>
+    <string name="signature">簽名檔</string>
+    <string name="mobile_footer">行動版簽名</string>
+    <string name="edit_mobile_footer">啟用行動版註腳</string>
     <string name="default_mobile_footer">從 Proton Mail 手機版送出</string>
-    <string name="mobile_footer_is_premium">只有付費使用者可變更行動版註腳</string>
-    <string name="mobile_footer_info">此註腳會附加至您的簽章之後</string>
+    <string name="mobile_footer_is_premium">僅付費使用者可變更行動版註腳</string>
+    <string name="mobile_footer_info">此註腳會加入至您的簽名檔下方</string>
     <!-- region Snooze Settings -->
-    <string name="snooze_header">延遲</string>
-    <string name="notifications_snooze">通知暫停</string>
+    <string name="snooze_header">延後</string>
+    <string name="notifications_snooze">延後通知</string>
     <string-array name="quick_snooze_values">
         <item>30 分鐘</item>
         <item>1 小時</item>
@@ -693,23 +693,23 @@
         <item>8 小時</item>
         <item>12 小時</item>
         <item>自訂</item>
-        <item>已排程</item>
+        <item>已排定</item>
     </string-array>
     <string name="notifications_snoozed">通知已延遲</string>
-    <string name="notifications_snooze_scheduled">已排程</string>
-    <string name="notifications_snooze_scheduled_settings">已排程的延遲設定</string>
+    <string name="notifications_snooze_scheduled">已排定</string>
+    <string name="notifications_snooze_scheduled_settings">已排定的延後設定</string>
     <string name="notifications_snooze_current_status">狀態</string>
     <string name="snooze_start_time">開始時間：</string>
     <string name="snooze_end_time">結束時間：</string>
-    <string name="snooze_repeat">重複：</string>
+    <string name="snooze_repeat">重複週期：</string>
     <plurals name="quick_snooze_resume_min">
         <item quantity="other">通知將在 %d 分鐘後恢復</item>
     </plurals>
     <string name="quick_snooze_resume_hours">通知將在 %1$d 小時 %2$d 分鐘後恢復</string>
     <string name="minutes">分鐘</string>
-    <string name="set_custom_quick_snooze">自訂快速延遲數值</string>
+    <string name="set_custom_quick_snooze">自訂快速休眠值</string>
     <string name="turn_off">關閉</string>
-    <string name="work_days">工作日</string>
+    <string name="work_days">上班日</string>
     <string name="weekends">週末</string>
     <string name="every_day">每天</string>
     <string-array name="snooze_repeat_values">
@@ -721,89 +721,89 @@
         <item>週六</item>
         <item>週日</item>
     </string-array>
-    <string name="quick_and_scheduled_enabled">快速和排程延遲使用中</string>
-    <string name="quick_only_enabled">快速延遲使用中</string>
-    <string name="scheduled_only_enabled">排程延遲使用中</string>
-    <string name="quick_and_scheduled_disabled">快速和排程延遲已停用</string>
-    <string name="scheduled_snooze_on">排程（開啟）</string>
-    <string name="scheduled_snooze_off">排程（關閉）</string>
+    <string name="quick_and_scheduled_enabled">快速休眠和排程休眠作用中</string>
+    <string name="quick_only_enabled">快速休眠作用中</string>
+    <string name="scheduled_only_enabled">排程休眠作用中</string>
+    <string name="quick_and_scheduled_disabled">快速休眠和排程休眠已停用</string>
+    <string name="scheduled_snooze_on">排程 (開啟)</string>
+    <string name="scheduled_snooze_off">排程 (關閉)</string>
     <!-- endregion -->
     <string name="mailbox">信箱</string>
     <string name="privacy">隱私</string>
     <string name="auto_download_messages_title">自動下載郵件</string>
-    <string name="auto_download_messages_subtitle">開啟此選項時，每次當您收到新郵件通知，將會自動下載郵件內容（會消耗更多數據）。如果關閉此選項，則只會在您打開郵件時下載郵件內容。（注意：不論此選項為何，清除快取或登出帳號後，您將無法在離線狀態下查看郵件內容。）</string>
-    <string name="settings_background_sync">背景同步</string>
+    <string name="auto_download_messages_subtitle">開啟此選項時，每次當您收到新郵件通知，將自動下載郵件內容 (會耗用較多流量)。如果關閉此選項，則只會在您打開郵件時才下載郵件內容。(注意：倘若您清除快取或登出帳號後，不論選項的開啟與關閉，都將無法離線狀態查看郵件內容。)</string>
+    <string name="settings_background_sync">背景裡同步</string>
     <string name="settings_auto_show_images">自動顯示遠端圖像</string>
     <string name="settings_auto_show_embedded_images">自動顯示嵌入圖像</string>
-    <string name="settings_prevent_taking_screenshots">防止螢幕截圖</string>
-    <string name="hyperlink_confirmation">請求連結確認</string>
-    <string name="labels_and_folders">標籤與資料夾 </string>
+    <string name="settings_prevent_taking_screenshots">防止擷取螢幕截圖</string>
+    <string name="hyperlink_confirmation">申請發送連結確認</string>
+    <string name="labels_and_folders">標籤 &amp; 資料夾 </string>
     <string name="folders">資料夾</string>
     <string name="labels">標籤</string>
-    <string name="swipe_actions">滑動動作</string>
+    <string name="swipe_actions">滑動操作</string>
     <string name="swipe_action_right">向右滑動</string>
     <string name="swipe_action_left">向左滑動</string>
     <!-- region Swipe Actions -->
-    <string name="swipe_action_chooser_title">選擇滑動動作</string>
-    <string name="swipe_action_trash">郵件移動到垃圾桶</string>
-    <string name="swipe_action_trash_short">移至垃圾桶</string>
+    <string name="swipe_action_chooser_title">選擇滑動的動作</string>
+    <string name="swipe_action_trash">郵件丟進垃圾桶</string>
+    <string name="swipe_action_trash_short">丟進垃圾桶</string>
     <string name="swipe_action_star">郵件加上星號</string>
-    <string name="swipe_action_star_short">更新星號</string>
+    <string name="swipe_action_star_short">更新加上星號</string>
     <string name="swipe_action_spam">郵件標記為垃圾郵件</string>
     <string name="swipe_action_spam_short">垃圾郵件</string>
-    <string name="swipe_action_archive">郵件封存</string>
-    <string name="swipe_action_archive_short">封存</string>
+    <string name="swipe_action_archive">封存郵件</string>
+    <string name="swipe_action_archive_short">封存檔</string>
     <string name="swipe_action_mark_read">郵件標記為已讀</string>
-    <string name="swipe_action_mark_read_short">已讀</string>
+    <string name="swipe_action_mark_read_short">已讀取</string>
     <plurals name="action_move_to_trash">
-        <item quantity="other">郵件已移動到垃圾桶</item>
+        <item quantity="other">郵件已丟進垃圾桶</item>
     </plurals>
     <!-- endregion -->
-    <string name="local_storage">本機儲存空間限制</string>
+    <string name="local_storage">機體儲存空間限制</string>
     <!-- endregion -->
     <string name="app_settings">應用程式設定</string>
     <!-- region App Settings -->
     <string name="push_notifications">推播通知</string>
     <string name="extended_notifications">延伸通知</string>
-    <string name="extended_notifications_description">啟用此功能以在推送通知中\n檢視電郵的寄件者。</string>
+    <string name="extended_notifications_description">開啟此功能，可以在推播通知裡查看電郵的寄件者。</string>
     <string name="notification_settings">通知設定</string>
     <string name="auto_lock">自動鎖定</string>
     <string name="auto_lock_app">自動鎖定應用程式</string>
-    <string name="auto_lock_description">啟用此功能以自動鎖定您的\n應用程式並使用 PIN 碼或指紋\n來解鎖。</string>
+    <string name="auto_lock_description">啟用此功能可自動鎖定應用程式並透過使用 PIN 碼或指紋解鎖。</string>
     <string name="change_pin_code">變更 PIN 碼</string>
     <string name="auto_lock_timer">自動鎖定計時器</string>
     <string name="connections_via_third_parties">替代路由</string>
     <string name="allow_secure_connections_via_third_parties">允許替代路由</string>
-    <string name="allow_secure_connections_via_third_parties_settings_description">萬一 Proton 網站遭到封鎖，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">萬一 Proton 網站遭到封鎖，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。<a href="https://proton.me/blog/anti-censorship-alternative-routing">瞭解更多</a></string>
-    <string name="app_language">應用程式語言</string>
-    <string name="custom_language_dialog_title">選擇應用程式語言</string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">萬一 Proton 網站遭到攔截，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">萬一 Proton 網站遭到攔截，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。<a href="https://proton.me/blog/anti-censorship-alternative-routing">瞭解更多</a></string>
+    <string name="app_language">應用程式使用語種</string>
+    <string name="custom_language_dialog_title">選擇應用程式的語言</string>
     <string name="auto_detect">自動偵測</string>
-    <string name="combined_contacts">合併聯絡人</string>
-    <string name="turn_combined_contacts_on">啟用此功能，以使用已登入帳號中的聯絡人，自動填入電子郵件地址。</string>
+    <string name="combined_contacts">合併聯絡名片</string>
+    <string name="turn_combined_contacts_on">啟用此功能，以使用已登入帳號中的聯絡人，自動填入電子郵件位址。</string>
     <string name="local_cache_management">本機快取</string>
-    <string name="cache_cleared">本機快取已重新整理</string>
+    <string name="cache_cleared">已重新整理本機快取</string>
     <string name="empty_data">清除資料</string>
     <!-- endregion -->
-    <string name="enabled">已啟用</string>
-    <string name="disabled">已停用</string>
+    <string name="enabled">啟用</string>
+    <string name="disabled">停用</string>
     <string name="app_info">應用程式資訊</string>
     <string name="app_version">應用程式版本</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="signed_in_with">已使用 %s 登入</string>
+    <string name="signed_in_with">目前登入的帳號為 %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">撰寫郵件</string>
     <string name="shortcut_compose_new_message">撰寫新郵件</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_dialog_title">常見連線問題及解決方案</string>
+    <string name="troubleshoot_dialog_title">簡單的連線疑難雜症與解決方案</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;未連線網路&lt;/i&gt; - 請檢查是否已正確連接網路。
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;網絡供應商 (ISP) 故障&lt;/i&gt; - 嘗試其他網絡連接 Proton (或使用 &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; 或 &lt;a href=\"https://www.torproject.org/\"&gt;Tor 洋蔥&lt;/a&gt;)。
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;政府實施封鎖&lt;/i&gt; - 您所在的國家可能封鎖連接 Proton 的通道。 嘗試透過 &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (或其他 VPN) 或r &lt;a href=\"https://www.torproject.org/\"&gt;Tor 洋蔥&lt;/a&gt; 以連接 Proton。
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;防毒軟件發生衝突&lt;/i&gt; - 暫時禁用或移除您的防毒軟件。
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;代理伺服器/防火牆發生衝突&lt;/i&gt; - 禁用任何代理伺服器或防火牆，或聯繫您的網絡管理員。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;網絡供應商 (ISP) 故障&lt;/i&gt; - 嘗試其它網絡連接 Proton (或使用 &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; 或 &lt;a href=\"https://www.torproject.org/\"&gt;Tor 洋蔥&lt;/a&gt;)。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;政府實施攔截&lt;/i&gt; - 您所在的國家可能攔截連接 Proton 的通道。 嘗試透過 &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (或其它 VPN) 或r &lt;a href=\"https://www.torproject.org/\"&gt;Tor 洋蔥&lt;/a&gt; 以連接 Proton。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;防毒軟體發生衝突&lt;/i&gt; - 暫時停用或移除您的防毒軟體。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;代理伺服器/防火牆發生衝突&lt;/i&gt; - 禁用任何代理伺服器或防火牆，或聯繫您的網路管理員。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton 服務故障&lt;/i&gt; - 登入 &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; 了解系統最新狀態。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;未能解決疑難&lt;/i&gt; - 直接聯絡我們，透過 &lt;a href=\"https://proton.me/support/contact\"&gt;填寫表格&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;電郵&lt;/a&gt; (support@protonmail.zendesk.com), 或 &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter&lt;/a&gt;。
     </string>
@@ -815,47 +815,49 @@
     <!-- endregion -->
     <string name="allowed">已允許</string>
     <string name="denied">已拒絕</string>
-    <string name="more">更多</string>
+    <string name="more">瀏覽更多</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">滑動手勢已變更</string>
-    <string name="swipe_gestures_changed_message">在上次更新後已切換滑動手勢。如果您想要的話，您可以在設定中重設它們。</string>
-    <string name="go_to_settings">前往設定頁面</string>
+    <string name="swipe_gestures_changed_message">在上次更新後已切換滑動手勢。如果您想要變更，可以在設定值裡進行重設。</string>
+    <string name="go_to_settings">前往設定值頁面</string>
     <!-- endregion -->
-    <string name="invalid_firebase_api_key_message">無效的 Firebase API 金鑰。推送通知將無法運作。</string>
+    <string name="invalid_firebase_api_key_message">無效的 Firebase API 金鑰。推播通知將無法運作。</string>
     <string name="failed_saving_draft_online">無法儲存郵件的線上草稿：「%s」</string>
     <string name="failed_draft_does_not_exist">不存在訊息「%s」。</string>
-    <string name="failed_uploading_attachment_online">郵件的附件錯誤：「%s」</string>
-    <string name="cannot_open_message_while_being_sent">傳送時無法開啟此郵件</string>
-    <string name="enable_conversation_mode">啟用交談模式</string>
+    <string name="failed_uploading_attachment_online">郵件的附件錯誤: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">無法打開正在傳送中的郵件</string>
+    <string name="enable_conversation_mode">啟用交談對話模式</string>
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="star">加上星號</string>
-    <string name="unstar">移除星號</string>
-    <string name="star_unstar">加上星號／移除星號</string>
-    <string name="send_to_archive">要送歸封存嗎？</string>
-    <string name="label_as">加上標籤…</string>
-    <string name="mark_as_unread">標記為未讀</string>
-    <string name="mark_as_read">標記為已讀</string>
+    <string name="star">標注星號</string>
+    <string name="unstar">取消星號</string>
+    <string name="star_unstar">標注星號 / 取消星號</string>
+    <string name="send_to_archive">傳送至封存檔？</string>
+    <string name="label_as">標簽注記為…</string>
+    <string name="mark_as_unread">標記為未讀取</string>
+    <string name="mark_as_read">標記為已讀取</string>
     <string name="move_message">移動郵件</string>
     <string name="manage">管理</string>
-    <string name="message_from">來自 %s 的郵件</string>
-    <string name="not_spam_move_to_inbox">非垃圾郵件 (移動至收件匣)</string>
+    <string name="message_from">郵件出處 %s</string>
+    <string name="not_spam_move_to_inbox">這不是垃圾郵件 (移至收件匣)</string>
     <string name="action_sheet_view_in_light_mode">在淺色模式中檢視</string>
     <string name="action_sheet_view_in_dark_mode">在深色模式中檢視</string>
     <plurals name="x_messages_count">
         <item quantity="other">%d 封郵件</item>
     </plurals>
     <plurals name="x_conversations_count">
-        <item quantity="other">%d 個交談</item>
+        <item quantity="other">%d 則交談對話</item>
     </plurals>
-    <string name="contacts_call">通話</string>
+    <string name="contacts_call">撥打通話</string>
     <string name="contacts_send_group_message">傳送群組訊息</string>
-    <string name="inbox_this_folder_is_empty">此資料夾是空的</string>
+    <string name="inbox_this_folder_is_empty">此資料夾目前是空的</string>
     <string name="inbox_could_not_retrieve_messages">無法擷取您的郵件</string>
     <string name="inbox_pull_down_to_retry">請往下拉來重試</string>
     <string name="edit_draft">編輯草稿</string>
-    <string name="details_show_history">顯示紀錄</string>
+    <string name="details_show_history">顯示記錄</string>
     <string name="could_not_complete_action">無法完成此動作</string>
     <string name="decryption_of_message_failed">解密錯誤：此郵件的加密內容解密失敗。</string>
+    <string name="expand_message_details">展開訊息詳細資訊</string>
+    <string name="collapse_message_details">折疊訊息詳細資訊</string>
 </resources>

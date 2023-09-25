@@ -41,7 +41,7 @@
     <string name="drawer_scheduled">Zamanlanmış</string>
     <string name="drawer_contacts">Kişiler</string>
     <string name="drawer_lock_the_app">Uygulamayı kilitle</string>
-    <string name="drawer_report_bug">Bir sorun bildireceğim</string>
+    <string name="drawer_report_bug">Sorun bildirin</string>
     <string name="drawer_settings">Ayarlar</string>
     <string name="drawer_sign_out">Oturumu kapat</string>
     <string name="drawer_create_folder_description">Yeni klasör ekle</string>
@@ -104,7 +104,7 @@
     <string name="set_msg_password_error_too_short">Parola çok kısa</string>
     <string name="set_msg_password_error_too_long">Parola çok uzun</string>
     <string name="set_msg_password_error_mismatch">Parola eşleşmiyor</string>
-    <string name="set_msg_expiration_title">İleti süresi</string>
+    <string name="set_msg_expiration_title">İleti geçerlilik süresi</string>
     <string name="set_msg_expiration_none">Yok</string>
     <string name="set_msg_expiration_1_hour">1 saat</string>
     <string name="set_msg_expiration_1_day">1 gün</string>
@@ -160,15 +160,15 @@
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Herkes için gizlilik</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Sorunsuz uçtan uca şifrelemenin tadını çıkarmak için tanıdıklarınızı Proton Mail kullanmaya çağırın ya da gönderdiğiniz iletilere parola koruması ekleyin.</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Sorunsuz uçtan uca şifrelemenin tadını çıkarmak için tanıdıklarınızı Proton Mail kullanmaya davet edin ya da gönderdiğiniz iletilere parola koruması ekleyin.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Temiz ve düzenli</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Gelen kutunuzu mükemmelleştirmek için iletileri dosyalayın, etiketleyin ve renklendirin.</string>
     <string name="existing_user_onboarding_new_look_headline">Yeni görünüm, aynı koruma</string>
     <string name="existing_user_onboarding_new_look_description">Şifrelenmiş e-postanız daha kolay kullanım için yeniden tasarlandı.</string>
     <string name="existing_user_onboarding_new_features_headline">Yeni özellikler</string>
-    <string name="existing_user_onboarding_new_features_description">Karanlık kip, geliştirilmiş bildirimler, okunmamış iletiler süzgeci ve alt klasörler gibi yeni özelliklerin tadını çıkarın.</string>
+    <string name="existing_user_onboarding_new_features_description">Koyu tema, geliştirilmiş bildirimler, okunmamış iletiler süzgeci ve alt klasörler gibi yeni özelliklerin tadını çıkarın.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Güncellenmiş Proton, birleşik koruma</string>
-    <string name="existing_user_onboarding_updated_proton_description">Yenilenmiş Proton böyle görünüyor. Birçok hizmet, tek amaç. Gizliliğin doğal sayıldığı internet fikrine hoş geldiniz. <a href="https://proton.me/news/updated-proton">Ayrıntılı bilgi alın</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Yenilenmiş Proton böyle görünüyor. Birçok hizmet, tek amaç. Gizliliğe odaklanmış bir İnternet fikrine hoş geldiniz. <a href="https://proton.me/news/updated-proton">Ayrıntılı bilgi alın</a></string>
     <string name="onboarding_next">Sonraki</string>
     <string name="onboarding_get_started">Başlayalım</string>
     <string name="onboarding_got_it">Anladım</string>
@@ -186,7 +186,7 @@
     <string name="processing_request">İsteğiniz işleniyor</string>
     <!-- should check for html tag -->
     <!-- Toast messages -->
-    <string name="error_chrome_disabled">İçerik yüklenemedi. Lütfen Chrome uygulamasını etkinleştirin</string>
+    <string name="error_chrome_disabled">İçerik yüklenemedi. Lütfen Chrome uygulamasını kullanıma alın</string>
     <string name="error_chrome_not_found">İçerik yüklenemedi. Lütfen Chrome uygulamasını kurun</string>
     <string name="messages_load_failure">İletiler alınamadı</string>
     <string name="message_details_load_failure">İleti ayrıntıları alınamadı</string>
@@ -194,8 +194,8 @@
     <string name="no_network_queued">Ağ bağlantısı yok. İleti sıraya alındı.</string>
     <string name="update_app_title">Güncelleme gerekli</string>
     <string name="update_app">Proton Mail uygulamanız güncellenene kadar kullanılamaz</string>
-    <string name="you_are_offline">Çevrimdışısınız</string>
-    <string name="api_offline">Proton Mail şu anda çevrimdışı. Güncel durum için https://protonstatus.com sitemize veya https://twitter.com/ProtonPrivacy Twitter adresimize bakabilirsiniz</string>
+    <string name="you_are_offline">Çevrim dışısınız</string>
+    <string name="api_offline">Proton Mail şu anda çevrim dışı. Güncel durum için https://protonstatus.com sitemize veya https://twitter.com/ProtonPrivacy Twitter adresimize bakabilirsiniz</string>
     <string name="contact_saved">Kişi kaydedildi</string>
     <string name="contact_saved_offline">Kişi kaydedildi. Bağlantı kurulduğunda eşitlenecek</string>
     <string name="contact_exist">Kişi e-posta adresi zaten var</string>
@@ -206,7 +206,7 @@
     <string name="open_drawer">Aç</string>
     <string name="close_drawer">Kapat</string>
     <string name="inbox_option">Gelen kutusu</string>
-    <string name="starred_option">Yıldız konulmuş</string>
+    <string name="starred_option">Yıldızlı</string>
     <string name="drafts_option">Taslaklar</string>
     <string name="sent_option">Gönderilmiş</string>
     <string name="archive_option">Arşiv</string>
@@ -214,7 +214,7 @@
     <string name="spam_option">İstenmeyen</string>
     <string name="allmail_option">Tüm e-postalar</string>
     <string name="inbox">Gelen kutusu</string>
-    <string name="starred">Yıldız konulmuş</string>
+    <string name="starred">Yıldızlı</string>
     <string name="drafts">Taslaklar</string>
     <string name="sent">Gönderilmiş</string>
     <string name="archive">Arşiv</string>
@@ -232,7 +232,7 @@
     <string name="view_headers">Üst bilgileri görüntüle</string>
     <string name="message_headers">İleti üst bilgisi</string>
     <string name="delete_messages">İletileri sil</string>
-    <string name="move_to_archive">Arşive taşı</string>
+    <string name="move_to_archive">Arşivle</string>
     <string name="move_to_trash">Çöpe at</string>
     <string name="move_to_spam">İstenmeyen kutusuna taşı</string>
     <string name="move_to_inbox">Gelen kutusuna taşı</string>
@@ -253,8 +253,8 @@
     <string name="confirm_message_password">Parola onayı</string>
     <string name="define_password_hint">İpucu belirleyin (İsteğe bağlı)</string>
     <string name="eo_passwords_do_not_match">Parola ile onayı aynı değil</string>
-    <string name="define_expiration_period">Sona erme süresini belirtin</string>
-    <string name="set_message_expiration">İleti sona erme süresini ayarla</string>
+    <string name="define_expiration_period">Geçerlilik süresini belirtin</string>
+    <string name="set_message_expiration">İleti geçerlilik süresini ayarla</string>
     <string name="days">Gün</string>
     <string name="hours">Saat</string>
     <string name="max_labels_exceeded">%1$s iletisinde %2$d taneden fazla etiket bulunamaz.</string>
@@ -301,7 +301,7 @@
     <string name="no_password_specified">Geçerlilik süresi yalnızca tamamen şifrelenmiş iletiler için ayarlanabilir. Lütfen Proton Mail kullanmayan alıcılarınız için bir parola ayarlayın.</string>
     <string name="attachment_limit">Ek dosya sınırı %1$s. Toplam ek dosya boyutu en fazla %2$s olabilir.</string>
     <string name="sending_message">İleti gönderiliyor...</string>
-    <string name="sending_message_offline">Çevrimdışı. Daha sonra gönderilmek üzere sıraya alındı...</string>
+    <string name="sending_message_offline">Çevrim dışı. Daha sonra gönderilmek üzere sıraya alındı...</string>
     <string name="message_sent">İleti gönderildi</string>
     <string name="message_failed">İleti gönderilemedi</string>
     <string name="storage_limit">Depolama alanı sınırı</string>
@@ -396,9 +396,9 @@
     <string name="label_add_new">Yeni etiket ekle</string>
     <string name="available_labels">Kullanılabilecek etiketler</string>
     <string name="delete_selected">Seçilmişi sil</string>
-    <string name="pin_not_activated">PIN kodu etkinleştirilmemiş</string>
+    <string name="pin_not_activated">PIN kodu kullanıma alınmamış</string>
     <string name="available_options">Kullanılabilecek seçenekler</string>
-    <string name="background_sync_subtitle">Bu seçenek etkinleştirildiğinde, uygulama sunucu ile arka planda eşitlenir. Devre dışı bırakıldığında anlık bildirimler devre dışı bırakılır.</string>
+    <string name="background_sync_subtitle">Bu seçenek açıldığında, uygulama sunucu ile arka planda eşitlenir. Kapatıldığında anlık bildirimler de kapatılır.</string>
     <string-array name="notification_options">
         <item>Titreşim veya ses yok</item>
         <item>Titreşim olmadan ses</item>
@@ -542,7 +542,7 @@
     <string name="recipient_popup_copy_address">Adresi kopyala</string>
     <string name="recipient_popup_see_details">Kişi bilgilerini görüntüle</string>
     <string name="send_with_untrusted_key_title">Güvenilmemiş bir anahtar ile göndermek ister misiniz?</string>
-    <string name="send_with_untrusted_key_message">%s için güvenilmiş anahtarlarla adres doğrulamasını etkinleştirdiniz. Ancak etkin şifreleme anahtarlarına güvenilmemiş.</string>
+    <string name="send_with_untrusted_key_message">%s için güvenilen anahtarlarla adres doğrulama özelliğini açtınız. Ancak kullanımdaki şifreleme anahtarlarına güvenilmemiş.</string>
     <string name="resign_contact_title">Kişiyi yeniden imzalamak ister misiniz?</string>
     <string name="resign_contact_message">%s doğrulanamadı: Kişi doğru şekilde imzalanmamış. Bu adrese bir ileti göndermek veya kişiyi düzenlemek için kişiyi yeniden imzalamalısınız. Bu durum parolanızı kurtardığınızda ve anahtarlarınızı sıfırladığınızda da ortaya çıkabilir.</string>
     <!-- Sender locks -->
@@ -566,9 +566,9 @@
     <string name="recipient_not_found_and_removed">Alıcı bulunamadı: %s ve kaldırıldı</string>
     <string name="recipient_error_and_removed">Alıcı bilgileri alınırken bir sorun çıktı ve alıcı kaldırıldı: %s</string>
     <string name="send_anyway">Yine de gönder</string>
-    <string name="expiration_error_title">İletinin geçerlilik süresini etkinleştirdiniz. Ancak tüm alıcılar bu özelliği desteklemiyor.</string>
+    <string name="expiration_error_title">İleti için geçerlilik süresini açtınız. Ancak tüm alıcılar bu özelliği desteklemiyor.</string>
     <string name="expiration_error_add_msg_password">Lütfen şu alıcılar için bir ileti parolası ekleyin:</string>
-    <string name="expiration_error_disable_pgp_sending">Lütfen şu alıcılara geçerlilik süresini etkinleştirmek için PGP ile gönderimi devre dışı bırakın:</string>
+    <string name="expiration_error_disable_pgp_sending">Lütfen geçerlilik süresini açmak için şu alıcılara PGP ile gönderimi kapatın:</string>
     <string name="expiration_error_proceed">Bu alıcılara geçerlilik süresi olmadan göndermek için Gönder üzerine dokunun.</string>
     <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">AYRINTILI BİLGİ ALIN</a></string>
     <string name="channel_name_attachments">Ek dosyalar</string>
@@ -735,17 +735,17 @@
         <item>Ct</item>
         <item>Pa</item>
     </string-array>
-    <string name="quick_and_scheduled_enabled">Hızlı erteleme ve zamanlanmış erteleme etkin</string>
-    <string name="quick_only_enabled">Hızlı erteleme etkin</string>
-    <string name="scheduled_only_enabled">Zamanlanmış erteleme etkin</string>
-    <string name="quick_and_scheduled_disabled">Hızlı erteleme ve zamanlanmış erteleme devre dışı</string>
+    <string name="quick_and_scheduled_enabled">Hızlı erteleme ve zamanlanmış erteleme açık</string>
+    <string name="quick_only_enabled">Hızlı erteleme açık</string>
+    <string name="scheduled_only_enabled">Zamanlanmış erteleme açık</string>
+    <string name="quick_and_scheduled_disabled">Hızlı erteleme ve zamanlanmış erteleme kapalı</string>
     <string name="scheduled_snooze_on">Zamanlanmış (açık)</string>
     <string name="scheduled_snooze_off">Zamanlanmış (kapalı)</string>
     <!-- endregion -->
     <string name="mailbox">Posta kutusu</string>
     <string name="privacy">Gizlilik</string>
     <string name="auto_download_messages_title">İletiler otomatik indirilsin</string>
-    <string name="auto_download_messages_subtitle">Bu seçenek etkinleştirildiğinde, yeni bir e-posta bildirimi aldığınızda ileti gövdeleri otomatik olarak indirilir (daha fazla veri kullanılır). Devre dışı bırakıldığındaysa, ileti gövdeleri yalnızca e-posta açıldığında indirilir. (Not: Her iki seçenekte de ön belleği temizlerseniz veya oturumu kapatırsanız, çevrimdışı durumdayken ileti gövdelerini okuyamazsınız.)</string>
+    <string name="auto_download_messages_subtitle">Bu seçenek açıldığında, yeni bir e-posta bildirimi aldığınızda ileti içerikleri otomatik olarak indirilir (daha fazla veri kullanılır). Kapatıldığındaysa, ileti içerikleri yalnızca e-posta açıldığında indirilir. (Not: Her iki seçenekte de ön belleği temizlerseniz veya oturumu kapatırsanız, çevrim dışı durumdayken ileti gövdelerini okuyamazsınız.)</string>
     <string name="settings_background_sync">Arka planda eşitlensin</string>
     <string name="settings_auto_show_images">Uzak görseller görüntülensin</string>
     <string name="settings_auto_show_embedded_images">Gömülü görseller görüntülensin</string>
@@ -765,7 +765,7 @@
     <string name="swipe_action_star_short">Yıldızı güncelle</string>
     <string name="swipe_action_spam">İletiyi istenmeyen olarak işaretlendi</string>
     <string name="swipe_action_spam_short">İstenmeyen</string>
-    <string name="swipe_action_archive">İletiyi arşivle</string>
+    <string name="swipe_action_archive">İleti arşivlendi</string>
     <string name="swipe_action_archive_short">Arşivle</string>
     <string name="swipe_action_mark_read">İletiyi okunmuş olarak işaretlendi</string>
     <string name="swipe_action_mark_read_short">Oku</string>
@@ -780,7 +780,7 @@
     <!-- region App Settings -->
     <string name="push_notifications">Anlık bildirimler</string>
     <string name="extended_notifications">Genişletilmiş bildirimler</string>
-    <string name="extended_notifications_description">Anlık bildirimlerde e-posta göndericisini görmek için bu özelliği etkinleştirin.</string>
+    <string name="extended_notifications_description">Anlık bildirimlerde e-posta göndericisini görmek için bu özelliği açın.</string>
     <string name="notification_settings">Bildirim ayarları</string>
     <string name="auto_lock">Otomatik kilit</string>
     <string name="auto_lock_app">Uygulama otomatik kilitlensin</string>
@@ -795,13 +795,13 @@
     <string name="custom_language_dialog_title">Uygulama dilini seçin</string>
     <string name="auto_detect">Otomatik algılama</string>
     <string name="combined_contacts">Birleştirilmiş kişiler</string>
-    <string name="turn_combined_contacts_on">E-posta adreslerinin, oturum açtığınız tüm hesaplardaki kişilerle otomatik olarak tamamlanması için bu özelliği etkinleştirin.</string>
+    <string name="turn_combined_contacts_on">E-posta adreslerinin, oturum açtığınız tüm hesaplardaki kişilerle otomatik olarak tamamlanması için bu özelliği açın.</string>
     <string name="local_cache_management">Yerel ön bellek</string>
     <string name="cache_cleared">Yerel ön bellek yenilendi</string>
     <string name="empty_data">Verileri temizle</string>
     <!-- endregion -->
-    <string name="enabled">Etkin</string>
-    <string name="disabled">Devre dışı</string>
+    <string name="enabled">Açık</string>
+    <string name="disabled">Kullanımdan kaldırılmış</string>
     <string name="app_info">Uygulama bilgileri</string>
     <string name="app_version">Uygulama sürümü</string>
     <!-- endregion -->
@@ -814,11 +814,11 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Sık karşılaşılan bağlantı sorunları ve çözümleri</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;İnternet bağlantısı yok&lt;/i&gt; - Lütfen internet bağlantınızın çalıştığından emin olun.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;İnternet bağlantısı yok&lt;/i&gt; - Lütfen İnternet bağlantınızın çalıştığından emin olun.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;İnternet hizmeti sağlayıcısı (ISP) sorunu&lt;/i&gt; - Proton ile bağlantı kurmak için farklı bir ağ kullanmayı deneyin (alternatif olarak &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; ya da &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; kullanın).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Hükümet sansürü&lt;/i&gt; - Ülkeniz Proton sunucularına bağlanmanızı engelliyor olabilir. &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (ya da başka bir VPN) ya da &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; kullanmayı deneyin.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus etkileşimi&lt;/i&gt; - Antivirus uygulamanızı geçici olarak devre dışı bırakın ya da kaldırın.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vekil sunucu/&amp;güvenlik duvarı etkileşimi&lt;/i&gt; - Vekil sunucu veya güvenlik duvarlarını devre dışı bırakın ya da ağ yöneticiniz ile görüşün.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus etkileşimi&lt;/i&gt; - Antivirus uygulamanızı geçici olarak kapatın ya da kaldırın.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vekil sunucu/güvenlik duvarı etkileşimi&lt;/i&gt; - Vekil sunucu veya güvenlik duvarlarını kapatın ya da ağ yöneticiniz ile görüşün.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton çalışmıyor&lt;/i&gt; - Sistemimizin durumunu görmek için &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; sitesine bakın.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Sorun hala çözülmediyse&lt;/i&gt; - Bizimle doğrudan &lt;a href=\"https://proton.me/support/contact\"&gt;destek formumuz&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-posta adresimiz&lt;/a&gt; (support@protonmail.zendesk.com) ya da &lt;a href=\"https://twitter.com/ProtonPrivacy\"&gt;Twitter hesabımız&lt;/a&gt; üzerinden görüşün.
     </string>
@@ -837,11 +837,11 @@
     <string name="go_to_settings">Ayarlara git</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Firebase API anahtarı geçersiz. Anlık bildirimler çalışmayacak.</string>
-    <string name="failed_saving_draft_online">Çevrimiçi ileti taslağı kaydedilemedi: \"%s\"</string>
+    <string name="failed_saving_draft_online">Çevrim içi ileti taslağı kaydedilemedi: \"%s\"</string>
     <string name="failed_draft_does_not_exist">\"%s\" iletisi bulunamadı.</string>
     <string name="failed_uploading_attachment_online">İletiye dosya eklenirken sorun çıktı: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Bu ileti gönderilirken açılamaz</string>
-    <string name="enable_conversation_mode">Yazışma kipini etkinleştir</string>
+    <string name="enable_conversation_mode">Yazışma görünümüne geç</string>
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
@@ -856,8 +856,8 @@
     <string name="manage">Yönet</string>
     <string name="message_from">%s kişisinden ileti</string>
     <string name="not_spam_move_to_inbox">İstenmeyen değil (Gelen kutusuna taşı)</string>
-    <string name="action_sheet_view_in_light_mode">Açık kipte görüntüle</string>
-    <string name="action_sheet_view_in_dark_mode">Koyu kipte görüntüle</string>
+    <string name="action_sheet_view_in_light_mode">Açık tema ile görüntüle</string>
+    <string name="action_sheet_view_in_dark_mode">Koyu tema ile görüntüle</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d ileti</item>
         <item quantity="other">%d ileti</item>
@@ -875,4 +875,6 @@
     <string name="details_show_history">Geçmişi göster</string>
     <string name="could_not_complete_action">İşlem tamamlanamadı</string>
     <string name="decryption_of_message_failed">Şifre çözme sorunu: Bu iletinin şifrelenmiş içeriğinin şifresi çözülemedi.</string>
+    <string name="expand_message_details">İleti ayrıntıları aç</string>
+    <string name="collapse_message_details">İleti ayrıntılarını kapat</string>
 </resources>

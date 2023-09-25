@@ -67,11 +67,11 @@
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Ouvrir dans Proton Calendar</string>
-    <string name="details_open_in_proton_calendar_subtitle">Calendrier chiffré sécurisé</string>
+    <string name="details_open_in_proton_calendar_subtitle">Calendrier chiffré et sécurisé</string>
     <string name="details_open_in_proton_calendar_icon_desc">icône Proton Calendar</string>
-    <string name="details_play_store_error">Impossible d\'ouvrir le Play Store</string>
+    <string name="details_play_store_error">Le Play Store ne s\'ouvre pas.</string>
     <string name="details_hyperlink_phishing_dialog_title">Attention : site internet suspect/frauduleux</string>
-    <string name="details_hyperlink_phishing_dialog_content">Ce lien mène à un site web qui pourrait essayer de voler vos informations, comme des mots de passe et des informations de cartes bancaires.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Pour votre sécurité, ne continuez pas.</string>
+    <string name="details_hyperlink_phishing_dialog_content">Ce lien mène à un site internet qui pourrait essayer de voler vos informations, comme des mots de passe et des informations de cartes bancaires.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Pour votre sécurité, ne continuez pas.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Revenir en arrière (recommandé)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorer l\'avertissement et continuer</string>
     <string name="scheduled_message_info">Ce message sera envoyé %s.</string>
@@ -86,7 +86,7 @@
     <string name="composer_from">De :</string>
     <string name="composer_subject">Objet :</string>
     <string name="composer_to">À :</string>
-    <string name="composer_removing_address_generic_error">Impossible de vérifier l\'adresse : %s. L\'envoi pourrait ne pas aboutir.</string>
+    <string name="composer_removing_address_generic_error">Il n\'est pas possible de vérifier l\'adresse : %s. L\'envoi pourrait ne pas aboutir.</string>
     <string name="composer_removing_address_server_error">Suppression de l\'adresse : %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Le %s, %s &lt; %s&gt; a écrit :</string>
@@ -127,7 +127,7 @@
     <string name="settings_swipe_left_to_right">De gauche à droite</string>
     <string name="settings_swipe_right_to_left">De droite à gauche</string>
     <string name="settings_swipe_saving">Enregistrement de l\'action de balayage…</string>
-    <string name="settings_swipe_generic_error">Impossible d\'enregistrer l\'action de balayage</string>
+    <string name="settings_swipe_generic_error">Impossible de sauvegarder l\'action de balayage</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Thème de l\'application</string>
@@ -137,7 +137,7 @@
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Sélectionnez le dossier parent (facultatif)</string>
-    <string name="labels_manager_parent_folder_selected"><b>Dossier parent sélectionné.</b> Tapotez pour modifier</string>
+    <string name="labels_manager_parent_folder_selected"><b>Dossier parent sélectionné.</b> Appuyez pour modifier</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Dossier parent</string>
@@ -175,8 +175,8 @@
     <string name="onboarding_image_view_content_description">Illustration Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
-    <string name="snackbar_message_draft_saved">Brouillon enregistré</string>
-    <string name="snackbar_message_draft_moved_to_trash">Brouillon déplacé dans le dossier Corbeille</string>
+    <string name="snackbar_message_draft_saved">Le brouillon a été enregistré.</string>
+    <string name="snackbar_message_draft_moved_to_trash">Le brouillon a été déplacé dans le dossier Corbeille.</string>
     <string name="snackbar_action_discard">Ignorer</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
@@ -186,10 +186,10 @@
     <string name="processing_request">Votre demande est en cours de traitement.</string>
     <!-- should check for html tag -->
     <!-- Toast messages -->
-    <string name="error_chrome_disabled">Impossible de charger le contenu, veuillez activer Chrome.</string>
-    <string name="error_chrome_not_found">Impossible de charger le contenu, veuillez installer Chrome.</string>
-    <string name="messages_load_failure">Impossible de récupérer les messages</string>
-    <string name="message_details_load_failure">Impossible de récupérer les détails du message</string>
+    <string name="error_chrome_disabled">Le contenu ne peut pas être chargé. Veuillez activer Chrome.</string>
+    <string name="error_chrome_not_found">Le contenu ne peut pas être chargé. Veuillez installer Chrome.</string>
+    <string name="messages_load_failure">Les messages ne peuvent pas être récupérés.</string>
+    <string name="message_details_load_failure">Les détails du message ne peuvent pas être récupérés.</string>
     <string name="no_more_messages">Il n\'y a plus de messages.</string>
     <string name="no_network_queued">Pas de réseau, message placé en file d\'attente</string>
     <string name="update_app_title">Mise à jour nécessaire</string>
@@ -205,7 +205,7 @@
     <string name="attachment_failed_message_drafted">Veuillez supprimer et rattacher « %s », puis renvoyer le message. Votre message se trouve dans le dossier Brouillons.</string>
     <string name="open_drawer">Ouvrir</string>
     <string name="close_drawer">Fermer</string>
-    <string name="inbox_option">Boîte de réception</string>
+    <string name="inbox_option">Boite de réception</string>
     <string name="starred_option">Favoris</string>
     <string name="drafts_option">Brouillons</string>
     <string name="sent_option">Envoyés</string>
@@ -213,7 +213,7 @@
     <string name="trash_option">Corbeille</string>
     <string name="spam_option">Indésirables/spam</string>
     <string name="allmail_option">Tous les messages</string>
-    <string name="inbox">Boîte de réception</string>
+    <string name="inbox">Boite de réception</string>
     <string name="starred">Favoris</string>
     <string name="drafts">Brouillons</string>
     <string name="sent">Envoyés</string>
@@ -223,19 +223,19 @@
     <string name="all_mail">Tous les messages</string>
     <string name="contacts">Contacts</string>
     <string name="search_contacts">Rechercher des contacts</string>
-    <string name="fetching_contacts">Récupération des contacts Proton Mail…</string>
+    <string name="fetching_contacts">La récupération des contacts Proton Mail est en cours.</string>
     <string name="fetching_contacts_success">Les contacts ont été actualisés.</string>
-    <string name="fetching_contacts_failure">Impossible d\'actualiser les contacts</string>
+    <string name="fetching_contacts_failure">Les contacts ne peuvent pas être actualisés.</string>
     <string name="compose">Rédiger</string>
     <string name="compose_message">Rédiger un message</string>
-    <string name="empty_folder">Dossier vide</string>
+    <string name="empty_folder">Vider le dossier</string>
     <string name="view_headers">Afficher les en-têtes</string>
     <string name="message_headers">En-tête du message</string>
     <string name="delete_messages">Supprimer les messages</string>
     <string name="move_to_archive">Déplacer dans le dossier Archives</string>
     <string name="move_to_trash">Déplacer dans le dossier Corbeille</string>
     <string name="move_to_spam">Déplacer dans le dossier Indésirables/spam</string>
-    <string name="move_to_inbox">Déplacer dans le dossier Boîte de réception</string>
+    <string name="move_to_inbox">Déplacer dans le dossier Boite de réception</string>
     <string name="move_to">Déplacer…</string>
     <string name="are_you_sure_empty">Voulez-vous vraiment supprimer tous les messages de ce dossier ?</string>
     <string name="send">Envoyer</string>
@@ -280,11 +280,11 @@
     <string name="attach_file">Joindre un fichier</string>
     <string name="take_photo">Prendre une photo</string>
     <string name="problem_taking_photo">Une erreur s\'est produite durant la prise de la photo.</string>
-    <string name="problem_selecting_file">Une erreur s\'est produite lors de l\'ajout du fichier sélectionné.</string>
+    <string name="problem_selecting_file">Une erreur s\'est produite pendant l\'ajout du fichier sélectionné.</string>
     <string name="add_contact">Ajouter un contact</string>
     <string name="delete_contact">Supprimer %s des contacts ?</string>
     <string name="confirm">Confirmer</string>
-    <string name="confirm_destructive_action">Êtes-vous sûr ? Cette action ne peut pas être annulée.</string>
+    <string name="confirm_destructive_action">Vous confirmez ? Cette action ne peut pas être annulée.</string>
     <string name="create">Créer</string>
     <string name="email">E-mail</string>
     <string name="phone">Numéro de téléphone</string>
@@ -300,9 +300,9 @@
     <string name="no_recipients_specified">Ajoutez au moins un destinataire</string>
     <string name="no_password_specified">Définir un délai d\'expiration n\'est possible que sur les messages entièrement chiffrés. Nous vous invitons à définir un mot de passe pour vos destinataires qui n\'utilisent pas Proton Mail.</string>
     <string name="attachment_limit">Les pièces jointes sont limitées à %1$s. Le poids total des pièces jointes est de %2$s.</string>
-    <string name="sending_message">Envoi du message en cours...</string>
-    <string name="sending_message_offline">Hors-ligne, placé en file d\'attente pour un envoi différé…</string>
-    <string name="message_sent">Message envoyé</string>
+    <string name="sending_message">L\'envoi du message est en cours.</string>
+    <string name="sending_message_offline">Vous êtes hors ligne, le message est en file d\'attente pour l\'envoi.</string>
+    <string name="message_sent">Le message a été envoyé.</string>
     <string name="message_failed">Le message n\'a pas pu être envoyé.</string>
     <string name="storage_limit">Limite de stockage</string>
     <string name="edit_settings">Modifier les paramètres</string>
@@ -326,11 +326,11 @@
     <string name="no_application_found">Aucune application n’a été trouvée pour gérer cette action.</string>
     <string name="no_application_found_or_link_invalid">Aucune application n’a été trouvée pour gérer cette action, ou bien l\'URL n\'est pas valide.</string>
     <string name="label_deleted">Label supprimé</string>
-    <string name="label_deleted_error">Erreur lors de la suppression du label</string>
-    <string name="message_deleted_error">Erreur lors de la suppression de certains messages qui sont peut-être en cours d\'envoi.</string>
+    <string name="label_deleted_error">Une erreur s\'est produite pendant la suppression du label.</string>
+    <string name="message_deleted_error">Une erreur s\'est produite pendant la suppression de certains messages qui sont peut-être en cours d\'envoi.</string>
     <string name="respond_inline">Répondre dans le message</string>
     <string name="server_not_reachable_troubleshoot">Serveur injoignable… (<u>dépannage</u>)</string>
-    <string name="connectivity_checking">Recherche de connexion en cours...</string>
+    <string name="connectivity_checking">Vérification de la connexion en cours</string>
     <string name="draft_label_attachments_uploading">chargement des pièces jointes…</string>
     <string name="draft_label_message_uploading">envoi du message en cours…</string>
     <string name="attachment_failed">La pièce jointe n\'a pas pu être téléchargée dans le message. </string>
@@ -340,10 +340,10 @@
     <string name="retry">Réessayer</string>
     <string name="saving_failed_no_conn">La sauvegarde n\'a pas abouti, il n\'y a pas de connexion.</string>
     <string name="attachment_exists">Pièce jointe déjà ajoutée</string>
-    <string name="eo_password_not_completed">Mot de passe du message non renseigné.</string>
+    <string name="eo_password_not_completed">Le mot de passe du message n\'a pas été saisi.</string>
     <string name="delinquency_subtitle">L\'accès à ce compte est désactivé en raison d’un défaut de paiement. Nous vous invitons à vous connecter via proton.me pour régler votre facture impayée.</string>
-    <string name="downloading">Téléchargement en cours...</string>
-    <string name="cant_download_attachment">Impossible de télécharger la pièce jointe</string>
+    <string name="downloading">Téléchargement en cours</string>
+    <string name="cant_download_attachment">La pièce jointe ne peut pas être téléchargée.</string>
     <string-array name="auto_logout_options_array">
         <item>Immédiatement</item>
         <item>5 minutes d\'inactivité</item>
@@ -362,7 +362,7 @@
     <string name="ringtone">Sonnerie</string>
     <string name="ringtone_selected">Sonnerie :</string>
     <string name="ringtone_invalid">La sélection de la sonnerie a renvoyé une valeur incorrecte.</string>
-    <string name="ringtone_no_default">Impossible de charger une sonnerie par défaut</string>
+    <string name="ringtone_no_default">Une sonnerie par défaut ne peut pas être chargée.</string>
     <string name="select_tone">Choisir une sonnerie</string>
     <string name="copy_link">Copier le lien</string>
     <string name="share_link">Partager le lien</string>
@@ -445,7 +445,7 @@
         <item>Autre</item>
     </string-array>
     <string-array name="vcard_option_email">
-        <item>E-mail</item>
+        <item>Adresse e-mail</item>
         <item>Personnelle</item>
         <item>Professionnelle</item>
         <item>Autre</item>
@@ -481,8 +481,8 @@
     <string name="folder_created">Dossier créé</string>
     <string name="folder_invalid">Le dossier n\'a pas été créé, car le nom n\'est pas valide.</string>
     <string name="folder_deleted">Dossier supprimé</string>
-    <string name="folder_deleted_error">Erreur lors de la suppression du dossier</string>
-    <string name="empty_emails">Aucun email</string>
+    <string name="folder_deleted_error">Une erreur se produit pendant la suppression du dossier.</string>
+    <string name="empty_emails">Aucun message</string>
     <string name="empty_email_list">Aucune adresse e-mail</string>
     <string name="no_contacts">Aucun contact</string>
     <string name="sender_name_address">%1$s &lt; %2$s &gt; a écrit :</string>
@@ -490,10 +490,10 @@
     <string name="delete">Supprimer</string>
     <string name="subject_copied">Objet copié dans le presse-papiers</string>
     <string name="details_copied">Informations copiées dans le presse-papiers</string>
-    <string name="saving">Enregistrement en cours...</string>
+    <string name="saving">Enregistrement en cours</string>
     <string name="update_folder">Mettre à jour le dossier</string>
-    <string name="spam_score_100">Ce message semble provenir d\'une adresse Proton Mail, mais il vient de l\'extérieur de notre système et a échoué à nos exigences d\'authentification. Il a peut-être été falsifié ou transféré de manière incorrecte.</string>
-    <string name="spam_score_101">Cette adresse e-mail ne répond pas aux exigences d\'authentification de son domaine. Elle a peut-être été falsifiée ou transférée de manière incorrecte.</string>
+    <string name="spam_score_100">Ce message semble provenir d\'une adresse Proton Mail, mais il vient de l\'extérieur de notre système et ne répond pas à nos exigences d\'authentification. Il a peut-être été falsifié ou transféré de manière incorrecte.</string>
+    <string name="spam_score_101">Ce message ne répond pas aux exigences d\'authentification de son domaine. Il a peut-être été falsifié ou transféré de manière incorrecte.</string>
     <string name="spam_score_102">Ce message pourrait être une tentative de phishing/hameçonnage. Vérifiez l’expéditeur et le contenu pour vous assurer qu’ils sont légitimes. <a href="https://proton.me/blog/prevent-phishing-attacks">En savoir plus</a></string>
     <string name="print_from_template">De : %s</string>
     <string name="print_to_template">À : %s; </string>
@@ -505,7 +505,7 @@
     <string name="address_city">Ville</string>
     <string name="address_region">Région (État ou province)</string>
     <string name="address_postcode">Code postal</string>
-    <string name="address_po_box">Boîte postale</string>
+    <string name="address_po_box">Boite postale</string>
     <string name="address_country">Pays</string>
     <string name="recheck_delinquency">Vérifier à nouveau</string>
     <string name="close_app">Fermer l\'application</string>
@@ -564,16 +564,16 @@
     <string name="composer_lock_pgp_encrypted_pinned">Chiffrement PGP vers un destinataire vérifié</string>
     <string name="composer_lock_pgp_signed">Signé par PGP</string>
     <string name="recipient_not_found_and_removed">%s : le destinataire est introuvable et a été supprimé.</string>
-    <string name="recipient_error_and_removed">Une erreur s’est produite lors de la récupération des informations du destinataire et le destinataire a été supprimé : %s</string>
+    <string name="recipient_error_and_removed">Une erreur s’est produite pendant la récupération des informations du destinataire et le destinataire a été supprimé : %s</string>
     <string name="send_anyway">Envoyer quand même</string>
     <string name="expiration_error_title">Vous avez ajouté un délai d\'expiration, mais tous les destinataires ne prennent pas cette fonctionnalité en charge.</string>
     <string name="expiration_error_add_msg_password">Ajoutez un mot de passe de chiffrement pour les destinataires suivants :</string>
     <string name="expiration_error_disable_pgp_sending">Désactivez l\'envoi PGP pour activer le délai d\'expiration pour les destinataires suivants :</string>
-    <string name="expiration_error_proceed">Tapotez sur Envoyer quand même pour envoyer à ces destinataires sans délai d’expiration.</string>
+    <string name="expiration_error_proceed">Appuyez sur Envoyer quand même pour envoyer à ces destinataires sans délai d’expiration.</string>
     <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">En savoir plus</a></string>
     <string name="channel_name_attachments">Pièces jointes</string>
     <string name="channel_description_attachments">Informe sur l\'état du téléchargement des pièces jointes</string>
-    <string name="channel_name_emails">E-mails</string>
+    <string name="channel_name_emails">Messages</string>
     <string name="channel_description_emails">Notifications de réception de messages</string>
     <string name="channel_name_account">Compte</string>
     <string name="channel_description_account">État du compte</string>
@@ -743,7 +743,7 @@ Appuyez pour en savoir plus.</string>
     <string name="settings_auto_show_images">Afficher automatiquement les images distantes</string>
     <string name="settings_auto_show_embedded_images">Afficher automatiquement les images intégrées</string>
     <string name="settings_prevent_taking_screenshots">Empêcher la prise de captures d\'écran</string>
-    <string name="hyperlink_confirmation">Demander une confirmation lors de l\'ouverture de liens</string>
+    <string name="hyperlink_confirmation">Demander une confirmation pour l\'ouverture de liens</string>
     <string name="labels_and_folders">Labels et dossiers </string>
     <string name="folders">Dossiers</string>
     <string name="labels">Labels</string>
@@ -817,9 +817,9 @@ Appuyez pour en savoir plus.</string>
     </string>
     <!-- endregion -->
     <!-- region errors -->
-    <string name="error_image_not_found">Image non trouvée</string>
+    <string name="error_image_not_found">L\'image n\'a pas été trouvée.</string>
     <string name="error_image_bad_url">L\'URL d\'image n\'est pas valide.</string>
-    <string name="error_saving_try_again">Erreur lors de l\'enregistrement du message, veuillez réessayer.</string>
+    <string name="error_saving_try_again">Une erreur s\'est produite pendant l\'enregistrement du message. Veuillez réessayer.</string>
     <!-- endregion -->
     <string name="allowed">Autorisé</string>
     <string name="denied">Refusé</string>
@@ -833,7 +833,7 @@ Appuyez pour en savoir plus.</string>
     <string name="failed_saving_draft_online">Le brouillon du message n\'a pas pu être sauvegardé en ligne : « %s »</string>
     <string name="failed_draft_does_not_exist">Le message « %s » n\'existe pas.</string>
     <string name="failed_uploading_attachment_online">Erreur de pièce jointe pour le message : « %s »</string>
-    <string name="cannot_open_message_while_being_sent">Impossible d\'ouvrir ce message lors de son envoi</string>
+    <string name="cannot_open_message_while_being_sent">Ce message ne peut pas être ouvert pendant l\'envoi.</string>
     <string name="enable_conversation_mode">Activer le mode conversation</string>
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
@@ -848,7 +848,7 @@ Appuyez pour en savoir plus.</string>
     <string name="move_message">Déplacer le message</string>
     <string name="manage">Gérer</string>
     <string name="message_from">Message de %s</string>
-    <string name="not_spam_move_to_inbox">Non indésirable/spam (déplacer dans le dossier Boîte de réception)</string>
+    <string name="not_spam_move_to_inbox">Non indésirable/spam (déplacer dans le dossier Boite de réception)</string>
     <string name="action_sheet_view_in_light_mode">Voir en mode Clair</string>
     <string name="action_sheet_view_in_dark_mode">Voir en mode Sombre</string>
     <plurals name="x_messages_count">
@@ -862,10 +862,12 @@ Appuyez pour en savoir plus.</string>
     <string name="contacts_call">Appeler</string>
     <string name="contacts_send_group_message">Envoyer un message de groupe</string>
     <string name="inbox_this_folder_is_empty">Ce dossier est vide.</string>
-    <string name="inbox_could_not_retrieve_messages">Impossible de récupérer vos messages</string>
+    <string name="inbox_could_not_retrieve_messages">Vos messages n\'ont pas pu être récupérés.</string>
     <string name="inbox_pull_down_to_retry">Tirez vers le bas pour réessayer.</string>
     <string name="edit_draft">Modifier le brouillon</string>
     <string name="details_show_history">Afficher l\'historique</string>
     <string name="could_not_complete_action">Impossible de terminer l\'action</string>
     <string name="decryption_of_message_failed">Erreur de déchiffrement : le contenu chiffré de ce message n\'a pas pu être déchiffré.</string>
+    <string name="expand_message_details">Montrer les informations sur le message</string>
+    <string name="collapse_message_details">Masquer les informations sur le message</string>
 </resources>

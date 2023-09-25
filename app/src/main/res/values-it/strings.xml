@@ -23,19 +23,19 @@
     <string name="x_add_folder">Aggiungi cartella</string>
     <string name="x_add_label">Aggiungi etichetta</string>
     <string name="x_days">Giorni</string>
-    <string name="x_done">Completato</string>
+    <string name="x_done">Fatto</string>
     <string name="x_edit">Modifica</string>
     <string name="x_hours">Ore</string>
     <string name="x_more">Altro</string>
     <string name="x_none">Nessuno</string>
-    <string name="x_search">Ricerca</string>
+    <string name="x_search">Cerca</string>
     <string name="x_set">Imposta</string>
     <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Content descriptions: accessibility description for icons -->
     <string name="x_label_icon_description">Icona etichetta</string>
     <string name="x_folder_icon_description">Icona della cartella</string>
-    <string name="x_parent_folder_icon_description">Cartella con icona bambini</string>
+    <string name="x_parent_folder_icon_description">Icona cartella con sottocartelle</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_scheduled">Pianificato</string>
@@ -43,9 +43,9 @@
     <string name="drawer_lock_the_app">Blocca l\'app</string>
     <string name="drawer_report_bug">Segnala un problema</string>
     <string name="drawer_settings">Impostazioni</string>
-    <string name="drawer_sign_out">Esci</string>
-    <string name="drawer_create_folder_description">Creazione nuova cartella</string>
-    <string name="drawer_create_label_description">Creazione nuova etichetta</string>
+    <string name="drawer_sign_out">Disconnetti</string>
+    <string name="drawer_create_folder_description">Crea una nuova cartella</string>
+    <string name="drawer_create_label_description">Crea una nuova etichetta</string>
     <!-- endregion -->
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Questa cartella è vuota</string>
@@ -56,18 +56,18 @@
     <string name="mailbox_empty_state_try_a_different_term">Prova un termine di ricerca diverso</string>
     <string name="mailbox_no_messages">Nessun messaggio</string>
     <plurals name="mailbox_unread_count">
-        <item quantity="one">%d non letta</item>
-        <item quantity="other">%d non lette</item>
+        <item quantity="one">%d non letto</item>
+        <item quantity="other">%d non letti</item>
     </plurals>
-    <string name="mailbox_updated_just_now">Aggiornato proprio ora</string>
+    <string name="mailbox_updated_just_now">Appena aggiornato</string>
     <string name="mailbox_updated_recently">Aggiornato di recente</string>
-    <string name="mailbox_updating">In aggiornamento…</string>
+    <string name="mailbox_updating">Aggiornamento in corso…</string>
     <string name="is_proton">Questo è un messaggio Proton</string>
     <string name="is_proton_official_badge">Ufficiale</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Apri in Proton Calendar</string>
-    <string name="details_open_in_proton_calendar_subtitle">Calendario criptato sicuro</string>
+    <string name="details_open_in_proton_calendar_subtitle">Calendario crittografato sicuro</string>
     <string name="details_open_in_proton_calendar_icon_desc">Icona Proton Calendar</string>
     <string name="details_play_store_error">Impossibile aprire il Play Store</string>
     <string name="details_hyperlink_phishing_dialog_title">Attenzione: sospetto sito web falso</string>
@@ -77,7 +77,7 @@
     <string name="scheduled_message_info">Questo messaggio verrà inviato il %s</string>
     <string name="scheduled_message_edit_info">Al momento, i messaggi programmati possono essere modificati solo dalle applicazioni Web e iOS.</string>
     <string name="scheduled_message_moved_to_trash_title">Il messaggio non verrà inviato</string>
-    <string name="scheduled_message_moved_to_trash_desc">Spostando il messaggio nel cestino ne cancellerai la pianificazione.</string>
+    <string name="scheduled_message_moved_to_trash_desc">Spostando il messaggio nel cestino annullerai la sua pianificazione.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Ccn:</string>
@@ -87,11 +87,11 @@
     <string name="composer_subject">Oggetto:</string>
     <string name="composer_to">A:</string>
     <string name="composer_removing_address_generic_error">Impossibile verificare l\'indirizzo: %s. L\'invio potrebbe fallire.</string>
-    <string name="composer_removing_address_server_error">Indirizzi in rimozione: %s. %s</string>
+    <string name="composer_removing_address_server_error">Rimozione dell\'indirizzo: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Il %s, %s &lt; %s&gt; ha scritto:</string>
     <string name="set_msg_password_title">Imposta password</string>
-    <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per gli utenti che non usano Proton mail. <a href="https://proton.me/support/password-protected-emails">Per saperne di più</a></string>
+    <string name="set_msg_password_info">Imposta una password per crittografare questo messaggio per gli utenti che non usano Proton mail. <a href="https://proton.me/support/password-protected-emails">Scopri di più</a></string>
     <string name="set_msg_password_info_icon_description">Informazioni</string>
     <string name="set_msg_password_msg_password_title">Password messaggio</string>
     <string name="set_msg_password_msg_password_hint">da 4 a 21 caratteri</string>
@@ -105,14 +105,14 @@
     <string name="set_msg_password_error_too_long">Password troppo lunga</string>
     <string name="set_msg_password_error_mismatch">La password non corrisponde</string>
     <string name="set_msg_expiration_title">Scadenza del messaggio</string>
-    <string name="set_msg_expiration_none">Nessuno</string>
+    <string name="set_msg_expiration_none">Nessuna</string>
     <string name="set_msg_expiration_1_hour">1 ora</string>
     <string name="set_msg_expiration_1_day">1 giorno</string>
     <string name="set_msg_expiration_3_days">3 giorni</string>
     <string name="set_msg_expiration_1_week">1 settimana</string>
     <string name="set_msg_expiration_custom">Personalizzato</string>
     <string name="set_msg_expiration_check_description">Questo elemento è controllato</string>
-    <string name="composer_invalid_sender_saving_draft_failed">L\'indirizzo immesso nella casella \"Da:\" non è valido. Si prega di cambiarlo con uno valido</string>
+    <string name="composer_invalid_sender_saving_draft_failed">L\'indirizzo immesso nella casella \"Da:\" non è valido. Cambialo con uno valido</string>
     <string name="composer_invalid_subject_saving_draft_failed">L\'oggetto non è valido.</string>
     <!-- endregion -->
     <!-- region Settings -->
@@ -126,11 +126,11 @@
     <string name="settings_swipe_settings_info">Configura i gesti di scorrimento per accedere alle azioni più usate.</string>
     <string name="settings_swipe_left_to_right">Da sinistra a destra</string>
     <string name="settings_swipe_right_to_left">Da destra a sinistra</string>
-    <string name="settings_swipe_saving">Salvando l\'azione di Scorrimento…</string>
+    <string name="settings_swipe_saving">Salvataggio dell\'azione di scorrimento…</string>
     <string name="settings_swipe_generic_error">Impossibile salvare l\'azione di Scorrimento</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">App tema</string>
+    <string name="app_theme_title">Tema dell\'app</string>
     <string name="app_theme_light">Chiaro</string>
     <string name="app_theme_dark">Scuro</string>
     <string name="app_theme_system">Predefinito di sistema</string>
@@ -145,7 +145,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Nuovi messaggi</string>
-    <string name="notification_invalid_sender_sending_failed">Il tuo messaggio può essere ritrovato come bozza. Si prega di verificare che nella casella \"Da:\" sia stato immesso un indirizzo email attivo.</string>
+    <string name="notification_invalid_sender_sending_failed">Il tuo messaggio può essere ritrovato come bozza. Verifica che l\'email immessa nella casella \"Da:\" sia attiva.</string>
     <string name="notification_invalid_subject_sending_failed">Il tuo messaggio può essere ritrovato come bozza. L\'oggetto non è valido.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
@@ -153,7 +153,7 @@
     <string name="contacts_empty_state_no_groups">Nessun gruppo</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">I gruppi di contatti non verranno importati. Esegui l\'upgrade a un piano a pagamento per usufruire delle funzionalità premium.</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">I gruppi di contatti non verranno importati. Effettua l\'upgrade a un piano a pagamento per usufruire delle funzionalità premium.</string>
     <string name="contact_details_remote_content_dialog_title">Contenuto remoto</string>
     <string name="contact_details_remote_content_dialog_message">Questo contatto contiene contenuti remoti.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Carica il contenuto</string>
@@ -166,9 +166,9 @@
     <string name="existing_user_onboarding_new_look_headline">Nuovo aspetto, stessa protezione</string>
     <string name="existing_user_onboarding_new_look_description">La tua email crittografata è stata completamente riprogettata per un facile utilizzo.</string>
     <string name="existing_user_onboarding_new_features_headline">Nuove funzioni</string>
-    <string name="existing_user_onboarding_new_features_description">Goditi le nuove funzionalità come la modalità oscura, le notifiche migliorate, un filtro per i messaggi non letti e le sottocartelle.</string>
+    <string name="existing_user_onboarding_new_features_description">Goditi le nuove funzionalità come la modalità scura, le notifiche migliorate, un filtro per i messaggi non letti e le sottocartelle.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton Aggiornato, protezione unificata</string>
-    <string name="existing_user_onboarding_updated_proton_description">Ti presentiamo il nuovo look di Proton. Tanti servizi, una sola missione. Ti diamo il benvenuto in una versione di internet dove la privacy è alla base. <a href="https://proton.me/news/updated-proton">Scopri di più</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Ti presentiamo il nuovo look di Proton. Tanti servizi, una sola missione. Ti diamo il benvenuto in una versione d\'internet dove la privacy è alla base. <a href="https://proton.me/news/updated-proton">Scopri di più</a></string>
     <string name="onboarding_next">Successiva</string>
     <string name="onboarding_get_started">Per iniziare</string>
     <string name="onboarding_got_it">Ho capito</string>
@@ -181,8 +181,8 @@
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">Proton Mail</string>
-    <string name="sign_out">Esci</string>
-    <string name="sign_out_question">È sicuro di voler uscire?</string>
+    <string name="sign_out">Disconnetti</string>
+    <string name="sign_out_question">Sei sicuro di volerti disconnettere?</string>
     <string name="processing_request">La tua richiesta è in elaborazione</string>
     <!-- should check for html tag -->
     <!-- Toast messages -->
@@ -198,11 +198,11 @@
     <string name="api_offline">Proton Mail è attualmente offline, controlla https://protonstatus.com o il nostro Twitter per conoscere lo stato attuale: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Contatto salvato</string>
     <string name="contact_saved_offline">Contatto salvato. Verrà sincronizzato quando sarà disponibile una connessione.</string>
-    <string name="contact_exist">L\'email del contatto è già esistente</string>
+    <string name="contact_exist">L\'email del contatto esiste già.</string>
     <string name="invalid_email">Indirizzo email non valido</string>
     <string name="duplicate_email">L\'indirizzo email è un duplicato</string>
-    <string name="message_drafted">Invio del messaggio fallito. I messaggi sono salvati nella cartella Bozze.</string>
-    <string name="attachment_failed_message_drafted">Sei pregato di rimuovere e riallegare \"%s\" e reinviare il messaggio. Il tuo messaggio si può trovare nella cartella \"Bozze\".</string>
+    <string name="message_drafted">Invio del messaggio non riuscito. I messaggi sono salvati nella cartella Bozze.</string>
+    <string name="attachment_failed_message_drafted">Rimuovi e riallega \"%s\" e invia nuovamente il messaggio. Puoi trovare il tuo messaggio nella cartella \"Bozze\".</string>
     <string name="open_drawer">Apri</string>
     <string name="close_drawer">Chiudi</string>
     <string name="inbox_option">Posta in arrivo</string>
@@ -235,8 +235,8 @@
     <string name="move_to_archive">Sposta in archivio</string>
     <string name="move_to_trash">Sposta nel cestino</string>
     <string name="move_to_spam">Sposta in spam</string>
-    <string name="move_to_inbox">Sposta in posta in arrivo</string>
-    <string name="move_to">Sposta a…</string>
+    <string name="move_to_inbox">Sposta nella posta in arrivo</string>
+    <string name="move_to">Sposta in…</string>
     <string name="are_you_sure_empty">È sicuro di voler eliminare tutti i messaggi da questa cartella?</string>
     <string name="send">Invia</string>
     <string name="selected">Selezionato</string>
@@ -297,11 +297,11 @@
     <string name="original_message_divider">-------- Messaggio originale --------</string>
     <string name="invalid_email_address">L\'indirizzo \'%s\' non è valido</string>
     <string name="invalid_email_address_removed">L\'indirizzo \'%s\' non è valido ed è stato rimosso</string>
-    <string name="no_recipients_specified">Inserisca almeno un destinatario</string>
-    <string name="no_password_specified">Il tempo di scadenza può essere impostato solo sui messaggi completamente criptati. Imposta una password per i tuoi destinatari che non utilizzano Proton Mail.</string>
+    <string name="no_recipients_specified">Inserisci almeno un destinatario</string>
+    <string name="no_password_specified">Il tempo di scadenza può essere impostato solo sui messaggi completamente crittografati. Imposta una password per i tuoi destinatari che non utilizzano Proton Mail.</string>
     <string name="attachment_limit">Gli allegati sono limitati a %1$s. Il totale degli allegati sarebbe %2$s.</string>
     <string name="sending_message">Invio del messaggio...</string>
-    <string name="sending_message_offline">Non in linea, messo in coda per l\'invio più tardi...</string>
+    <string name="sending_message_offline">Offline, messo in coda per l\'invio più tardi...</string>
     <string name="message_sent">Messaggio inviato</string>
     <string name="message_failed">Errore nell\'invio del messaggio</string>
     <string name="storage_limit">Limite spazio</string>
@@ -310,7 +310,7 @@
     <string name="cancel">Annulla</string>
     <string name="close">Chiudi</string>
     <string name="eo_password_title">Imposta password</string>
-    <string name="eo_password_subtitle">Imposta una password per criptare questo messaggio per i non utenti di Proton Mail</string>
+    <string name="eo_password_subtitle">Imposta una password per crittografare questo messaggio per gli utenti non-Proton Mail</string>
     <string name="eo_password_more_info">Ottenga maggiori informazioni</string>
     <string name="no_attachments">0 allegati</string>
     <string name="display_name_banned_chars">Nome visualizzato non valido. \'&gt;\' and \'&lt;\' non sono ammessi</string>
@@ -322,7 +322,7 @@
     <string name="undo">Annulla</string>
     <string name="label_apply">Applica</string>
     <string name="label_add">Aggiungi</string>
-    <string name="no_browser_found">Si prega di installare un browser al fine di completare questa azione</string>
+    <string name="no_browser_found">Installa un app browser al fine di completare questa azione</string>
     <string name="no_application_found">Nessuna applicazione trovata per gestire questa azione</string>
     <string name="no_application_found_or_link_invalid">Nessuna app trovata per gestire questa azione o URL non valido</string>
     <string name="label_deleted">Etichetta eliminata</string>
@@ -330,18 +330,18 @@
     <string name="message_deleted_error">Errore durante l\'eliminazione di alcuni messaggi. Alcuni dei messaggi selezionati sono in fase di invio?!</string>
     <string name="respond_inline">Rispondi in linea</string>
     <string name="server_not_reachable_troubleshoot">Server non raggiungibile… (<u>Risoluzione dei problemi</u>)</string>
-    <string name="connectivity_checking">Verificando la connessione...</string>
+    <string name="connectivity_checking">Verifica della connessione…</string>
     <string name="draft_label_attachments_uploading">caricamento degli allegati…</string>
     <string name="draft_label_message_uploading">invio del messaggio…</string>
     <string name="attachment_failed">Errore nel caricamento dell\'allegato del messaggio </string>
-    <string name="attaching_photo_failed">Aggiunta della foto fallita</string>
+    <string name="attaching_photo_failed">Aggiunta della foto non riuscita</string>
     <string name="empty_message">Messaggio vuoto</string>
     <string name="display_images">Mostra immagini</string>
     <string name="retry">Riprova</string>
-    <string name="saving_failed_no_conn">Salvataggio fallito, nessuna connessione</string>
+    <string name="saving_failed_no_conn">Salvataggio non riuscito. Nessuna connessione</string>
     <string name="attachment_exists">Allegato già presente</string>
     <string name="eo_password_not_completed">Password del messaggio non completata.</string>
-    <string name="delinquency_subtitle">L\'accesso a questo account è disabilitato a causa di mancato pagamento. Per favore, accedi su proton.me per pagare la fattura pendente.</string>
+    <string name="delinquency_subtitle">L\'accesso a questo account è disabilitato a causa di mancato pagamento. Accedi su proton.me per pagare la fattura in sospeso.</string>
     <string name="downloading">Scaricamento...</string>
     <string name="cant_download_attachment">Impossibile scaricare l\'allegato</string>
     <string-array name="auto_logout_options_array">
@@ -378,8 +378,8 @@
         <item quantity="one">%d tentativo rimasto prima dell\'eliminazione dei dati!</item>
         <item quantity="other">%d tentativi rimasti prima dell\'eliminazione dei dati!</item>
     </plurals>
-    <string name="logout">Esci</string>
-    <string name="logout_question_next_account">Sei sicuro di voler uscire con l\'account corrente e procedere utilizzando %s?</string>
+    <string name="logout">Disconnetti</string>
+    <string name="logout_question_next_account">Passerai a %s.</string>
     <string name="upgrade">Effettua l\'upgrade</string>
     <string name="error">Errore</string>
     <string name="inline_prefix">[Inline]</string>
@@ -392,10 +392,10 @@
     <string name="inactive_addresses">Indirizzi inattivi</string>
     <string name="not_set">Non impostato</string>
     <string name="no_available_addresses">Non ha indirizzi disponibili</string>
-    <string name="no_inactive_addresses">Non ha indirizzi inattivi</string>
+    <string name="no_inactive_addresses">Non hai indirizzi inattivi</string>
     <string name="label_add_new">Aggiungi nuova etichetta</string>
     <string name="available_labels">Etichette disponibili</string>
-    <string name="delete_selected">Elimina selezionato</string>
+    <string name="delete_selected">Elimina selezionato/i</string>
     <string name="pin_not_activated">PIN non attivato</string>
     <string name="available_options">Opzioni disponibili</string>
     <string name="background_sync_subtitle">Se questa opzione è abilitata, l\'app si sincronizzerà con il server in background. Disabilitare questa funzione disabiliterà le notifiche.</string>
@@ -415,7 +415,7 @@
     <string name="email_type_home">Casa</string>
     <string name="type_title">Scegli il tipo</string>
     <string name="sync_local_contacts">Carica su Proton Mail</string>
-    <string name="please_select_only_phone_contacts">Per favore seleziona solo i contatti locali del telefono</string>
+    <string name="please_select_only_phone_contacts">Seleziona solo contatti locali del telefono</string>
     <string name="contact_vcard_hint_email">Inserisci email</string>
     <string name="contact_vcard_hint_phone">Inserisci numero telefono</string>
     <string name="contact_vcard_hint_address">Inserisci indirizzo</string>
@@ -473,7 +473,7 @@
     <string name="message_expires_in">Questo messaggio scadrà tra %s</string>
     <string name="unsaved_changes_title">Modifiche non salvate</string>
     <string name="unsaved_changes_subtitle">Ci sono delle voci non salvate nel modulo. È sicuro di volerle scartare?</string>
-    <string name="request_timeout">Richiesta scaduta, per favore prova di nuovo</string>
+    <string name="request_timeout">Richiesta scaduta. Per favore riprova</string>
     <string name="no_folders">Nessuna cartella</string>
     <string name="folder_add_new">Aggiungi nuova cartella</string>
     <string name="folder_name">Nome cartella</string>
@@ -492,8 +492,8 @@
     <string name="details_copied">Dettagli copiati negli appunti</string>
     <string name="saving">Salvataggio...</string>
     <string name="update_folder">Aggiorna cartella</string>
-    <string name="spam_score_100">Questa email sembra provenire da un indirizzo Proton Mail, ma arriva dall\'esterno del nostro sistema e ha fallito la nostra prova di autenticazione. Potrebbe essere falsa o non correttamente inoltrata!</string>
-    <string name="spam_score_101">Quest\'email ha fallito i requisiti d\'autenticazione del suo dominio. Potrebbe esser falsificata o inoltrata impropriamente.</string>
+    <string name="spam_score_100">Questa email sembra provenire da un indirizzo Proton Mail, ma arriva dall\'esterno del nostro sistema e non ha superato la nostra prova di autenticazione. Potrebbe essere falsa o non correttamente inoltrata!</string>
+    <string name="spam_score_101">Quest\'email non ha superato i requisiti d\'autenticazione del suo dominio. Potrebbe esser falsificata o inoltrata impropriamente.</string>
     <string name="spam_score_102">Questo messaggio potrebbe essere un tentativo di phishing. Per favore, controlla il mittente e il contenuto per verificare che siano veritieri. <a href="https://proton.me/blog/prevent-phishing-attacks">MAGGIORI INFORMAZIONI</a></string>
     <string name="print_from_template">Da: %s</string>
     <string name="print_to_template">A: %s;  </string>
@@ -512,11 +512,11 @@
     <string name="empty_subject">(Nessun Oggetto)</string>
     <string name="empty_recipients">(Nessun destinatario)</string>
     <string name="contacts_unknown">Sconosciuto</string>
-    <string name="learn_more"><u>Per saperne di più</u></string>
+    <string name="learn_more"><u>Scopri di più</u></string>
     <string name="info">Informazioni</string>
-    <string name="error_can_not_send_from_this_address">Effettui l\'upgrade ad un piano a pagamento per inviare dal suo indirizzo %s.</string>
+    <string name="error_can_not_send_from_this_address">Effettua l\'upgrade ad un piano a pagamento per inviare dal tuo indirizzo %s.</string>
     <string name="email_empty">Indirizzo email mancante</string>
-    <string name="encrypted_contact_details">Dettagli criptati del contatto</string>
+    <string name="encrypted_contact_details">Dettagli crittografati del contatto</string>
     <string name="convert_question">Carica contatti locali</string>
     <string name="convert_question_subtitle">Questo caricherà i contatti locali sul suo dispositivo sulla sua cartella dei contatti di Proton Mail. In questo modo, sarà in grado di accedere a questi contatti da altri dispositivi tramite Proton Mail.</string>
     <string name="refresh_contacts">Aggiorna</string>
@@ -534,34 +534,34 @@
     <string name="attachment_storage_value_current">Attualmente selezionato: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Selezione corrente: illimitata</string>
     <string name="attachment_offline_max_storage">Imposta la quantità massima di spazio di archiviazione che Proton Mail può usare sul tuo dispositivo mobile.</string>
-    <string name="load_embedded_images_failed_no_network">Il caricamento delle immagini incorporate è fallito. Controlla la tua connessione per favore.</string>
-    <string name="load_embedded_images_failed">Caricamento delle immagini incorporate fallito.</string>
+    <string name="load_embedded_images_failed_no_network">Il caricamento delle immagini incorporate non è riuscito. Controlla la tua connessione alla rete.</string>
+    <string name="load_embedded_images_failed">Il caricamento delle immagini incorporate non è riuscito.</string>
     <string name="unlimited">Illimitato</string>
-    <string name="local_storage_cleared">Archivio locale pulito</string>
+    <string name="local_storage_cleared">Archiviazione locale cancellata</string>
     <string name="recipient_popup_compose_to">Comporre a</string>
     <string name="recipient_popup_copy_address">Copia indirizzo</string>
     <string name="recipient_popup_see_details">Mostra dettagli contatto</string>
     <string name="send_with_untrusted_key_title">Vuoi inviare con una chiave non verificata?</string>
-    <string name="send_with_untrusted_key_message">Hai abilitato la verifica dell\'indirizzo con una chiave verificata per %s, ma nessuna chiave di cifratura attivata è stata verificata.</string>
+    <string name="send_with_untrusted_key_message">Hai abilitato la verifica dell\'indirizzo con una chiave verificata per %s, ma nessuna chiave di crittografia attivata è stata verificata.</string>
     <string name="resign_contact_title">Vuoi ri-firmare il contatto?</string>
-    <string name="resign_contact_message">La verifica di %s è fallita: il contatto non è firmato correttamente. Devi firmare nuovamente il contatto in modo da inviare messaggi a questo indirizzo o modificare il contatto. Questo può succedere anche quando recuperi la tua password e resetti le tue chiavi.</string>
+    <string name="resign_contact_message">La verifica di %s non è riuscita: il contatto non è firmato correttamente. Devi firmare nuovamente il contatto per poter inviare messaggi a questo indirizzo o modificare il contatto. Questo può succedere anche quando recuperi la tua password e reimposti le tue chiavi.</string>
     <!-- Sender locks -->
     <string name="sender_lock_zero_access">Memorizzato con crittografia zero access</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Inviato da te con la crittografia end-to-end</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_autoresponder">Inviato da Proton Mail con la crittografia zero access</string>
-    <string name="sender_lock_verification_failed">Verifica del mittente fallita</string>
-    <string name="sender_lock_pgp_encrypted">Messaggio PGP criptato</string>
+    <string name="sender_lock_verification_failed">Verifica del mittente non riuscita</string>
+    <string name="sender_lock_pgp_encrypted">Messaggio crittografato con PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Messaggio crittografato con PGP da un indirizzo verificato</string>
     <string name="sender_lock_pgp_signed_verified_sender">Messaggio firmato con PGP da un indirizzo verificato</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Messaggio crittografato e firmato end-to-end</string>
     <string name="sender_lock_internal_verified">Messaggio crittografato ent-to-end da un indirizzo verificato</string>
     <!-- Composer locks -->
-    <string name="composer_lock_internal">Crittografia end-to-end</string>
-    <string name="composer_lock_internal_pinned">Destinatario crittografato end-to-end verificato</string>
-    <string name="composer_lock_pgp_encrypted_pinned">Destinatario crittografato PGP verificato</string>
+    <string name="composer_lock_internal">Crittografato end-to-end</string>
+    <string name="composer_lock_internal_pinned">Crittografato end-to-end a un destinatario verificato</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Crittografato con PGP al destinatario verificato</string>
     <string name="composer_lock_pgp_signed">Firmato con PGP</string>
     <string name="recipient_not_found_and_removed">Il destinatario non può essere trovato: %s ed è stato rimosso</string>
     <string name="recipient_error_and_removed">Si è verificato un errore durante il recupero delle informazioni del destinatario, il quale è stato rimosso: %s</string>
@@ -583,12 +583,12 @@
     <string name="retrieving_notifications">Recupero notifiche</string>
     <string name="report_phishing">Segnala phishing</string>
     <string name="print">Stampa</string>
-    <string name="phishing_dialog_title">Conferma il report di phishing</string>
+    <string name="phishing_dialog_title">Conferma la segnalazione di phishing</string>
     <string name="phishing_dialog_message">Segnalare un messaggio come tentativo di phishing invierà il
 		messaggio a noi, cosicché potremo analizzarlo e migliorare i nostri filtri. Questo significa che saremo in grado
 		di leggere i contenuti del messaggio per intero.</string>
-    <string name="phishing_report_send_message_moved_to_spam">Rapporto inviato. Messaggio spostato nello spam.</string>
-    <string name="cannot_send_report_send">Impossibile inviare il report</string>
+    <string name="phishing_report_send_message_moved_to_spam">Segnalazione inviata. Messaggio spostato in spam.</string>
+    <string name="cannot_send_report_send">Impossibile inviare la segnalazione</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Aggiungi foto</string>
@@ -643,10 +643,10 @@
     <string name="contacts_add_photo_title">Aggiungi foto</string>
     <string name="contacts_add_photo_select_gallery">Scegli dalla galleria</string>
     <string name="contacts_add_photo_select_camera">Cattura dalla fotocamera</string>
-    <string name="save_group_validation_error">Si prega di fornire il nome del gruppo</string>
+    <string name="save_group_validation_error">Fornisci un nome per il gruppo</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Hai raggiunto il limite di archiviazione. Impossibile inviare o ricevere email.
-        Premi per saperne di più.</string>
+        Tocca per scoprire di più.</string>
     <string name="storage_limit_warning_title">Attenzione</string>
     <string name="storage_limit_reached_text">Hai utilizzato il 100% del tuo spazio disponibile. Non
         sarà più possibile inviare o ricevere email a meno che non cancelli definitivamente qualche email o che acquisti più
@@ -654,7 +654,7 @@
     <string name="storage_limit_approaching_text">Hai raggiunto il 90% del tuo spazio disponibile.
         Prova a liberare dello spazio o acquista più spazio di archiviazione prima di esaurirlo tutto.</string>
     <!-- endregion -->
-    <string name="need_permissions_title">Permessi</string>
+    <string name="need_permissions_title">Autorizzazioni</string>
     <string name="need_storage_permissions_add_attachment_text">Per aggiungere allegati devi consentire
         l\'accesso all\'archiviazione.</string>
     <string name="need_storage_permissions_download_attachment_text">Per scaricare allegati devi consentire
@@ -717,8 +717,8 @@
     <string name="snooze_end_time">Ora di fine:</string>
     <string name="snooze_repeat">Ripeti:</string>
     <plurals name="quick_snooze_resume_min">
-        <item quantity="one">Le notifiche si riattiveranno tra %d min</item>
-        <item quantity="other">Le notifiche si riattiveranno tra %d min</item>
+        <item quantity="one">Le notifiche riprenderanno tra %d min</item>
+        <item quantity="other">Le notifiche riprenderanno tra %d min</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Le notifiche riprenderanno tra %1$d ore e %2$d minuti</string>
     <string name="minutes">Minuti</string>
@@ -746,12 +746,12 @@
     <string name="mailbox">Casella email</string>
     <string name="privacy">Privacy</string>
     <string name="auto_download_messages_title">Scaricamento automatico dei messaggi</string>
-    <string name="auto_download_messages_subtitle">Quando l\'opzione è attivata, i corpi dei messaggi verranno scaricati automaticamente ogni volta che riceverai una nuova notifica via email (questo consumerà più dati). Se l\'opzione non è attivata, i corpi dei messaggi verranno scaricati solo quando si apre un\'email. (Nota: con entrambe le opzioni, se si svuota la cache o si effettua il logout, non sarà possibile leggere i corpi dei messaggi mentre si è offline)</string>
+    <string name="auto_download_messages_subtitle">Quando l\'opzione è attivata, i corpi dei messaggi verranno scaricati automaticamente ogni volta che riceverai una nuova notifica via email (questo consumerà più dati). Se l\'opzione non è attivata, i corpi dei messaggi verranno scaricati solo quando si apre un\'email. (Nota: con entrambe le opzioni, se svuoti la cache o ti disconnetti, non potrai leggere i corpi dei messaggi mentre sei offline.)</string>
     <string name="settings_background_sync">Sincronizzazione in background</string>
     <string name="settings_auto_show_images">Mostra automaticamente le immagini remote</string>
     <string name="settings_auto_show_embedded_images">Mostra automaticamente le immagini incorporate</string>
     <string name="settings_prevent_taking_screenshots">Previeni la cattura degli screenshot</string>
-    <string name="hyperlink_confirmation">Richiedi link di conferma</string>
+    <string name="hyperlink_confirmation">Richiedi conferma dei link</string>
     <string name="labels_and_folders">Etichette e cartelle </string>
     <string name="folders">Cartelle</string>
     <string name="labels">Etichette</string>
@@ -761,7 +761,7 @@
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Scelta azione con gesti di scorrimento</string>
     <string name="swipe_action_trash">Messaggio spostato nel cestino</string>
-    <string name="swipe_action_trash_short">Sposta nel Cestino</string>
+    <string name="swipe_action_trash_short">Sposta nel cestino</string>
     <string name="swipe_action_star">Messaggio preferito aggiornato</string>
     <string name="swipe_action_star_short">Aggiorna stella</string>
     <string name="swipe_action_spam">Messaggio segnato come spam</string>
@@ -856,7 +856,7 @@
     <string name="move_message">Sposta messaggio</string>
     <string name="manage">Gestisci</string>
     <string name="message_from">Messaggio da %s</string>
-    <string name="not_spam_move_to_inbox">Non spam (Sposta nella Posta in Arrivo)</string>
+    <string name="not_spam_move_to_inbox">Non spam (Sposta in posta in arrivo)</string>
     <string name="action_sheet_view_in_light_mode">Visualizza in modalità Chiara</string>
     <string name="action_sheet_view_in_dark_mode">Visualizza in modalità Scura</string>
     <plurals name="x_messages_count">
@@ -871,9 +871,11 @@
     <string name="contacts_send_group_message">Invia messaggio di gruppo</string>
     <string name="inbox_this_folder_is_empty">Questa cartella è vuota</string>
     <string name="inbox_could_not_retrieve_messages">Impossibile recuperare i tuoi messaggi</string>
-    <string name="inbox_pull_down_to_retry">Sei pregato di tirare in giù e riprovare</string>
+    <string name="inbox_pull_down_to_retry">Scorri verso il basso per riprovare</string>
     <string name="edit_draft">Modifica la bozza</string>
     <string name="details_show_history">Mostra cronologia</string>
     <string name="could_not_complete_action">Impossibile completare l\'azione</string>
-    <string name="decryption_of_message_failed">Errore di decriptazione: decriptazione del contenuto crittografato di questo messaggio fallita.</string>
+    <string name="decryption_of_message_failed">Errore di decriptazione: decriptazione del contenuto crittografato di questo messaggio non riuscita.</string>
+    <string name="expand_message_details">Espandi i dettagli del messaggio</string>
+    <string name="collapse_message_details">Comprimi i dettagli del messaggio</string>
 </resources>

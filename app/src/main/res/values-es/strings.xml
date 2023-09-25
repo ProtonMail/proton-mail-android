@@ -75,7 +75,7 @@
     <string name="details_hyperlink_phishing_dialog_cancel_action">Volver (recomendado)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorar la advertencia y continuar</string>
     <string name="scheduled_message_info">Este mensaje se enviará el %s.</string>
-    <string name="scheduled_message_edit_info">Actualmente los mensajes programados solo pueden modificarse desde la versión Web o desde iOS.</string>
+    <string name="scheduled_message_edit_info">Actualmente los mensajes programados solo pueden modificarse desde la versiones Web o iOS.</string>
     <string name="scheduled_message_moved_to_trash_title">El mensaje no se enviará.</string>
     <string name="scheduled_message_moved_to_trash_desc">Mover este mensaje a la papelera cancelará su programación.</string>
     <!-- endregion -->
@@ -86,7 +86,7 @@
     <string name="composer_from">De:</string>
     <string name="composer_subject">Asunto:</string>
     <string name="composer_to">Para:</string>
-    <string name="composer_removing_address_generic_error">No se puede verificar la dirección: %s. El envío podría fallar.</string>
+    <string name="composer_removing_address_generic_error">No se puede verificar la dirección: %s. El envío podría no funcionar.</string>
     <string name="composer_removing_address_server_error">Eliminando la dirección: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">El %s, %s &lt; %s&gt; escribió:</string>
@@ -124,8 +124,8 @@
     <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB utilizados)</string>
     <string name="settings_storage_limit_unlimited_value">Ilimitado (%1$.2f MB utilizados)</string>
     <string name="settings_swipe_settings_info">Establecer gestos de deslizamiento para acceder a las acciones más utilizadas.</string>
-    <string name="settings_swipe_left_to_right">Izquierda a derecha</string>
-    <string name="settings_swipe_right_to_left">Derecha a izquierda</string>
+    <string name="settings_swipe_left_to_right">De izquierda a derecha</string>
+    <string name="settings_swipe_right_to_left">De derecha a izquierda</string>
     <string name="settings_swipe_saving">Guardando gesto de deslizamiento…</string>
     <string name="settings_swipe_generic_error">No se puede guardar el gesto de deslizamiento.</string>
     <!-- endregion -->
@@ -153,7 +153,7 @@
     <string name="contacts_empty_state_no_groups">No hay grupos</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">Los grupos de contactos no se importarán. Pasa a un plan de pago para disfrutar de las funciones prémium.</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">Los grupos de contactos no se importarán. Mejora a un plan de pago para disfrutar de las funciones prémium.</string>
     <string name="contact_details_remote_content_dialog_title">Contenido remoto</string>
     <string name="contact_details_remote_content_dialog_message">Este contacto contiene contenido remoto.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Cargar contenido</string>
@@ -182,7 +182,7 @@
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Cerrar sesión</string>
-    <string name="sign_out_question">¿Estás seguro de que quieres cerrar sesión?</string>
+    <string name="sign_out_question">¿Estás seguro de que quieres cerrar la sesión?</string>
     <string name="processing_request">Tu solicitud se está procesando.</string>
     <!-- should check for html tag -->
     <!-- Toast messages -->
@@ -228,7 +228,7 @@
     <string name="fetching_contacts_failure">No se pueden actualizar los contactos</string>
     <string name="compose">Redactar</string>
     <string name="compose_message">Redactar mensaje</string>
-    <string name="empty_folder">Vaciar carpeta</string>
+    <string name="empty_folder">Vaciar la carpeta</string>
     <string name="view_headers">Ver encabezados</string>
     <string name="message_headers">Encabezado del mensaje</string>
     <string name="delete_messages">Eliminar mensajes</string>
@@ -330,7 +330,7 @@
     <string name="message_deleted_error">Error al eliminar algunos mensajes. Algunos de los mensajes seleccionados están en proceso de envío.</string>
     <string name="respond_inline">Responder en línea</string>
     <string name="server_not_reachable_troubleshoot">Servidor no accesible… (<u>Resolución de problemas</u>)</string>
-    <string name="connectivity_checking">Comprobando la conexión...</string>
+    <string name="connectivity_checking">Verificando la conexión...</string>
     <string name="draft_label_attachments_uploading">cargando archivos adjuntos…</string>
     <string name="draft_label_message_uploading">enviando mensaje…</string>
     <string name="attachment_failed">Error al cargar el archivo adjunto del mensaje </string>
@@ -380,7 +380,7 @@
     </plurals>
     <string name="logout">Cerrar sesión</string>
     <string name="logout_question_next_account">Serás redirigido por %s.</string>
-    <string name="upgrade">Cambiar de plan</string>
+    <string name="upgrade">Mejorar</string>
     <string name="error">Error</string>
     <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
@@ -395,7 +395,7 @@
     <string name="no_inactive_addresses">No tiene direcciones inactivas.</string>
     <string name="label_add_new">Añadir etiqueta</string>
     <string name="available_labels">Etiquetas disponibles</string>
-    <string name="delete_selected">Eliminar selección</string>
+    <string name="delete_selected">Eliminar la selección</string>
     <string name="pin_not_activated">PIN no activado</string>
     <string name="available_options">Opciones disponibles</string>
     <string name="background_sync_subtitle">Si esta opción está habilitada, la aplicación se sincronizará con el servidor en segundo plano. Al deshabilitar esta función se deshabilitarán las notificaciones push.</string>
@@ -493,7 +493,7 @@
     <string name="saving">Guardando...</string>
     <string name="update_folder">Actualizar carpeta</string>
     <string name="spam_score_100">Este correo parece llegar de una dirección de Proton Mail pero viene de fuera de nuestro sistema y no ha superado los requisitos de autenticación. Puede haber sido falsificado o reenviado incorrectamente.</string>
-    <string name="spam_score_101">Se ha producido un error con los requisitos de autenticación del dominio de este correo electrónico. Puede estar falsificado o reenviado incorrectamente.</string>
+    <string name="spam_score_101">Este correo electrónico no ha superado los requisitos de autenticación de su dominio. Puede estar falsificado o reenviado incorrectamente.</string>
     <string name="spam_score_102">Este mensaje puede ser un intento de suplantación de identidad. Verifica que el remitente y el contenido sean legítimos. <a href="https://proton.me/blog/prevent-phishing-attacks">MÁS INFORMACIÓN</a></string>
     <string name="print_from_template">De: %s</string>
     <string name="print_to_template">Para: %s;  </string>
@@ -514,7 +514,7 @@
     <string name="contacts_unknown">Desconocido</string>
     <string name="learn_more"><u>Más información</u></string>
     <string name="info">Información</string>
-    <string name="error_can_not_send_from_this_address">Actualiza a un plan de pago para enviar desde tu dirección %s.</string>
+    <string name="error_can_not_send_from_this_address">Mejora a un plan de pago para enviar desde tu dirección %s.</string>
     <string name="email_empty">Falta la dirección de correo electrónico.</string>
     <string name="encrypted_contact_details">Datos de contacto cifrados</string>
     <string name="convert_question">Cargar contactos locales</string>
@@ -526,7 +526,7 @@
     <string name="print_date_template">Fecha: %s</string>
     <string name="print_attachment_template">Archivo adjunto: %s;  </string>
     <string name="pm_me_changed">El envío de mensajes desde la dirección @pm.me es una función de pago. Tu mensaje será enviado desde tu dirección por defecto %s.</string>
-    <string name="pm_me_can_not_be_default">Actualiza a un plan de pago para establecer %s como dirección por defecto.</string>
+    <string name="pm_me_can_not_be_default">Mejora a un plan de pago para establecer %s como dirección por defecto.</string>
     <string name="dont_remind_again">No volver a recordarme</string>
     <string name="load_embedded_images">Cargar imágenes incrustadas</string>
     <string name="remove_password">Eliminar contraseña</string>
@@ -620,7 +620,7 @@
         <item quantity="one">%d seleccionado</item>
         <item quantity="other">%d seleccionados</item>
     </plurals>
-    <string name="paid_plan_needed">Pasa a un plan de pago para estas funciones prémium.</string>
+    <string name="paid_plan_needed">Mejora a un plan de pago para estas funciones prémium.</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d miembros)</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">¿Estás seguro de que quieres eliminar este grupo?</item>
@@ -667,8 +667,8 @@ compres más
     <string name="use_pin_instead">Utiliza el PIN en su lugar</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">No hay datos biométricos registrados.</string>
-    <string name="log_in_using_biometric_credential">Desbloquear usando tus credenciales biométricas</string>
-    <string name="unlock_using_biometrics">Desbloquear usando datos biométricos</string>
+    <string name="log_in_using_biometric_credential">Desbloquear utilizando tus credenciales biométricas</string>
+    <string name="unlock_using_biometrics">Desbloquear utilizando datos biométricos</string>
     <string name="biometric_error_hw_not_available">Hardware biométrico no disponible.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Destinatarios desconocidos</string>
@@ -746,7 +746,7 @@ compres más
     <string name="mailbox">Buzón</string>
     <string name="privacy">Privacidad</string>
     <string name="auto_download_messages_title">Descargar mensajes automáticamente</string>
-    <string name="auto_download_messages_subtitle">Cuando esta opción está activada, los cuerpos de los mensajes se descargarán automáticamente cada vez que recibas una notificación nueva (esto consumirá más datos). Si la opción no está activada, los cuerpos de los mensajes solo se descargarán cuando abras el mensaje. (Nota: con cualquier opción, si vacías la caché o cierras la sesión, no podrás leer el cuerpo de los mensajes mientras no estés conectado).</string>
+    <string name="auto_download_messages_subtitle">Cuando esta opción está activada, los cuerpos de los mensajes se descargarán automáticamente cada vez que reciba una notificación nueva (esto consumirá más datos). Si la opción no está activada, los cuerpos de los mensajes solo se descargarán cuando abra el mensaje. (Nota: con cualquier opción, si vacía la caché o cierra la sesión, no podrá leer el cuerpo de los mensajes mientras no esté conectado).</string>
     <string name="settings_background_sync">Sincronizar en segundo plano</string>
     <string name="settings_auto_show_images">Mostrar imágenes remotas automáticamente</string>
     <string name="settings_auto_show_embedded_images">Mostrar automáticamente las imágenes incrustadas</string>
@@ -785,7 +785,7 @@ compres más
     <string name="notification_settings">Configuración de las notificaciones</string>
     <string name="auto_lock">Bloqueo automático</string>
     <string name="auto_lock_app">Bloqueo automático de la app</string>
-    <string name="auto_lock_description">Activa esta función para bloquear automáticamente la\napp y usar un código PIN o huella dactilar\npara desbloquearla.</string>
+    <string name="auto_lock_description">Activa esta función para bloquear automáticamente la\napp y utilizar un código PIN o huella dactilar\npara desbloquearla.</string>
     <string name="change_pin_code">Cambiar código PIN</string>
     <string name="auto_lock_timer">Tiempo de bloqueo automático</string>
     <string name="connections_via_third_parties">Enrutado alternativo</string>
@@ -796,7 +796,7 @@ compres más
     <string name="custom_language_dialog_title">Seleccionar idioma de la aplicación</string>
     <string name="auto_detect">Detectar automáticamente</string>
     <string name="combined_contacts">Contactos combinados</string>
-    <string name="turn_combined_contacts_on">Activa esta función para completar automáticamente las direcciones utilizando los contactos de todas tus cuentas conectadas.</string>
+    <string name="turn_combined_contacts_on">Active esta función para completar automáticamente las direcciones utilizando los contactos de todas sus cuentas conectadas.</string>
     <string name="local_cache_management">Caché local</string>
     <string name="cache_cleared">La caché local está actualizada.</string>
     <string name="empty_data">Limpiar datos</string>
@@ -816,7 +816,7 @@ compres más
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemas y soluciones habituales de conexión</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;Sin conexión a internet&lt;/i&gt; - Asegúrate de que tu conexión está funcionando.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema del proveedor de servicios de internet (ISP)&lt;/i&gt; - Prueba a conectarte a Proton desde una red diferente (o usa &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema del proveedor de servicios de internet (ISP)&lt;/i&gt; - Prueba a conectarte a Proton desde una red diferente (o utiliza &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueo gubernamental&lt;/i&gt; - Tu país puede estar bloqueando el acceso a Proton. Prueba &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o cualquier otra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para acceder a Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de antivirus&lt;/i&gt; - Deshabilita temporalmente o elimina tu software antivirus.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de proxy/cortafuego&lt;/i&gt; - Deshabilita cualquier proxy o cortafuegos, o contacta con tu administrador de red.
@@ -875,4 +875,6 @@ compres más
     <string name="details_show_history">Mostrar historial</string>
     <string name="could_not_complete_action">No se ha podido completar la acción.</string>
     <string name="decryption_of_message_failed">Error de descifrado: no se ha podido descifrar el contenido cifrado de este mensaje.</string>
+    <string name="expand_message_details">Expandir los detalles del mensaje</string>
+    <string name="collapse_message_details">Minimizar los detalles del mensaje</string>
 </resources>

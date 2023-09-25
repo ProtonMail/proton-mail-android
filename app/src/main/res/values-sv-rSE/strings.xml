@@ -168,7 +168,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nya funktioner</string>
     <string name="existing_user_onboarding_new_features_description">Njut av nya funktioner som mörkt läge, förbättrade aviseringar, ett filter för olästa meddelanden och undermappar.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Uppdaterat Proton, enhetligt skydd</string>
-    <string name="existing_user_onboarding_updated_proton_description">Vi introducerar Protons uppdaterade utseende. Många tjänster, ett uppdrag. Välkommen till ett internet där integritet är standard. <a href="https://proton.me/news/updated-proton">Lär dig mer</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Vi introducerar Protons uppdaterade utseende. Många tjänster, ett uppdrag. Välkommen till ett Internet där integritet är standard. <a href="https://proton.me/news/updated-proton">Lär dig mer</a></string>
     <string name="onboarding_next">Nästa</string>
     <string name="onboarding_get_started">Kom igång</string>
     <string name="onboarding_got_it">Jag förstår</string>
@@ -298,8 +298,8 @@
     <string name="invalid_email_address">Adressen \'%s\' är ogiltig</string>
     <string name="invalid_email_address_removed">Adressen \'%s\' är ogiltig och har tagits bort</string>
     <string name="no_recipients_specified">Lägg till minst en mottagare</string>
-    <string name="no_password_specified">Utgångstid kan bara ställas in på fullständigt krypterade meddelanden. Vänligen ange ett lösenord för dina icke-ProtonMail-mottagare.</string>
-    <string name="attachment_limit">Bilagor är begränsat till %1$s. Totalt antal bilagor skulle uppgå till %2$s.</string>
+    <string name="no_password_specified">Utgångstider kan endast ställas in på fullständigt krypterade meddelanden. Ange ett lösenord för dina mottagare som inte använder Proton Mail.</string>
+    <string name="attachment_limit">Bilagor är begränsade till %1$s. Totalt bifogat skulle vara %2$s.</string>
     <string name="sending_message">Skickar meddelande...</string>
     <string name="sending_message_offline">Offline, köas för att skickas senare...</string>
     <string name="message_sent">Meddelande skickat</string>
@@ -310,7 +310,7 @@
     <string name="cancel">Avbryt</string>
     <string name="close">Stäng</string>
     <string name="eo_password_title">Ställ in lösenord</string>
-    <string name="eo_password_subtitle">Ställ in ett lösenord för att kryptera detta meddelande för icke-Proton Mail-användare</string>
+    <string name="eo_password_subtitle">Ställ in ett lösenord för att kryptera detta meddelande för användare som inte använder Proton Mail</string>
     <string name="eo_password_more_info">Få mer information</string>
     <string name="no_attachments">0 bilagor</string>
     <string name="display_name_banned_chars">Ogiltigt visningsnamn. \'&gt;\' och \'&lt;\' är inte tillåtna</string>
@@ -361,7 +361,7 @@
     <string name="attachment_download_failed">%s misslyckades att laddas ner korrekt</string>
     <string name="ringtone">Ringsignal</string>
     <string name="ringtone_selected">Ringsignal:</string>
-    <string name="ringtone_invalid">Valet av ringsignal gav ett ogiltigt värde</string>
+    <string name="ringtone_invalid">Val av ringsignal returnerade ett ogiltigt värde</string>
     <string name="ringtone_no_default">Omöjligt att ladda en standardringsignal</string>
     <string name="select_tone">Välj ton</string>
     <string name="copy_link">Kopiera länk</string>
@@ -375,8 +375,8 @@
         <item quantity="other">Felaktig PIN-kod, %d försök återstår</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
-        <item quantity="one">%d försök återstår till säker data raderas!</item>
-        <item quantity="other">%d försök återstår till säker data raderas!</item>
+        <item quantity="one">%d försök innan säker datarensning!</item>
+        <item quantity="other">%d försök innan säker datarensning!</item>
     </plurals>
     <string name="logout">Logga ut</string>
     <string name="logout_question_next_account">Du kommer att växlas till %s.</string>
@@ -398,7 +398,7 @@
     <string name="delete_selected">Ta bort valda</string>
     <string name="pin_not_activated">PIN-kod inte aktiverad</string>
     <string name="available_options">Tillgängliga alternativ</string>
-    <string name="background_sync_subtitle">Om detta alternativ är aktiverat, kommer appen att synkronisera med servern i bakgrunden. Om den avaktivers så kommer push-notifieringar att avaktiveras.</string>
+    <string name="background_sync_subtitle">Om detta alternativ är aktiverat kommer appen att synkronisera med servern i bakgrunden. Om du inaktiverar denna funktion inaktiveras push-notiser.</string>
     <string-array name="notification_options">
         <item>Inga vibrationer eller ljud</item>
         <item>Ljud utan vibration</item>
@@ -579,7 +579,7 @@
     <string name="channel_description_account">Kontostatus</string>
     <string name="channel_name_ongoing_operations">Pågående aktiviteter</string>
     <string name="channel_description_ongoing_operations">Visar alla pågående aktiviteter som nedladdning
-av nya meddelanden i bakgrunden</string>
+		av nya meddelanden i bakgrunden</string>
     <string name="retrieving_notifications">Hämtar aviseringar</string>
     <string name="report_phishing">Rapportera nätfiske</string>
     <string name="print">Skriv ut</string>
@@ -645,14 +645,14 @@ av nya meddelanden i bakgrunden</string>
     <string name="contacts_add_photo_select_camera">Ta bild från kamera</string>
     <string name="save_group_validation_error">Ange ett gruppnamn</string>
     <!-- region Storage Limit Reached -->
-    <string name="storage_limit_alert">Gränsen uppnåtts. Det gick inte att skicka eller ta emot e-postmeddelanden.
-        tryck för att läsa mer.</string>
+    <string name="storage_limit_alert">Lagringsgränsen nådd. Kan inte skicka eller ta emot e-post.
+        Tryck för att lära dig mer.</string>
     <string name="storage_limit_warning_title">Varning</string>
-    <string name="storage_limit_reached_text">Du har uppnått 100% av ditt lagringsutrymme. Du
-        kommer inte att kunna skicka eller ta emot e-post om du inte permanent tar bort några e-postmeddelanden eller köper mer
-        utrymme.</string>
-    <string name="storage_limit_approaching_text">Du har uppnåt 90 % av ditt lagringsutrymme.
-        Du bör överväga att frigöra plats eller köpa mer lagringsutrymme innan den tar slut.</string>
+    <string name="storage_limit_reached_text">Du har nått 100 % av din lagringskapacitet. Du
+        kommer inte kunna skicka eller ta emot e-post om du inte permanent tar bort några e-postmeddelanden eller köper mer
+        lagringsutrymme.</string>
+    <string name="storage_limit_approaching_text">Du har nått 90 % av din lagringskapacitet.
+        Överväg att frigöra lite utrymme eller köpa mer lagringsutrymme innan du får slut på utrymme.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Behörigheter</string>
     <string name="need_storage_permissions_add_attachment_text">För att lägga till bilagor måste du tillåta
@@ -693,12 +693,12 @@ av nya meddelanden i bakgrunden</string>
     <string name="signature">Signatur</string>
     <string name="mobile_footer">Mobil-sidfot</string>
     <string name="edit_mobile_footer">Aktivera mobil-sidfot</string>
-    <string name="default_mobile_footer">Skickat från Proton Mail mobil</string>
+    <string name="default_mobile_footer">Skickat från Proton Mail-mobil</string>
     <string name="mobile_footer_is_premium">Endast betalande användare tillåts att ändra mobil-sidfoten</string>
     <string name="mobile_footer_info">Denna sidfot läggs till efter din signatur</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Skjut upp</string>
-    <string name="notifications_snooze">Snooza notifieringar</string>
+    <string name="notifications_snooze">Snooza aviseringar</string>
     <string-array name="quick_snooze_values">
         <item>30 minuter</item>
         <item>1 timme</item>
@@ -736,10 +736,10 @@ av nya meddelanden i bakgrunden</string>
         <item>Lö</item>
         <item>Sö</item>
     </string-array>
-    <string name="quick_and_scheduled_enabled">Snabbsnooze och schemalagd snooze aktiverat</string>
+    <string name="quick_and_scheduled_enabled">Snabbsnooze och schemalagd snooze aktivt</string>
     <string name="quick_only_enabled">Snabbsnooze aktiverat</string>
     <string name="scheduled_only_enabled">Schemalagd snooze aktiverad</string>
-    <string name="quick_and_scheduled_disabled">Snabbsnooze och schemalagd snooze avaktiverat</string>
+    <string name="quick_and_scheduled_disabled">Snabbsnooze och schemalagd snooze inaktiverat</string>
     <string name="scheduled_snooze_on">Schemalagd (På)</string>
     <string name="scheduled_snooze_off">Schemalagd (Av)</string>
     <!-- endregion -->
@@ -785,7 +785,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="notification_settings">Aviseringsinställningar</string>
     <string name="auto_lock">Autolås</string>
     <string name="auto_lock_app">Lås app automatiskt</string>
-    <string name="auto_lock_description">Slå på den här funktionen för att automatiskt låsa din app och använd en PIN-kod eller fingeravtryck för att låsa upp den.</string>
+    <string name="auto_lock_description">Slå på denna funktion för att automatiskt låsa din app och använd en PIN-kod eller fingeravtryck för att låsa upp den.</string>
     <string name="change_pin_code">Ändra PIN-kod</string>
     <string name="auto_lock_timer">Autolås timer</string>
     <string name="connections_via_third_parties">Alternativ routing</string>
@@ -838,7 +838,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="go_to_settings">Gå till inställningar</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ogiltig Firebase API-nyckel. Push-meddelanden kommer inte fungera.</string>
-    <string name="failed_saving_draft_online">Det gick inte att spara utkast för meddelande: \"%s\"</string>
+    <string name="failed_saving_draft_online">Misslyckades att spara onlineutkast för meddelande: “%s“</string>
     <string name="failed_draft_does_not_exist">Meddelande ”%s” finns inte.</string>
     <string name="failed_uploading_attachment_online">Fel med bilaga till meddelande: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Kan inte öppna detta meddelande när det skickas</string>
@@ -875,5 +875,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="edit_draft">Redigera utkast</string>
     <string name="details_show_history">Visa historik</string>
     <string name="could_not_complete_action">Det gick inte att slutföra åtgärden</string>
-    <string name="decryption_of_message_failed">Dekrypteringsfel: dekrypteringen av det här meddelandets krypterade innehåll misslyckades.</string>
+    <string name="decryption_of_message_failed">Dekrypteringsfel: dekryptering av detta meddelandets krypterade innehåll misslyckades.</string>
+    <string name="expand_message_details">Expandera meddelandedetaljer</string>
+    <string name="collapse_message_details">Minimera meddelandedetaljer</string>
 </resources>
