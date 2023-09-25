@@ -877,4 +877,6 @@
     <string name="details_show_history">Előzmények megjelenítése</string>
     <string name="could_not_complete_action">Nem sikerült a művelet befejezése</string>
     <string name="decryption_of_message_failed">Visszafejtési hiba: Az üzenet titkosított tartalmának visszafejtése sikertelen.</string>
+    <string name="expand_message_details">Üzenet részleteinek kinyitása</string>
+    <string name="collapse_message_details">Üzenet részleteinek összecsukása</string>
 </resources>

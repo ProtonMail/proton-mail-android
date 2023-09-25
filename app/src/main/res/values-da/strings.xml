@@ -110,7 +110,7 @@
     <string name="set_msg_expiration_1_day">1 dag</string>
     <string name="set_msg_expiration_3_days">3 dage</string>
     <string name="set_msg_expiration_1_week">1 uge</string>
-    <string name="set_msg_expiration_custom">Tilpasset</string>
+    <string name="set_msg_expiration_custom">Brugerdefineret</string>
     <string name="set_msg_expiration_check_description">Dette emne er afmærket</string>
     <string name="composer_invalid_sender_saving_draft_failed">\"Fra:\"-adressen er ugyldig. Ændr den venligst til en gyldig</string>
     <string name="composer_invalid_subject_saving_draft_failed">Emnet er ikke gyldigt.</string>
@@ -162,7 +162,7 @@
     <string name="new_user_onboarding_privacy_for_all_headline">Privatliv for alle</string>
     <string name="new_user_onboarding_privacy_for_all_description">Inviter dine kontakter til Proton Mail for at nyde godt af problemfri end-to-end-kryptering, eller tilføj adgangskodebeskyttelse til de beskeder, du sender til dem.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Pæn og ryddelig</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">Arkivér, etikettér og farvekod beskeder for at skabe din perfekte, tilpassede indbakke.</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Arkivér, etikettér og farvekod beskeder for at skabe din perfekte, brugerdefinerede indbakke.</string>
     <string name="existing_user_onboarding_new_look_headline">Nyt udseende, samme beskyttelse</string>
     <string name="existing_user_onboarding_new_look_description">Din krypterede e-mail er blevet fuldstændig redesignet for at gøre den nemmere at bruge.</string>
     <string name="existing_user_onboarding_new_features_headline">Nye funktioner</string>
@@ -313,7 +313,7 @@
     <string name="eo_password_subtitle">Indstil en adgangskode for at kryptere denne besked til brugere, som ikke anvender Proton Mail</string>
     <string name="eo_password_more_info">Få flere oplysninger</string>
     <string name="no_attachments">0 vedhæftninger</string>
-    <string name="display_name_banned_chars">Ugyldigt visningsnavn. \'&gt;\', \'&lt;\' og \' @\' er ikke tilladt</string>
+    <string name="display_name_banned_chars">Ugyldigt visningsnavn. \'&gt;\' og \'&lt;\' er ikke tilladt</string>
     <string name="cont">Fortsæt</string>
     <string name="reply_prefix_on">Til</string>
     <string name="label_name">Etiketnavn</string>
@@ -354,9 +354,9 @@
     <string name="delete_label_confirmation_title">Slet valgte etiketter?</string>
     <string name="delete_folder_confirmation_title">Slet valgte mapper?</string>
     <string name="delete_label_confirmation_message">De e-mails, der er indeholdt her, vil kunne findes i <b>Alle e-mails</b></string>
-    <string name="pin_invalid">Ugyldig PIN-kode. Angiv den korrekte 4-cifrede PIN-kode</string>
-    <string name="pin_not_match">PIN-koder matcher ikke</string>
-    <string name="new_pin_saved">Ny PIN-kode gemt</string>
+    <string name="pin_invalid">Ugyldig pinkode. Angiv den korrekte 4-cifrede pinkode</string>
+    <string name="pin_not_match">Pinkoder matcher ikke</string>
+    <string name="new_pin_saved">Ny pinkode gemt</string>
     <string name="attachment_download_success">%s blev downloadet til Filhåndtering</string>
     <string name="attachment_download_failed">Mislykkedes at downloade %s</string>
     <string name="ringtone">Ringetone</string>
@@ -368,11 +368,11 @@
     <string name="share_link">Del link</string>
     <string name="sync_attachments">Synkroniserer vedhæftninger</string>
     <string name="processing_attachment">Behandler vedhæftninger</string>
-    <string name="hyperlink_confirmation_dialog_text_html">Du er ved at starte webbrowseren og navigere til:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Ønsker du at fortsætte?</string>
+    <string name="hyperlink_confirmation_dialog_text_html">Du er ved at starte webbrowseren og fortsætte til:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Ønsker du at fortsætte?</string>
     <string name="dont_ask_again">Spørg ikke igen</string>
     <plurals name="incorrect_pin_remaining_attempts">
-        <item quantity="one">Forkert PIN-kode, %d forsøg tilbage</item>
-        <item quantity="other">Forkert PIN-kode, %d forsøg tilbage</item>
+        <item quantity="one">Forkert pinkode, %d forsøg tilbage</item>
+        <item quantity="other">Forkert pinkode, %d forsøg tilbage</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="one">%d forsøg inden sikker datarydning!</item>
@@ -396,7 +396,7 @@
     <string name="label_add_new">Tilføj ny etiket</string>
     <string name="available_labels">Tilgængelige etiketter</string>
     <string name="delete_selected">Slet valgte</string>
-    <string name="pin_not_activated">PIN-kode ikke aktiveret</string>
+    <string name="pin_not_activated">Pinkode ikke aktiveret</string>
     <string name="available_options">Tilgængelige valgmuligheder</string>
     <string name="background_sync_subtitle">Er denne indstilling aktiv, vil app\'en synkronisere med serveren i baggrunden. Deaktiveres denne funktion, deaktiverer push-notifikationer.</string>
     <string-array name="notification_options">
@@ -664,7 +664,7 @@
     <string name="push_notifications_alert_title">Push-notifikationsadvarsel</string>
     <string name="push_notifications_alert_subtitle">Push-notifikationer for Proton Mail fungerer ikke uden opdaterede Google Play-tjenester.</string>
     <string name="app_locked">App er låst</string>
-    <string name="use_pin_instead">Brug i stedet PIN-kode</string>
+    <string name="use_pin_instead">Brug i stedet pinkode</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">Ingen biometriske data registreret</string>
     <string name="log_in_using_biometric_credential">Lås op ved hjælp af dine biometriske legitimationsoplysninger</string>
@@ -706,7 +706,7 @@
         <item>4 timer</item>
         <item>8 timer</item>
         <item>12 timer</item>
-        <item>Tilpasset</item>
+        <item>Brugerdefineret</item>
         <item>Planlagt</item>
     </string-array>
     <string name="notifications_snoozed">Notifikationsudsættelse</string>
@@ -722,7 +722,7 @@
     </plurals>
     <string name="quick_snooze_resume_hours">Beskeder genoptages om %1$d timer og %2$d min</string>
     <string name="minutes">Minutter</string>
-    <string name="set_custom_quick_snooze">Indstil tilpasset værdi for Straks-udsættelse</string>
+    <string name="set_custom_quick_snooze">Indstil brugerdefineret værdi for Straks-udsættelse</string>
     <string name="turn_off">Slå fra</string>
     <string name="work_days">Arbejdsdage</string>
     <string name="weekends">Weekend</string>
@@ -744,7 +744,7 @@
     <string name="scheduled_snooze_off">Planlagt (Fra)</string>
     <!-- endregion -->
     <string name="mailbox">Postkasse</string>
-    <string name="privacy">Fortrolighed</string>
+    <string name="privacy">Privatliv</string>
     <string name="auto_download_messages_title">Auto-download beskeder</string>
     <string name="auto_download_messages_subtitle">Når denne indstilling er aktiveret, hentes beskedindhold automatisk, hver gang du modtager en ny e-mail-notifikation (dette vil forbruge flere data). Er indstillingen ikke aktiveret, downloades beskedindholdet kun ved åbning af en e-mail. (Bemærk: Rydder du cachen eller logger ud, kan du ikke med nogen af indstilllingerne læse beskedindhold, mens du er offline.)</string>
     <string name="settings_background_sync">Baggrundssynkronisering</string>
@@ -785,8 +785,8 @@
     <string name="notification_settings">Notifikationsindstillinger</string>
     <string name="auto_lock">Autolås</string>
     <string name="auto_lock_app">Autolås app</string>
-    <string name="auto_lock_description">Slå funktionen til for at autolåse din\napp og benytte PIN-kode eller fingeraftryk\ntil oplåsning af den.</string>
-    <string name="change_pin_code">Skift PIN-kode</string>
+    <string name="auto_lock_description">Slå denne funktion til for at låse din app automatisk og bruge en pinkode eller fingeraftryk til at låse den op.</string>
+    <string name="change_pin_code">Skift pinkode</string>
     <string name="auto_lock_timer">Autolås-timer</string>
     <string name="connections_via_third_parties">Alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties">Tillad alternativ routing</string>
@@ -876,4 +876,6 @@
     <string name="details_show_history">Vis historik</string>
     <string name="could_not_complete_action">Kunne ikke fuldføre handlingen</string>
     <string name="decryption_of_message_failed">Dekrypteringsfejl: Dekryptering af denne beskeds krypterede indhold mislykkedes.</string>
+    <string name="expand_message_details">Udvid beskeddetaljer</string>
+    <string name="collapse_message_details">Skjul beskeddetaljer</string>
 </resources>

@@ -71,13 +71,13 @@
     <string name="details_open_in_proton_calendar_icon_desc">Tignit n Proton Calendar</string>
     <string name="details_play_store_error">Ulamek alday n Play Store</string>
     <string name="details_hyperlink_phishing_dialog_title">Ɣur-k•m: yettban d yir asmel web</string>
-    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
+    <string name="details_hyperlink_phishing_dialog_content">Aseɣwen-a yettawi ɣer usmel web i yettaɛraḍen ahat ad yaker talɣut-ik, am wawalen uffiren d telqayt n tkarḍa n usmad.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;I tɣellist-ik, ur ttkemmil ara.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Uɣal ɣer deffir (yettwasemter)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Zgel alɣu, tkemmkeḍ</string>
     <string name="scheduled_message_info">Izen-a ad yettwazen deg %s</string>
-    <string name="scheduled_message_edit_info">Scheduled messages can only be modified from the Web and iOS applications currently.</string>
+    <string name="scheduled_message_edit_info">Iznan yettusɣawsen zemren kan ad ttusneflen seg Web d yisnasen iOS.</string>
     <string name="scheduled_message_moved_to_trash_title">Izen ur yettwazen ara</string>
-    <string name="scheduled_message_moved_to_trash_desc">Moving this message to trash will cancel its schedule.</string>
+    <string name="scheduled_message_moved_to_trash_desc">Tiririt n yizen-a ɣer tqecwalt n yiḍumman ad issefsex asɣiwes-is.</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Anɣ. Uff. I:</string>
@@ -86,12 +86,12 @@
     <string name="composer_from">Sɣur:</string>
     <string name="composer_subject">Asentel:</string>
     <string name="composer_to">Ɣer:</string>
-    <string name="composer_removing_address_generic_error">Cannot verify address: %s. Sending might fail.</string>
+    <string name="composer_removing_address_generic_error">Yugi ad yeddu usenqed n tansa: %s. Tuzna tezmer ad tecceḍ.</string>
     <string name="composer_removing_address_server_error">Tukksa n tansa: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; yura:</string>
     <string name="set_msg_password_title">Sbadu awal uffir</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://proton.me/support/password-protected-emails">Learn more</a></string>
+    <string name="set_msg_password_info">Sbadu awal uffir i uwgelhen n yizen-a i yiseqdacen n yimaylen ur nelli n Proton. <a href="https://proton.me/support/password-protected-emails">Issin ugar</a></string>
     <string name="set_msg_password_info_icon_description">Talɣut</string>
     <string name="set_msg_password_msg_password_title">Awal n uffir n yizen</string>
     <string name="set_msg_password_msg_password_hint">8 ar 21 n yisekkilen</string>
@@ -112,8 +112,8 @@
     <string name="set_msg_expiration_1_week">1 n yimalas</string>
     <string name="set_msg_expiration_custom">Yugen</string>
     <string name="set_msg_expiration_check_description">Aferdis-agi yettwafren</string>
-    <string name="composer_invalid_sender_saving_draft_failed">The \"From:\" address is invalid. Please change it to a valid one</string>
-    <string name="composer_invalid_subject_saving_draft_failed">The subject is not valid.</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Tabewwaḍt \"Seg:\" tansa d tarameɣtut. Ttxil-k beddel-itt s tmeɣtut</string>
+    <string name="composer_invalid_subject_saving_draft_failed">Asentel d arameɣtu.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Asentel</string>
@@ -122,12 +122,12 @@
     <string name="settings_pins_dont_match">Tingalin PIN ilaq ad ilint kifkif!</string>
     <string name="settings_enter_pin_code_title">Sekcem tangalt n PIN</string>
     <string name="settings_storage_limit_mb_value">%1$d MṬ (%2$.2f MṬ yettwaseqdec)</string>
-    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
+    <string name="settings_storage_limit_unlimited_value">War tilas (%1$.2f MAṬ i yettwasqedcen)</string>
     <string name="settings_swipe_settings_info">Sbadu isillifen n uzuɣer akken ad tkecmeḍ ɣer tigawin i yettwaseqdacen s waṭas.</string>
     <string name="settings_swipe_left_to_right">Seg uzelmaḍ s ayeffus</string>
     <string name="settings_swipe_right_to_left">Seg uyeffus s azelmaḍ</string>
-    <string name="settings_swipe_saving">Saving Swipe action…</string>
-    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
+    <string name="settings_swipe_saving">Asekles n tigawt n Uḍummu…</string>
+    <string name="settings_swipe_generic_error">Ur yezmir ara ad issekles tigawt n usɛeddi</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Asentel n usnas</string>
@@ -172,7 +172,7 @@
     <string name="onboarding_next">Γer zdat</string>
     <string name="onboarding_get_started">Bdu</string>
     <string name="onboarding_got_it">Gziɣ-t</string>
-    <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
+    <string name="onboarding_image_view_content_description">Asumen n Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
     <string name="snackbar_message_draft_saved">Tamerkast tattwasekles</string>
@@ -369,7 +369,7 @@
     <string name="sync_attachments">Amtawi n ifuyla yeddan</string>
     <string name="processing_attachment">Asesfer n ufaylu yeddan</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ad tsnekreḍ iminig web akken zd terzuḍ ɣer:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Tebɣiḍ ad tkemleḍ?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Ur d-ssutur ara tikkelt niḍen</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Yir tangalt PIN,%d n uɛraḍ i d-yeqqimen</item>
         <item quantity="other">Yir tangalt PIN,%d n uɛraḍ i d-yeqqimen</item>
@@ -501,7 +501,7 @@
     <string name="print_bcc_template">Anɣ. Uffi. I.: %s;  </string>
     <string name="address">Tansa: </string>
     <string name="address_street">Abrid</string>
-    <string name="address_extended_street">Extended street</string>
+    <string name="address_extended_street">Tansa tayeḍ</string>
     <string name="address_city">Tamdint</string>
     <string name="address_region">Tamnaḍt (tawilayt neɣ agezdu)</string>
     <string name="address_postcode">Tangalt n lpusta</string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Tanaka n yimayl</string>
     <string name="privacy">Tabaḍnit</string>
     <string name="auto_download_messages_title">Sider iznan s wudem awurman</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, message bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or sign out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Mi ara yermed uɣewwar-a, tifekkiwin yettwaznen ad ttwasadren s wudem awurman yal mi ara tenremseḍ alɣu amaynut s yimayl (aya ad yawi ugar n yisefka). Ma ur yermid ara uɣewwar-a, tifekkiwin n yiznan ad ttwasadren kan mi ara teldiḍ imayl. (Tamawt: s yal aɣewwar, ma tsefḍeḍ tuffirt neɣ teffɣeḍ, ur tzemmreḍ ara ad teɣreḍ tifekkiwin n yimaylen ma ur teqqineḍ ara)</string>
     <string name="settings_background_sync">Amtawi deg ugilal</string>
     <string name="settings_auto_show_images">Sken-d tugna s wudem awurman</string>
     <string name="settings_auto_show_embedded_images">Sken-d tugna tusliγt s wudem awurman</string>
@@ -876,4 +876,6 @@
     <string name="details_show_history">Sken amazray</string>
     <string name="could_not_complete_action">D awezd awezɣi ad temmed tigawt</string>
     <string name="decryption_of_message_failed">Tuccḍa di tukksa n uwgelhen: tukksa n uwgelhen n yizen-a tecceḍ.</string>
+    <string name="expand_message_details">Asemɣer n telqayt n yizen</string>
+    <string name="collapse_message_details">Ffer talqayt n yizen</string>
 </resources>

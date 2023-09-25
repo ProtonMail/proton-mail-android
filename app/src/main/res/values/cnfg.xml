@@ -35,60 +35,60 @@
     <string name="default_delimiter" translatable="false">:</string>
     <array name="custom_language_labels" translatable="false">
         <item>English</item>
+        <item>Deutsch</item>
+        <item>Français</item>
+        <item>Español (España)</item>
+        <item>Español (Latinoamérica)</item>
+        <item>Italiano</item>
+        <item>Nederlands</item>
+        <item>Polski</item>
+        <item>Português (Brasil)</item>
+        <item>Русский</item>
         <item>Беларуская</item>
         <item>Català</item>
         <item>Čeština</item>
         <item>Dansk</item>
-        <item>Deutsch</item>
         <item>Ελληνικά</item>
-        <item>Español (España)</item>
-        <item>Français</item>
         <item>Hrvatski</item>
         <item>Magyar</item>
         <item>Bahasa (Indonesia)</item>
-        <item>íslenska</item>
-        <item>Italiano</item>
         <item>日本語</item>
         <item>Taqbaylit</item>
-        <item>Nederlands</item>
-        <item>Polski</item>
         <item>Português (Portugal)</item>
-        <item>Português (Brasil)</item>
         <item>Română</item>
-        <item>Русский</item>
         <item>Svenska</item>
         <item>Türkçe</item>
         <item>Українська</item>
-        <item>繁體中文</item>
         <item>简体中文</item>
+        <item>繁體中文</item>
     </array>
     <array name="custom_language_values" translatable="false">
         <item>en</item>
+        <item>de</item>
+        <item>fr</item>
+        <item>es</item>
+        <item>es_la</item>
+        <item>it</item>
+        <item>nl</item>
+        <item>pl</item>
+        <item>pt_BR</item>
+        <item>ru</item>
         <item>be</item>
         <item>ca_ES</item>
         <item>cs</item>
         <item>da</item>
-        <item>de</item>
         <item>el</item>
-        <item>es</item>
-        <item>fr</item>
         <item>hr</item>
         <item>hu_HU</item>
         <item>in</item>
-        <item>is_IS</item>
-        <item>it</item>
         <item>ja</item>
         <item>kab</item>
-        <item>nl</item>
-        <item>pl</item>
         <item>pt</item>
-        <item>pt_BR</item>
         <item>ro</item>
-        <item>ru</item>
         <item>sv_SE</item>
         <item>tr</item>
         <item>uk</item>
-        <item>zh_TW</item>
         <item>zh_CN</item>
+        <item>zh_TW</item>
     </array>
 </resources>

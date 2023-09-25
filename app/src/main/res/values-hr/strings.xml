@@ -229,7 +229,7 @@
     <string name="fetching_contacts_failure">Nije moguće osvježiti kontakte</string>
     <string name="compose">Nova poruka</string>
     <string name="compose_message">Sastavite poruku</string>
-    <string name="empty_folder">Isprazni mapu</string>
+    <string name="empty_folder">Empty Folder</string>
     <string name="view_headers">Pregled zaglavlja</string>
     <string name="message_headers">Zaglavlje poruke</string>
     <string name="delete_messages">Izbriši poruke</string>
@@ -892,4 +892,6 @@
     <string name="details_show_history">Prikaži povijest</string>
     <string name="could_not_complete_action">Dovršavanje radnje nije uspjelo</string>
     <string name="decryption_of_message_failed">Pogreška dešifriranja: dešifriranje šifriranog sadržaja ove poruke nije uspjelo.</string>
+    <string name="expand_message_details">Expand Message Details</string>
+    <string name="collapse_message_details">Collapse Message Details</string>
 </resources>

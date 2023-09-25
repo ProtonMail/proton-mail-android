@@ -211,7 +211,7 @@
     <string name="sent_option">Απεσταλμένα</string>
     <string name="archive_option">Αρχειοθετημένα</string>
     <string name="trash_option">Διαγραμμένα</string>
-    <string name="spam_option">Ανεπιθύμητα</string>
+    <string name="spam_option">Ενοχλητικό</string>
     <string name="allmail_option">Όλα τα μηνύματα</string>
     <string name="inbox">Εισερχόμενα</string>
     <string name="starred">Με αστέρι</string>
@@ -219,7 +219,7 @@
     <string name="sent">Απεσταλμένα</string>
     <string name="archive">Αρχειοθετημένα</string>
     <string name="trash">Κάδος Απορριμμάτων</string>
-    <string name="spam">Ανεπιθύμητα</string>
+    <string name="spam">Ενοχλητικά</string>
     <string name="all_mail">Όλα τα μηνύματα</string>
     <string name="contacts">Επαφές</string>
     <string name="search_contacts">Αναζήτηση επαφών</string>
@@ -232,7 +232,7 @@
     <string name="view_headers">Προβολή Headers</string>
     <string name="message_headers">Header μηνύματος</string>
     <string name="delete_messages">Διαγραφή μηνυμάτων</string>
-    <string name="move_to_archive">Μετακίνηση στα αρχειοθετημένα</string>
+    <string name="move_to_archive">Μετακίνηση στα Αρχειοθετημένα</string>
     <string name="move_to_trash">Μετακίνηση στον κάδο απορριμμάτων</string>
     <string name="move_to_spam">Μετακίνηση στα Ενοχλητικά</string>
     <string name="move_to_inbox">Μετακίνηση στα Εισερχόμενα</string>
@@ -587,7 +587,7 @@
     <string name="phishing_dialog_message">Η αναφορά ενός μηνύματος ως προσπάθεια ηλεκτρονικού \"ψαρέματος\", θα στείλει το μήνυμα
 		σε εμάς, ώστε να το αναλύσουμε και να βελτιώσουμε τα φίλτρα μας. Αυτό σημαίνει ότι θα 										 
  		μπορέσουμε να δούμε το πλήρες περιεχόμενο όλου του μηνύματος.</string>
-    <string name="phishing_report_send_message_moved_to_spam">Η αναφορά στάλθηκε. Το μήνυμα μετακινήθηκε στα ανεπιθύμητα.</string>
+    <string name="phishing_report_send_message_moved_to_spam">Η αναφορά στάλθηκε. Το μήνυμα μετακινήθηκε στα Ενοχλητικά.</string>
     <string name="cannot_send_report_send">Δεν είναι δυνατή η αποστολή αναφοράς</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
@@ -746,7 +746,7 @@
     <string name="mailbox">Γραμματοκιβώτιο</string>
     <string name="privacy">Ιδιωτικότητα</string>
     <string name="auto_download_messages_title">Αυτόματη λήψη μηνυμάτων</string>
-    <string name="auto_download_messages_subtitle">Όταν αυτή η επιλογή είναι ενεργοποιημένη, τα αρχεία μηνυμάτων θα κατεβάζει αυτόματα κάθε φορά που θα λάβετε μια νέα ειδοποίηση μέσω E-mail (αυτό θα καταναλώνει περισσότερα δεδομένα). Εάν η επιλογή είναι απενεργοποιημένη, τα αρχεία μηνυμάτων θα μεταφορτωθούν μόνο όταν ανοίγετε ένα E-mail. (Σημείωση: με οποιαδήποτε από τις επιλογές, εάν διαγράψετε την προσωρινή μνήμη ή αποσυνδεθείτε, δεν θα μπορείτε να διαβάσετε τα μηνύματα όταν είστε εκτός σύνδεσης.)</string>
+    <string name="auto_download_messages_subtitle">Όταν αυτή η επιλογή είναι ενεργοποιημένη, τα αρχεία μηνυμάτων θα κατεβαίνουν αυτόματα κάθε φορά που θα λάβετε μια ειδοποίηση για νέο E-mail (αυτό θα καταναλώνει περισσότερα δεδομένα). Εάν η επιλογή είναι απενεργοποιημένη, τα αρχεία μηνυμάτων θα μεταφορτωθούν μόνο όταν ανοίγετε ένα E-mail. (Σημείωση: με οποιαδήποτε από τις επιλογές, εάν διαγράψετε την προσωρινή μνήμη ή αποσυνδεθείτε, δεν θα μπορείτε να διαβάσετε τα μηνύματα όταν είστε εκτός σύνδεσης.)</string>
     <string name="settings_background_sync">Συγχρονισμός στο παρασκήνιο</string>
     <string name="settings_auto_show_images">Αυτόματη Εμφάνιση Απομακρυσμένων Εικόνων</string>
     <string name="settings_auto_show_embedded_images">Αυτόματη Εμφάνιση Ενσωματωμένων Εικόνων</string>
@@ -767,7 +767,7 @@
     <string name="swipe_action_spam">Το μήνυμα σημάνθηκε ως ενοχλητικό</string>
     <string name="swipe_action_spam_short">Ενοχλητικά</string>
     <string name="swipe_action_archive">Το μήνυμα αρχειοθετήθηκε</string>
-    <string name="swipe_action_archive_short">Αρχειοθέτηση</string>
+    <string name="swipe_action_archive_short">Αρχειοθετημένα</string>
     <string name="swipe_action_mark_read">Το μήνυμα επισημάνθηκε ως αναγνωσμένο</string>
     <string name="swipe_action_mark_read_short">Διαβασμένο</string>
     <plurals name="action_move_to_trash">
@@ -849,7 +849,7 @@
     <string name="star">Αστέρι</string>
     <string name="unstar">Αφαίρεση αστεριού</string>
     <string name="star_unstar">Αστέρι/μη αστέρι</string>
-    <string name="send_to_archive">Αποστολή στο αρχείο;</string>
+    <string name="send_to_archive">Αποστολή στα Αρχειοθετημένα;</string>
     <string name="label_as">Ετικέτα ως…</string>
     <string name="mark_as_unread">Επισήμανση ως μη αναγνωσμένο</string>
     <string name="mark_as_read">Επισήμανση ως αναγνωσμένο</string>
@@ -876,4 +876,6 @@
     <string name="details_show_history">Εμφάνιση ιστορικού</string>
     <string name="could_not_complete_action">Δεν ήταν δυνατή η ολοκλήρωση της ενέργειας</string>
     <string name="decryption_of_message_failed">Σφάλμα αποκρυπτογράφησης: η αποκρυπτογράφηση του κρυπτογραφημένου περιεχομένου αυτού του μηνύματος απέτυχε.</string>
+    <string name="expand_message_details">Αναπτύξτε το στοιχείο Λεπτομέρειες μηνύματος</string>
+    <string name="collapse_message_details">Σύμπτυξη λεπτομερειών μηνύματος</string>
 </resources>

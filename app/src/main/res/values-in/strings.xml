@@ -53,7 +53,7 @@
     <string name="mailbox_empty_spam_subtitle">Folder spam Anda kosong</string>
     <string name="mailbox_empty_trash_subtitle">Sampah kosong</string>
     <string name="mailbox_empty_state_no_results_found">Tidak ada hasil yang ditemukan</string>
-    <string name="mailbox_empty_state_try_a_different_term">Coba kriteria pencarian lainnya</string>
+    <string name="mailbox_empty_state_try_a_different_term">Coba kata kunci pencarian yang berbeda</string>
     <string name="mailbox_no_messages">Tidak ada pesan</string>
     <plurals name="mailbox_unread_count">
         <item quantity="other">%d belum dibaca</item>
@@ -102,7 +102,7 @@
     <string name="set_msg_password_remove_password">Hapus kata sandi</string>
     <string name="set_msg_password_error_too_short">Kata sandi terlalu pendek</string>
     <string name="set_msg_password_error_too_long">Kata sandi terlalu panjang</string>
-    <string name="set_msg_password_error_mismatch">Kata sandi tidak cocok</string>
+    <string name="set_msg_password_error_mismatch">Kata sandi tidak sesuai</string>
     <string name="set_msg_expiration_title">Waktu kedaluwarsa pesan</string>
     <string name="set_msg_expiration_none">Tidak ada</string>
     <string name="set_msg_expiration_1_hour">1 jam</string>
@@ -110,13 +110,13 @@
     <string name="set_msg_expiration_3_days">3 hari</string>
     <string name="set_msg_expiration_1_week">1 pekan</string>
     <string name="set_msg_expiration_custom">Sesuaikan</string>
-    <string name="set_msg_expiration_check_description">Item ini sudah dicentang</string>
+    <string name="set_msg_expiration_check_description">Item ini telah dicentang</string>
     <string name="composer_invalid_sender_saving_draft_failed">Alamat yang tertera pada kolom \"Dari:\" tidak valid. Silakan ubah ke alamat yang valid</string>
     <string name="composer_invalid_subject_saving_draft_failed">Subjek tidak valid.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Tema</string>
-    <string name="settings_create_pin_code_title">Atur kode PIN</string>
+    <string name="settings_create_pin_code_title">Tentukan kode PIN</string>
     <string name="settings_confirm_pin_code_title">Ulangi kode PIN</string>
     <string name="settings_pins_dont_match">Kode PIN harus cocok!</string>
     <string name="settings_enter_pin_code_title">Masukkan kode PIN</string>
@@ -153,7 +153,7 @@
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Grup kontak tidak dapat diimpor. Mohon tingkatkan akun Anda ke akun berbayar untuk dapat menggunakan berbagai fitur premium.</string>
-    <string name="contact_details_remote_content_dialog_title">Konten jarak jauh</string>
+    <string name="contact_details_remote_content_dialog_title">Remote content</string>
     <string name="contact_details_remote_content_dialog_message">Kontak ini mengandung remote content.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Muat konten</string>
     <!-- endregion -->
@@ -227,7 +227,7 @@
     <string name="fetching_contacts_failure">Tidak dapat menyegarkan kontak</string>
     <string name="compose">Tulis</string>
     <string name="compose_message">Tulis pesan</string>
-    <string name="empty_folder">Folder Kosong</string>
+    <string name="empty_folder">Folder kosong</string>
     <string name="view_headers">Lihat Header</string>
     <string name="message_headers">Header Pesan</string>
     <string name="delete_messages">Hapus pesan</string>
@@ -275,8 +275,8 @@
     <string name="select_file">Pilih berkas</string>
     <string name="attach_file">Lampirkan berkas</string>
     <string name="take_photo">Ambil foto</string>
-    <string name="problem_taking_photo">Terjadi masalah saat memotret</string>
-    <string name="problem_selecting_file">Ada masalah saat menambahkan berkas yang dipilih</string>
+    <string name="problem_taking_photo">Terdapat masalah dalam mengambil gambar</string>
+    <string name="problem_selecting_file">Terdapat masalah dalam menambahkan berkas yang dipilih</string>
     <string name="add_contact">Tambah Kontak</string>
     <string name="delete_contact">Hapus %s dari Kontak?</string>
     <string name="confirm">Konfirmasi</string>
@@ -432,7 +432,7 @@
     <string name="uploading_contacts">Mengunggah kontak…</string>
     <string-array name="vcard_option_phone">
         <item>Telepon</item>
-        <item>Seluler</item>
+        <item>Mobile</item>
         <item>Kantor</item>
         <item>Faks</item>
         <item>Lainnya</item>
@@ -481,8 +481,8 @@
     <string name="sender_name_address">%1$s &lt; %2$s&gt; menulis:</string>
     <string name="update_label">Perbarui Label</string>
     <string name="delete">Hapus</string>
-    <string name="subject_copied">Subjek disalin ke clipboard</string>
-    <string name="details_copied">Rincian disalin ke clipboard</string>
+    <string name="subject_copied">Subjek disalin ke papan klip</string>
+    <string name="details_copied">Rincian disalin ke papan klip</string>
     <string name="saving">Menyimpan...</string>
     <string name="update_folder">Perbarui Folder</string>
     <string name="spam_score_100">Walaupun email ini sekilas terlihat seperti dikirim dari alamat Proton Mail, email ini sepertinya berasal dari luar sistem kami dan tidak memenuhi persyaratan autentikasi yang kami miliki. Email ini mungkin palsu atau tidak diteruskan dengan benar!</string>
@@ -498,7 +498,7 @@
     <string name="address_city">Kota</string>
     <string name="address_region">Wilayah (negara bagian/provinsi)</string>
     <string name="address_postcode">Kode pos</string>
-    <string name="address_po_box">Kotak PO</string>
+    <string name="address_po_box">PO Box</string>
     <string name="address_country">Negara</string>
     <string name="recheck_delinquency">Periksa Kembali</string>
     <string name="close_app">Tutup Aplikasi</string>
@@ -541,7 +541,7 @@
     <!-- Sender locks -->
     <string name="sender_lock_zero_access">Disimpan dengan enkripsi zero access</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_end_to_end">Dikirim oleh Anda dengan enkripsi ujung ke ujung</string>
+    <string name="sender_lock_sent_end_to_end">Dikirim oleh Anda dengan enkripsi end-to-end</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_autoresponder">Dikirim oleh Proton Mail dengan teknologi enkripsi zero access</string>
     <string name="sender_lock_verification_failed">Verifikasi pengirim gagal</string>
@@ -549,11 +549,11 @@
     <string name="sender_lock_pgp_encrypted_verified">Pesan terenkripsi PGP dari alamat terverifikasi</string>
     <string name="sender_lock_pgp_signed_verified_sender">Pesan yang ditandatangani PGP dari alamat yang terverifikasi</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Pesan terenkripsi ujung ke ujung dan ditandatangani</string>
-    <string name="sender_lock_internal_verified">Pesan terenkripsi ujung ke ujung dari alamat terverifikasi</string>
+    <string name="sender_lock_internal">Pesan yang terenkripsi end-to-end dan ditandatangani</string>
+    <string name="sender_lock_internal_verified">Pesan terenkripsi end-to-end dari alamat terverifikasi</string>
     <!-- Composer locks -->
-    <string name="composer_lock_internal">Terenkripsi ujung ke ujung</string>
-    <string name="composer_lock_internal_pinned">Terenkripsi ujung ke ujung ke alamat terverifikasi</string>
+    <string name="composer_lock_internal">Terenkripsi end-to-end</string>
+    <string name="composer_lock_internal_pinned">Terenkripsi end-to-end kepada alamat terverifikasi</string>
     <string name="composer_lock_pgp_encrypted_pinned">Terenkripsi PGP ke penerima terverifikasi</string>
     <string name="composer_lock_pgp_signed">Ditandatangani PGP</string>
     <string name="recipient_not_found_and_removed">Penerima tidak dapat ditemukan: %s dan telah dihapus</string>
@@ -681,7 +681,7 @@
     <string name="signature">Tanda tangan</string>
     <string name="mobile_footer">Footer seluler</string>
     <string name="edit_mobile_footer">Aktifkan footer seluler</string>
-    <string name="default_mobile_footer">Dikirim dari Proton Mail seluler</string>
+    <string name="default_mobile_footer">Dikirim dari Proton Mail versi mobile</string>
     <string name="mobile_footer_is_premium">Footer Seluler hanya dapat diubah oleh pengguna berbayar</string>
     <string name="mobile_footer_info">Footer ini akan ditambahkan setelah tanda tangan Anda</string>
     <!-- region Snooze Settings -->
@@ -860,4 +860,6 @@
     <string name="details_show_history">Tampilkan riwayat</string>
     <string name="could_not_complete_action">Tidak dapat menyelesaikan tindakan</string>
     <string name="decryption_of_message_failed">Dekripsi gagal: proses dekripsi konten yang terenkripsi dalam pesan ini telah gagal.</string>
+    <string name="expand_message_details">Buka Detail Pesan</string>
+    <string name="collapse_message_details">Tutup Detail Pesan</string>
 </resources>

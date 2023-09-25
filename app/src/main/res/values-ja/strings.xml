@@ -194,7 +194,7 @@
     <string name="update_app_title">アップデートが必要です。</string>
     <string name="update_app">アップデートされるまで、Proton Mail アプリはご利用いただけません</string>
     <string name="you_are_offline">オフラインです</string>
-    <string name="api_offline">Proton Mail は現在ご利用できません。https://protonstatus.com または Twitter (https://twitter.com/ProtonPrivacy) で現在の状態を確認してください。</string>
+    <string name="api_offline">Proton Mail は現在ご利用できません。https://protonstatus.com または Twitter （https://twitter.com/ProtonPrivacy）で現在の状態を確認してください。</string>
     <string name="contact_saved">連絡先が保存されました。</string>
     <string name="contact_saved_offline">連絡先が保存されました。ネットワーク接続が使用可能なときに同期します。</string>
     <string name="contact_exist">連絡先メールアドレスは既に存在しています</string>
@@ -227,7 +227,7 @@
     <string name="fetching_contacts_failure">連絡先を更新できません。</string>
     <string name="compose">新規作成</string>
     <string name="compose_message">メッセージの作成</string>
-    <string name="empty_folder">フォルダーを空にする</string>
+    <string name="empty_folder">空のフォルダ</string>
     <string name="view_headers">ヘッダーを表示</string>
     <string name="message_headers">メッセージのヘッダー</string>
     <string name="delete_messages">メッセージを削除</string>
@@ -852,4 +852,6 @@
     <string name="details_show_history">履歴を表示</string>
     <string name="could_not_complete_action">アクションを完了できませんでした</string>
     <string name="decryption_of_message_failed">メッセージの復号に失敗しました。</string>
+    <string name="expand_message_details">メッセージ詳細を表示</string>
+    <string name="collapse_message_details">メッセージ詳細を非表示</string>
 </resources>

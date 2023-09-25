@@ -250,7 +250,7 @@
     <string name="email_subject">邮件主题</string>
     <string name="define_message_password">邮件密码</string>
     <string name="confirm_message_password">确认密码</string>
-    <string name="define_password_hint">密码提示（非必填）</string>
+    <string name="define_password_hint">密码提示（选填）</string>
     <string name="eo_passwords_do_not_match">密码不一致</string>
     <string name="define_expiration_period">设置有效期</string>
     <string name="set_message_expiration">设置邮件有效期</string>
@@ -725,7 +725,7 @@
     <string name="mailbox">邮箱</string>
     <string name="privacy">隐私</string>
     <string name="auto_download_messages_title">自动下载邮件</string>
-    <string name="auto_download_messages_subtitle">开启后新邮件内容将在后台自动下载（会耗费更多流量），否则打开邮件时才会开始下载。（注意：无论是否开启此选项，清理缓存或退出账户后都不能在离线状态下查看邮件内容。）</string>
+    <string name="auto_download_messages_subtitle">开启后每次收到新邮件提示时消息内容将在后台自动下载（会耗费更多流量），否则打开邮件时才会开始下载。(注意：无论是否开启此选项，清理缓存或退出账户后都不能在离线状态下查看邮件内容。)</string>
     <string name="settings_background_sync">后台同步</string>
     <string name="settings_auto_show_images">自动显示外链图像</string>
     <string name="settings_auto_show_embedded_images">自动显示嵌入图像</string>
@@ -852,4 +852,6 @@
     <string name="details_show_history">显示历史记录</string>
     <string name="could_not_complete_action">操作无法完成</string>
     <string name="decryption_of_message_failed">解密失败：解密此邮件的内容时出错。</string>
+    <string name="expand_message_details">展开邮件详细信息</string>
+    <string name="collapse_message_details">收起邮件详细信息</string>
 </resources>

@@ -49,7 +49,7 @@
     <!-- endregion -->
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Dieser Ordner ist leer</string>
-    <string name="mailbox_empty_inbox_subtitle">Du bist auf dem neusten Stand</string>
+    <string name="mailbox_empty_inbox_subtitle">Du bist auf dem neusten Stand.</string>
     <string name="mailbox_empty_spam_subtitle">Dein Spam-Ordner ist leer</string>
     <string name="mailbox_empty_trash_subtitle">Papierkorb ist leer</string>
     <string name="mailbox_empty_state_no_results_found">Keine Ergebnisse gefunden</string>
@@ -868,4 +868,6 @@ Ziehe in Erwägung, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, b
     <string name="details_show_history">Verlauf anzeigen</string>
     <string name="could_not_complete_action">Die Aktion konnte nicht abgeschlossen werden</string>
     <string name="decryption_of_message_failed">Entschlüsselungsfehler: Das Entschlüsseln des verschlüsselten Inhalts dieser Nachricht ist fehlgeschlagen.</string>
+    <string name="expand_message_details">Nachrichtendetails aufklappen</string>
+    <string name="collapse_message_details">Nachrichtendetails einklappen</string>
 </resources>

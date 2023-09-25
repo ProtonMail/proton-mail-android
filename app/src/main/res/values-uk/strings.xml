@@ -114,15 +114,15 @@
     <string name="set_msg_expiration_1_week">1 тиждень</string>
     <string name="set_msg_expiration_custom">Власний</string>
     <string name="set_msg_expiration_check_description">Цей елемент позначено</string>
-    <string name="composer_invalid_sender_saving_draft_failed">Адреса «Від:» недійсна. Будь ласка, виправте адресу</string>
+    <string name="composer_invalid_sender_saving_draft_failed">Адреса \"Від:\" недійсна. Будь ласка, виправте адресу</string>
     <string name="composer_invalid_subject_saving_draft_failed">Недійсна тема.</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Тема</string>
-    <string name="settings_create_pin_code_title">Встановити ПІН-код</string>
-    <string name="settings_confirm_pin_code_title">Повторіть ПІН-код</string>
-    <string name="settings_pins_dont_match">ПІН-коди повинні збігатися!</string>
-    <string name="settings_enter_pin_code_title">Введіть ПІН-код</string>
+    <string name="settings_create_pin_code_title">Встановити PIN-код</string>
+    <string name="settings_confirm_pin_code_title">Повторіть PIN-код</string>
+    <string name="settings_pins_dont_match">PIN-коди повинні збігатися!</string>
+    <string name="settings_enter_pin_code_title">Введіть PIN-код</string>
     <string name="settings_storage_limit_mb_value">%1$d МБ (%2$.2f МБ використано)</string>
     <string name="settings_storage_limit_unlimited_value">Необмежено (%1$.2f МБ використано)</string>
     <string name="settings_swipe_settings_info">Налаштуйте жести посування для швидких дій.</string>
@@ -132,7 +132,7 @@
     <string name="settings_swipe_generic_error">Неможливо зберегти дію посування</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">Тема застосунку</string>
+    <string name="app_theme_title">Тема програми</string>
     <string name="app_theme_light">Світла</string>
     <string name="app_theme_dark">Темна</string>
     <string name="app_theme_system">Системна</string>
@@ -147,7 +147,7 @@
     <!-- endregion -->
     <!-- region Notifications -->
     <string name="notification_summary_text_new_messages">Нові повідомлення</string>
-    <string name="notification_invalid_sender_sending_failed">Ваше повідомлення можна знайти як чернетку. Будь ласка, перевірте чи електронна адреса в полі «Від:» у повідомленні активна.</string>
+    <string name="notification_invalid_sender_sending_failed">Ваше повідомлення можна знайти як чернетку. Будь ласка, перевірте чи електронна адреса в полі \"Від:\" у повідомленні активна.</string>
     <string name="notification_invalid_subject_sending_failed">Ваше повідомлення збережено до чернеток. Тема недійсна.</string>
     <!-- endregion -->
     <!-- region Contacts Empty States -->
@@ -195,7 +195,7 @@
     <string name="no_more_messages">Більше повідомлень немає</string>
     <string name="no_network_queued">Немає мережі, повідомлення в очікуванні</string>
     <string name="update_app_title">Необхідне оновлення</string>
-    <string name="update_app">Програму Proton Mail не можна використовувати, поки вона не буде оновлена</string>
+    <string name="update_app">Програмою Proton Mail не можна користуватися, поки вона оновлюється</string>
     <string name="you_are_offline">Ви не в мережі</string>
     <string name="api_offline">Перепрошуємо, але Proton Mail зараз офлайн. Перейдіть на https://protonstatus.com або у наш Twitter, щоб дізнатися про поточний стан: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Контакт збережено</string>
@@ -204,7 +204,7 @@
     <string name="invalid_email">Недійсна адреса е-пошти</string>
     <string name="duplicate_email">Дублікат адреси е-пошти</string>
     <string name="message_drafted">Не вдалося надіслати повідомлення. Ваші повідомлення збережені в теці Чернетки</string>
-    <string name="attachment_failed_message_drafted">Вилучіть і повторно додайте «%s» та надішліть повідомлення ще раз. Ваше повідомлення розташовано у теці «Чернетки».</string>
+    <string name="attachment_failed_message_drafted">Вилучіть і повторно додайте \"%s\" та надішліть повідомлення ще раз. Ви можете знайти своє повідомлення у теці \"Чернетки\".</string>
     <string name="open_drawer">Відкрити</string>
     <string name="close_drawer">Закрити</string>
     <string name="inbox_option">Вхідні</string>
@@ -362,9 +362,9 @@
     <string name="delete_label_confirmation_title">Видалити вибрані мітки?</string>
     <string name="delete_folder_confirmation_title">Видалити вибрані теки?</string>
     <string name="delete_label_confirmation_message">Електронні листи, що містяться тут, можна знайти в <b>Уся пошта</b></string>
-    <string name="pin_invalid">Неправильний ПІН. Введіть правильний ПІН з 4 цифр</string>
-    <string name="pin_not_match">ПІН-коди відрізняються</string>
-    <string name="new_pin_saved">Новий ПІН збережено</string>
+    <string name="pin_invalid">Неправильний PIN-код. Введіть правильний PIN-код із 4 цифр</string>
+    <string name="pin_not_match">PIN-коди відрізняються</string>
+    <string name="new_pin_saved">Новий PIN-код збережено</string>
     <string name="attachment_download_success">%s успішно завантажено до файлового менеджера</string>
     <string name="attachment_download_failed">%s не вдалося завантажити належним чином</string>
     <string name="ringtone">Мелодія</string>
@@ -379,10 +379,10 @@
     <string name="hyperlink_confirmation_dialog_text_html">Ви збираєтеся запустити браузер і перейти до:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Хочете продовжити?</string>
     <string name="dont_ask_again">Не питати знову</string>
     <plurals name="incorrect_pin_remaining_attempts">
-        <item quantity="one">Неправильний ПІН. Залишилась %d спроба</item>
-        <item quantity="few">Неправильний ПІН. Залишилось %d спроби</item>
-        <item quantity="many">Неправильний ПІН. Залишилось %d спроб</item>
-        <item quantity="other">Неправильний ПІН. Залишилось %d спроб</item>
+        <item quantity="one">Неправильний PIN-код. Залишилась %d спроба</item>
+        <item quantity="few">Неправильний PIN-код. Залишилось %d спроби</item>
+        <item quantity="many">Неправильний PIN-код. Залишилось %d спроб</item>
+        <item quantity="other">Неправильний PIN-код. Залишилось %d спроб</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="one">%d спроба до стирання захищених даних!</item>
@@ -410,7 +410,7 @@
     <string name="label_add_new">Додати нову мітку</string>
     <string name="available_labels">Доступні мітки</string>
     <string name="delete_selected">Видалити вибране</string>
-    <string name="pin_not_activated">ПІН не активовано</string>
+    <string name="pin_not_activated">PIN-код не активовано</string>
     <string name="available_options">Доступні варіанти</string>
     <string name="background_sync_subtitle">Якщо цю функцію увімкнено, програма синхронізуватиметься з сервером у фоновому режимі. Вимкнення цієї функції також вимкне push-сповіщення.</string>
     <string-array name="notification_options">
@@ -684,7 +684,7 @@
     <string name="need_storage_permissions_download_attachment_text">Щоб завантажити вкладення вам потрібно надати
         доступ до сховища.</string>
     <string name="need_contacts_permissions_text">Щоб імпортувати контакти, вам потрібно надати доступ до контактів.</string>
-    <string name="need_notification_permissions_to_receive_notifications">Щоб отримувати сповіщення із застосунку, ви маєте надати дозвіл на показ сповіщень.</string>
+    <string name="need_notification_permissions_to_receive_notifications">Щоб отримувати сповіщення з програми, ви маєте надати дозвіл на показ сповіщень.</string>
     <string name="push_notifications_alert_title">Push-сповіщення</string>
     <string name="push_notifications_alert_subtitle">Push-сповіщення Proton Mail не працюють без оновлених сервісів Google Play.</string>
     <string name="app_locked">Програму заблоковано</string>
@@ -813,7 +813,7 @@
     <string name="notification_settings">Налаштування сповіщень</string>
     <string name="auto_lock">Автоблокування</string>
     <string name="auto_lock_app">Автоблокування програми</string>
-    <string name="auto_lock_description">Увімкніть цю функцію, щоб автоматично блокувати програму і використовувати ПІН або відбиток пальця для розблокування.</string>
+    <string name="auto_lock_description">Увімкніть цю функцію, щоб автоматично блокувати програму і використовувати PIN-код або відбиток пальця для розблокування.</string>
     <string name="change_pin_code">Змінити PIN-код</string>
     <string name="auto_lock_timer">Таймер автоблокування</string>
     <string name="connections_via_third_parties">Альтернативна маршрутизація</string>
@@ -844,7 +844,7 @@
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Поширені проблеми зв\'язку та їх розв\'язання</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;Немає зв\'язку з інтернетом&lt;/i&gt; — Переконайтеся у справності з\'єднання.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема з постачальником послуги доступу Інтернету (ISP)&lt;/i&gt; — Спробуйте під\'єднатися до Proton з іншої мережі (або скористайтеся &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; або &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема з постачальником послуги доступу інтернету (ISP)&lt;/i&gt; — Спробуйте під\'єднатися до Proton з іншої мережі (або скористайтеся &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; або &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Блокування урядом&lt;/i&gt; — Можливо, ваша країна блокує доступ до Proton. Спробуйте &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (або інший VPN) або &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; для доступу до Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Перешкоджання антивіруса&lt;/i&gt; — Тимчасово вимкніть або вилучіть антивірусне програмне забезпечення.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Перешкоджання проксі/брандмауера&lt;/i&gt; — Вимкніть будь-які проксі-сервери чи брандмауери або зверніться до адміністратора мережі.
@@ -867,8 +867,8 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Недійсний ключ API Firebas. Push-сповіщення не працюватимуть.</string>
     <string name="failed_saving_draft_online">Не вдалося зберегти в мережі чернетку повідомлення: \"%s\"</string>
-    <string name="failed_draft_does_not_exist">Повідомлення «%s» не існує.</string>
-    <string name="failed_uploading_attachment_online">Помилка вкладення до повідомлення: «%s»</string>
+    <string name="failed_draft_does_not_exist">Повідомлення \"%s\" не існує.</string>
+    <string name="failed_uploading_attachment_online">Помилка вкладення до повідомлення: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Це повідомлення не можна відкрити, доки воно надсилається</string>
     <string name="enable_conversation_mode">Увімкнути режим розмов</string>
     <!-- endregion -->
@@ -908,4 +908,6 @@
     <string name="details_show_history">Показати історію</string>
     <string name="could_not_complete_action">Неможливо завершити цю дію</string>
     <string name="decryption_of_message_failed">Помилка розшифрування: не вдалося розшифрувати вміст цього повідомлення.</string>
+    <string name="expand_message_details">Розгорнути подробиці</string>
+    <string name="collapse_message_details">Згорнути подробиці</string>
 </resources>

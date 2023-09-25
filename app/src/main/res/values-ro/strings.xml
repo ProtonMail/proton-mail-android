@@ -53,7 +53,7 @@
     <string name="mailbox_empty_spam_subtitle">Folderul de mesaje nedorite este gol</string>
     <string name="mailbox_empty_trash_subtitle">Coșul de gunoi este gol</string>
     <string name="mailbox_empty_state_no_results_found">Nu s-au găsit rezultate</string>
-    <string name="mailbox_empty_state_try_a_different_term">Căutați alt termen de căutare</string>
+    <string name="mailbox_empty_state_try_a_different_term">Încercați să căutați alt termen</string>
     <string name="mailbox_no_messages">Nu sunt mesaje</string>
     <plurals name="mailbox_unread_count">
         <item quantity="one">Unul necitit</item>
@@ -81,21 +81,21 @@
     <string name="scheduled_message_moved_to_trash_desc">Mutând acest mesaj în gunoi se va anula programarea sa.</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">CA:</string>
+    <string name="composer_bcc">Ca:</string>
     <string name="composer_cc">C:</string>
     <string name="composer_compose_email">Compunere e-mail</string>
     <string name="composer_from">De la:</string>
     <string name="composer_subject">Subiect:</string>
     <string name="composer_to">Către:</string>
     <string name="composer_removing_address_generic_error">Nu se poate verifica adresa: %s. Trimiterea ar putea eșua.</string>
-    <string name="composer_removing_address_server_error">Eliminare adresa: %s. %s</string>
+    <string name="composer_removing_address_server_error">Se elimină adresa: %s. %s</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">La %s, %s &lt; %s&gt; a scris:</string>
     <string name="set_msg_password_title">Setare parolă</string>
     <string name="set_msg_password_info">Setați o parolă pentru a cripta acest mesaj pentru cei care nu sunt utilizatori ai Proton Mail. <a href="https://proton.me/support/password-protected-emails">Detalii</a></string>
     <string name="set_msg_password_info_icon_description">Informaţii</string>
     <string name="set_msg_password_msg_password_title">Parolă mesaj</string>
-    <string name="set_msg_password_msg_password_hint">între 4 și 21 de caractere</string>
+    <string name="set_msg_password_msg_password_hint">Între 4 și 21 de caractere</string>
     <string name="set_msg_password_repeat_password_title">Repetare parolă</string>
     <string name="set_msg_password_repeat_password_hint">Parolele trebuie să corespundă.</string>
     <string name="set_msg_password_password_hint_title">Indiciu parolă</string>
@@ -122,8 +122,8 @@
     <string name="settings_confirm_pin_code_title">Repere cod PIN</string>
     <string name="settings_pins_dont_match">Codurile PIN trebuie să corespundă!</string>
     <string name="settings_enter_pin_code_title">Introduceţi codul PIN</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB folosit)</string>
-    <string name="settings_storage_limit_unlimited_value">Nelimitat (%1$.2f MB folosiți)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MiB (%2$.2f MiB folosit)</string>
+    <string name="settings_storage_limit_unlimited_value">Nelimitat (%1$.2f MiB folosiți)</string>
     <string name="settings_swipe_settings_info">Configurare gesturi de glisare pentru a accesa cele mai utilizate acțiuni.</string>
     <string name="settings_swipe_left_to_right">De la stânga la dreapta</string>
     <string name="settings_swipe_right_to_left">De la dreapta la stânga</string>
@@ -138,7 +138,7 @@
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Selectați dosarul părinte (opțional)</string>
-    <string name="labels_manager_parent_folder_selected"><b>Folderul părinte a fost selectat.</b> Atingeți pentru a schimba.</string>
+    <string name="labels_manager_parent_folder_selected"><b>Folderul părinte a fost selectat.</b> Atingeți pentru a-l schimba.</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Folder părinte</string>
@@ -188,7 +188,7 @@
     <!-- should check for html tag -->
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Imposibil de încărcat conținutul. Vă rugăm să activați Chrome.</string>
-    <string name="error_chrome_not_found">Imposibil de încărcat conținutul. Vă rugăm să instalați Chrome.</string>
+    <string name="error_chrome_not_found">Imposibil de încărcat conținutul. Trebuie să instalați Chrome.</string>
     <string name="messages_load_failure">Nu s-au putut descărca mesajele</string>
     <string name="message_details_load_failure">Nu s-au putut descărca detaliile mesajului</string>
     <string name="no_more_messages">Nu mai există mesaje</string>
@@ -244,7 +244,7 @@
     <string name="no_labels">Nu sunt etichete</string>
     <string name="to">Către</string>
     <string name="cc">C</string>
-    <string name="bcc">CA</string>
+    <string name="bcc">Ca</string>
     <string name="to_prefix">Către:</string>
     <string name="reply">Răspuns</string>
     <string name="reply_all">Răspuns tuturor</string>
@@ -252,7 +252,7 @@
     <string name="email_subject">Subiect e-mail</string>
     <string name="define_message_password">Parolă mesaj</string>
     <string name="confirm_message_password">Confirmare parolă</string>
-    <string name="define_password_hint">Definire indiciu (opţional)</string>
+    <string name="define_password_hint">Definire indiciu (opțional)</string>
     <string name="eo_passwords_do_not_match">Parolele nu coincid</string>
     <string name="define_expiration_period">Definire dată de expirare</string>
     <string name="set_message_expiration">Stabilire expirare mesaj</string>
@@ -326,7 +326,7 @@
     <string name="undo">Anulare</string>
     <string name="label_apply">Aplicare</string>
     <string name="label_add">Adăugare</string>
-    <string name="no_browser_found">Instalați un navigator pentru a finaliza această acțiune</string>
+    <string name="no_browser_found">Instalați un navigator pentru a finaliza această acțiune.</string>
     <string name="no_application_found">Nu este aplicație asociată acestei acțiuni</string>
     <string name="no_application_found_or_link_invalid">Nu s-a găsit o aplicație pentru această acțiune sau adresa nu este validă</string>
     <string name="label_deleted">Etichetă ștearsă</string>
@@ -385,8 +385,8 @@
         <item quantity="other">%d de încercări până la distrugerea sigură a datelor!</item>
     </plurals>
     <string name="logout">Deconectare</string>
-    <string name="logout_question_next_account">Veți fi comutat la %s.</string>
-    <string name="upgrade">Modernizare</string>
+    <string name="logout_question_next_account">Se va comuta la %s.</string>
+    <string name="upgrade">Modificare</string>
     <string name="error">Eroare</string>
     <string name="inline_prefix">[Inline]</string>
     <plurals name="inline_header">
@@ -505,7 +505,7 @@
     <string name="print_from_template">De la: %s</string>
     <string name="print_to_template">Către: %s;  </string>
     <string name="print_cc_template">C: %s;  </string>
-    <string name="print_bcc_template">CA: %s;  </string>
+    <string name="print_bcc_template">Ca: %s;  </string>
     <string name="address">Adresa: </string>
     <string name="address_street">Strada</string>
     <string name="address_extended_street">Stradă extinsă</string>
@@ -538,7 +538,7 @@
     <string name="load_embedded_images">Încărcare imagini incluse</string>
     <string name="remove_password">Eliminare parolă</string>
     <string name="remove_password_question">Eliminați parola?</string>
-    <string name="attachment_storage_value_current">Selectare actuală: %d MB</string>
+    <string name="attachment_storage_value_current">Selectare actuală: %d MiB</string>
     <string name="attachment_storage_value_current_unlimited">Selectare actuală: nelimitat</string>
     <string name="attachment_offline_max_storage">Stabilește cantitatea maximă de spațiu de stocare pe care Proton Mail o poate utiliza pe dispozitivul mobil.</string>
     <string name="load_embedded_images_failed_no_network">Încărcare eșuată imagini incluse. Verificați conexiunea la internet.</string>
@@ -555,9 +555,9 @@
     <!-- Sender locks -->
     <string name="sender_lock_zero_access">Stocat criptat cu acces exclusiv personal</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_end_to_end">Trimis de dvs. cu criptare în ambele părți</string>
+    <string name="sender_lock_sent_end_to_end">Trimis de către dvs. cu criptare în ambele părți.</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Trimis de Proton Mail cu criptare cu acces zero</string>
+    <string name="sender_lock_sent_autoresponder">Trimis cu Proton Mail cu criptare cu acces zero.</string>
     <string name="sender_lock_verification_failed">Verificare eșuată expeditor</string>
     <string name="sender_lock_pgp_encrypted">Mesaj criptat PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Mesaj criptat cu PGP de la adresă verificată</string>
@@ -667,10 +667,8 @@ descărcarea în fundal a mesajelor noi</string>
         Vă sfătuim să ștergeți din mesaje sau să mai achiziționați spațiu de stocare înainte de a-l epuiza.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permisiuni</string>
-    <string name="need_storage_permissions_add_attachment_text">Pentru a adăuga atașamente trebuie să permiteți
-        accesul la spațiul de stocare al telefonului.</string>
-    <string name="need_storage_permissions_download_attachment_text">Pentru a descărca atașamente, trebuie să permiteți
-        accesul la spațiul de stocare al telefonului.</string>
+    <string name="need_storage_permissions_add_attachment_text">Pentru a adăuga atașamente trebuie să permiteți accesul la spațiul de stocare al telefonului.</string>
+    <string name="need_storage_permissions_download_attachment_text">Pentru a descărca atașamente, trebuie să permiteți accesul la spațiul de stocare al telefonului.</string>
     <string name="need_contacts_permissions_text">Pentru a importa contacte, trebuie să permiteți accesul la contacte.</string>
     <string name="need_notification_permissions_to_receive_notifications">Pentru a primi notificări de la aplicație trebuie să activați permisiunea pentru notificări.</string>
     <string name="push_notifications_alert_title">Notificări instante</string>
@@ -705,7 +703,7 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="signature">Semnătura</string>
     <string name="mobile_footer">Mesaj subsol</string>
     <string name="edit_mobile_footer">Activare mesaj subsol</string>
-    <string name="default_mobile_footer">Trimis cu Proton Mail pentru mobil</string>
+    <string name="default_mobile_footer">Trimis cu Proton Mail pentru mobil.</string>
     <string name="mobile_footer_is_premium">Modificarea mesajului din subsol este permisă doar celor cu un cont plătit</string>
     <string name="mobile_footer_info">Acest mesaj din subsol este adăugat după semnătură</string>
     <!-- region Snooze Settings -->
@@ -805,7 +803,7 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="connections_via_third_parties">Rută alternativă</string>
     <string name="allow_secure_connections_via_third_parties">Permitere rută alternativă</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">În cazul în care serverele Proton sunt blocate, această setare permite aplicației să încerce accesarea printr-o rețea alternativă pentru a ajunge la Proton, ceea ce poate fi util pentru ocolirea paravanelor de protecție sau a problemelor de rețea. Se recomandă păstrarea acestei setări pentru o fiabilitate mai mare.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">În cazul în care serverele Proton sunt blocate, această setare permite aplicației să încerce accesarea printr-o rețea alternativă pentru a ajunge la Proton, ceea ce poate fi util pentru ocolirea paravanelor de protecție sau a problemelor de rețea. Se recomandă păstrarea acestei setări acitvată pentru o fiabilitate mai mare.<a href="https://proton.me/blog/anti-censorship-alternative-routing">Detalii</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">În cazul în care serverele Proton sunt blocate, această setare permite aplicației să încerce accesarea printr-o rețea alternativă pentru a ajunge la Proton, ceea ce poate fi util pentru ocolirea paravanelor de protecție sau a problemelor de rețea. Se recomandă păstrarea acestei setări activată pentru o fiabilitate mai mare.<a href="https://proton.me/blog/anti-censorship-alternative-routing">Detalii</a></string>
     <string name="app_language">Limbă aplicație</string>
     <string name="custom_language_dialog_title">Selectare limbă</string>
     <string name="auto_detect">Autodetectare</string>
@@ -849,7 +847,7 @@ descărcarea în fundal a mesajelor noi</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Gesturi glisare schimbate</string>
     <string name="swipe_gestures_changed_message">După ultima actualizare gesturile de glisare au fost schimbate. Dacă doriți, le puteți reseta în setări.</string>
-    <string name="go_to_settings">Accesați setările</string>
+    <string name="go_to_settings">Accesare setări</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Cheie API Firebase nevalidă. Notificările push nu vor funcționa.</string>
     <string name="failed_saving_draft_online">Nu s-a reușit salvarea ciornei pentru mesajul: „%s”</string>
@@ -892,4 +890,6 @@ descărcarea în fundal a mesajelor noi</string>
     <string name="details_show_history">Afişare istoric</string>
     <string name="could_not_complete_action">Nu s-a putut finaliza acțiunea</string>
     <string name="decryption_of_message_failed">Eroare decriptare: decriptarea conținutului criptat al acestui mesaj a eșuat.</string>
+    <string name="expand_message_details">Extindere detalii mesaj</string>
+    <string name="collapse_message_details">Restrângere detalii mesaj</string>
 </resources>

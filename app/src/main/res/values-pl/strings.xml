@@ -25,7 +25,7 @@
     <string name="x_days">dni</string>
     <string name="x_done">Gotowe</string>
     <string name="x_edit">Edytuj</string>
-    <string name="x_hours">godziny</string>
+    <string name="x_hours">Hours</string>
     <string name="x_more">Więcej</string>
     <string name="x_none">Brak</string>
     <string name="x_search">Szukaj</string>
@@ -363,7 +363,7 @@
     <string name="delete_folder_confirmation_title">Usunąć zaznaczone foldery?</string>
     <string name="delete_label_confirmation_message">Przypisane wiadomości znajdziesz w folderze <b>Wszystkie wiadomości</b></string>
     <string name="pin_invalid">Kod PIN jest nieprawidłowy, wpisz poprawny 4-cyfrowy kod PIN</string>
-    <string name="pin_not_match">Kody PIN nie pasują</string>
+    <string name="pin_not_match">Kody PIN nie pasują do siebie</string>
     <string name="new_pin_saved">Nowy kod PIN został zapisany</string>
     <string name="attachment_download_success">Plik %s został pobrany</string>
     <string name="attachment_download_failed">Nie udało się pobrać pliku %s</string>
@@ -379,10 +379,10 @@
     <string name="hyperlink_confirmation_dialog_text_html">Masz zamiar uruchomić przeglądarkę i przejść do:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Czy chcesz kontynuować?</string>
     <string name="dont_ask_again">Nie pytaj ponownie</string>
     <plurals name="incorrect_pin_remaining_attempts">
-        <item quantity="one">Kod PIN jest nieprawidłowy, pozostała %d próba</item>
-        <item quantity="few">Kod PIN jest nieprawidłowy, pozostały %d próby</item>
-        <item quantity="many">Kod PIN jest nieprawidłowy, pozostało %d prób</item>
-        <item quantity="other">Kod PIN jest nieprawidłowy, pozostało %d prób</item>
+        <item quantity="one">Kod PIN jest nieprawidłowy. Pozostała %d próba</item>
+        <item quantity="few">Kod PIN jest nieprawidłowy. Pozostały %d próby</item>
+        <item quantity="many">Kod PIN jest nieprawidłowy. Pozostało %d prób</item>
+        <item quantity="other">Kod PIN jest nieprawidłowy. Pozostało %d prób</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="one">Pozostała %d próba do bezpiecznego wymazania danych!</item>
@@ -812,7 +812,7 @@
     <string name="auto_lock_app">Automatyczna blokada aplikacji</string>
     <string name="auto_lock_description">Włączenie tej funkcji zablokuje aplikację.\nWymagane będzie użycie kodu PIN lub odcisku palca, aby ją odblokować.</string>
     <string name="change_pin_code">Zmień kod PIN</string>
-    <string name="auto_lock_timer">Czas automatycznego blokowania</string>
+    <string name="auto_lock_timer">Automatyczne blokowanie</string>
     <string name="connections_via_third_parties">Alternatywne przekierowanie połączenia</string>
     <string name="allow_secure_connections_via_third_parties">Zezwalaj na alternatywne przekierowanie połączenia</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">W przypadku zablokowania dostępu do stron Proton, ta konfiguracja pozwoli aplikacji wypróbować alternatywne połączenia sieciowe, które mogą przywrócić ten dostęp. Ta funkcja może być przydatna podczas problemów z siecią lub w celu ominięcia zapór. Zalecamy włączenie tego ustawienia dla zapewnienia większej niezawodności.</string>
@@ -873,7 +873,7 @@
     <string name="star">Oznacz gwiazdką</string>
     <string name="unstar">Usuń gwiazdkę</string>
     <string name="star_unstar">Oznacz gwiazdką / usuń gwiazdkę</string>
-    <string name="send_to_archive">Przenieś do Archiwum?</string>
+    <string name="send_to_archive">Przenieść do Archiwum?</string>
     <string name="label_as">Oznacz jako…</string>
     <string name="mark_as_unread">Oznacz jako nieprzeczytane</string>
     <string name="mark_as_read">Oznacz jako przeczytane</string>
@@ -904,4 +904,6 @@
     <string name="details_show_history">Pokaż historię</string>
     <string name="could_not_complete_action">Nie można zakończyć akcji</string>
     <string name="decryption_of_message_failed">Błąd odszyfrowywania: odszyfrowanie tej wiadomości nie powiodło się.</string>
+    <string name="expand_message_details">Rozwiń szczegóły wiadomości</string>
+    <string name="collapse_message_details">Zwiń szczegóły wiadomości</string>
 </resources>
