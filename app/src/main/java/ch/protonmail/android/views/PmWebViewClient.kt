@@ -252,9 +252,6 @@ open class PmWebViewClient(
         if (uri.scheme.equals("cid", ignoreCase = true) || uri.scheme.equals("data", ignoreCase = true)) {
             return super.shouldInterceptRequest(view, url)
         }
-        if (url.lowercase(Locale.getDefault()).contains("/favicon.ico")) {
-            return super.shouldInterceptRequest(view, url)
-        }
         blockedImages++
         return WebResourceResponse("text/plain", "utf-8", ByteArrayInputStream(ByteArray(0)))
     }
