@@ -61,6 +61,7 @@
         <item>Українська</item>
         <item>简体中文</item>
         <item>繁體中文</item>
+        <item>ქართული ენა (beta)</item>
     </array>
     <array name="custom_language_values" translatable="false">
         <item>en</item>
@@ -90,5 +91,6 @@
         <item>uk</item>
         <item>zh_CN</item>
         <item>zh_TW</item>
+        <item>ka</item>
     </array>
 </resources>

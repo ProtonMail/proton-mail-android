@@ -160,9 +160,9 @@
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Herkes için gizlilik</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Sorunsuz uçtan uca şifrelemenin tadını çıkarmak için tanıdıklarınızı Proton Mail kullanmaya davet edin ya da gönderdiğiniz iletilere parola koruması ekleyin.</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Tanıdıklarınıza sorunsuz Proton Mail uçtan uca şifrelemesini önerin ve iletilerinize parola koruması ekleyin.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Temiz ve düzenli</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">Gelen kutunuzu mükemmelleştirmek için iletileri dosyalayın, etiketleyin ve renklendirin.</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Gelen kutunuzu düzenlemek için iletileri dosyalayın, etiketleyin ve renklendirin.</string>
     <string name="existing_user_onboarding_new_look_headline">Yeni görünüm, aynı koruma</string>
     <string name="existing_user_onboarding_new_look_description">Şifrelenmiş e-postanız daha kolay kullanım için yeniden tasarlandı.</string>
     <string name="existing_user_onboarding_new_features_headline">Yeni özellikler</string>
