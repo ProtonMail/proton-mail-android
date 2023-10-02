@@ -81,7 +81,7 @@
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
     <string name="composer_cc">Cc:</string>
-    <string name="composer_compose_email">Tulis email</string>
+    <string name="composer_compose_email">Tulis surel</string>
     <string name="composer_from">Dari:</string>
     <string name="composer_subject">Subjek:</string>
     <string name="composer_to">Kepada:</string>
@@ -163,7 +163,7 @@
     <string name="new_user_onboarding_neat_and_tidy_headline">Rapi dan teratur</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Arsipkan, labeli, dan warnai pesan Anda agar kotak masuk Anda dapat terlihat sempurna sebagaimana yang Anda kehendaki.</string>
     <string name="existing_user_onboarding_new_look_headline">Tampilan baru, perlindungan yang sama</string>
-    <string name="existing_user_onboarding_new_look_description">Email terenkripsi Anda telah sepenuhnya dirancang ulang agar dapat digunakan dengan mudah.</string>
+    <string name="existing_user_onboarding_new_look_description">Surel terenkripsi Anda telah sepenuhnya dirancang ulang agar dapat digunakan dengan mudah.</string>
     <string name="existing_user_onboarding_new_features_headline">Fitur baru</string>
     <string name="existing_user_onboarding_new_features_description">Nikmati berbagai fitur baru seperti mode gelap, sistem notifikasi yang telah disempurnakan, filter untuk pesan-pesan yang belum dibaca, dan subfolder.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton yang baru, dengan perlindungan yang tersatukan</string>
@@ -197,9 +197,9 @@
     <string name="api_offline">Proton Mail sedang offline. Kunjungi https://protonstatus.com atau akun Twitter kami untuk mengetahui status kami saat ini: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Kontak telah tersimpan</string>
     <string name="contact_saved_offline">Kontak tersimpan, akan disinkronkan saat koneksi tersedia</string>
-    <string name="contact_exist">Email kontak sudah ada</string>
-    <string name="invalid_email">Alamat email tidak valid</string>
-    <string name="duplicate_email">Alamat email adalah duplikat</string>
+    <string name="contact_exist">Surel kontak sudah ada</string>
+    <string name="invalid_email">Alamat surel tidak valid</string>
+    <string name="duplicate_email">Alamat surel adalah duplikat</string>
     <string name="message_drafted">Gagal mengirim pesan. Pesan Anda disimpan dalam folder draf</string>
     <string name="attachment_failed_message_drafted">Harap hapus dan lampirkan ulang \"%s\" dan kirim ulang pesan ini setelahnya. Pesan yang bersangkutan dapat Anda temukan pada folder \"Draf\".</string>
     <string name="open_drawer">Buka</string>
@@ -247,7 +247,7 @@
     <string name="reply">Balas</string>
     <string name="reply_all">Balas Semua</string>
     <string name="forward">Teruskan</string>
-    <string name="email_subject">Subjek email</string>
+    <string name="email_subject">Subjek surel</string>
     <string name="define_message_password">Kata Sandi Pesan</string>
     <string name="confirm_message_password">Konfirmasi Kata Sandi</string>
     <string name="define_password_hint">Tentukan Petunjuk (Opsional)</string>
@@ -282,7 +282,7 @@
     <string name="confirm">Konfirmasi</string>
     <string name="confirm_destructive_action">Apakah Anda yakin? Tindakan ini tidak dapat diurungkan.</string>
     <string name="create">Buat</string>
-    <string name="email">Email</string>
+    <string name="email">Surel</string>
     <string name="phone">Nomor telepon</string>
     <string name="save">Simpan</string>
     <string name="no_subject">Kirim pesan tanpa subjek?</string>
@@ -349,7 +349,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Hapus label yang dipilih?</string>
     <string name="delete_folder_confirmation_title">Hapus folder yang dipilih?</string>
-    <string name="delete_label_confirmation_message">Seluruh email yang tersimpan di sini akan dapat ditemukan di <b>Semua Surat</b></string>
+    <string name="delete_label_confirmation_message">Seluruh surel yang tersimpan di sini akan dapat ditemukan di <b>Semua Surat</b></string>
     <string name="pin_invalid">PIN tidak valid, masukkan 4 digit PIN yang benar</string>
     <string name="pin_not_match">PIN tidak cocok</string>
     <string name="new_pin_saved">PIN baru disimpan</string>
@@ -409,12 +409,12 @@
     <string name="type_title">Pilih Jenis</string>
     <string name="sync_local_contacts">Unggah ke Proton Mail</string>
     <string name="please_select_only_phone_contacts">Harap pilih hanya Kontak Telepon Lokal</string>
-    <string name="contact_vcard_hint_email">Masukkan Email</string>
+    <string name="contact_vcard_hint_email">Masukkan Surel</string>
     <string name="contact_vcard_hint_phone">Masukkan Nomor Telepon</string>
     <string name="contact_vcard_hint_address">Masukkan Alamat</string>
     <string name="contact_vcard_hint_other">Masukkan Informasi</string>
     <string name="contact_vcard_hint_note">Masukkan Catatan</string>
-    <string name="contact_vcard_new_row_email">tambahkan alamat email</string>
+    <string name="contact_vcard_new_row_email">tambahkan alamat surel</string>
     <string name="contact_vcard_new_row_phone">tambahkan nomor telepon</string>
     <string name="contact_vcard_new_row_address">tambahkan alamat</string>
     <string name="contact_vcard_new_row_other">tambahkan informasi</string>
@@ -438,7 +438,7 @@
         <item>Lainnya</item>
     </string-array>
     <string-array name="vcard_option_email">
-        <item>Email</item>
+        <item>Surel</item>
         <item>Pribadi</item>
         <item>Kantor</item>
         <item>Lainnya</item>
@@ -475,8 +475,8 @@
     <string name="folder_invalid">Folder tidak dibuat karena nama tidak valid.</string>
     <string name="folder_deleted">Folder Dihapus</string>
     <string name="folder_deleted_error">Kesalahan saat menghapus folder</string>
-    <string name="empty_emails">Tidak ada email</string>
-    <string name="empty_email_list">Tidak ada alamat email</string>
+    <string name="empty_emails">Tidak ada surel</string>
+    <string name="empty_email_list">Tidak ada alamat surel</string>
     <string name="no_contacts">Tidak ada kontak</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; menulis:</string>
     <string name="update_label">Perbarui Label</string>
@@ -485,9 +485,9 @@
     <string name="details_copied">Rincian disalin ke papan klip</string>
     <string name="saving">Menyimpan...</string>
     <string name="update_folder">Perbarui Folder</string>
-    <string name="spam_score_100">Walaupun email ini sekilas terlihat seperti dikirim dari alamat Proton Mail, email ini sepertinya berasal dari luar sistem kami dan tidak memenuhi persyaratan autentikasi yang kami miliki. Email ini mungkin palsu atau tidak diteruskan dengan benar!</string>
-    <string name="spam_score_101">Email ini telah gagal memenuhi syarat autentikasi domainnya. Email ini mungkin telah dipalsukan atau tidak diteruskan dengan benar.</string>
-    <string name="spam_score_102">Pesan ini mungkin merupakan sebuah upaya phishing. Mohon periksa nama pengirim dan konten yang tertera secara seksama untuk memastikan keabsahan email ini. <a href="https://proton.me/blog/prevent-phishing-attacks">PELAJARI LEBIH LANJUT</a></string>
+    <string name="spam_score_100">Walaupun surel ini sekilas terlihat seperti dikirim dari alamat Proton Mail, surel ini sepertinya berasal dari luar sistem kami dan tidak memenuhi persyaratan autentikasi yang kami miliki. Surel ini mungkin palsu atau tidak diteruskan dengan benar!</string>
+    <string name="spam_score_101">Surel ini telah gagal memenuhi syarat autentikasi domainnya. Surel ini mungkin telah dipalsukan atau tidak diteruskan dengan benar.</string>
+    <string name="spam_score_102">Pesan ini mungkin merupakan sebuah upaya phishing. Mohon periksa nama pengirim dan konten yang tertera secara seksama untuk memastikan keabsahan surel ini. <a href="https://proton.me/blog/prevent-phishing-attacks">PELAJARI LEBIH LANJUT</a></string>
     <string name="print_from_template">Dari: %s</string>
     <string name="print_to_template">Kepada: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -508,12 +508,12 @@
     <string name="learn_more"><u>Pelajari Lebih Lanjut</u></string>
     <string name="info">Informasi</string>
     <string name="error_can_not_send_from_this_address">Tingkatkan ke paket berbayar untuk mengirim dari alamat %s Anda.</string>
-    <string name="email_empty">Alamat email tidak ada</string>
+    <string name="email_empty">Alamat surel tidak ada</string>
     <string name="encrypted_contact_details">Rincian Kontak Terenkripsi</string>
     <string name="convert_question">Unggah kontak lokal</string>
     <string name="convert_question_subtitle">Tindakan ini akan mengunggah kontak lokal pada perangkat Anda ke direktori kontak Proton Mail Anda. Anda akan kemudian dapat mengakses kontak ini pada perangkat lainnya yang Anda miliki melalui Proton Mail.</string>
     <string name="refresh_contacts">Muat Ulang</string>
-    <string name="invalid_email_some_contacts">Alamat email sebagian kontak Anda tidak valid</string>
+    <string name="invalid_email_some_contacts">Alamat surel sebagian kontak Anda tidak valid</string>
     <string name="protonmail_contacts">Kontak Proton Mail</string>
     <string name="device_contacts">Kontak Perangkat</string>
     <string name="print_date_template">Tanggal: %s</string>
@@ -566,8 +566,8 @@
     <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">PELAJARI LEBIH LANJUT</a></string>
     <string name="channel_name_attachments">Lampiran</string>
     <string name="channel_description_attachments">Menginformasikan status unduhan lampiran</string>
-    <string name="channel_name_emails">Email</string>
-    <string name="channel_description_emails">Pemberitahuan email masuk</string>
+    <string name="channel_name_emails">Surel</string>
+    <string name="channel_description_emails">Pemberitahuan surel masuk</string>
     <string name="channel_name_account">Akun</string>
     <string name="channel_description_account">Status akun</string>
     <string name="channel_name_ongoing_operations">Operasi yang sedang berlangsung</string>
@@ -586,7 +586,7 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Tambah Foto</string>
     <string name="contact_display_name">Nama Tampilan</string>
-    <string name="add_new_email">Tambah Alamat Email</string>
+    <string name="add_new_email">Tambah Alamat Surel</string>
     <string name="no_groups">Tidak ada grup</string>
     <string name="contact_vcard_note">Catatan</string>
     <string name="edit_contact">Ubah Kontak</string>
@@ -633,11 +633,11 @@
     <string name="contacts_add_photo_select_camera">Jepret Dari Kamera</string>
     <string name="save_group_validation_error">Mohon masukkan nama grup</string>
     <!-- region Storage Limit Reached -->
-    <string name="storage_limit_alert">Batas penyimpanan tercapai. Tidak dapat mengirim atau menerima email.
+    <string name="storage_limit_alert">Batas penyimpanan tercapai. Tidak dapat mengirim atau menerima surel.
         Tekan untuk mempelajari lebih lanjut.</string>
     <string name="storage_limit_warning_title">Peringatan</string>
     <string name="storage_limit_reached_text">Kuota penyimpanan Anda telah 100% terpakai. Anda
-        tidak akan lagi dapat menerima email-email baru kecuali Anda menghapus email-email lama atau membeli kuota penyimpanan
+        tidak akan lagi dapat menerima surel-surel baru kecuali Anda menghapus surel-surel lama atau membeli kuota penyimpanan
         tambahan.</string>
     <string name="storage_limit_approaching_text">Kapasitas penyimpanan Anda sudah mencapai 90%.
         Silakan pertimbangkan untuk membebaskan ruang atau membayar penyimpanan lebih sebelum kapasitas penyimpanan Anda habis.</string>
@@ -668,12 +668,12 @@
     <string name="drawer_subscription">Langganan</string>
     <string name="password_manager">Pengelolaan kata sandi</string>
     <string name="password_changed">Kata sandi diubah.</string>
-    <string name="recovery_email">Alamat email pemulihan</string>
-    <string name="recovery_email_changed">Email pemulihan diubah.</string>
+    <string name="recovery_email">Alamat surel pemulihan</string>
+    <string name="recovery_email_changed">Surel pemulihan diubah.</string>
     <string name="storage">Ukuran kotak surat</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Alamat</string>
-    <string name="default_mail_address">Alamat email default</string>
+    <string name="default_mail_address">Alamat surel default</string>
     <string name="default_address">Alamat default</string>
     <string name="display_name_n_signature">Nama tampilan &amp; tanda tangan</string>
     <string name="display_name">Nama tampilan</string>
@@ -733,7 +733,7 @@
     <string name="mailbox">Kotak Surat</string>
     <string name="privacy">Privasi</string>
     <string name="auto_download_messages_title">Unduh pesan secara otomatis</string>
-    <string name="auto_download_messages_subtitle">Pada saat opsi ini diaktifkan, isi pesan akan diunduh secara otomatis setiap kali Anda menerima notifikasi email baru (yang akan menggunakan lebih banyak data). Apabila tidak, isi pesan hanya akan diunduh pada saat Anda membuka email. (Catatan: terlepas dari opsi yang Anda pilih, apabila Anda menghapus cache atau keluar dari akun, Anda tidak akan dapat membaca pesan saat offline.)</string>
+    <string name="auto_download_messages_subtitle">Pada saat opsi ini diaktifkan, isi pesan akan diunduh secara otomatis setiap kali Anda menerima notifikasi surel baru (yang akan menggunakan lebih banyak data). Apabila tidak, isi pesan hanya akan diunduh pada saat Anda membuka surel. (Catatan: terlepas dari opsi yang Anda pilih, apabila Anda menghapus cache atau keluar dari akun, Anda tidak akan dapat membaca pesan saat offline.)</string>
     <string name="settings_background_sync">Sinkronkan di Latar Belakang</string>
     <string name="settings_auto_show_images">Tampilkan Otomatis Gambar Jarak Jauh</string>
     <string name="settings_auto_show_embedded_images">Muat Gambar yang Tersemat Secara Otomatis</string>
@@ -767,7 +767,7 @@
     <!-- region App Settings -->
     <string name="push_notifications">Notifikasi</string>
     <string name="extended_notifications">Notifikasi Terinci</string>
-    <string name="extended_notifications_description">Aktifkan fitur ini untuk dapat melihat nama pengirim email dalam notifikasi yang diterima.</string>
+    <string name="extended_notifications_description">Aktifkan fitur ini untuk dapat melihat nama pengirim surel dalam notifikasi yang diterima.</string>
     <string name="notification_settings">Pengaturan Notifikasi</string>
     <string name="auto_lock">Kunci otomatis</string>
     <string name="auto_lock_app">Kunci aplikasi otomatis</string>
@@ -782,7 +782,7 @@
     <string name="custom_language_dialog_title">Pilih Bahasa Aplikasi</string>
     <string name="auto_detect">Deteksi otomatis</string>
     <string name="combined_contacts">Kontak gabungan</string>
-    <string name="turn_combined_contacts_on">Aktifkan fitur ini agar alamat email yang Anda ketik dapat dilengkapi secara otomatis dengan data kontak dari seluruh akun yang terhubung masuk.</string>
+    <string name="turn_combined_contacts_on">Aktifkan fitur ini agar alamat surel yang Anda ketik dapat dilengkapi secara otomatis dengan data kontak dari seluruh akun yang terhubung masuk.</string>
     <string name="local_cache_management">Cache lokal</string>
     <string name="cache_cleared">Cache lokal telah dikosongkan</string>
     <string name="empty_data">Bersihkan data</string>

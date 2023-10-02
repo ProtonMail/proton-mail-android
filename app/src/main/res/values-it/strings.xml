@@ -50,7 +50,7 @@
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Questa cartella è vuota</string>
     <string name="mailbox_empty_inbox_subtitle">Aggiornato</string>
-    <string name="mailbox_empty_spam_subtitle">La cartella Spam è vuota</string>
+    <string name="mailbox_empty_spam_subtitle">La cartella spam è vuota</string>
     <string name="mailbox_empty_trash_subtitle">Il cestino è vuoto</string>
     <string name="mailbox_empty_state_no_results_found">Nessun risultato trovato</string>
     <string name="mailbox_empty_state_try_a_different_term">Prova un termine di ricerca diverso</string>
@@ -71,7 +71,7 @@
     <string name="details_open_in_proton_calendar_icon_desc">Icona Proton Calendar</string>
     <string name="details_play_store_error">Impossibile aprire il Play Store</string>
     <string name="details_hyperlink_phishing_dialog_title">Attenzione: sospetto sito web falso</string>
-    <string name="details_hyperlink_phishing_dialog_content">Questo collegamento conduce a un sito Web che potrebbe tentare di rubare le tue informazioni, come password e dettagli della carta di credito.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Per la tua sicurezza, non continuare.</string>
+    <string name="details_hyperlink_phishing_dialog_content">Questo link conduce a un sito web che potrebbe tentare di rubare le tue informazioni, come password e dettagli della carta di credito.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Per la tua sicurezza, non continuare.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Torna indietro (consigliato)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignora l\'avviso e continua</string>
     <string name="scheduled_message_info">Questo messaggio verrà inviato il %s</string>
@@ -197,7 +197,7 @@
     <string name="you_are_offline">Sei offline</string>
     <string name="api_offline">Proton Mail è attualmente offline, controlla https://protonstatus.com o il nostro Twitter per conoscere lo stato attuale: https://twitter.com/ProtonPrivacy</string>
     <string name="contact_saved">Contatto salvato</string>
-    <string name="contact_saved_offline">Contatto salvato. Verrà sincronizzato quando sarà disponibile una connessione.</string>
+    <string name="contact_saved_offline">Contatto salvato, verrà sincronizzato quando sarà disponibile una connessione</string>
     <string name="contact_exist">L\'email del contatto esiste già.</string>
     <string name="invalid_email">Indirizzo email non valido</string>
     <string name="duplicate_email">L\'indirizzo email è un duplicato</string>
@@ -353,7 +353,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Eliminare le etichette selezionate?</string>
     <string name="delete_folder_confirmation_title">Eliminare le cartelle selezionate?</string>
-    <string name="delete_label_confirmation_message">Le email qui contenute saranno trovate in <b>Tutte le email</b></string>
+    <string name="delete_label_confirmation_message">Le email contenute qui potranno essere trovate in <b>Tutte le email</b></string>
     <string name="pin_invalid">PIN non valido, inserisci il PIN di 4 cifre corretto</string>
     <string name="pin_not_match">Il PIN non corrisponde</string>
     <string name="new_pin_saved">Nuovo PIN salvato</string>
@@ -366,8 +366,8 @@
     <string name="select_tone">Seleziona suoneria</string>
     <string name="copy_link">Copia link</string>
     <string name="share_link">Condividi link</string>
-    <string name="sync_attachments">Sincronizzando gli allegati</string>
-    <string name="processing_attachment">Elaborando l\'allegato</string>
+    <string name="sync_attachments">Sincronizzazione degli allegati</string>
+    <string name="processing_attachment">Elaborazione dell\'allegato</string>
     <string name="hyperlink_confirmation_dialog_text_html">Stai per avviare il browser web e navigare in:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vuoi continuare?</string>
     <string name="dont_ask_again">Non chiederlo più</string>
     <plurals name="incorrect_pin_remaining_attempts">
@@ -518,9 +518,9 @@
     <string name="email_empty">Indirizzo email mancante</string>
     <string name="encrypted_contact_details">Dettagli crittografati del contatto</string>
     <string name="convert_question">Carica contatti locali</string>
-    <string name="convert_question_subtitle">Questo caricherà i contatti locali sul suo dispositivo sulla sua cartella dei contatti di Proton Mail. In questo modo, sarà in grado di accedere a questi contatti da altri dispositivi tramite Proton Mail.</string>
+    <string name="convert_question_subtitle">Questo caricherà i contatti locali sul tuo dispositivo nella cartella dei contatti di Proton Mail. In questo modo potrai accedere a questi contatti da altri dispositivi, tramite Proton Mail.</string>
     <string name="refresh_contacts">Aggiorna</string>
-    <string name="invalid_email_some_contacts">L\'indirizzo email di alcuni dei suoi contatti non è valido</string>
+    <string name="invalid_email_some_contacts">L\'indirizzo email di alcuni dei tuoi contatti non è valido</string>
     <string name="protonmail_contacts">Contatti Proton Mail</string>
     <string name="device_contacts">Contatti del dispositivo</string>
     <string name="print_date_template">Data: %s</string>
@@ -543,7 +543,7 @@
     <string name="recipient_popup_see_details">Mostra dettagli contatto</string>
     <string name="send_with_untrusted_key_title">Vuoi inviare con una chiave non verificata?</string>
     <string name="send_with_untrusted_key_message">Hai abilitato la verifica dell\'indirizzo con una chiave verificata per %s, ma nessuna chiave di crittografia attivata è stata verificata.</string>
-    <string name="resign_contact_title">Vuoi ri-firmare il contatto?</string>
+    <string name="resign_contact_title">Vuoi firmare nuovamente il contatto?</string>
     <string name="resign_contact_message">La verifica di %s non è riuscita: il contatto non è firmato correttamente. Devi firmare nuovamente il contatto per poter inviare messaggi a questo indirizzo o modificare il contatto. Questo può succedere anche quando recuperi la tua password e reimposti le tue chiavi.</string>
     <!-- Sender locks -->
     <string name="sender_lock_zero_access">Memorizzato con crittografia zero access</string>
@@ -649,7 +649,7 @@
         Tocca per scoprire di più.</string>
     <string name="storage_limit_warning_title">Attenzione</string>
     <string name="storage_limit_reached_text">Hai utilizzato il 100% del tuo spazio disponibile. Non
-        sarà più possibile inviare o ricevere email a meno che non cancelli definitivamente qualche email o che acquisti più
+        potrai inviare o ricevere email a meno che non elimini definitivamente alcune email o acquisti più
         spazio.</string>
     <string name="storage_limit_approaching_text">Hai raggiunto il 90% del tuo spazio disponibile.
         Prova a liberare dello spazio o acquista più spazio di archiviazione prima di esaurirlo tutto.</string>
@@ -667,8 +667,8 @@
     <string name="use_pin_instead">Usa invece il PIN</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">Nessun dato biometrico registrato</string>
-    <string name="log_in_using_biometric_credential">Sblocca utilizzando le tue credenziali biometriche</string>
-    <string name="unlock_using_biometrics">Sblocca utilizzando i dati biometrici</string>
+    <string name="log_in_using_biometric_credential">Sblocca con le tue credenziali biometriche</string>
+    <string name="unlock_using_biometrics">Sblocca con la biometria</string>
     <string name="biometric_error_hw_not_available">Hardware biometrico non disponibile.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Destinatari nascosti</string>
@@ -687,7 +687,7 @@
     <string name="addresses">Indirizzi</string>
     <string name="default_mail_address">Indirizzo email predefinito</string>
     <string name="default_address">Indirizzo predefinito</string>
-    <string name="display_name_n_signature">Mostra nome &amp; firma</string>
+    <string name="display_name_n_signature">Nome visualizzato e firma</string>
     <string name="display_name">Nome visualizzato</string>
     <string name="edit_display_name">Modifica nome visualizzato</string>
     <string name="signature">Firma</string>
@@ -746,7 +746,7 @@
     <string name="mailbox">Casella email</string>
     <string name="privacy">Privacy</string>
     <string name="auto_download_messages_title">Scaricamento automatico dei messaggi</string>
-    <string name="auto_download_messages_subtitle">Quando l\'opzione è attivata, i corpi dei messaggi verranno scaricati automaticamente ogni volta che riceverai una nuova notifica via email (questo consumerà più dati). Se l\'opzione non è attivata, i corpi dei messaggi verranno scaricati solo quando si apre un\'email. (Nota: con entrambe le opzioni, se svuoti la cache o ti disconnetti, non potrai leggere i corpi dei messaggi mentre sei offline.)</string>
+    <string name="auto_download_messages_subtitle">Quando questa opzione è abilitata, i corpi dei messaggi verranno scaricati automaticamente ogni volta che riceverai una nuova notifica email (questo consumerà più dati). Se questa opzione non è abilitata, i corpi dei messaggi verranno scaricati solo quando apri un\'email. (Nota: con entrambe le opzioni, se cancelli la cache o ti disconnetti, non potrai leggere i corpi dei messaggi mentre sei offline.)</string>
     <string name="settings_background_sync">Sincronizzazione in background</string>
     <string name="settings_auto_show_images">Mostra automaticamente le immagini remote</string>
     <string name="settings_auto_show_embedded_images">Mostra automaticamente le immagini incorporate</string>

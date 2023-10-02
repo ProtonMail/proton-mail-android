@@ -1,0 +1,879 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2022 Proton AG
+  ~
+  ~ This file is part of Proton Mail.
+  ~
+  ~ Proton Mail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Mail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- region All -->
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
+    <string name="x_add_folder">საქაღალდის დამატება</string>
+    <string name="x_add_label">ჭდის დამატება</string>
+    <string name="x_days">დღე</string>
+    <string name="x_done">მზადაა</string>
+    <string name="x_edit">ჩასწორება</string>
+    <string name="x_hours">სთ</string>
+    <string name="x_more">მეტი</string>
+    <string name="x_none">არცერთი</string>
+    <string name="x_search">ძებნა</string>
+    <string name="x_set">დაყენება</string>
+    <string name="x_0">0</string>
+    <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">ჭდის ხატულა</string>
+    <string name="x_folder_icon_description">საქაღალდის ხატულა</string>
+    <string name="x_parent_folder_icon_description">საქაღალდე ბავშვებიანი ხატულით</string>
+    <!-- endregion -->
+    <!-- region Drawer -->
+    <string name="drawer_scheduled">დაგეგმილია</string>
+    <string name="drawer_contacts">კონტაქტები</string>
+    <string name="drawer_lock_the_app">აპის ჩაკეტვა</string>
+    <string name="drawer_report_bug">პრობლემის შესახებ შეტყობინება</string>
+    <string name="drawer_settings">მორგება</string>
+    <string name="drawer_sign_out">გასვლა</string>
+    <string name="drawer_create_folder_description">ახალი საქაღალდის შექმნა</string>
+    <string name="drawer_create_label_description">ახალი ჭდის შექმნა</string>
+    <!-- endregion -->
+    <!-- region Mailbox -->
+    <string name="mailbox_empty_folder_subtitle">საქაღალდე ცარიელია</string>
+    <string name="mailbox_empty_inbox_subtitle">განახლებულია</string>
+    <string name="mailbox_empty_spam_subtitle">თქვენი სპამის საქაღალდე ცარიელია</string>
+    <string name="mailbox_empty_trash_subtitle">სანაგვე ცარიელია</string>
+    <string name="mailbox_empty_state_no_results_found">შედეგების გარეშე</string>
+    <string name="mailbox_empty_state_try_a_different_term">სცადეთ სხვა საძიებო ტერმინი</string>
+    <string name="mailbox_no_messages">შეტყობინებების გარეშე</string>
+    <plurals name="mailbox_unread_count">
+        <item quantity="one">%d წაუკითხავი</item>
+        <item quantity="other">%d წაუკითხავი</item>
+    </plurals>
+    <string name="mailbox_updated_just_now">ახლახან განახლდა</string>
+    <string name="mailbox_updated_recently">ცოტა ხნის წინ განახლდა</string>
+    <string name="mailbox_updating">განახლება…</string>
+    <string name="is_proton">ეს Proton-ის შეტყობინებაა</string>
+    <string name="is_proton_official_badge">ოფიციალური</string>
+    <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Proton Calendar-ში გახსნა</string>
+    <string name="details_open_in_proton_calendar_subtitle">დაშიფრული კალენდრის დაცვა</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar-ის ხატულა</string>
+    <string name="details_play_store_error">Play Store-ის გახსნის შეცდომა</string>
+    <string name="details_hyperlink_phishing_dialog_title">გაფრთხილება: დიდი ალბათობით, ვებგვერდი ყალბია</string>
+    <string name="details_hyperlink_phishing_dialog_content">ბმული მიდის ვებგვერდამდე, რომელმაც შეიძლება მოიპაროს თქვენი ისეთი ინფორმაცია, როგორიცაა პაროლები და საკრედიტო ბარათის დეტალები..&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; თქვენივე უსაფრთხოებისთვის, არ გადახვიდეთ.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">უკან დაბრუნება (რეკომენდებულია)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">გაფრთხილების იგნორი და გაგრძელება</string>
+    <string name="scheduled_message_info">შეტყობინება გაიგზავნება: %s</string>
+    <string name="scheduled_message_edit_info">დაგეგმილი შეტყობინებების ჩასწორება ამჟამად, მხოლოდ, ვებ და iOS აპებიდანაა შესაძლებელი.</string>
+    <string name="scheduled_message_moved_to_trash_title">შეტყობინება არ გაიგზავნება</string>
+    <string name="scheduled_message_moved_to_trash_desc">ამ შეტყობინების სანაგვე ყუთში გადატანა მისი გაგზავნის გეგმას გააუქმებს.</string>
+    <!-- endregion -->
+    <!-- region Composer -->
+    <string name="composer_bcc">ბრმა ასლი:</string>
+    <string name="composer_cc">ასლი:</string>
+    <string name="composer_compose_email">წერილის შედგენა</string>
+    <string name="composer_from">გამომგზავნელი:</string>
+    <string name="composer_subject">საგანი:</string>
+    <string name="composer_to">ვის:</string>
+    <string name="composer_removing_address_generic_error">მისამართის შემოწმების შეცდომა: %s. წერილის გაგზავნა, ალბათ, წარუმატებელი იქნება.</string>
+    <string name="composer_removing_address_server_error">წაიშლება მისამართი: %s. %s</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">%s, %s &lt; %s&gt; დაწერა:</string>
+    <string name="set_msg_password_title">პაროლის დაყენება</string>
+    <string name="set_msg_password_info">დააყენეთ პაროლი ამ შეტყობინების Proton Mail-ის გარეთ დასაშიფრად. <a href="https://proton.me/support/password-protected-emails">გაიგეთ მეტი</a></string>
+    <string name="set_msg_password_info_icon_description">ინფო</string>
+    <string name="set_msg_password_msg_password_title">შეტყობინების პაროლი</string>
+    <string name="set_msg_password_msg_password_hint">4-დან 15-მდე სიმბოლო</string>
+    <string name="set_msg_password_repeat_password_title">გაიმეორეთ პაროლი</string>
+    <string name="set_msg_password_repeat_password_hint">პაროლები უნდა ემთხვეოდეს</string>
+    <string name="set_msg_password_password_hint_title">პაროლის მინიშნება</string>
+    <string name="set_msg_password_password_hint_hint">მითითების განსაზღვრა (არასავალდებულო)</string>
+    <string name="set_msg_password_apply_password">პაროლის დაყენება</string>
+    <string name="set_msg_password_remove_password">პაროლის მოშლა</string>
+    <string name="set_msg_password_error_too_short">პაროლი ძალიან მოკლეა</string>
+    <string name="set_msg_password_error_too_long">პაროლი ძალიან გრძელია</string>
+    <string name="set_msg_password_error_mismatch">პაროლები არ ემთხვევა</string>
+    <string name="set_msg_expiration_title">შეტყობინების ვადა</string>
+    <string name="set_msg_expiration_none">არცერთი</string>
+    <string name="set_msg_expiration_1_hour">1 სთ</string>
+    <string name="set_msg_expiration_1_day">1 დღე</string>
+    <string name="set_msg_expiration_3_days">3 დღე</string>
+    <string name="set_msg_expiration_1_week">1 კვირა</string>
+    <string name="set_msg_expiration_custom">ხელით</string>
+    <string name="set_msg_expiration_check_description">ელემენტი ჩართულია</string>
+    <string name="composer_invalid_sender_saving_draft_failed">\"ვისგან:\" მისამართი არასწორია. ჩაანაცვლეთ სწორი ვარიანტით</string>
+    <string name="composer_invalid_subject_saving_draft_failed">თემა არასწორია.</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_theme_title">თემა</string>
+    <string name="settings_create_pin_code_title">დააყენეთ PIN კოდი</string>
+    <string name="settings_confirm_pin_code_title">გაიმეორეთ PIN კოდი</string>
+    <string name="settings_pins_dont_match">PIN კოდები ერთმანეთს უნდა ემთხვეოდეს!</string>
+    <string name="settings_enter_pin_code_title">შეიყვანეთ PIN კოდი</string>
+    <string name="settings_storage_limit_mb_value">%1$d მბ (%2$.2f მბ გამოყენებულია)</string>
+    <string name="settings_storage_limit_unlimited_value">ულიმიტო (გამოყენებულია %1$.2f მბ)</string>
+    <string name="settings_swipe_settings_info">გასმის ჟესტების ხშირად გამოყენებულ ქმედებებზე მინიჭება.</string>
+    <string name="settings_swipe_left_to_right">მარცხნიდან მარჯვნივ</string>
+    <string name="settings_swipe_right_to_left">მარჯვნიდან მარცხნივ</string>
+    <string name="settings_swipe_saving">გასმის ქმედების ჩაწერა…</string>
+    <string name="settings_swipe_generic_error">გასმის ქმედების ჩაწერის შეცდომა</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">აპის თემა</string>
+    <string name="app_theme_light">ღია</string>
+    <string name="app_theme_dark">ბნელი</string>
+    <string name="app_theme_system">სისტემის ნაგულისხმები</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">აირჩიეთ მშობელი საქაღალდე (არასავალდებული)</string>
+    <string name="labels_manager_parent_folder_selected"><b>მონიშნულია მშობელი საქაღალდე.</b>დააჭირეთ შესაცვლელად</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">მშობელი საქაღალდე</string>
+    <string name="parent_picker_header">თუ არ აირჩევთ მშობელ საქაღალდეს, ახალი საქაღალდე პირველ დონეზე შეიქმნება.</string>
+    <!-- endregion -->
+    <!-- region Notifications -->
+    <string name="notification_summary_text_new_messages">ახალი შეტყობინებები</string>
+    <string name="notification_invalid_sender_sending_failed">თქვენი შეტყობინების ნახვა მონახაზებში შეგიძლიათ. შეამოწმეთ, \"ვისგან:\" მისამართში მითითიებული ელფოსტის აქტიურობის სტატუსი.</string>
+    <string name="notification_invalid_subject_sending_failed">თქვენი შეტყობინება მონახაზებში შეგიძლიათ, იპოვოთ. სათაური არასწორია.</string>
+    <!-- endregion -->
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">კონტაქტების გარეშე</string>
+    <string name="contacts_empty_state_no_groups">ჯგუფების გარეშე</string>
+    <!-- endregion -->
+    <!-- region Dialogs -->
+    <string name="contact_list_cannot_upload_groups_dialog_message">კონტაქტების ჯგუფები შემოტანილი არ იქნება. პრემიუმ ფუნქციებით სარგებლობისთვის, გთხოვთ, ტარიფი ფასიან გეგმამდე განაახლოთ.</string>
+    <string name="contact_details_remote_content_dialog_title">დაშორებული შემცველობა</string>
+    <string name="contact_details_remote_content_dialog_message">კოტაქტი შეიცავს მონაცემებს გარე სერვერებიდან.</string>
+    <string name="contact_details_remote_content_dialog_positive_button">შემცველობის ჩატვირთვა</string>
+    <!-- endregion -->
+    <!-- region Onboarding -->
+    <string name="new_user_onboarding_privacy_for_all_headline">პირადი სივრცე ყველასთვის</string>
+    <string name="new_user_onboarding_privacy_for_all_description">მოიწვიეთ თქვენი კონტაქტები ProtonMail-ზე გამჭოლი დაშიფვრის გამოსაყენებლად და პაროლიანი ელ-ფოსტების დასაგზავნად.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">მოვლილი და მოწესრიგებული</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">ფაილი, ჭდე და შეტყობინების ფერადი ჭდეები, რათა იდეალური, თქვენზე მორგებული საფოსტო ყუთი შექმნათ.</string>
+    <string name="existing_user_onboarding_new_look_headline">ახალი გარეგნობა, იგივე დაცვა</string>
+    <string name="existing_user_onboarding_new_look_description">თქვენი დაშიფრული ელ-ფოსტის დიზაინი შეიცვალა და უფრო გამარტივდა.</string>
+    <string name="existing_user_onboarding_new_features_headline">ახალი თვისებები</string>
+    <string name="existing_user_onboarding_new_features_description">ისიამოვნეთ ისეთი ახალი თვისებებით, როგორიცაა ბნელი რეჟიმი, გაუმჯობესებული გაფრთხილებები, წაუკითხავი შეტყობინებების ფილტრი და ქვესაღალდეები.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">განახლებული Proton-ი, გაერთიანებული დაცვა</string>
+    <string name="existing_user_onboarding_updated_proton_description">წარმოგიდგენთ Proton-ის განახლებულ გარეგნობას. ბევრი სერვისი, ერთი მისია. მოგესალმებით ინტერნეტში, სადაც კონფიდენციალობა ნაგულისხმებია. <a href="https://proton.me/news/updated-proton">გაიგეთ მეტი</a></string>
+    <string name="onboarding_next">შემდეგი</string>
+    <string name="onboarding_get_started">დაიწყეთ</string>
+    <string name="onboarding_got_it">გავიგე</string>
+    <string name="onboarding_image_view_content_description">ProtonMail-ის ილუსტრაცია</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">მონახაზი შენახულია</string>
+    <string name="snackbar_message_draft_moved_to_trash">მონახაზის სანაგვე ყუთში გადატანა</string>
+    <string name="snackbar_action_discard">მოცილება</string>
+    <!-- endregion -->
+    <!-- region Old / V3 / pre-conventions -->
+    <string name="protonmail">Proton Mail</string>
+    <string name="sign_out">გასვლა</string>
+    <string name="sign_out_question">დარწმუნებული ბრძანდებით, რომ გნებავთ გახვიდეთ?</string>
+    <string name="processing_request">თქვენი მოთხოვნა მუშავდება</string>
+    <!-- should check for html tag -->
+    <!-- Toast messages -->
+    <string name="error_chrome_disabled">შემცველობის ჩატვირთვა შეუძლებელია. გთხოვთ ჩართოთ Chrome-ი</string>
+    <string name="error_chrome_not_found">შემცველობის ჩატვირთვის შეცდომა. დააყენეთ Chrome-ი</string>
+    <string name="messages_load_failure">შეტყობინებების მოძიების შეცდომა</string>
+    <string name="message_details_load_failure">შეტყობინების დეტალების მოძიების შეცდომა</string>
+    <string name="no_more_messages">მეტი შეტყობინება არაა</string>
+    <string name="no_network_queued">ქსელი გათიშულია, შეტყობინება კი რიგში ჩადგა</string>
+    <string name="update_app_title">აუცილებელია განახლება</string>
+    <string name="update_app">თქვენი Proton Mail-ის აპის გამოყენება მის განახლებამდე შეუძლებელია</string>
+    <string name="you_are_offline">ქსელი გამორთულია</string>
+    <string name="api_offline">Proton Mail ამჟამად გათიშულია. მიმდინარე სტატუსისთვის შეამოწმეთ ჩვენი ტვიტერი: https://twitter.com/ProtonPrivacy ან ვებგვერდი https://protonstatus.com</string>
+    <string name="contact_saved">კონტაქტი შენახულია</string>
+    <string name="contact_saved_offline">კონტაქტი შენახულია. დასინქრონდება ინტერნეტკავშირის აღდგენის შემდეგ</string>
+    <string name="contact_exist">კონტაქტს ელფოსტის მისამართი უკვე აქვს მინიჭებული</string>
+    <string name="invalid_email">ელფოსტის მისამართი არასწორია</string>
+    <string name="duplicate_email">გამეორებადი ელფოსტის მისამართი</string>
+    <string name="message_drafted">შეტყობინების გაგზავნის შეცდომა. შეტყობინება შენახულია მონახაზების საქაღალდეში</string>
+    <string name="attachment_failed_message_drafted">გთხოვთ, მოაცილოთ და თავიდან მიამაგროთ %s და გააგზავნოთ შეტყობინება თავიდან. თქვენს ფოსტას \"მონახაზების\" საქაღალდეში იპოვით.</string>
+    <string name="open_drawer">გახსნა</string>
+    <string name="close_drawer">დახურვა</string>
+    <string name="inbox_option">შემომავალი</string>
+    <string name="starred_option">ვარსკვლავიანები</string>
+    <string name="drafts_option">მონახაზები</string>
+    <string name="sent_option">გაგზავნილები</string>
+    <string name="archive_option">არქივი</string>
+    <string name="trash_option">სანაგვე ყუთი</string>
+    <string name="spam_option">სპამი</string>
+    <string name="allmail_option">ყველა ელფოსტა</string>
+    <string name="inbox">შემომავალი</string>
+    <string name="starred">ვარსკვლავიანი</string>
+    <string name="drafts">მონახაზები</string>
+    <string name="sent">გაგზავნილები</string>
+    <string name="archive">არქივი</string>
+    <string name="trash">სანაგვე ყუთი</string>
+    <string name="spam">სპამი</string>
+    <string name="all_mail">ყველა ელფოსტა</string>
+    <string name="contacts">კონტაქტები</string>
+    <string name="search_contacts">კონტაქტების ძებნა</string>
+    <string name="fetching_contacts">Proton Mail-ის კონტაქტების მოძიება...</string>
+    <string name="fetching_contacts_success">კონტაქტები წარმატებით განახლდა</string>
+    <string name="fetching_contacts_failure">კონტაქტების განახლების შეცდომა</string>
+    <string name="compose">შედგენა</string>
+    <string name="compose_message">წერილის შედგენა</string>
+    <string name="empty_folder">საქაღალდის დაცარიელება</string>
+    <string name="view_headers">თავსართების ნახვა</string>
+    <string name="message_headers">შეტყობინების თავსართი</string>
+    <string name="delete_messages">შეტყობინებების წაშლა</string>
+    <string name="move_to_archive">არქივში გადატანა</string>
+    <string name="move_to_trash">ნაგავში გადატანა</string>
+    <string name="move_to_spam">სმაპში გადატანა</string>
+    <string name="move_to_inbox">შემოსულებში გადატანა</string>
+    <string name="move_to">გადატანა…</string>
+    <string name="are_you_sure_empty">დარწმუნებული ბრძანდებით, რომ გნებავთ ამ საქაღალდიდან ყველა შეტყობინების წაშლა?</string>
+    <string name="send">გაგზავნა</string>
+    <string name="selected">მონიშნულია</string>
+    <string name="no_labels">ჭდეების გარეშე</string>
+    <string name="to">ვის</string>
+    <string name="cc">ასლი</string>
+    <string name="bcc">ბრმა ასლი</string>
+    <string name="to_prefix">ვის:</string>
+    <string name="reply">პასუხი</string>
+    <string name="reply_all">ყველასთვის პასუხი</string>
+    <string name="forward">გადაგზავნა</string>
+    <string name="email_subject">წერილის საგანი</string>
+    <string name="define_message_password">შეტყობინების პაროლი</string>
+    <string name="confirm_message_password">პაროლის დადასტურება</string>
+    <string name="define_password_hint">მითითების განსაზღვრა (არასავალდებულო)</string>
+    <string name="eo_passwords_do_not_match">პაროლები არ ემთხვევა</string>
+    <string name="define_expiration_period">ვადის ამოწურვის პერიოდის განსაზღვრა</string>
+    <string name="set_message_expiration">შეტყობინების ვადის დაყენება</string>
+    <string name="days">დღე</string>
+    <string name="hours">სთ</string>
+    <string name="max_labels_exceeded">შეტყობინებას %1$s არ შეიძლება ჰქონდეს %2$d-ზე მეტი ჭდე.</string>
+    <string name="max_attachments_reached">მიღწეულია თითოეულ შეტყობინებაზე მიმაგრებადი ფაილების მაქსიმუმი</string>
+    <string name="max_attachments_size_reached">თითოეულ შეტყობინებაზე მიმაგრებადი ფაილების მაქსიმალური ზომა მიღწეულია</string>
+    <string name="expiration_days">%d დღე</string>
+    <string name="expiration_hours">%d სთ</string>
+    <string name="expiration_minutes">%d წთ</string>
+    <plurals name="attachments">
+        <item quantity="one">%d მიმაგრება</item>
+        <item quantity="other">%d მიმაგრება</item>
+    </plurals>
+    <plurals name="attachments_non_descriptive">
+        <item quantity="one">\u0020 %d მიმაგრებული ფაილი</item>
+        <item quantity="other">\u0020 %d მიმაგრებული ფაილი</item>
+    </plurals>
+    <plurals name="attachments_number">
+        <item quantity="one">%d მიმაგრება</item>
+        <item quantity="other">%d მიმაგრება</item>
+    </plurals>
+    <string name="add_attachment">ფაილის მიმაგრება</string>
+    <string name="select_file">აირჩიეთ ფაილი</string>
+    <string name="attach_file">ფაილის მიმაგრება</string>
+    <string name="take_photo">სურათის გადაღბა</string>
+    <string name="problem_taking_photo">სურათის გადაღების შეცდომა</string>
+    <string name="problem_selecting_file">მონიშნული ფალის დამატების პრობლემა</string>
+    <string name="add_contact">კონტაქტის დამატება</string>
+    <string name="delete_contact">გნებავთ %s-ის კონტაქტებიდან წაშლა?</string>
+    <string name="confirm">დასტური</string>
+    <string name="confirm_destructive_action">დარწმუნებული ბრძანდებით? ამას ვერ დააბრუნებთ.</string>
+    <string name="create">შექმნა</string>
+    <string name="email">ელფოსტა</string>
+    <string name="phone">ტელეფონის ნომერი</string>
+    <string name="save">შენახვა</string>
+    <string name="no_subject">გავაგზავნო შეტყობინება საგნის გარეშე?</string>
+    <string name="yes">დიახ</string>
+    <string name="no">არა</string>
+    <string name="ok">დიახ</string>
+    <string name="forward_prefix">გად:</string>
+    <string name="original_message_divider">-------- ძირითადი შეტყობინება --------</string>
+    <string name="invalid_email_address">მისამართი \'%s\' არასწორია</string>
+    <string name="invalid_email_address_removed">მისამართი %s არასწორია და წაიშალა</string>
+    <string name="no_recipients_specified">დაამატეთ ერთი მიმღები მაინც</string>
+    <string name="no_password_specified">ვადა შეიძლება, მხოლოდ, სრულად დაშიფრულ შეტყობინებებზე დაყენდეს. დააყენეთ პაროლი თქვენი არა-Proton Mail მიმღებებისათვის.</string>
+    <string name="attachment_limit">მიმაგრებული ფაილების ზღვარია %1$s. თქვენ კი %2$s-ის მიმაგრებას აპირებდით.</string>
+    <string name="sending_message">შეტყობინების გაგზავნა...</string>
+    <string name="sending_message_offline">ინტერნეტის გარეშე. რიგშია მოგვიანებით გასაგზავნად...</string>
+    <string name="message_sent">შეტყობინება გაიგზავნა</string>
+    <string name="message_failed">შეტყობინების გაგზავნის შეცდომა</string>
+    <string name="storage_limit">საცავის ლიმიტი</string>
+    <string name="edit_settings">მორგება</string>
+    <string name="share">გაზიარება</string>
+    <string name="cancel">გაუქმება</string>
+    <string name="close">დახურვა</string>
+    <string name="eo_password_title">პაროლის დაყენება</string>
+    <string name="eo_password_subtitle">ამ შეტყობინების არა-Proton Mail-ის მომხმარებლებისთვის დასაშიფრად დააყენეთ პაროლი</string>
+    <string name="eo_password_more_info">მეტი ინფორმაციის მიღება</string>
+    <string name="no_attachments">0 მიმაგრება</string>
+    <string name="display_name_banned_chars">არასწორი საჩვენებელი სახელი. \'&gt;\' და \'&lt;\' დაუშვებელი სიმბოლოებია</string>
+    <string name="cont">გაგრძელება</string>
+    <string name="reply_prefix_on">თარიღი</string>
+    <string name="label_name">ჭდის სახელი</string>
+    <string name="label_created">ჭდე შექმნილია</string>
+    <string name="label_invalid">არასწორი სახელის გამო ჭდე არ დამატებია.</string>
+    <string name="undo">დაბრუნება</string>
+    <string name="label_apply">გადატარება</string>
+    <string name="label_add">დამატება</string>
+    <string name="no_browser_found">ამ ქმედების დასასრულებლად საჭიროა ბრაუზერის დაყენება</string>
+    <string name="no_application_found">ვერ ვიპოვე ამ ქმედების გამგები აპი</string>
+    <string name="no_application_found_or_link_invalid">URL არასწორია ან ამ ქმედების შესაბამისი აპი ვერ ვიპოვე</string>
+    <string name="label_deleted">ჭდე წაშლილია</string>
+    <string name="label_deleted_error">ჭდის წაშლის შეცდომა</string>
+    <string name="message_deleted_error">ზოგიერთი შეტყობინების წაშლის შეცდომა. არის თუ არა ზოგი მათგანი გაგზავნის პროცესში?!</string>
+    <string name="respond_inline">პასუხის იქვე მიწერა</string>
+    <string name="server_not_reachable_troubleshoot">სერვერი მიუწვდომელია…(<u>პრობლემების პოვნა</u>)</string>
+    <string name="connectivity_checking">კავშირის შემოწმება…</string>
+    <string name="draft_label_attachments_uploading">მისამაგრებელი ფაილების ატვირთვა…</string>
+    <string name="draft_label_message_uploading">შეტყობინების გაგზავნა…</string>
+    <string name="attachment_failed">შეტყობინებისთვის მისამაგრებელი ფაილის ატვირთვის შეცდომა </string>
+    <string name="attaching_photo_failed">სურათის მიმაგრების შეცდომა</string>
+    <string name="empty_message">ცარიელი შეტყობინება</string>
+    <string name="display_images">გარე შემცველობის ჩვენება</string>
+    <string name="retry">თავიდან</string>
+    <string name="saving_failed_no_conn">შენახვის შეცდომა. ინტერნეტი გამორთულია</string>
+    <string name="attachment_exists">ფაილი უკვე მიმაგრებულია</string>
+    <string name="eo_password_not_completed">შეტყობინების პაროლი ბოლომდე არაა შეყვანილი.</string>
+    <string name="delinquency_subtitle">ანგარიშზე წვდომა გათიშულია გადაუხდელობის გამო.თქვენი გადაუხდელი ინვოისის გადასახდელად გთხოვთ შეხვიდეთ proton.me-ზე.</string>
+    <string name="downloading">გადმოწერა...</string>
+    <string name="cant_download_attachment">მიმაგრებული ფაილის გადმოწერის შეცდომა</string>
+    <string-array name="auto_logout_options_array">
+        <item>დაუყოვნებლივ</item>
+        <item>5 წთ უმოქმედობა</item>
+        <item>15 წთ უმოქმედობა</item>
+        <item>1 სთ უმოქმედობა</item>
+        <item>24 სთ უმოქმედობა</item>
+    </string-array>
+    <string name="delete_label_confirmation_title">წავშალო მონიშნული ჭდეები?</string>
+    <string name="delete_folder_confirmation_title">წავშალო მონიშნული საქაღალდეები?</string>
+    <string name="delete_label_confirmation_message">წერილები, რომელსაც აქ ხედავთ, შეგიძლიათ იპოვოთ <b>ყველა ფოსტა</b>-ში</string>
+    <string name="pin_invalid">არასწორი PIN კოდი. შეიყვანეთ სწორი 4 ციფრი</string>
+    <string name="pin_not_match">PIN კოდი არ ემთხვევა</string>
+    <string name="new_pin_saved">ახალი PIN შენახულია</string>
+    <string name="attachment_download_success">%s წარმატებით გადმოიწერა ფაილების მენეჯერში</string>
+    <string name="attachment_download_failed">%s-ის სწორად გადმოწერის შეცდომა</string>
+    <string name="ringtone">ზარი</string>
+    <string name="ringtone_selected">ზარი:</string>
+    <string name="ringtone_invalid">ზარის არჩევანმა არასწორი მნიშვნელობა დააბრუნა</string>
+    <string name="ringtone_no_default">ნაგულისხმები ზარის ჩატვირთვა შეუძლებელია</string>
+    <string name="select_tone">აირჩიეთ ტონი</string>
+    <string name="copy_link">ბმულის კოპირება</string>
+    <string name="share_link">ბმულის გაზიარება</string>
+    <string name="sync_attachments">მიმაგრებული ფაილების სინქრონიზაცია</string>
+    <string name="processing_attachment">მიმაგრებული ფაილის დამუშავება</string>
+    <string name="hyperlink_confirmation_dialog_text_html">თქვენ გახსნით ბრაუზერს და გადახვალთ ვებგვერდზე: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; ეთანხმებით?</string>
+    <string name="dont_ask_again">აღარ მკითხო</string>
+    <plurals name="incorrect_pin_remaining_attempts">
+        <item quantity="one">არასწორი PIN კოდი. დარჩენილია %d ცდა</item>
+        <item quantity="other">არასწორი PIN კოდი. დარჩენილია %d ცდა</item>
+    </plurals>
+    <plurals name="incorrect_pin_remaining_attempts_wipe">
+        <item quantity="one">მონაცემების წაშლამდე დარჩენილია %d ცდა!</item>
+        <item quantity="other">მონაცემების წაშლამდე დარჩენილია %d ცდა!</item>
+    </plurals>
+    <string name="logout">გასვლა</string>
+    <string name="logout_question_next_account">თქვენ გადაირთვებით %s-ზე.</string>
+    <string name="upgrade">გაუმჯობესება</string>
+    <string name="error">შეცდომა</string>
+    <string name="inline_prefix">[Inline]</string>
+    <plurals name="inline_header">
+        <item quantity="one">%d Ჩადგმული გამოსახულება</item>
+        <item quantity="other">%d Ჩადგმული გამოსახულება</item>
+    </plurals>
+    <string name="warning">გაფრთხილება</string>
+    <string name="available_addresses">ხელმისაწვდომი მისამართები</string>
+    <string name="inactive_addresses">არააქტიური მისამართები</string>
+    <string name="not_set">დაყენებული არაა</string>
+    <string name="no_available_addresses">არ გაქვთ ხელმისაწვდომი მისამართები</string>
+    <string name="no_inactive_addresses">თქვენ არ გაქვთ არააქტიური მისამართები</string>
+    <string name="label_add_new">ახალი ჭდის დამატება</string>
+    <string name="available_labels">ხელმისაწვდომი ჭდეები</string>
+    <string name="delete_selected">მონიშნულის წაშლა</string>
+    <string name="pin_not_activated">PIN კოდი არაა გააქტიურებული</string>
+    <string name="available_options">ხელმისაწვდომი პარამეტრები</string>
+    <string name="background_sync_subtitle">თუ ეს ჩართულია, აპი სერვერთან ფონურად სინქრონიზდება. თუ გამორთავთ, გაითიშება პუშ გაფრთხილებები.</string>
+    <string-array name="notification_options">
+        <item>ვიბრაციისა და ხმის გარეშე</item>
+        <item>ხმა ვიბრაციის გარეშე</item>
+        <item>ვიბრაცია ხმის გარეშე</item>
+        <item>ვიბრაცია და ხმა</item>
+    </string-array>
+    <string-array name="account_type_names">
+        <item>Free</item>
+        <item>Plus</item>
+        <item>Visionary</item>
+        <item>Professional</item>
+    </string-array>
+    <string name="contact_details">კონტაქტის დეტალები</string>
+    <string name="email_type_home">საწყისი</string>
+    <string name="type_title">აირჩიეთ ტიპი</string>
+    <string name="sync_local_contacts">Proton Mail-ზე ატვირთვა</string>
+    <string name="please_select_only_phone_contacts">აირჩიეთ, მხოლოდ, ლოკალური ტელეფონის კონტაქტები</string>
+    <string name="contact_vcard_hint_email">შეიყვანეთ ელფოსტა</string>
+    <string name="contact_vcard_hint_phone">შეიყვანეთ ტელეფონის ნომერი</string>
+    <string name="contact_vcard_hint_address">შეიყვანეთ მისამართი</string>
+    <string name="contact_vcard_hint_other">შეიყვანეთ ინფორმაცია</string>
+    <string name="contact_vcard_hint_note">შეიყვანეთ შენიშვნა</string>
+    <string name="contact_vcard_new_row_email">ელფოსტის მისამართის დამატება</string>
+    <string name="contact_vcard_new_row_phone">ტელეფონის ნომრის დამატება</string>
+    <string name="contact_vcard_new_row_address">მისამართის დამატება</string>
+    <string name="contact_vcard_new_row_other">ინფორმაციის დამატება</string>
+    <string name="vcard_other_option_org">ორგანიზაცია</string>
+    <string name="vcard_other_option_title">სათაური</string>
+    <string name="vcard_other_option_nickname">მეტსახელი</string>
+    <string name="vcard_other_option_birthday">დაბადების დღე</string>
+    <string name="vcard_other_option_anniversary">აღნიშვნა</string>
+    <string name="vcard_other_option_gender">სქესი</string>
+    <string name="vcard_other_option_role">როლი</string>
+    <string name="vcard_other_option_url">URL</string>
+    <string name="contacts_import_contact">კონტაქტის შემოტანა</string>
+    <string name="contacts_import">შემოტანა</string>
+    <string name="upload_contacts">კონტაქტების ატვირთვა</string>
+    <string name="uploading_contacts">კონტაქტების ატვირთვა…</string>
+    <string-array name="vcard_option_phone">
+        <item>ტელეფონი</item>
+        <item>მობილური</item>
+        <item>სამსახური</item>
+        <item>ფაქსი</item>
+        <item>სხვა</item>
+    </string-array>
+    <string-array name="vcard_option_email">
+        <item>ელფოსტა</item>
+        <item>პირადი</item>
+        <item>სამსახური</item>
+        <item>სხვა</item>
+    </string-array>
+    <string-array name="vcard_option_address">
+        <item>მისამართი</item>
+        <item>პირადი</item>
+        <item>სამსახური</item>
+        <item>სხვა</item>
+    </string-array>
+    <string-array name="vcard_option_other">
+        <item>@string/vcard_other_option_org</item>
+        <item>@string/vcard_other_option_anniversary</item>
+        <item>@string/vcard_other_option_birthday</item>
+        <item>@string/vcard_other_option_gender</item>
+        <item>@string/vcard_other_option_nickname</item>
+        <item>@string/vcard_other_option_role</item>
+        <item>@string/vcard_other_option_title</item>
+        <item>@string/vcard_other_option_url</item>
+    </string-array>
+    <string name="logged_out">გამოსული</string>
+    <string name="logged_out_description">გამოხვედით. შედით თავიდან.</string>
+    <string name="print_error">ბეჭდვის შეცდომა</string>
+    <string name="download_complete">გადმოწერა დასრულებულია</string>
+    <string name="message_expires_in">შეტყობინებას ვადა გაუვა %s-ში</string>
+    <string name="unsaved_changes_title">შეუნახავი ცვლილებები</string>
+    <string name="unsaved_changes_subtitle">ფორმაში შეუნახავი ელემენტებია. გნებავთ მათი მოცილება?</string>
+    <string name="request_timeout">მოლოდინის დრო გავიდა. თავიდან სცადეთ</string>
+    <string name="no_folders">საქაღალდეების გარეშე</string>
+    <string name="folder_add_new">ახალი საქაღალდის დამატება</string>
+    <string name="folder_name">საქაღალდის სახელი</string>
+    <string name="available_folders">ხელმისაწვდომი საქაღალდეები</string>
+    <string name="folder_created">საქაღალდე შექმნილია</string>
+    <string name="folder_invalid">არასწორი სახელის გამო საქაღალდე არ შეიქმნა.</string>
+    <string name="folder_deleted">საქაღალდე წაშლილია</string>
+    <string name="folder_deleted_error">საქაღალდის წაშლის შეცდომა</string>
+    <string name="empty_emails">ელფოსტების გარეშე</string>
+    <string name="empty_email_list">ელფოსტის მისამართის გარეშე</string>
+    <string name="no_contacts">კონტაქტების გარეშე</string>
+    <string name="sender_name_address">%1$s&lt;%2$s&gt;-მა დაწერა:</string>
+    <string name="update_label">ჭდის განახლება</string>
+    <string name="delete">წაშლა</string>
+    <string name="subject_copied">საგანი დაკოპირებულია მიმოცვლის ბაფერში</string>
+    <string name="details_copied">დეტალები დაკოპირებულია მიმოცვლის ბაფერში</string>
+    <string name="saving">შენახვა...</string>
+    <string name="update_folder">საქაღალდის განახლება</string>
+    <string name="spam_score_100">როგორც ჩანს, ეს ელფოსტა არის Proton Mail მისამართიდან, მაგრამ მოვიდა ჩვენი სისტემის გარედან და ვერ გაიარა ავტორიზაცია. ის შეიძლება გაყალბებული ან არასწორად გადაგზავნილია!</string>
+    <string name="spam_score_101">ამ ელფოსტამ ვერ დააკმაყოფილა დომენის ავთენტიფიკაციის მოთხოვნები. ის შეიძლება იყოს გაყალბებული ან არასწორად გადაგზავნილი.</string>
+    <string name="spam_score_102">შეტყობინება წააგავს ფიშინგის მცდელობას. შეამოწმეთ გამომგზავნი და შემცველობა, დარწმუნდით, რომ ისინი ნამდვილია.<a href="https://proton.me/blog/prevent-phishing-attacks">გაიგეთ მეტი</a></string>
+    <string name="print_from_template">გამომგზავნი: %s</string>
+    <string name="print_to_template">მიმღები: %s; </string>
+    <string name="print_cc_template">ასლი: %s;  </string>
+    <string name="print_bcc_template">ბრმა ასლი: %s;   </string>
+    <string name="address">მისამართი: </string>
+    <string name="address_street">ქუჩა</string>
+    <string name="address_extended_street">ქუჩის დამატებითი სახელი</string>
+    <string name="address_city">ქალაქი</string>
+    <string name="address_region">რეგიონი (შტატი ან პროვინცია)</string>
+    <string name="address_postcode">საფოსტო კოდი</string>
+    <string name="address_po_box">საფოსტო ყუთი</string>
+    <string name="address_country">ქვეყანა</string>
+    <string name="recheck_delinquency">კიდევ ერთხელ შემოწმება</string>
+    <string name="close_app">აპლიკაციის დახურვა</string>
+    <string name="empty_subject">(საგნის გარეშე)</string>
+    <string name="empty_recipients">(მიმღებების გარეშე)</string>
+    <string name="contacts_unknown">უცნობი</string>
+    <string name="learn_more"><u>შეიტყვეთ მეტი</u></string>
+    <string name="info">ინფო</string>
+    <string name="error_can_not_send_from_this_address">თქვენი მისამართიდან (%s) გასაგზავნად გადადით ფასიან გეგმაზე.</string>
+    <string name="email_empty">აკლია ელფოსტის მისამართი</string>
+    <string name="encrypted_contact_details">დაშიფრული კონტაქტის დეტალები</string>
+    <string name="convert_question">ადგილობრივი კონტაქტების ატვირთვა</string>
+    <string name="convert_question_subtitle">ეს ატვირთავს თქვენი მოწყობილობის კონტაქტებს Proton Mail-ის კონტაქტების საქაღალდეში. ამის შემდეგ ამ კონტაქტებთან წვდომა სხვა მოწყობილობებიდანაც გექნებათ.</string>
+    <string name="refresh_contacts">განახლება</string>
+    <string name="invalid_email_some_contacts">თქვენი ზოგიერთი კონტაქტის ელფოსტის მისამართი არასწორია</string>
+    <string name="protonmail_contacts">Proton Mail-ის კონტაქტები</string>
+    <string name="device_contacts">კონტაქტები მოწყობილობიდან</string>
+    <string name="print_date_template">თარიღი: %s</string>
+    <string name="print_attachment_template">მიმაგრებული: %s;  </string>
+    <string name="pm_me_changed">\@pm.ge მისამართიდან შეტყობინებების გაგზავნა ფასიანი ფუნქციაა. შეტყობინება თქვენი ნაგულისხმები მისამართიდან (%s) გაიგზავნება</string>
+    <string name="pm_me_can_not_be_default">ფასიან გეგმაზე გადასვლით თქვენ საშუალება გექნებათ ისარგებლოთ %s მისამართით</string>
+    <string name="dont_remind_again">აღარ შემახსენო</string>
+    <string name="load_embedded_images">ჩადგმული გამოსახულებების ჩატვირთვა</string>
+    <string name="remove_password">პაროლის მოშლა</string>
+    <string name="remove_password_question">პაროლის მოშლა?</string>
+    <string name="attachment_storage_value_current">ამჟამად მონიშნულია: %d მბ</string>
+    <string name="attachment_storage_value_current_unlimited">ამჟამად მონიშნულია: ულიმიტო</string>
+    <string name="attachment_offline_max_storage">მობილურ მოწყობილობებზე Proton Mail-ის იერ გამოყენებული საცავის მაქსიმალურ ზომის დაყენება.</string>
+    <string name="load_embedded_images_failed_no_network">ჩაშენებული სურათების ჩატვირთვის შეცდომა. შეამოწმეთ თქვენი ინტერნეტშეერთება.</string>
+    <string name="load_embedded_images_failed">ჩაშენებული გამოსახულებების ჩატვირთვის შეცდომა.</string>
+    <string name="unlimited">უსაზღვრო</string>
+    <string name="local_storage_cleared">ადგილობრივი საცავი გასუფთავებულია</string>
+    <string name="recipient_popup_compose_to">გაგზავნა</string>
+    <string name="recipient_popup_copy_address">მისამართის კოპირება</string>
+    <string name="recipient_popup_see_details">კონტაქტის დეტალების ნახვა</string>
+    <string name="send_with_untrusted_key_title">გნებავთ არასანდო გასაღებით გაგზავნა?</string>
+    <string name="send_with_untrusted_key_message">თქვენ ჩართული %s-ის გაქვთ მისამართის შემოწმება სანდო გასაღებებით. მაგრამ არ გაქვთ არცერთი გასასაღები მონიშნული, როგორც სანდო.</string>
+    <string name="resign_contact_title">გნებავთ კონტაქტის თავიდან ხელმოწერა?</string>
+    <string name="resign_contact_message">%s-ის შემოწმება ვერ მოხერხდა: კონტაქტი არ არის სწორად ხელმოწერილი. თქვენ ხელახლა უნდა მოაწეროთ ხელი კონტაქტს, რათა გაგზავნოთ შეტყობინება ამ მისამართზე, ან ჩაასწოროთ კონტაქტი. ეს ასევე შეიძლება მოხდეს, როდესაც აღადგენთ თქვენს პაროლს და აღადგენთ გასაღებებს.</string>
+    <!-- Sender locks -->
+    <string name="sender_lock_zero_access">ინახება წვდომის გარეშე შიფრაციით</string>
+    <!-- External message that was encrypted by the BE -->
+    <string name="sender_lock_sent_end_to_end">გამოგეგზავნათ გამჭოლი დაშიფვრით</string>
+    <!-- External message that was encrypted by the BE -->
+    <string name="sender_lock_sent_autoresponder">გამოგზავნილია Proton Mail-ის მიერ ნულოვანი წვდომის დაშიფვრით</string>
+    <string name="sender_lock_verification_failed">გამომგზავნის შემოწმების შეცდომა</string>
+    <string name="sender_lock_pgp_encrypted">PGP-ით დაშიფრული შეტყობინება</string>
+    <string name="sender_lock_pgp_encrypted_verified">PGP-ით დაშიფრული შეტყობინება შემოწმებული მისამართიდან</string>
+    <string name="sender_lock_pgp_signed_verified_sender">PGP-ით ხელმოწერილი შეტყობინება შემოწმებული მისამართიდან</string>
+    <!-- External PGP signed-only message that was encrypted by the BE -->
+    <string name="sender_lock_internal">გამჭოლად დაშიფრული და ხელმოწერილი შეტყობინება</string>
+    <string name="sender_lock_internal_verified">გამჭოლად დაშიფრული შეტყობინება შემოწმებული მისამართიდან</string>
+    <!-- Composer locks -->
+    <string name="composer_lock_internal">გამჭოლი შიფრაცია</string>
+    <string name="composer_lock_internal_pinned">გამჭოლი შიფრაცია შემოწმებულ მისამართამდე</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-ით დაშიფრული შეტყობინება შემოწმებული მიმღებისთვის</string>
+    <string name="composer_lock_pgp_signed">PGP-ის ბეჭდით</string>
+    <string name="recipient_not_found_and_removed">მიმღების პოვნის შეცდომა: %s წაშლილია</string>
+    <string name="recipient_error_and_removed">შეცდომა მიმღების შესახებ ინფორმაციის მიღებისას. ეს მიმღები წაიშალა: %s</string>
+    <string name="send_anyway">მაინც გაგზავნა</string>
+    <string name="expiration_error_title">თქვენ კი ჩართული გაქვთ შეტყობინების ვადა, მაგრამ ყველა მიმღებს არ გააჩნია მისი მხარდაჭერა.</string>
+    <string name="expiration_error_add_msg_password">დაამატეთ შეტყობინების პაროლი შემდეგი მიმღებებისთვის:</string>
+    <string name="expiration_error_disable_pgp_sending">გამორთეთ PGP გაგზავნა ჩამოთვლილი მიმღებებისთვის ვადის დაყენებისთვის:</string>
+    <string name="expiration_error_proceed">ამ მიმღებებისთვის შეტყობინების მაინც, ვადის ამოწურვის გარეშე გაგზავნისთვის \"მაინც გაგზავნაზე\" დაატყაპუნეთ.</string>
+    <string name="expiration_error_learn_more"><a href="https://proton.me/support/password-protected-emails">გაიგეთ მეტი</a></string>
+    <string name="channel_name_attachments">მიმაგრებები</string>
+    <string name="channel_description_attachments">მიმაგრებული ფაილის გადმოწერის სტატუსი</string>
+    <string name="channel_name_emails">ელფოსტა</string>
+    <string name="channel_description_emails">შემომავალი ელფოსტის გაფრთხილებები</string>
+    <string name="channel_name_account">ანგარიში</string>
+    <string name="channel_description_account">ანგარიშის სტატუსი</string>
+    <string name="channel_name_ongoing_operations">მიმდინარე ოპერაციები</string>
+    <string name="channel_description_ongoing_operations">აჩვენებს ყველა მიმდინარე ოპერაციას,
+თითქოს, ეს შეტყობინების ფონური გადმოწერაა</string>
+    <string name="retrieving_notifications">გაფრთხილებების მოძიება</string>
+    <string name="report_phishing">ფიშინგის შესახებ შეტყობინება</string>
+    <string name="print">დაბეჭდვა</string>
+    <string name="phishing_dialog_title">ფიშინგის ანგარიშის დასტური</string>
+    <string name="phishing_dialog_message">შეტყობინების ფიშინგად მონიშვნა გამოიწვევს ამ შეტყობინების ჩვენთვის გადმოგზავნას. ჩვენ გავაანალიზებთ მას და გავაუმჯობესებთ ჩვენს ფილტრებს. ეს ასევე ნიშნავს, რომ ჩვენ წვდომა გვექნება შეტყობინების სრულ შინაარსთან.</string>
+    <string name="phishing_report_send_message_moved_to_spam">ანგარიში გაგზავნილია. შეტყობინება გადატანილია სპამში.</string>
+    <string name="cannot_send_report_send">ანგარიშის გაგზავნა შეუძლებელია</string>
+    <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
+    <!-- Contact Groups Strings -->
+    <string name="add_photo">სურათის დამატება</string>
+    <string name="contact_display_name">საჩვენებელი სახელი</string>
+    <string name="add_new_email">ელფოსტის მისამართის დამატება</string>
+    <string name="no_groups">ჯგუფების გარეშე</string>
+    <string name="contact_vcard_note">შენიშვნა</string>
+    <string name="edit_contact">კონტაქტის ჩასწორება</string>
+    <string name="create_contact_group">კონტაქტების ჯგუფის შექმნა</string>
+    <string name="edit_contact_group">კონტაქტების ჯგუფის ჩასწორება</string>
+    <string name="contact_groups_manage_members">წევრების მართვა</string>
+    <string name="contact_group_display_name">საჩვენებელი სახელი</string>
+    <string name="contact_group_groups_icon">\ue91a </string>
+    <string name="title_activity_address_chooser">წევრების მართვა</string>
+    <string name="default_error_message">შეცდომა</string>
+    <string name="no_contact_groups">საკონტაქტო ჯგუფების გარეშე</string>
+    <string name="search_contacts_inside_group">კონტაქტების ძებნა</string>
+    <string name="contact_group_toolbar_title">%s (%s)</string>
+    <plurals name="contact_group_members">
+        <item quantity="one">%d წევრი</item>
+        <item quantity="other">%d წევრი</item>
+    </plurals>
+    <string name="groups">ჯგუფები</string>
+    <string name="tab_contacts">კონტაქტები (%d)</string>
+    <string name="tab_contact_groups">ჯგუფები (%d)</string>
+    <string name="contact_group_saved">ჯგუფი შენახულია</string>
+    <string name="no_recipients">მიმღებების გარეშე</string>
+    <plurals name="contact_group_selected">
+        <item quantity="one">მონიშნულია %d</item>
+        <item quantity="other">მონიშნულია %d</item>
+    </plurals>
+    <string name="paid_plan_needed">პრემიუმ თვისებების მისაღებად განაახლეთ ფასიან გეგმამდე</string>
+    <string name="composer_group_count_of">%1$s( %2$d/%3$d წევრი)</string>
+    <plurals name="are_you_sure_delete_group">
+        <item quantity="one">დარწმუნებული ბრძანდებით, რომ გნებავთ მონიშნული ჯგუფის წაშლა?</item>
+        <item quantity="other">დარწმუნებული ბრძანდებით, რომ გნებავთ მონიშნული ჯგუფების წაშლა?</item>
+    </plurals>
+    <plurals name="group_deleted">
+        <item quantity="one">ჯგუფი წაიშალა</item>
+        <item quantity="other">ჯგუფები წაიშალა</item>
+    </plurals>
+    <plurals name="are_you_sure_delete_contact">
+        <item quantity="one">დარწმუნებული ბრძანდებით, რომ გნებავთ ამ კონტაქტის წაშლა?</item>
+        <item quantity="other">დარწმუნებული ბრძანდებით, რომ გნებავთ ამ კონტაქტების წაშლა?</item>
+    </plurals>
+    <string name="members">წევრები</string>
+    <string name="select_deselect_all">ყველაფრის მონიშვნა</string>
+    <string name="contact_group_name_hint">აირჩიეთ ჯგუფის სახელი</string>
+    <string name="contact_group_change_color">ფერის შეცვლა</string>
+    <string name="fab_add_contact">ახალი კონტაქტის დამატება</string>
+    <string name="fab_add_contact_group">კონტაქტების ახალი ჯგუფის დამატება</string>
+    <string name="contacts_add_photo_title">სურათის დამატება</string>
+    <string name="contacts_add_photo_select_gallery">აირჩიეთ ალბომიდან</string>
+    <string name="contacts_add_photo_select_camera">გადაიღეთ კამერით</string>
+    <string name="save_group_validation_error">შეიყვანეთ ჯგუფის სახელი</string>
+    <!-- region Storage Limit Reached -->
+    <string name="storage_limit_alert">მიღწეულია საცავის ლიმიტი. ელფოსტების მიღება ან გაგზავნა შეუძლებელია.
+      მეტის გასაგებად დააწექით.</string>
+    <string name="storage_limit_warning_title">გაფრთხილება</string>
+    <string name="storage_limit_reached_text">თქვენი საცავი 100%-ით სავსეა.
+     თქვენ ვერ შეძლებთ გააგზავნოთ ან მიიღოთ ელფოსტები, სანამ სამუდამოდ არ წაშლით ზოგ ელფოსტას,
+    ან მეტ საცავს არ შეიძენთ.</string>
+    <string name="storage_limit_approaching_text">თქვენ იყენებთ საცავის 90%-ს.
+     შეიძინეთ მეტი საცავი, ან გაათავისუფლეთ ადგილი, სანამ გაივსო.</string>
+    <!-- endregion -->
+    <string name="need_permissions_title">წვდომები</string>
+    <string name="need_storage_permissions_add_attachment_text">ფაილების მისამაგრებლად საჭიროა, რომ
+        საცავთან წვდომა დაუშვათ.</string>
+    <string name="need_storage_permissions_download_attachment_text">მიმაგრებული ფაილების გადმოსაწერად საჭიროა
+      საცავთან წვდომა.</string>
+    <string name="need_contacts_permissions_text">კონტაქტების შემოსატანად კონტაქტებზე წვდომა უნდა დაუშვათ.</string>
+    <string name="need_notification_permissions_to_receive_notifications">აპიდან შეტყობინებების მისაღებად, თქვენ უნდა ჩართოთ შეტყობინებების ნებართვები.</string>
+    <string name="push_notifications_alert_title">პუშ გაფრთხილების შეტყობინება</string>
+    <string name="push_notifications_alert_subtitle">Proton Mail-ის პუშ გაფრთხილებები არ მუშაობს Google Play-ის განახლებული სერვისების გარეშე.</string>
+    <string name="app_locked">აპლიკაცია ჩაკეტილია</string>
+    <string name="use_pin_instead">უმჯობესია გამოიყენოთ PIN</string>
+    <!-- strings used for biometric enrollment -->
+    <string name="no_biometric_data_enrolled">ბიომეტრიული მონაცემები დარეგისტრირებული არაა</string>
+    <string name="log_in_using_biometric_credential">ბიომეტრიის საშუალებით განბლოკვა</string>
+    <string name="unlock_using_biometrics">ბიომეტრიით განბლოკვა</string>
+    <string name="biometric_error_hw_not_available">ბიომეტრიული აპარატურა ხელმიუწვდომელია.</string>
+    <!-- end strings used for biometric enrollment -->
+    <string name="undisclosed_recipients">გაუმჟღავნებელი მიმღებები</string>
+    <!-- region Settings -->
+    <string name="settings">მორგება</string>
+    <string name="account_settings">ანგარიშის მორგება</string>
+    <!-- region Acc Settings -->
+    <string name="account">ანგარიში</string>
+    <string name="drawer_subscription">გამოწერა</string>
+    <string name="password_manager">პაროლების მართვა</string>
+    <string name="password_changed">პაროლი შეიცვალა.</string>
+    <string name="recovery_email">აღდგენის ელფოსტა</string>
+    <string name="recovery_email_changed">აღდგენის ელფოსტა შეიცვალა.</string>
+    <string name="storage">საფოსტო ყუთის ზომა</string>
+    <string name="storage_used">%1$s / %2$s</string>
+    <string name="addresses">მისამართები</string>
+    <string name="default_mail_address">ელფოსტის ნაგულისხმები მისამართი</string>
+    <string name="default_address">ნაგულისხმები მისამართი</string>
+    <string name="display_name_n_signature">სახელისა &amp; ხელმოწერის ჩვენება</string>
+    <string name="display_name">საჩვენებელი სახელი</string>
+    <string name="edit_display_name">საჩვენებელი სახელის ჩასწორება</string>
+    <string name="signature">ხელმოწერა</string>
+    <string name="mobile_footer">მობილური ბოლოსართი</string>
+    <string name="edit_mobile_footer">მობილური ბოლოსართის ჩართვა</string>
+    <string name="default_mobile_footer">გამოგზავნილია Proton Mail-ის მობილური ვერსიიდან</string>
+    <string name="mobile_footer_is_premium">მობილური ბოლოსართის შეცვლა, მხოლოდ, გადამხდელ მომხმარებლებს შეუძლიათ</string>
+    <string name="mobile_footer_info">მინაწერი თქვენი ბოლოსართის შემდეგ დაემატება</string>
+    <!-- region Snooze Settings -->
+    <string name="snooze_header">დროებით დადუმება</string>
+    <string name="notifications_snooze">შეტყობინებების ჩაჩუმება</string>
+    <string-array name="quick_snooze_values">
+        <item>30 წუთი</item>
+        <item>1 სთ</item>
+        <item>2 სთ</item>
+        <item>4 სთ</item>
+        <item>8 სთ</item>
+        <item>12 სთ</item>
+        <item>ხელით</item>
+        <item>დაგეგმილია</item>
+    </string-array>
+    <string name="notifications_snoozed">შეტყობინებები ჩაჩუმებულია</string>
+    <string name="notifications_snooze_scheduled">დაგეგმილია</string>
+    <string name="notifications_snooze_scheduled_settings">დაგეგმილი ჩაჩუმების მორგება</string>
+    <string name="notifications_snooze_current_status">სტატუსი</string>
+    <string name="snooze_start_time">საწყისი დრო:</string>
+    <string name="snooze_end_time">დასასრულის დრო:</string>
+    <string name="snooze_repeat">გამეორება:</string>
+    <plurals name="quick_snooze_resume_min">
+        <item quantity="one">შეტყობინებები განახლდება %d წუთში</item>
+        <item quantity="other">შეტყობინებები განახლდება %d წუთში</item>
+    </plurals>
+    <string name="quick_snooze_resume_hours">შეტყობინებები განახლდება %1$d საათსა და %2$d წუთში</string>
+    <string name="minutes">წთ</string>
+    <string name="set_custom_quick_snooze">სწრაფი ჩაჩუმების მნიშვნელობის დაყენება</string>
+    <string name="turn_off">გამორთვა</string>
+    <string name="work_days">სამუშაო დღეებში</string>
+    <string name="weekends">შაბათ-კვირა</string>
+    <string name="every_day">ყოველდღე</string>
+    <string-array name="snooze_repeat_values">
+        <item>თვე</item>
+        <item>სამშ</item>
+        <item>ოთხშ</item>
+        <item>ხუთშ</item>
+        <item>პარ</item>
+        <item>შაბ</item>
+        <item>კვ</item>
+    </string-array>
+    <string name="quick_and_scheduled_enabled">სწრაფი და დაგეგმილი ჩაჩუმებები აქტიურია</string>
+    <string name="quick_only_enabled">სწრაფი ჩაჩუმება აქტიურია</string>
+    <string name="scheduled_only_enabled">დაგეგმილი ჩაჩუმება აქტიურია</string>
+    <string name="quick_and_scheduled_disabled">სწრაფი და დაგეგმილი ჩაჩუმებები გათიშულია</string>
+    <string name="scheduled_snooze_on">დაგეგმილია (ჩართვა)</string>
+    <string name="scheduled_snooze_off">დაგეგმილია (გამორთვა)</string>
+    <!-- endregion -->
+    <string name="mailbox">საფოსტო ყუთი</string>
+    <string name="privacy">პირადი მონაცემები</string>
+    <string name="auto_download_messages_title">შეტყობინებების ავტომატური გადმოწერა</string>
+    <string name="auto_download_messages_subtitle">როცა ჩართულია, შეტყობინებების ტექსტი ავტომატურად ჩამოიტვირთება ყოველ ჯერზე, როდესაც თქვენ მიიღებთ ახალ შეტყობინებას ელფოსტით (ეს მოიხმარს მეტ მონაცემს). თუ ეს პარამეტრი არ არის ჩართული, შეტყობინებების ტექსტები ჩამოიტვირთება, მხოლოდ, მაშინ, როცა ელფოსტას გახსნით. (შენიშვნა: თუ გაასუფთავებთ ქეშს ან გამოხვალთ, ვერ შეძლებთ შეტყობინების ტექსტების წაკითხვას ხაზგარეშე რეჟიმში.)</string>
+    <string name="settings_background_sync">ფონური სინქრონიზაცია</string>
+    <string name="settings_auto_show_images">გარე გამოსახულებების ავტომატური ჩვენება</string>
+    <string name="settings_auto_show_embedded_images">ჩადგმული გამოსახულებების ავტომატური ჩატვირთვა</string>
+    <string name="settings_prevent_taking_screenshots">ეკრანის ანაბეჭდების გადაღების გათიშვა</string>
+    <string name="hyperlink_confirmation">ბმულის დადასტურების მოთხოვნა</string>
+    <string name="labels_and_folders">ჭდეები &amp; საქაღალდეები </string>
+    <string name="folders">საქაღალდეები</string>
+    <string name="labels">ჭდეები</string>
+    <string name="swipe_actions">გადათრევის ქმედებები</string>
+    <string name="swipe_action_right">გადაათრიეთ მარჯვნივ</string>
+    <string name="swipe_action_left">გაუსვით მარცხნივ</string>
+    <!-- region Swipe Actions -->
+    <string name="swipe_action_chooser_title">აირჩიეთ გადათრევის ქმედებები</string>
+    <string name="swipe_action_trash">შეტყობინება გადატანილია ნაგავში</string>
+    <string name="swipe_action_trash_short">ნაგავში გადატანა</string>
+    <string name="swipe_action_star">შეტყობინების ვარსკვლავი განახლებულია</string>
+    <string name="swipe_action_star_short">ვარსკვლავის განახლება</string>
+    <string name="swipe_action_spam">შეტყობინება მოინიშნა, როგორც სპამი</string>
+    <string name="swipe_action_spam_short">სპამი</string>
+    <string name="swipe_action_archive">შეტყობინება დაარქივდა</string>
+    <string name="swipe_action_archive_short">არქივი</string>
+    <string name="swipe_action_mark_read">შეტყობინება მოინიშნა, როგორც წაკითხული</string>
+    <string name="swipe_action_mark_read_short">წაკითხული</string>
+    <plurals name="action_move_to_trash">
+        <item quantity="one">შეტყობინება გადატანილია ნაგავში</item>
+        <item quantity="other">შეტყობინებები გადატანილია ნაგავში</item>
+    </plurals>
+    <!-- endregion -->
+    <string name="local_storage">ლოკალური საცავის ზღვარი</string>
+    <!-- endregion -->
+    <string name="app_settings">აპის მორგება</string>
+    <!-- region App Settings -->
+    <string name="push_notifications">პუშ გაფრთხილებები</string>
+    <string name="extended_notifications">გაფართოებული გაფრთხილებები</string>
+    <string name="extended_notifications_description">ჩართეთ პუშ გაფრთხილებებში გამომგზავნის მისამართის დასანახად.</string>
+    <string name="notification_settings">გაფრთხილებების მორგება</string>
+    <string name="auto_lock">თვითჩაკეტვა</string>
+    <string name="auto_lock_app">აპის ავტომატური ჩაკეტვა</string>
+    <string name="auto_lock_description">აპლიკაციის ავტომატურად ჩასაკეტად და მისი განბლოკვისთვის PIN-კოდის, ან ანაბეჭდის გამოსაყენებლად ჩართეთ ეს თვისება.</string>
+    <string name="change_pin_code">PIN კოდის შეცვლა</string>
+    <string name="auto_lock_timer">ავტომატური დაბლოკვის დრო</string>
+    <string name="connections_via_third_parties">ალტერნატიული რაუტინგი</string>
+    <string name="allow_secure_connections_via_third_parties">ალტერნატიული რაუტინგის ჩართვა</string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">იმ შემთხვევაში, თუ Proton-ის საიტები დაბლოკილია, ეს პარამეტრი აპს საშუალებას აძლევს, Proton-მდე მისასვლელად ქსელის ალტერნატიული რაუტინგი სცადოს, რაც შეიძლება, სასარგებლო იყოს ბრანდმაუერის ან ქსელის პრობლემების გვერდის ავლით. მეტი საიმედოობისთვის გირჩევთ, ჩართოთ ეს პარამეტრი.</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">იმ შემთხვევაში, თუ Proton-ის საიტები დაბლოკილია, ეს პარამეტრი აპს საშუალებას აძლევს, Proton-მდე მისასვლელად ქსელის ალტერნატიული რაუტინგი სცადოს, რაც შეიძლება, სასარგებლო იყოს ბრანდმაუერის ან ქსელის პრობლემების გვერდის ავლით. მეტი საიმედოობისთვის გირჩევთ, ჩართოთ ეს პარამეტრი. <a href="https://proton.me/blog/anti-censorship-alternative-routing">გაიგეთ მეტი</a></string>
+    <string name="app_language">აპის ენა</string>
+    <string name="custom_language_dialog_title">აირჩიეთ აპის ენა</string>
+    <string name="auto_detect">ავტო-ძებნა</string>
+    <string name="combined_contacts">გაერთიანებული კონტაქტები</string>
+    <string name="turn_combined_contacts_on">ჩართეთ ეს ფუნქცია თქვენი ყველა შემოსული ანგარიშის კონტაქტების გამოყენებით ელფოსტის მისამართების ავტომატურად შესავსებად.</string>
+    <string name="local_cache_management">ლოკალური ქეში</string>
+    <string name="cache_cleared">ადგილობრივი ქეში განახლდა</string>
+    <string name="empty_data">მონაცემების გასუფთავება</string>
+    <!-- endregion -->
+    <string name="enabled">ჩართულია</string>
+    <string name="disabled">გათიშულია</string>
+    <string name="app_info">აპის შესახებ</string>
+    <string name="app_version">აპის ვერსია</string>
+    <!-- endregion -->
+    <!-- region Multi Account -->
+    <string name="signed_in_with">შეხვედით, როგორც %s</string>
+    <!-- endregion -->
+    <!-- region Compose shortcut -->
+    <string name="shortcut_compose">შედგენა</string>
+    <string name="shortcut_compose_new_message">ახალი წერილის შედგენა</string>
+    <!-- endregion -->
+    <!-- region Troubleshoot screen -->
+    <string name="troubleshoot_dialog_title">კავშირის ჩვეულებრივი პრობლემები და გადაწყვეტები</string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;ინტერნეტთან შეერთების პრობლემა&lt;/i&gt; - დარწმუნდით, რომ ინტერნეტი მუშაობს.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;პროვაიდერის პრობლემა&lt;/i&gt; - სცადეთ Proton-თან შეერთება &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN-ით&lt;/a&gt; ან &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;სამთავრობო ბლოკი&lt;/i&gt; - თქვენი ქვეყანა შეიძლება ბლოკავდეს Proton-თან წვდომას. სცადეთ &lt;a href=\"https://protonvpn.com/\"&gt;Proton VPN&lt;/a&gt; (ან სხვა VPN) ან &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; Proton-თან წვდომის აღსადგენად.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;ანტივირუსის ჩარევა&lt;/i&gt; - დროებით გამორთეთ ანტივირუსი.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;პროქსი/ბრანდმაუერის ჩარევა&lt;/i&gt; - გამორთეთ პროქსი ან ბრანდმაუერი, ან დაუკავშირდით ქსელის ადმინისტრატორს.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton-ი გათიშულია&lt;/i&gt; - შეამოწმეთ &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; მდგომარეობის გასაგებად.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;ჯერ ვერ ვიპოვე გადაწყვეტილება&lt;/i&gt; - დაგვიკავშირდით &lt;a href=\"https://proton.me/contact\"&gt;მხარდაჭერის ფორმიდან&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), ან &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">სურათის პოვნა შეუძლებელია</string>
+    <string name="error_image_bad_url">გამოსახულების არასწორი URL</string>
+    <string name="error_saving_try_again">შეტყობინების შენახვის შეცდომა. კიდევ სცადეთ.</string>
+    <!-- endregion -->
+    <string name="allowed">დაშვებულია</string>
+    <string name="denied">უარყოფილია</string>
+    <string name="more">მეტი</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">გასმის ჟესტები შეიცვალა</string>
+    <string name="swipe_gestures_changed_message">ბოლო განახლების შემდეგ გასმის ჟესტები შეიცვალა. თქვენ შეგიძლიათ დააბრუნოთ ისინი მორგების ფანჯარაში.</string>
+    <string name="go_to_settings">პარამეტრებზე გადასვლა</string>
+    <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Firebase API-ის არასწორი გასაღები. Push გაფრთხილებები არ იმუშავებს.</string>
+    <string name="failed_saving_draft_online">შეცდომა მონახაზის შენახვისას შეტყობინებისთვის: %s</string>
+    <string name="failed_draft_does_not_exist">შეტყობინება \"%s\"არ არსებობს.</string>
+    <string name="failed_uploading_attachment_online">მიმაგრებული ფაილის შეცდომა შეტყობინებისთვის: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">შეტყობინების გახსნა მისი გაგზავნის დროს შეუძლებელია</string>
+    <string name="enable_conversation_mode">საუბრების ჩართვა</string>
+    <!-- endregion -->
+    <string name="recipient_email_format">&lt;%s&gt;</string>
+    <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
+    <string name="star">ვარსკვლავი</string>
+    <string name="unstar">ვარსკვლავის მოხსნა</string>
+    <string name="star_unstar">ვარსკვლავის დაყენება/მოცილება</string>
+    <string name="send_to_archive">გადავიტანო არქივში?</string>
+    <string name="label_as">ჭდის დადება…</string>
+    <string name="mark_as_unread">წაუკითხავად მონიშვნა</string>
+    <string name="mark_as_read">წაკითხულად მონიშვნა</string>
+    <string name="move_message">შეტყობინების გადატანა</string>
+    <string name="manage">მართვა</string>
+    <string name="message_from">შეტყობინება %s-გან</string>
+    <string name="not_spam_move_to_inbox">სპამი არაა (შემომავლებში გადატანა)</string>
+    <string name="action_sheet_view_in_light_mode">ღია რეჟიმში ნახვა</string>
+    <string name="action_sheet_view_in_dark_mode">მუქ რეჟიმში ნახვა</string>
+    <plurals name="x_messages_count">
+        <item quantity="one">%d შეტყობინება</item>
+        <item quantity="other">%d შეტყობინება</item>
+    </plurals>
+    <plurals name="x_conversations_count">
+        <item quantity="one">%d საუბარი</item>
+        <item quantity="other">%d საუბარი</item>
+    </plurals>
+    <string name="contacts_call">ზარი</string>
+    <string name="contacts_send_group_message">ჯგუფისთვის შეტყობინების გაგზავნა</string>
+    <string name="inbox_this_folder_is_empty">საქაღალდე ცარიელია</string>
+    <string name="inbox_could_not_retrieve_messages">შეტყობინებების გამოთხოვნის შეცდომა</string>
+    <string name="inbox_pull_down_to_retry">თავიდან საცდელად დაქაჩეთ ქვემოთ</string>
+    <string name="edit_draft">მონახაზის ჩასწორება</string>
+    <string name="details_show_history">ისტორიის ჩვენება</string>
+    <string name="could_not_complete_action">ქმედების დასრულება შეუძლებელია</string>
+    <string name="decryption_of_message_failed">გაშიფვრის შეცდომა: შეტყობინების დაშიფრული ნაწილის გაშიფვრის შეცდომა.</string>
+    <string name="expand_message_details">მეტი დეტალის ჩვენება</string>
+    <string name="collapse_message_details">ნაკლები დეტალის ჩვენება</string>
+</resources>
