@@ -25,8 +25,8 @@ import org.gradle.api.JavaVersion
  */
 object ProtonMail {
 
-    const val versionName = "3.0.16"
-    const val versionCode = 938
+    const val versionName = "3.0.17"
+    const val versionCode = 939
 
     const val compileSdk = 33
     const val targetSdk = 31
