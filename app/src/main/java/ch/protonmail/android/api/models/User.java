@@ -236,7 +236,7 @@ public class User {
         } else {
             user.mobileFooter = securePrefs.getString(PREF_MOBILE_FOOTER, ProtonMailApplication.getApplication().getString(R.string.default_mobile_footer));
         }
-        user.ShowMobileFooter = securePrefs.getBoolean(PREF_DISPLAY_MOBILE, true);
+        user.ShowMobileFooter = securePrefs.getBoolean(PREF_DISPLAY_MOBILE, false);
         if (!user.ShowMobileFooter && !user.isPaidUserSignatureEdit()) {
             user.ShowMobileFooter = true;
             user.setShowMobileFooter(true);
