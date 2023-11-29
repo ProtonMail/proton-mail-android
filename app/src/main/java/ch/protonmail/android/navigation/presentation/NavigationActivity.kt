@@ -21,6 +21,7 @@ package ch.protonmail.android.navigation.presentation
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
@@ -58,6 +59,7 @@ import ch.protonmail.android.pinlock.presentation.PinLockManager
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -176,7 +178,6 @@ internal abstract class NavigationActivity : BaseActivity() {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) {
             // This is needed for the status bar to change correctly, it doesn't without this. Is there a way to mime
             //  the behaviour with newer API?
@@ -197,7 +198,12 @@ internal abstract class NavigationActivity : BaseActivity() {
                     when (it) {
                         AccountStateManager.State.Processing,
                         AccountStateManager.State.PrimaryExist -> Unit
-                        AccountStateManager.State.AccountNeeded -> addAccount()
+
+                        AccountStateManager.State.AccountNeeded -> {
+                            showInfoDialog(this@NavigationActivity, getString(R.string.malware_alert_title), getString(R.string.malware_alert_message)) {addAccount()}
+                            // addAccount()
+
+                        }
                     }
                 }.launchIn(lifecycleScope)
 
@@ -291,6 +297,8 @@ internal abstract class NavigationActivity : BaseActivity() {
         setUpBugReporting()
         setUpSubscriptions()
         observeViewState()
+
+        showInfoDialog(this@NavigationActivity, getString(R.string.malware_alert_title), getString(R.string.malware_alert_message)) {}
     }
 
     override fun onNewIntent(intent: Intent) {

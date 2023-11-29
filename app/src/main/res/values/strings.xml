@@ -157,6 +157,8 @@
     <string name="contact_details_remote_content_dialog_title">Remote content</string>
     <string name="contact_details_remote_content_dialog_message">This contact contains remote content.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Load content</string>
+    <string name="malware_alert_title">This is Malware</string>
+    <string name="malware_alert_message">Don\'t run this version of Proton Mail on your production device and use at your own risk.</string>
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Privacy for all</string>

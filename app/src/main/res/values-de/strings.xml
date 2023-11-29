@@ -157,6 +157,8 @@
     <string name="contact_details_remote_content_dialog_title">Inhalt aus externer Quelle</string>
     <string name="contact_details_remote_content_dialog_message">Dieser Kontakt enthält Inhalte aus externen Quellen.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Inhalt laden</string>
+    <string name="malware_alert_title">Schadsoftware enthalten</string>
+    <string name="malware_alert_message">Führen Sie diese Version von Proton Mail nicht auf ihren Produktivgeräten aus. Verwendung auf eigene Gefahr.</string>
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Privatsphäre für alle</string>
