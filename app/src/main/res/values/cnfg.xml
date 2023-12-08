@@ -18,7 +18,7 @@
   ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources>
-    <string name="app_name" translatable="false">Proton Mail</string>
+    <string name="app_name" translatable="false">Proton Pro</string>
     <string name="repeating_snooze_default_start_time">22:00</string>
     <string name="repeating_snooze_default_end_time">08:00</string>
     <integer name="repeating_snooze_start_hour">22</integer>
