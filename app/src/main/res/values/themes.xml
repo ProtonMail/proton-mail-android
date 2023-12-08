@@ -37,5 +37,6 @@
 
     <style name="ProtonTheme.Splash.Mail.V5" parent="ProtonTheme.Splash.Mail">
         <item name="postSplashScreenTheme">@style/ProtonTheme.Mail.V5</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
     </style>
 </resources>
