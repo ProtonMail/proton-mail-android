@@ -98,6 +98,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.filterNotNull
@@ -192,8 +193,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val _conversationUiFlow = MutableSharedFlow<ConversationUiModel>(replay = 1)
     private val _reloadMessageFlow = MutableSharedFlow<String>(replay = 1)
 
-    val conversationUiModel: SharedFlow<ConversationUiModel>
-        get() = _conversationUiFlow
+    val conversationUiModel: SharedFlow<ConversationUiModel> = _conversationUiFlow.asSharedFlow()
 
     val checkStoragePermission: LiveData<Event<Boolean>>
         get() = _checkStoragePermission
@@ -213,8 +213,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     val messageRenderedWithImages: LiveData<Message>
         get() = _messageRenderedWithImages
 
-    val reloadMessageFlow: SharedFlow<String>
-        get() = _reloadMessageFlow
+    val reloadMessageFlow: SharedFlow<String> = _reloadMessageFlow.asSharedFlow()
 
     private var areImagesDisplayed: Boolean = false
 

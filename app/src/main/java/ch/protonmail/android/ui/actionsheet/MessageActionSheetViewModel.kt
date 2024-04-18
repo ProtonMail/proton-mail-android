@@ -46,6 +46,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
@@ -75,12 +76,10 @@ internal class MessageActionSheetViewModel @Inject constructor(
 
 
     private val mutableStateFlow = MutableStateFlow<MessageActionSheetState>(MessageActionSheetState.Initial)
-    val stateFlow: StateFlow<MessageActionSheetState>
-        get() = mutableStateFlow
+    val stateFlow: StateFlow<MessageActionSheetState> = mutableStateFlow.asStateFlow()
 
     private val actionsMutableFlow = MutableStateFlow<MessageActionSheetAction>(MessageActionSheetAction.Default)
-    val actionsFlow: StateFlow<MessageActionSheetAction>
-        get() = actionsMutableFlow
+    val actionsFlow: StateFlow<MessageActionSheetAction> = actionsMutableFlow.asStateFlow()
 
     fun setupViewState(
         context: Context,

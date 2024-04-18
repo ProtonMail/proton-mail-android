@@ -103,8 +103,7 @@ internal class LabelsActionSheetViewModel @Inject constructor(
     val labels: StateFlow<List<LabelActonItemUiModel>> =
         labelsMutableFlow.asStateFlow()
 
-    val actionsResult: StateFlow<ManageLabelActionResult>
-        get() = actionsResultMutableFlow
+    val actionsResult: StateFlow<ManageLabelActionResult> = actionsResultMutableFlow.asStateFlow()
 
     init {
         accountManager.getPrimaryUserId().filterNotNull()

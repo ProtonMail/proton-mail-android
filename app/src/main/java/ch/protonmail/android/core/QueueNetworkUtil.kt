@@ -29,6 +29,7 @@ import com.birbit.android.jobqueue.network.NetworkEventProvider
 import com.birbit.android.jobqueue.network.NetworkUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.security.GeneralSecurityException
@@ -48,10 +49,8 @@ class QueueNetworkUtil @Inject constructor(
     private var isServerAccessible: Boolean = true
     private var lastEmissionTime = 0L
 
-    val connectionStateFlow: StateFlow<Constants.ConnectionState>
-        get() = backendExceptionFlow
-
     private val backendExceptionFlow = MutableStateFlow(Constants.ConnectionState.CONNECTED)
+    val connectionStateFlow: StateFlow<Constants.ConnectionState> = backendExceptionFlow.asStateFlow()
 
     init {
         updateRealConnectivity(true) // initially we assume there is connectivity

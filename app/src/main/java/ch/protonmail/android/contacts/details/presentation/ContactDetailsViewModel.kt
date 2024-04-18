@@ -37,6 +37,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -56,12 +58,10 @@ class ContactDetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val mutableContactsResultFlow = MutableStateFlow<ContactDetailsViewState>(ContactDetailsViewState.Loading)
-    val contactsViewState: StateFlow<ContactDetailsViewState>
-        get() = mutableContactsResultFlow
+    val contactsViewState: StateFlow<ContactDetailsViewState> = mutableContactsResultFlow.asStateFlow()
 
     private val mutableFlowVcard = MutableSharedFlow<Uri>()
-    val vCardSharedFlow: SharedFlow<Uri>
-        get() = mutableFlowVcard
+    val vCardSharedFlow: SharedFlow<Uri> = mutableFlowVcard.asSharedFlow()
 
     fun getContactDetails(contactId: String) {
         val userId = userManager.currentUserId

@@ -55,12 +55,10 @@ class ParentFolderPickerViewModel @Inject constructor(
     private val mapper: ParentFolderPickerItemUiModelMapper
 ) : ViewModel() {
 
-    val state: StateFlow<ParentFolderPickerState> get() =
-        mutableState.asStateFlow()
-
     private val mutableState: MutableStateFlow<ParentFolderPickerState> = MutableStateFlow(
         ParentFolderPickerState.Loading(selectedItemId = savedStateHandle.selectedParentFolderId)
     )
+    val state: StateFlow<ParentFolderPickerState> = mutableState.asStateFlow()
 
     init {
         accountManager.getPrimaryUserId()
